@@ -1,7 +1,5 @@
-import Link from "next/link";
-
 import { HydrateClient } from "@/trpc/server";
-import { LoginButton } from "./_components/login";
+import { LoginButton } from "@/components/login";
 
 export default async function Home() {
   return (

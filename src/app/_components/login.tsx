@@ -1,20 +1,21 @@
 "use client";
 
-import { api } from "@/trpc/react";
-import { login } from "../api/auth/login/client";
+import { toast } from "@/components/ui/toast";
+import { login } from "@/app/api/auth/login/client";
 
 const loginHandler = async () => {
-  const x = await login('hello');
+  const response = await login("hello");
 
-  console.log(x.data?.name, x.data?.id);
-}
+  if (response.error !== null) {
+    const errorMessage = `Login Error: ${response.error}`;
+
+    toast.error(errorMessage);
+    console.error(errorMessage);
+  } else {
+    toast.info(response.data.name);
+  }
+};
 
 export function LoginButton() {
-
-  return (
-    <div>
-      <span>Value:</span>
-      <button onClick={loginHandler}>Click</button>
-    </div>
-  );
+  return <button onClick={loginHandler}>Click</button>;
 }
