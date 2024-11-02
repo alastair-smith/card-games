@@ -1,13 +1,19 @@
-import { requestSchema, ResponseSchema, responseSchema } from "./schema";
+import {
+  type RequestSchema,
+  requestSchema,
+  type ResponseSchema,
+  responseSchema,
+} from "./schema";
 
 export const login = async (name: string): Promise<ResponseSchema> => {
-  let body;
-  let response;
-  let validatedResponse;
+  let body: RequestSchema;
+  let response: unknown;
+  let validatedResponse: ResponseSchema;
 
   try {
     body = requestSchema.parse({ name });
   } catch (error) {
+    console.error(error);
     return { error: "Input Validation Error", data: null };
   }
 
@@ -19,12 +25,14 @@ export const login = async (name: string): Promise<ResponseSchema> => {
 
     response = await rawResponse.json();
   } catch (error) {
+    console.error(error);
     return { error: "Fetching Error", data: null };
   }
 
   try {
     validatedResponse = responseSchema.parse(response);
   } catch (error) {
+    console.error(error);
     return { error: "Output Validation Error", data: null };
   }
 

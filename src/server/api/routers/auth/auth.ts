@@ -1,10 +1,4 @@
-import { z } from "zod";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "../../trpc";
-import { generateRandomToken, getTokenExpiryDate } from "@/server/auth";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   get: protectedProcedure.query(async (opts) => {

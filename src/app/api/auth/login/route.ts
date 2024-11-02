@@ -1,7 +1,7 @@
 import { generateRandomToken, getTokenExpiryDate } from "@/server/auth";
 import { db } from "@/server/db";
-import { NextRequest } from "next/server";
-import { requestSchema, responseSchema, ResponseSchema } from "./schema";
+import type { NextRequest } from "next/server";
+import { requestSchema, responseSchema, type ResponseSchema } from "./schema";
 
 const sendResponse = ({
   body,
@@ -17,6 +17,8 @@ const sendResponse = ({
   try {
     validatedBody = responseSchema.parse(body);
   } catch (error) {
+    console.error(error);
+
     return new Response(
       JSON.stringify({ error: "Internal Server Error", data: null }),
       {
@@ -45,6 +47,8 @@ export const POST = async (req: NextRequest) => {
   try {
     body = requestSchema.parse(await req.json());
   } catch (error) {
+    console.error(error);
+
     return sendResponse({
       body: { error: "Validation Error", data: null },
       status: 400,
@@ -65,6 +69,8 @@ export const POST = async (req: NextRequest) => {
       },
     });
   } catch (error) {
+    console.error(error);
+
     return sendResponse({
       body: { error: "Internal Server Error", data: null },
       status: 500,

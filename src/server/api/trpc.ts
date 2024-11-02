@@ -10,7 +10,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import cookie from "cookie";
+import { parse as parseCookies } from "cookie";
 
 import { db } from "@/server/db";
 
@@ -117,9 +117,9 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(async ({ ctx: { db, req }, next }) => {
-    const cookies = cookie.parse(req.headers.cookie || "");
-    const authToken = cookies["token"];
+  .use(async ({ ctx: { db, reqHeaders }, next }) => {
+    const cookies = parseCookies(reqHeaders.get("cookie") ?? "");
+    const authToken = cookies.token;
 
     if (!authToken) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
