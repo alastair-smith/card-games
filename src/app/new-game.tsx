@@ -1,16 +1,20 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./_components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 
-function Game({ name, href }: { name: string; href: string }) {
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/utils/cn";
+
+function Game({
+  name,
+  href,
+  image,
+}: {
+  name: string;
+  href: string;
+  image: string;
+}) {
   return (
     <Link href={href}>
       <Card>
@@ -18,19 +22,36 @@ function Game({ name, href }: { name: string; href: string }) {
           <CardTitle>{name}</CardTitle>
         </CardHeader>
 
-        <CardContent></CardContent>
+        <CardContent>
+          <Image src={image} alt={name} width={300} height={200} />
+        </CardContent>
       </Card>
     </Link>
   );
 }
 
-export function NewGame() {
+const games = [
+  { name: "Yaniv", href: "/yaniv", image: "https://placehold.co/300x200.png" },
+  { name: "Blob", href: "/blob", image: "https://placehold.co/300x200.png" },
+  {
+    name: "Shithead",
+    href: "/shithead",
+    image: "https://placehold.co/300x200.png",
+  },
+  { name: "Fool", href: "/fool", image: "https://placehold.co/300x200.png" },
+];
+
+export function NewGame({ className }: { className?: string }) {
   return (
-    <>
-      <Game name="Yaniv" href="/yaniv" />
-      <Game name="Blob" href="/blob" />
-      <Game name="Shithead" href="/shithead" />
-      <Game name="Fool" href="/fool" />
-    </>
+    <div
+      className={cn(
+        "grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4",
+        className,
+      )}
+    >
+      {games.map((game) => (
+        <Game key={game.name} {...game} />
+      ))}
+    </div>
   );
 }
