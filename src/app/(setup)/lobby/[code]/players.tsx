@@ -10,7 +10,7 @@ const InvitePlayers = ({ code }: { code: string }) => {
   return (
     <div className="flex gap-2">
       <GameCode code={code} />
-      <Button>Copy Link</Button>
+      <Button className="h-auto">Copy Link</Button>
     </div>
   );
 };

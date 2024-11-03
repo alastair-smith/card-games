@@ -1,17 +1,11 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../_components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import { useState } from "react";
-import Link from "next/link";
 import { GameCode } from "@/components/game-code";
+import Link from "next/link";
 
 export function JoinGame({ className }: { className?: string }) {
   const [code, setCode] = useState("");

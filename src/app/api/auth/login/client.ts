@@ -3,9 +3,15 @@ import {
   requestSchema,
   type ResponseSchema,
   responseSchema,
+  ERROR_PREFIX,
 } from "./schema";
 
-export const login = async (name: string): Promise<ResponseSchema> => {
+/**
+ * Create a user if one doesn't already exist, setting a user token cookie.
+ *
+ * If a user and token already exist then no action is taken.
+ * */
+export const login = async (name?: string): Promise<ResponseSchema> => {
   let body: RequestSchema;
   let response: unknown;
   let validatedResponse: ResponseSchema;
@@ -14,7 +20,7 @@ export const login = async (name: string): Promise<ResponseSchema> => {
     body = requestSchema.parse({ name });
   } catch (error) {
     console.error(error);
-    return { error: "Input Validation Error", data: null };
+    return { error: `${ERROR_PREFIX}Input Validation Error`, data: null };
   }
 
   try {
@@ -26,14 +32,14 @@ export const login = async (name: string): Promise<ResponseSchema> => {
     response = await rawResponse.json();
   } catch (error) {
     console.error(error);
-    return { error: "Fetching Error", data: null };
+    return { error: `${ERROR_PREFIX}Fetching Error`, data: null };
   }
 
   try {
     validatedResponse = responseSchema.parse(response);
   } catch (error) {
     console.error(error);
-    return { error: "Output Validation Error", data: null };
+    return { error: `${ERROR_PREFIX}Output Validation Error`, data: null };
   }
 
   return validatedResponse;
