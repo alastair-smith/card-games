@@ -3,8 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/utils/cn";
+import { Button } from "./_components/ui/button";
 
 function Game({
   name,
@@ -16,17 +23,24 @@ function Game({
   image: string;
 }) {
   return (
-    <Link href={href}>
-      <Card>
-        <CardHeader>
-          <CardTitle>{name}</CardTitle>
-        </CardHeader>
+    <Card>
+      <CardHeader>
+        <CardTitle>{name}</CardTitle>
+      </CardHeader>
 
-        <CardContent>
-          <Image src={image} alt={name} width={300} height={200} />
-        </CardContent>
-      </Card>
-    </Link>
+      <CardContent>
+        <Image src={image} alt={name} width={300} height={200} />
+      </CardContent>
+
+      <CardFooter className="justify-end gap-2">
+        <Button asChild variant="secondary">
+          <Link href={href}>View Rules</Link>
+        </Button>
+        <Button asChild>
+          <Link href={href}>Launch Game</Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 
@@ -45,7 +59,7 @@ export function NewGame({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4",
+        "grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-6",
         className,
       )}
     >
