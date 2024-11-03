@@ -19,17 +19,6 @@ export function JoinGame() {
       <CardContent>
         <form className="flex flex-col gap-4">
           <label className="flex flex-col gap-1.5">
-            <span>Your Name</span>
-            <Input
-              placeholder="Name"
-              className="w-[10rem] text-center font-mono uppercase"
-              name="name"
-              data-1p-ignore
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-1.5">
             <span>Game Code</span>
             <Input
               placeholder="Code"
