@@ -7,10 +7,15 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "./_components/ui/card";
+} from "../_components/ui/card";
 import { cn } from "@/utils/cn";
+import { useState } from "react";
+import Link from "next/link";
+import { GameCode } from "@/components/game-code";
 
 export function JoinGame({ className }: { className?: string }) {
+  const [code, setCode] = useState("");
+
   return (
     <Card className={cn("flex flex-col", className)}>
       <CardHeader>
@@ -21,16 +26,12 @@ export function JoinGame({ className }: { className?: string }) {
         <form className="flex flex-col items-center gap-4">
           <label className="flex flex-col gap-1.5">
             <span>Game Code</span>
-            <Input
-              placeholder="Code"
-              className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase"
-              name="code"
-              data-1p-ignore
-              autoComplete="off"
-            />
+            <GameCode code={code} setCode={setCode} />
           </label>
 
-          <Button>Join</Button>
+          <Button asChild>
+            <Link href={`/lobby/${code}`}>Join</Link>
+          </Button>
         </form>
       </CardContent>
     </Card>

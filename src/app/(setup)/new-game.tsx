@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
-import { Button } from "./_components/ui/button";
+import { Button } from "../_components/ui/button";
 
 function Game({
   name,
