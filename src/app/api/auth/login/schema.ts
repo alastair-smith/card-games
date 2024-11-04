@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ERROR_PREFIX = "Login Error:";
 
-export const playerNameSchema = z.string().min(1).max(64);
+export const playerNameSchema = z.string().min(1).max(32);
 
 export const requestSchema = z.object({
   name: playerNameSchema.optional(),

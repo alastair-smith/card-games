@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-switch": "^1.1.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.50.0",
     "@trpc/client": "^11.0.0-rc.446",
@@ -32,6 +33,8 @@
     "clsx": "^2.1.1",
     "cookie": "^1.0.1",
     "geist": "^1.3.0",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.454.0",
     "next": "^15.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -44,6 +47,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

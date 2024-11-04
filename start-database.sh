@@ -4,6 +4,7 @@ set -eou pipefail
 
 podman run -d \
   --name card-games-postgres \
+  --replace \
   -e POSTGRES_USER="postgres" \
   -e POSTGRES_PASSWORD="postgres" \
   -e POSTGRES_DB=card-games \

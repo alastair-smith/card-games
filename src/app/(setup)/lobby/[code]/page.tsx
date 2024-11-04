@@ -29,7 +29,6 @@ export default function Lobby() {
       <h1 className="sr-only">Lobby</h1>
       <GameInfo className="flex-1" />
       <Players className="flex-1" />
-      {user?.name}
     </div>
   );
 }
