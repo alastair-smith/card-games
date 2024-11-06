@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 
 import {
@@ -12,16 +11,55 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import { Button } from "../_components/ui/button";
+import { GameType } from "@prisma/client";
+import { toast } from "@/components/ui/toast";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
-function Game({
-  name,
-  href,
-  image,
-}: {
+type GameProps = {
   name: string;
-  href: string;
+  gameType: GameType;
   image: string;
-}) {
+};
+
+const games: GameProps[] = [
+  {
+    name: "Yaniv",
+    gameType: GameType.YANIV,
+    image: "https://placehold.co/300x200.png",
+  },
+  {
+    name: "Blob",
+    gameType: GameType.BLOB,
+    image: "https://placehold.co/300x200.png",
+  },
+  {
+    name: "Shithead",
+    gameType: GameType.SHITHEAD,
+    image: "https://placehold.co/300x200.png",
+  },
+  {
+    name: "Fool",
+    gameType: GameType.FOOL,
+    image: "https://placehold.co/300x200.png",
+  },
+];
+
+function Game({ name, gameType, image }: GameProps) {
+  const router = useRouter();
+  const { mutate: create } = api.lobby.create.useMutation({
+    onSuccess: ({ code }) => {
+      router.push(`/lobby/${code}`);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  const launchAction = () => {
+    create({ gameType });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -33,27 +71,12 @@ function Game({
       </CardContent>
 
       <CardFooter className="justify-end gap-2">
-        <Button asChild variant="secondary">
-          <Link href={href}>View Rules</Link>
-        </Button>
-        <Button asChild>
-          <Link href={href}>Launch Game</Link>
-        </Button>
+        <Button variant="secondary">View Rules</Button>
+        <Button onClick={launchAction}>Launch Game</Button>
       </CardFooter>
     </Card>
   );
 }
-
-const games = [
-  { name: "Yaniv", href: "/yaniv", image: "https://placehold.co/300x200.png" },
-  { name: "Blob", href: "/blob", image: "https://placehold.co/300x200.png" },
-  {
-    name: "Shithead",
-    href: "/shithead",
-    image: "https://placehold.co/300x200.png",
-  },
-  { name: "Fool", href: "/fool", image: "https://placehold.co/300x200.png" },
-];
 
 export function NewGame({ className }: { className?: string }) {
   return (

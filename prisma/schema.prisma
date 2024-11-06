@@ -13,8 +13,8 @@ model User {
   name  String
   token String @unique
 
-  hostedGames GameInstance[] @relation("GameInstanceHost")
-  playedGames GameInstance[]
+  hostedGames        GameInstance[]       @relation("GameInstanceHost")
+  gameInstancePlayer GameInstancePlayer[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,16 +26,29 @@ model GameInstance {
   gameType GameType
 
   hostUserId String
-  host       User    @relation("GameInstanceHost", fields: [hostUserId], references: [id])
-  players    User[]
-  ready      Boolean
+  host       User   @relation("GameInstanceHost", fields: [hostUserId], references: [id])
+
+  gameInstancePlayers GameInstancePlayer[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model GameInstancePlayer {
+  gameInstanceJoinCode String
+  gameInstance         GameInstance @relation(fields: [gameInstanceJoinCode], references: [joinCode])
+
+  playerUserId String
+  player       User   @relation(fields: [playerUserId], references: [id])
+
+  ready Boolean
+
+  @@id([gameInstanceJoinCode, playerUserId])
 }
 
 enum GameType {
   YANIV    @map("Yaniv")
   BLOB     @map("Blob")
   SHITHEAD @map("Shithead")
+  FOOL     @map("Fool")
 }
