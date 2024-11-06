@@ -26,8 +26,9 @@ model GameInstance {
   gameType GameType
 
   hostUserId String
-  host       User   @relation("GameInstanceHost", fields: [hostUserId], references: [id])
+  host       User    @relation("GameInstanceHost", fields: [hostUserId], references: [id])
   players    User[]
+  ready      Boolean
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

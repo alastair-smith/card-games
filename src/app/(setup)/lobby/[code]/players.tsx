@@ -84,7 +84,14 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
         {players.map((player) => (
           <TableRow key={player.id}>
             <TableCell className="w-[1ch]">
-              {player.isHost ? <CrownIcon size={22} /> : ""}
+              {player.isHost ? (
+                <>
+                  <CrownIcon size={22} />
+                  <span className="sr-only">Is host</span>
+                </>
+              ) : (
+                ""
+              )}
             </TableCell>
             <TableCell className="flex gap-2">
               {player.isCurrentUser ? (
