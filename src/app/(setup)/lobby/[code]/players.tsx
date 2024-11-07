@@ -16,9 +16,28 @@ import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import { playerNameSchema } from "@/app/api/auth/login/schema";
-import { CrownIcon } from "lucide-react";
+import { CrownIcon, EllipsisVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Player = {
   id: string;
@@ -95,6 +114,7 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
           <TableHead className="sr-only w-[1ch]">Host</TableHead>
           <TableHead className="pl-7">Name</TableHead>
           <TableHead>Ready</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -130,6 +150,86 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
                   debounceUpdateReadyStatus(ready);
                 }}
               />
+            </TableCell>
+            <TableCell>
+              <DropdownMenu>
+                <Button asChild variant="secondary" size="sm">
+                  <DropdownMenuTrigger>
+                    <EllipsisVertical />
+                  </DropdownMenuTrigger>
+                </Button>
+                <DropdownMenuContent>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        Leave
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to leave the game?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You can rejoin by re-visiting the url.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        Kick
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Kick{" "}
+                          <span className="font-semibold">{player.name}</span>{" "}
+                          from the game?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          They will be able to rejoin by re-visiting the url.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        Make Host
+                      </DropdownMenuItem>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Make{" "}
+                          <span className="font-semibold">{player.name}</span>{" "}
+                          the new host?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You will remain in the game, but lose host powers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Continue</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TableCell>
           </TableRow>
         ))}
