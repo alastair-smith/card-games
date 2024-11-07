@@ -16,6 +16,7 @@ import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { login } from "@/app/api/auth/login/client";
+import { useState } from "react";
 
 type GameProps = {
   name: string;
@@ -48,16 +49,19 @@ const games: GameProps[] = [
 
 function Game({ name, gameType, image }: GameProps) {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const { mutate: create } = api.lobby.create.useMutation({
     onSuccess: ({ code }) => {
       router.push(`/lobby/${code}`);
     },
     onError: (err) => {
+      setIsLoading(false);
       toast.error(err.message);
     },
   });
 
   const launchAction = async () => {
+    setIsLoading(true);
     await login();
     create({ gameType });
   };
@@ -78,6 +82,7 @@ function Game({ name, gameType, image }: GameProps) {
           onClick={() => {
             void launchAction();
           }}
+          disabled={isLoading}
         >
           Launch Game
         </Button>
