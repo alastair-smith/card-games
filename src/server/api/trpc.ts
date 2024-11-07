@@ -118,24 +118,37 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx: { db, reqHeaders }, next }) => {
+    let user;
+
     const cookies = parseCookies(reqHeaders.get("cookie") ?? "");
     const authToken = cookies.token;
 
     if (!authToken) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Token missing." });
     }
 
-    const user = await db.user.findUnique({
-      where: {
-        token: authToken,
-      },
-      select: {
-        id: true,
-      },
-    });
+    try {
+      user = await db.user.findUnique({
+        where: {
+          token: authToken,
+        },
+        select: {
+          id: true,
+        },
+      });
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        cause: error,
+        message: "Failed to lookup token.",
+      });
+    }
 
     if (!user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User not found.",
+      });
     }
 
     return next({

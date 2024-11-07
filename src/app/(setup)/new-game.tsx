@@ -10,11 +10,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
-import { Button } from "../_components/ui/button";
+import { Button } from "@/components/ui/button";
 import { GameType } from "@prisma/client";
 import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import { login } from "@/app/api/auth/login/client";
 
 type GameProps = {
   name: string;
@@ -56,7 +57,8 @@ function Game({ name, gameType, image }: GameProps) {
     },
   });
 
-  const launchAction = () => {
+  const launchAction = async () => {
+    await login();
     create({ gameType });
   };
 
@@ -72,7 +74,13 @@ function Game({ name, gameType, image }: GameProps) {
 
       <CardFooter className="justify-end gap-2">
         <Button variant="secondary">View Rules</Button>
-        <Button onClick={launchAction}>Launch Game</Button>
+        <Button
+          onClick={() => {
+            void launchAction();
+          }}
+        >
+          Launch Game
+        </Button>
       </CardFooter>
     </Card>
   );
