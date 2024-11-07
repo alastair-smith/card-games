@@ -1,13 +1,11 @@
 "use client";
 
-import { GameCode } from "@/components/game-code";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -20,6 +18,7 @@ import debounce from "lodash/debounce";
 import { playerNameSchema } from "@/app/api/auth/login/schema";
 import { CrownIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "@/components/ui/toast";
 
 type Player = {
   id: string;
@@ -29,25 +28,43 @@ type Player = {
   isHost: boolean;
 };
 
+const copyToClipboard = async (text: string) => {
+  await navigator.clipboard.writeText(text);
+  toast.success("Copied to clipboard.");
+};
+
 const InvitePlayers = ({ code }: { code: string }) => {
   return (
     <div className="flex gap-3">
-      <GameCode code={code} />
-      <Button className="h-auto">Copy Link</Button>
+      <Input
+        placeholder="Code"
+        className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase"
+        name="code"
+        value={code}
+        readOnly
+      />
+      <Button
+        className="h-auto"
+        onClick={() => {
+          void copyToClipboard(code);
+        }}
+      >
+        Copy Link
+      </Button>
     </div>
   );
 };
 
 const PlayerTable = ({ players }: { players: Player[] }) => {
   const [currentPlayerReady, setCurrentPlayerReady] = useState(false);
-  const { data, mutate: setReadyStatusMutation } =
+  const { mutate: setReadyStatusMutation } =
     api.lobby.setReadyStatus.useMutation();
   const debounceUpdateReadyStatus = useMemo(
     () => debounce((ready: boolean) => setReadyStatusMutation({ ready }), 300),
     [setReadyStatusMutation],
   );
 
-  const { data: user, mutate: nameMutation } = api.user.update.useMutation();
+  const { mutate: nameMutation } = api.user.update.useMutation();
   const [currentPlayerName, setCurrentPlayerName] = useState(
     players.find(({ isCurrentUser }) => isCurrentUser)?.name ?? "",
   );
@@ -149,6 +166,7 @@ export function Players({ className }: { className?: string }) {
             },
           ]}
         />
+        <Button disabled>Start Game</Button>
       </CardContent>
     </Card>
   );
