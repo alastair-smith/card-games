@@ -17,7 +17,7 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
