@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-const WEBSOCKET_URL = "ws://localhost:3000";
+const WEBSOCKET_URL = "ws://localhost:3000/socket";
 
 export const useWebSocket = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -16,6 +16,7 @@ export const useWebSocket = () => {
       setMessages((prevMessages: string[]) => [...prevMessages, message]);
     });
 
+    // cleanup
     return () => {
       socket.close();
     };
