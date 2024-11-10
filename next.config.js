@@ -7,8 +7,9 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["placehold.co"]
-  }
+    domains: ["placehold.co"],
+  },
+  poweredByHeader: false,
 };
 
 export default config;
