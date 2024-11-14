@@ -7,7 +7,10 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["placehold.co"],
+    remotePatterns: [{
+      protocol: "https",
+      hostname: "placehold.co",
+    }],
   },
   poweredByHeader: false,
 };

@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { joinSchema } from "./schemas";
-import { GameType } from "@prisma/client";
+import { GameType } from "@repo/database";
 import { TRPCError } from "@trpc/server";
 import { generateGameCode } from "./generateGameCode";
 

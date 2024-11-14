@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
-import { GameType } from "@prisma/client";
+import { GameType } from "@repo/database";
 import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";

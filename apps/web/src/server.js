@@ -26,7 +26,7 @@ const startServer = async () => {
   const nodeEnv = env.NODE_ENV;
   const port = env.PORT;
 
-  const app = next({ dev: nodeEnv === "development", turbopack: true });
+  const app = next({ dev: nodeEnv === "development" });
   const handle = app.getRequestHandler();
 
   await app.prepare().then(() => {
