@@ -11,7 +11,10 @@ export function GameInfo({ className }: { className?: string }) {
         <CardTitle>Game Info</CardTitle>
       </CardHeader>
       <CardContent>
-        <Button onClick={() => sendMessage("hello from the client")}>
+        <Button onClick={() => sendMessage(JSON.stringify({
+          procedure: "lobby.changeName",
+          data: { name: "XYZ" }
+        }))}>
           Send
         </Button>
         <div>

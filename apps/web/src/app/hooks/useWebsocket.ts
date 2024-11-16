@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-const WEBSOCKET_URL = "ws://localhost:3000/socket";
+const WEBSOCKET_URL = "ws://localhost:3001/socket";
 
 export const useWebSocket = () => {
   const [messages, setMessages] = useState<string[]>([]);
