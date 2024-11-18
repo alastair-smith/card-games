@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
+// TODO swap to wss protocol
 const WEBSOCKET_URL = "ws://localhost:3001/socket";
 
 export const useWebSocket = () => {
@@ -8,7 +9,8 @@ export const useWebSocket = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(WEBSOCKET_URL);
+    // TODO send token from here
+    const socket = new WebSocket(`${WEBSOCKET_URL}?token=123`);
     setSocket(socket);
 
     socket.addEventListener("message", (event) => {

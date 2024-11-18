@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@repo/database": "workspace:*",
+    "cookie": "^1.0.1",
     "ws": "^8.18.0",
     "zod": "^3.23.8"
   },

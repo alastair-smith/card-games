@@ -17,6 +17,9 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../../packages/database
+      cookie:
+        specifier: ^1.0.1
+        version: 1.0.1
       ws:
         specifier: ^8.18.0
         version: 8.18.0

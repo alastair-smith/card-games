@@ -5,8 +5,8 @@ type Middleware<TInput = unknown> = (input: TInput) => TInput;
 type Procedure<TInput = unknown> = {
   use: (middleware: Middleware<TInput>) => Procedure<TInput>;
   input: <T extends ZodSchema>(schema: T) => Procedure<z.infer<T>>;
-  handle: (handler: (opts: TInput) => void | Promise<void>) => Procedure<TInput>;
-  execute: (data: TInput) => Promise<void>;
+  handle: (handler: (opts: {user: string, lobby: string, input: TInput}) => void | Promise<void>) => Procedure<TInput>;
+  execute: (opts: {user: string, lobby: string, input: TInput}) => Promise<void>;
 };
 
 interface ProcedureNamespace {
@@ -17,7 +17,7 @@ export const procedure = <TInput = unknown>(
   state: {
     middlewares: Middleware<TInput>[];
     inputSchema?: ZodSchema<TInput>;
-    handlerFunction?: (opts: TInput) => void | Promise<void>;
+    handlerFunction?: (opts: {user: string, lobby: string, input: TInput}) => void | Promise<void>;
   } = { middlewares: [] }
 ): Procedure<TInput> => {
   return {
@@ -39,15 +39,15 @@ export const procedure = <TInput = unknown>(
         handlerFunction: handler,
       });
     },
-    execute: async (data) => {
+    execute: async (opts) => {
       if (!state.inputSchema || !state.handlerFunction) {
         throw new Error(`Procedure must have both input schema and handler defined before execution.`);
       }
 
-      console.log(`[Procedure] Executing with data:`, data);
+      console.log(`[Procedure] Executing with data:`, opts.input);
 
       // Apply middleware
-      let transformedData = data;
+      let transformedData = opts.input;
       for (const middleware of state.middlewares) {
         transformedData = middleware(transformedData);
       }
@@ -56,7 +56,7 @@ export const procedure = <TInput = unknown>(
       const parsedData = state.inputSchema.parse(transformedData);
 
       // Execute the handler (supports both sync and async)
-      await state.handlerFunction(parsedData);
+      await state.handlerFunction({ ...opts, input: parsedData });
     },
   };
 };
