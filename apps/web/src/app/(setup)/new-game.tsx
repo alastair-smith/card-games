@@ -76,7 +76,7 @@ function Game({ name, gameType, image }: GameProps) {
         <Image src={image} alt={name} width={300} height={200} />
       </CardContent>
 
-      <CardFooter className="justify-end gap-2">
+      <CardFooter className="justify-end gap-3">
         <Button variant="secondary">View Rules</Button>
         <Button
           onClick={() => {
