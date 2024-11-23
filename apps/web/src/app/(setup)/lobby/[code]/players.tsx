@@ -45,8 +45,9 @@ type Player = {
   isHost: boolean;
 };
 
-const copyToClipboard = async (text: string) => {
-  await navigator.clipboard.writeText(text);
+const copyUrlToClipboard = async () => {
+  const { origin, pathname } = new URL(window.location.href);
+  await navigator.clipboard.writeText(`${origin}${pathname}`);
   toast.success("Copied to clipboard.");
 };
 
@@ -63,7 +64,7 @@ const InvitePlayers = ({ code }: { code: string }) => {
       <Button
         className="h-auto"
         onClick={() => {
-          void copyToClipboard(code);
+          void copyUrlToClipboard();
         }}
       >
         Copy Link
