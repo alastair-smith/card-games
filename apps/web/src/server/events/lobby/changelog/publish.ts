@@ -1,4 +1,4 @@
 import { schema, EVENT_NAME } from "./schema"
-import { publishEvent } from "../../publishEvent";
+import { publisher } from "../../publishEvent";
 
-export const publishLobbyChangelog = publishEvent(EVENT_NAME, schema);
+export const lobbyChangelogPublisher = publisher(EVENT_NAME, schema);

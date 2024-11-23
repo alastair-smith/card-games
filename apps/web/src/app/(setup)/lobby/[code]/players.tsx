@@ -36,6 +36,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {schema as lobbyChangelogEventSchema, EVENT_NAME as LOBBY_CHANGELOG_EVENT_NAME} from '@/server/events/lobby/changelog/schema'
+import { z } from "zod";
 
 type Player = {
   id: string;
@@ -237,7 +239,32 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
   );
 };
 
-export function Players({ className }: { className?: string }) {
+export function Players({ className, gameCode, userId  }: { className?: string, gameCode:string, userId: string }) {
+  const [players, setPlayers] = useState<Player[]>([]);
+
+  api.lobby.subscribe.useSubscription({code: gameCode}, {onData: (rawEvent) => {
+    const {data: event, error} = z.object({
+      name: z.string(),
+      data: z.any()
+    }).safeParse(rawEvent);
+
+    if (error) {
+      console.error(error)
+      return;
+    }
+
+    if (event.name === LOBBY_CHANGELOG_EVENT_NAME) {
+      const players = lobbyChangelogEventSchema
+        .parse(event?.data)
+        .players
+        .map(player => ({
+          ...player,
+          isCurrentUser: player.id === userId,
+        }));
+
+      setPlayers(players);
+    }
+  }})
   const params = useParams<{ code: string }>();
 
   return (
@@ -248,22 +275,7 @@ export function Players({ className }: { className?: string }) {
       <CardContent className="flex flex-col items-center gap-6">
         <InvitePlayers code={params.code} />
         <PlayerTable
-          players={[
-            {
-              name: "abc",
-              isReady: false,
-              id: "1234",
-              isCurrentUser: true,
-              isHost: true,
-            },
-            {
-              name: "abc",
-              isReady: true,
-              id: "1235",
-              isCurrentUser: false,
-              isHost: false,
-            },
-          ]}
+          players={players}
         />
         <Button disabled>Start Game</Button>
       </CardContent>

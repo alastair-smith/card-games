@@ -7,8 +7,8 @@ export const schema = z.object({
   players: z.array(z.object({
     id: z.string(),
     name: z.string(),
-    ready: z.boolean(),
-    host: z.boolean()
+    isReady: z.boolean(),
+    isHost: z.boolean()
   }))
 });
 

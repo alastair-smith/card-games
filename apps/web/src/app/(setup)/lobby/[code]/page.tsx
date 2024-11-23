@@ -1,30 +1,11 @@
-"use client";
+'use server';
 
-import { useEffect } from "react";
-import { GameInfo } from "./game-info";
-import { Players } from "./players";
-import { login } from "@/app/api/auth/login/client";
-import { toast } from "sonner";
+import LobbyClient from "./client";
 
-export default function Lobby() {
-  useEffect(() => {
-    const loginHandler = async () => {
-      const { error } = await login();
+export default async function Lobby({params}: {
+  params: Promise<{code: string}>
+}) {
+  const code = (await params).code;
 
-      if (error !== null) {
-        console.error(error);
-        toast.error(error);
-      }
-    };
-
-    void loginHandler();
-  }, []);
-
-  return (
-    <div className="flex w-full flex-wrap gap-6">
-      <h1 className="sr-only">Lobby</h1>
-      <GameInfo className="flex-1" />
-      <Players className="flex-1" />
-    </div>
-  );
+  return <LobbyClient joinCode={code} />;
 }
