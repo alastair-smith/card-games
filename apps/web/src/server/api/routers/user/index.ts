@@ -1,5 +1,6 @@
 import { playerNameSchema } from "@/app/api/auth/login/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { ee } from "@/server/events/emitter";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
@@ -34,6 +35,8 @@ export const userRouter = createTRPCRouter({
           name: true,
         },
       });
+
+      ee.emit('add', `name change ${opts.input.name}`);
 
       return user;
     }),

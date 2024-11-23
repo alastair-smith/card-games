@@ -4,9 +4,8 @@ import { joinSchema } from "./schemas";
 import { GameType } from "@repo/database";
 import { TRPCError } from "@trpc/server";
 import { generateGameCode } from "./generateGameCode";
-import EventEmitter, { on } from "events";
-
-const ee = new EventEmitter();
+import { ee } from "@/server/events/emitter";
+import { on } from "events";
 
 export const lobbyRouter = createTRPCRouter({
   create: protectedProcedure
@@ -62,10 +61,6 @@ export const lobbyRouter = createTRPCRouter({
       return {
         ready: opts.input.ready,
       };
-    }),
-
-    post: protectedProcedure.input(z.object({data: z.string()})).mutation((opts) => {
-      ee.emit('add', opts.input.data);
     }),
 
   subscribe: protectedProcedure.input(z.object({
