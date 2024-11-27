@@ -4,7 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "start-redis": "./scripts/start-redis.sh"
   },
   "devDependencies": {
     "turbo": "^2.2.3"

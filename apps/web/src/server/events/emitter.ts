@@ -1,3 +1,3 @@
 import EventEmitter from "events";
 
-export const ee = new EventEmitter();
+export const ee = new GameEventEmitter();
