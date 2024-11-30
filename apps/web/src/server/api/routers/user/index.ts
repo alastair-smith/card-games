@@ -36,9 +36,9 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-       // TODO update name in all games?
+      // TODO update name in all games?
 
-      ee.emit('add', `name change ${opts.input.name}`);
+      ee.emit("add", `name change ${opts.input.name}`);
 
       return user;
     }),

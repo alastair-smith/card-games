@@ -1,12 +1,22 @@
-import { z, ZodSchema } from 'zod';
+import { z, ZodSchema } from "zod";
 
 type Middleware<TInput = unknown> = (input: TInput) => TInput;
 
 type Procedure<TInput = unknown> = {
   use: (middleware: Middleware<TInput>) => Procedure<TInput>;
   input: <T extends ZodSchema>(schema: T) => Procedure<z.infer<T>>;
-  handle: (handler: (opts: {user: string, lobby: string, input: TInput}) => void | Promise<void>) => Procedure<TInput>;
-  execute: (opts: {user: string, lobby: string, input: TInput}) => Promise<void>;
+  handle: (
+    handler: (opts: {
+      user: string;
+      lobby: string;
+      input: TInput;
+    }) => void | Promise<void>,
+  ) => Procedure<TInput>;
+  execute: (opts: {
+    user: string;
+    lobby: string;
+    input: TInput;
+  }) => Promise<void>;
 };
 
 interface ProcedureNamespace {
@@ -17,8 +27,12 @@ export const procedure = <TInput = unknown>(
   state: {
     middlewares: Middleware<TInput>[];
     inputSchema?: ZodSchema<TInput>;
-    handlerFunction?: (opts: {user: string, lobby: string, input: TInput}) => void | Promise<void>;
-  } = { middlewares: [] }
+    handlerFunction?: (opts: {
+      user: string;
+      lobby: string;
+      input: TInput;
+    }) => void | Promise<void>;
+  } = { middlewares: [] },
 ): Procedure<TInput> => {
   return {
     use: (middleware) => {
@@ -41,7 +55,9 @@ export const procedure = <TInput = unknown>(
     },
     execute: async (opts) => {
       if (!state.inputSchema || !state.handlerFunction) {
-        throw new Error(`Procedure must have both input schema and handler defined before execution.`);
+        throw new Error(
+          `Procedure must have both input schema and handler defined before execution.`,
+        );
       }
 
       console.log(`[Procedure] Executing with data:`, opts.input);
@@ -61,16 +77,22 @@ export const procedure = <TInput = unknown>(
   };
 };
 
-export const flattenRoutes = (namespace: ProcedureNamespace, prefix = ''): Record<string, Procedure<any>> => {
+export const flattenRoutes = (
+  namespace: ProcedureNamespace,
+  prefix = "",
+): Record<string, Procedure<any>> => {
   const flatRoutes: Record<string, Procedure<any>> = {};
 
   for (const [key, value] of Object.entries(namespace)) {
     const routePath = prefix ? `${prefix}.${key}` : key;
 
-    if (typeof value.execute === 'function') {
+    if (typeof value.execute === "function") {
       flatRoutes[routePath] = value as Procedure<any>;
     } else {
-      Object.assign(flatRoutes, flattenRoutes(value as ProcedureNamespace, routePath));
+      Object.assign(
+        flatRoutes,
+        flattenRoutes(value as ProcedureNamespace, routePath),
+      );
     }
   }
 

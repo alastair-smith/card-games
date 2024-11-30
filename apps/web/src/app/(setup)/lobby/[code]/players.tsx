@@ -36,7 +36,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {schema as lobbyChangelogEventSchema, EVENT_NAME as LOBBY_CHANGELOG_EVENT_NAME} from '@/server/events/lobby/changelog/schema'
+import {
+  schema as lobbyChangelogEventSchema,
+  EVENT_NAME as LOBBY_CHANGELOG_EVENT_NAME,
+} from "@/server/events/lobby/changelog/schema";
 import { z } from "zod";
 
 type Player = {
@@ -239,32 +242,46 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
   );
 };
 
-export function Players({ className, gameCode, userId  }: { className?: string, gameCode:string, userId: string }) {
+export function Players({
+  className,
+  gameCode,
+  userId,
+}: {
+  className?: string;
+  gameCode: string;
+  userId: string;
+}) {
   const [players, setPlayers] = useState<Player[]>([]);
 
-  api.lobby.subscribe.useSubscription({code: gameCode}, {onData: (rawEvent) => {
-    const {data: event, error} = z.object({
-      name: z.string(),
-      data: z.any()
-    }).safeParse(rawEvent);
+  api.lobby.subscribe.useSubscription(
+    { code: gameCode },
+    {
+      onData: (rawEvent) => {
+        const { data: event, error } = z
+          .object({
+            name: z.string(),
+            data: z.any(),
+          })
+          .safeParse(rawEvent);
 
-    if (error) {
-      console.error(error)
-      return;
-    }
+        if (error) {
+          console.error(error);
+          return;
+        }
 
-    if (event.name === LOBBY_CHANGELOG_EVENT_NAME) {
-      const players = lobbyChangelogEventSchema
-        .parse(event?.data)
-        .players
-        .map(player => ({
-          ...player,
-          isCurrentUser: player.id === userId,
-        }));
+        if (event.name === LOBBY_CHANGELOG_EVENT_NAME) {
+          const players = lobbyChangelogEventSchema
+            .parse(event?.data)
+            .players.map((player) => ({
+              ...player,
+              isCurrentUser: player.id === userId,
+            }));
 
-      setPlayers(players);
-    }
-  }})
+          setPlayers(players);
+        }
+      },
+    },
+  );
   const params = useParams<{ code: string }>();
 
   return (
@@ -274,9 +291,7 @@ export function Players({ className, gameCode, userId  }: { className?: string, 
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
         <InvitePlayers code={params.code} />
-        <PlayerTable
-          players={players}
-        />
+        <PlayerTable players={players} />
         <Button disabled>Start Game</Button>
       </CardContent>
     </Card>

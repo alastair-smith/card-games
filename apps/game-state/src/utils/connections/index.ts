@@ -1,7 +1,7 @@
-import { GameInstance, User } from "@repo/database"
+import { GameInstance, User } from "@repo/database";
 
-type LobbyId = GameInstance['joinCode'];
-type UserId = User['id'];
+type LobbyId = GameInstance["joinCode"];
+type UserId = User["id"];
 type Lobby = Map<UserId, WebSocket>;
 
 export const initConnections = () => {
@@ -16,15 +16,19 @@ export const initConnections = () => {
   const removeLobby = (lobbyId: LobbyId) => {
     // TODO clear connections
     liveConnections.delete(lobbyId);
-  }
+  };
 
   const getLobby = (lobbyId: LobbyId) => {
     return liveConnections.get(lobbyId);
-  }
+  };
 
   // connection management
 
-  const addUserConnection = (lobbyId: LobbyId, userId: UserId, connection: WebSocket) => {
+  const addUserConnection = (
+    lobbyId: LobbyId,
+    userId: UserId,
+    connection: WebSocket,
+  ) => {
     const lobby = getLobby(lobbyId);
 
     if (!lobby) {
@@ -49,7 +53,6 @@ export const initConnections = () => {
     addUserConnection,
     removeUserConnection,
     getUserConnection,
-    getAllLobbyConnections
-  }
-}
-
+    getAllLobbyConnections,
+  };
+};

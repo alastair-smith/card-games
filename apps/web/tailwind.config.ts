@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       boxShadowColor: {
-        DEFAULT: "hsl(var(--border))"
+        DEFAULT: "hsl(var(--border))",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -25,7 +25,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          background: "hsl(var(--primary-background))"
+          background: "hsl(var(--primary-background))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -58,7 +58,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        md: '1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px'
+        md: "1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],

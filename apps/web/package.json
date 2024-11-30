@@ -7,8 +7,6 @@
     "build": "next build",
     "check": "next lint && tsc --noEmit",
     "dev": "node --env-file .env ./src/server.js",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
@@ -59,8 +57,6 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.1",
     "postcss": "^8.4.39",
-    "prettier": "^3.3.2",
-    "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.5.3"
   },

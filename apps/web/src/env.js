@@ -11,7 +11,10 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    PORT: z.string().default('3000').transform(val => z.number().int().positive().parse(Number(val))),
+    PORT: z
+      .string()
+      .default("3000")
+      .transform((val) => z.number().int().positive().parse(Number(val))),
   },
 
   /**

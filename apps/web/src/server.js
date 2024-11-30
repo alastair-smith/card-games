@@ -2,10 +2,10 @@
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
-import {WebSocketServer} from "ws";
+import { WebSocketServer } from "ws";
 import { env } from "./env.js";
 
-const greetings =`
+const greetings = `
 \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m
 \x1b[47m\x1b[30m|\x1b[0m\x1b[47m\x1b[30mA _   \x1b[30m|\x1b[0m \x1b[47m\x1b[31m|A     \x1b[47m\x1b[30m|\x1b[0m \x1b[47m\x1b[31m|A_  _ \x1b[47m\x1b[30m|\x1b[0m \x1b[47m\x1b[30m|A .   \x1b[47m\x1b[30m|\x1b[0m
 \x1b[47m\x1b[30m|\x1b[0m\x1b[47m\x1b[30m ( )  \x1b[30m|\x1b[0m \x1b[47m\x1b[31m|  /\\  \x1b[47m\x1b[30m|\x1b[0m \x1b[47m\x1b[31m|( \\/ )\x1b[47m\x1b[30m|\x1b[0m \x1b[47m\x1b[30m| /.\\  \x1b[47m\x1b[30m|\x1b[0m
@@ -20,7 +20,6 @@ const greetings =`
  \x1b[93m| |___| (_| | | | (_| | | |__| | (_| | | | | | |  __/\\__ \\\x1b[0m
   \x1b[93m\\_____\\__,_|_|  \\__,_|  \\_____|\\__,_|_| |_| |_|\\___||___/\x1b[0m
 `;
-
 
 const startServer = async () => {
   const nodeEnv = env.NODE_ENV;
@@ -40,7 +39,7 @@ const startServer = async () => {
     server.on("upgrade", (request, socket, head) => {
       const pathname = parse(request.url ?? "", true).pathname;
 
-      if(pathname === '/socket') {
+      if (pathname === "/socket") {
         wss.handleUpgrade(request, socket, head, (ws) => {
           wss.emit("connection", ws, request);
         });
@@ -57,7 +56,7 @@ const startServer = async () => {
       });
 
       ws.on("message", (data) => {
-        console.log('message')
+        console.log("message");
 
         if (Array.isArray(data) || data instanceof Buffer) {
           const message = data.toString();
@@ -74,7 +73,7 @@ const startServer = async () => {
     });
 
     server.listen(port, () => {
-      console.log(greetings)
+      console.log(greetings);
       console.log(`✓ Ready on http://localhost:${port}`);
     });
   });

@@ -1,9 +1,11 @@
-'use server';
+"use server";
 
 import LobbyClient from "./client";
 
-export default async function Lobby({params}: {
-  params: Promise<{code: string}>
+export default async function Lobby({
+  params,
+}: {
+  params: Promise<{ code: string }>;
 }) {
   const code = (await params).code;
 

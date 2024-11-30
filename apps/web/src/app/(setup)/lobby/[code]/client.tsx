@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { GameInfo } from "./game-info";
@@ -6,7 +6,7 @@ import { Players } from "./players";
 import { login } from "@/app/api/auth/login/client";
 import { toast } from "sonner";
 
-export default function LobbyClient({joinCode}: {joinCode: string}) {
+export default function LobbyClient({ joinCode }: { joinCode: string }) {
   const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
@@ -24,12 +24,13 @@ export default function LobbyClient({joinCode}: {joinCode: string}) {
     void loginHandler();
   }, []);
 
-  return (
-    userId ?
+  return userId ? (
     <div className="flex w-full flex-wrap gap-6">
       <h1 className="sr-only">Lobby</h1>
       <GameInfo className="flex-1" gameCode={joinCode} />
       <Players className="flex-1" gameCode={joinCode} userId={userId} />
-    </div> : <div>Loading...</div>
+    </div>
+  ) : (
+    <div>Loading...</div>
   );
 }

@@ -1,24 +1,28 @@
-import WebSocket, { WebSocketServer } from 'ws';
-import { env } from './env.js';
-import {createServer} from 'http';
-import { router } from './incoming/index.js';
+import WebSocket, { WebSocketServer } from "ws";
+import { env } from "./env.js";
+import { createServer } from "http";
+import { router } from "./incoming/index.js";
 
-import {parse} from 'cookie'
+import { parse } from "cookie";
 
 export const startServer = () => {
   const server = createServer();
 
   const webSocketServer = new WebSocketServer({ server });
-  
-  webSocketServer.on('connection', (connection, request) => {
-    const cookies = parse(request.headers['cookie'] ?? '');
 
-    connection.on('error', (error) => {
+  webSocketServer.on("connection", (connection, request) => {
+    const cookies = parse(request.headers["cookie"] ?? "");
+
+    connection.on("error", (error) => {
       console.error(`Error: ${error}`);
     });
-  
-    connection.on('message', async (message) => {
-      const { procedure: procedurePath, lobby, data } = JSON.parse(message.toString());
+
+    connection.on("message", async (message) => {
+      const {
+        procedure: procedurePath,
+        lobby,
+        data,
+      } = JSON.parse(message.toString());
 
       const procedure = router[procedurePath];
 
@@ -39,10 +43,10 @@ export const startServer = () => {
         await procedure.execute({
           user: cookies.user,
           lobby,
-          input: data
+          input: data,
         });
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     });
   });
@@ -50,4 +54,4 @@ export const startServer = () => {
   server.listen(env.PORT, () => {
     console.log(`Server started on port ${env.PORT}`);
   });
-}
+};

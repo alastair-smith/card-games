@@ -7,5 +7,5 @@ export const {
   addUserConnection,
   removeUserConnection,
   getUserConnection,
-  getAllLobbyConnections
+  getAllLobbyConnections,
 } = initConnections();

@@ -6,4 +6,4 @@ export const GAME_TYPE = {
   YANIV: "YANIV",
 } as const;
 
-export type GameType = keyof typeof GAME_TYPE;
+export type GameType = typeof GAME_TYPE[keyof typeof GAME_TYPE];
