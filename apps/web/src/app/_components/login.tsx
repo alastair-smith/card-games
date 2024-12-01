@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/components/ui/toast";
-import { login } from "@/app/api/auth/login/client";
+import { login } from "@/app/api/auth/jwt/client";
 
 const loginHandler = async () => {
   const response = await login("hello");

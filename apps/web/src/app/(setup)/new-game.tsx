@@ -15,7 +15,7 @@ import { GameType } from "@repo/database";
 import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
-import { login } from "@/app/api/auth/login/client";
+import { login } from "@/app/api/auth/jwt/client";
 import { useState } from "react";
 
 type GameProps = {
@@ -62,7 +62,7 @@ function Game({ name, gameType, image }: GameProps) {
 
   const launchAction = async () => {
     setIsLoading(true);
-    await login();
+    // TODO login on homepage?? await login();
     create({ gameType });
   };
 

@@ -15,7 +15,7 @@ import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import debounce from "lodash/debounce";
-import { playerNameSchema } from "@/app/api/auth/login/schema";
+import { playerNameSchema } from "@/app/api/auth/jwt/schema";
 import { CrownIcon, EllipsisVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/toast";

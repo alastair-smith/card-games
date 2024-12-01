@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/app/actions/auth";
 import LobbyClient from "./client";
 
 export default async function Lobby({
@@ -8,6 +9,7 @@ export default async function Lobby({
   params: Promise<{ code: string }>;
 }) {
   const code = (await params).code;
+  const {id} = await auth(`/lobby/${code}`);
 
-  return <LobbyClient joinCode={code} />;
+  return <LobbyClient joinCode={code} userId={id}/>;
 }

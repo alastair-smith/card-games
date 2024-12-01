@@ -3,6 +3,7 @@ import { z } from "zod";
 import { GAME_CODE_LENGTH } from "@/server/api/routers/lobby/schemas";
 import { createEnumFromObject } from "./enum";
 import { GAME_TYPE } from "@/constants";
+import { type UUID } from "crypto";
 
 export const gameTypeSchema = createEnumFromObject(GAME_TYPE)
 
@@ -23,7 +24,9 @@ export const joinCodeSchema = z
 
 export type JoinCode = z.infer<typeof joinCodeSchema>;
 
-export const playerIdSchema = z.string().uuid().describe("unique identifier for the player");
+export const playerIdSchema = z.string().uuid().transform(
+  (value) => value as UUID
+).describe("Unique identifier for the player");
 
 export type PlayerId = z.infer<typeof playerIdSchema>;
 

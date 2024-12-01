@@ -1,4 +1,4 @@
-import { playerNameSchema } from "@/app/api/auth/login/schema";
+import { playerNameSchema } from "@/app/api/auth/jwt/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { ee } from "@/server/events/emitter";
 import { z } from "zod";

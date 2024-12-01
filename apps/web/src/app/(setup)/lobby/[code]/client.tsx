@@ -1,29 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { GameInfo } from "./game-info";
 import { Players } from "./players";
-import { login } from "@/app/api/auth/login/client";
-import { toast } from "sonner";
+import { type PlayerId } from "@/schemas/entities";
 
-export default function LobbyClient({ joinCode }: { joinCode: string }) {
-  const [userId, setUserId] = useState<string>();
-
-  useEffect(() => {
-    const loginHandler = async () => {
-      const { error, data } = await login();
-
-      if (error !== null) {
-        console.error(error);
-        toast.error(error);
-      } else {
-        setUserId(data.id);
-      }
-    };
-
-    void loginHandler();
-  }, []);
-
+export default function LobbyClient({ joinCode, userId }: { joinCode: string, userId: PlayerId }) {
   return userId ? (
     <div className="flex w-full flex-wrap gap-6">
       <h1 className="sr-only">Lobby</h1>

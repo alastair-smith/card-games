@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const ERROR_PREFIX = "Login Error:";
 
-export const playerNameSchema = z.string().min(1).max(32);
+export const callbackSchema = z.string();
 
 export const requestSchema = z.object({
-  name: playerNameSchema.optional(),
+  callback :callbackSchema,
 });
 
 export type RequestSchema = z.infer<typeof requestSchema>;
@@ -22,6 +22,7 @@ export const responseSchema = z.union([
       name: z.string(),
     }),
   }),
+  z.string(),
 ]);
 
 export type ResponseSchema = z.infer<typeof responseSchema>;
