@@ -11,11 +11,10 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
-import { GameType } from "@repo/database";
+import { GameType } from "@/types/game";
 import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
-import { login } from "@/app/api/auth/jwt/client";
 import { useState } from "react";
 
 type GameProps = {
@@ -25,6 +24,11 @@ type GameProps = {
 };
 
 const games: GameProps[] = [
+  {
+    name: "High Card",
+    gameType: GameType.HIGH_CARD,
+    image: "https://placehold.co/300x200.png",
+  },
   {
     name: "Yaniv",
     gameType: GameType.YANIV,
@@ -62,7 +66,7 @@ function Game({ name, gameType, image }: GameProps) {
 
   const launchAction = async () => {
     setIsLoading(true);
-    // TODO login on homepage?? await login();
+    // TODO login then callback to URL?
     create({ gameType });
   };
 

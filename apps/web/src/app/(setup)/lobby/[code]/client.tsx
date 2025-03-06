@@ -2,7 +2,7 @@
 
 import { GameInfo } from "./game-info";
 import { Players } from "./players";
-import { type PlayerId } from "@/schemas/entities";
+import { type PlayerId } from "@/types/entities";
 
 export default function LobbyClient({ joinCode, userId }: { joinCode: string, userId: PlayerId }) {
   return userId ? (

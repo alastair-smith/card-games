@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { joinCodeSchema, playerIdSchema, playerNameSchema } from "@/schemas/entities";
+import { joinCodeSchema, playerIdSchema, playerNameSchema } from "@/types/entities";
 
 export const LOBBY_EVENT_NAME = {
   GAME_STARTED: "GAME_STARTED",

@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { playerIdSchema } from "@/schemas/entities";
+import { playerIdSchema } from "@/types/entities";
 import crypto, { randomUUID, type UUID } from "crypto";
 import jwt from 'jsonwebtoken'
 import { z } from "zod";
@@ -65,3 +65,11 @@ export const setAuthCookieHeader = (id?: UUID | null) => {
     "set-cookie": `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=${getTokenExpiryDate()}`
   };
 };
+
+export const signIn = (callbackUrl: string, authCookie: string | undefined): { headers: Record<string, string>}  => {
+  const validJwt = existingJWT ? decodeJWT(existingJWT) : null;
+  
+  return {
+    headers: {}
+  };
+}

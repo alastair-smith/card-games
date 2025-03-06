@@ -11,8 +11,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { parse as parseCookies } from "cookie";
-
-import { db } from "@/server/db";
+import { state } from "@/server/service/state";
 
 /**
  * 1. CONTEXT
@@ -28,7 +27,7 @@ import { db } from "@/server/db";
  */
 export const createTRPCContext = async (reqHeaders: Headers) => {
   return {
-    db,
+    state,
     reqHeaders,
   };
 };
@@ -117,7 +116,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(async ({ ctx: { db, reqHeaders }, next }) => {
+  .use(async ({ ctx: { reqHeaders }, next }) => {
     let user;
 
     const cookies = parseCookies(reqHeaders.get("cookie") ?? "");
@@ -127,33 +126,9 @@ export const protectedProcedure = t.procedure
       throw new TRPCError({ code: "UNAUTHORIZED", message: "Token missing." });
     }
 
-    try {
-      user = await db.user.findUnique({
-        where: {
-          token: authToken,
-        },
-        select: {
-          id: true,
-        },
-      });
-    } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        cause: error,
-        message: "Failed to lookup token.",
-      });
-    }
-
-    if (!user) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "User not found.",
-      });
-    }
-
     return next({
       ctx: {
-        userId: user.id,
+        // userId: user.id,
       },
     });
   });

@@ -2,7 +2,6 @@
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
-import { WebSocketServer } from "ws";
 import { env } from "./env.js";
 
 const greetings = `
@@ -32,44 +31,6 @@ const startServer = async () => {
     const server = createServer((req, res) => {
       const parsedUrl = parse(req.url ?? "", true);
       void handle(req, res, parsedUrl);
-    });
-
-    const wss = new WebSocketServer({ noServer: true });
-
-    server.on("upgrade", (request, socket, head) => {
-      const pathname = parse(request.url ?? "", true).pathname;
-
-      if (pathname === "/socket") {
-        wss.handleUpgrade(request, socket, head, (ws) => {
-          wss.emit("connection", ws, request);
-        });
-      } else {
-        socket.destroy();
-      }
-    });
-
-    wss.on("connection", (ws) => {
-      console.log("New client connected");
-
-      ws.on("error", (error) => {
-        console.error(`WebSocket error: ${error}`);
-      });
-
-      ws.on("message", (data) => {
-        console.log("message");
-
-        if (Array.isArray(data) || data instanceof Buffer) {
-          const message = data.toString();
-          console.log(`Received message: ${message}`);
-          ws.send(`Server: ${message}`);
-        } else {
-          console.error("ArrayBuffer not currently supported");
-        }
-      });
-
-      ws.on("close", () => {
-        console.log("Client disconnected");
-      });
     });
 
     server.listen(port, () => {
