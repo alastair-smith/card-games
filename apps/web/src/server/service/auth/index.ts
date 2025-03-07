@@ -1,56 +1,48 @@
 import { env } from "@/env";
-import { playerIdSchema } from "@/types/entities";
-import crypto, { randomUUID, type UUID } from "crypto";
-import jwt from 'jsonwebtoken'
+import { playerIdSchema, type UserId } from "@/types/entities";
+import { randomUUID } from "crypto";
+import { sign, verify } from 'jsonwebtoken'
 import { z } from "zod";
 
-const TOKEN_LENGTH = 64;
 const AUTH_TOKEN_EXPIRY_DAYS = 7;
-export const RENEW_TOKEN_EXPIRY_DAYS = 6;
-export const TOKEN_COOKIE_NAME = "auth-token";
+const RENEW_TOKEN_EXPIRY_DAYS = 6;
+export const AUTH_COOKIE_NAME = 'auth';
 
-/**
- * JOIN GAME AUTH FLOW
- * 
- * 1. User goes to join game url
- * 2. If no player ID or playerID or token expires soon then redirect to login api with callback to game url
- * 2. ID is generated and stored in JWT and sent to client in cookie, no server storage
- */
-
-export const generateRandomToken = async () => {
-  return crypto.randomBytes(TOKEN_LENGTH / 2).toString("hex");
-};
-
-const getTokenExpiryDate = () => {
-  const expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + AUTH_TOKEN_EXPIRY_DAYS);
-
-  return expiryDate.toUTCString();
-};
-
-const jsonSchema = z.object({
+const jwtSchema = z.object({
   id: playerIdSchema,
   exp: z.number().int().positive()
 });
 
-const generateId = () => {
+type JWT = z.infer<typeof jwtSchema>;
+
+const generateUserId = (): UserId => {
   return randomUUID()
-}
-
-const encodeJWT = (id: UUID) => {
-  const rawJson: z.infer<typeof jsonSchema> = { id, exp: Date.now() + AUTH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000 };
-  const json = jsonSchema.parse(rawJson);
-  const token = jwt.sign(json, env.AUTH_SECRET)
-
-  return { id, token };
 };
 
-export const decodeJWT = (unverifiedToken?: string) => {
+const generateExpiry = (): JWT['exp'] => {
+  const expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + AUTH_TOKEN_EXPIRY_DAYS);
+
+  return expiryDate.getTime();
+};
+
+const encodeJWT = (userId?: UserId) => {
+  const expiry = generateExpiry();
+  const id = userId ?? generateUserId();
+
+  const rawJWT: JWT = { id, exp: expiry };
+  const jwt = jwtSchema.parse(rawJWT);
+  const signedJWT = sign(jwt, env.AUTH_SECRET)
+
+  return { signedJWT, expiry };
+};
+
+const decodeJWT = (unverifiedToken?: string): JWT | null => {
   if (!unverifiedToken) return null;
 
   try {
-    const json = jwt.verify(unverifiedToken, env.AUTH_SECRET);
-    const parsedJson = jsonSchema.parse(json);
+    const json = verify(unverifiedToken, env.AUTH_SECRET);
+    const parsedJson = jwtSchema.parse(json);
 
     return parsedJson;
   } catch {
@@ -58,18 +50,27 @@ export const decodeJWT = (unverifiedToken?: string) => {
   }
 };
 
-export const setAuthCookieHeader = (id?: UUID | null) => {
-  const { token } = encodeJWT(id ?? generateId());
+const setAuthCookie = (userId?: UserId) => {
+  const { signedJWT, expiry } = encodeJWT(userId);
 
   return {
-    "set-cookie": `token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=${getTokenExpiryDate()}`
+    "set-cookie": `${AUTH_COOKIE_NAME}=${signedJWT}; Path=/; HttpOnly; Secure; SameSite=Strict; Expires=${expiry}`
   };
 };
 
-export const signIn = (callbackUrl: string, authCookie: string | undefined): { headers: Record<string, string>}  => {
-  const validJwt = existingJWT ? decodeJWT(existingJWT) : null;
-  
-  return {
-    headers: {}
-  };
+const nearExpiry = (jwt: JWT): boolean => {
+  const timeUntilExpiry = jwt.exp - Date.now();
+  const renewCutoff = RENEW_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
+  return timeUntilExpiry < renewCutoff;
+};
+
+export const signIn = (callbackUrl: string, authToken: string | undefined): { headers: Record<string, string> } => {
+  const validJwt = decodeJWT(authToken);
+
+  const additionalHeaders = !validJwt || nearExpiry(validJwt)
+    ? setAuthCookie(validJwt?.id)
+    : {};
+
+  return { headers: { location: callbackUrl, ...additionalHeaders } };
 }
