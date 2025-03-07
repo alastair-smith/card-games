@@ -1,12 +1,13 @@
 import "server-only";
 
 import { createHydrationHelpers } from "@trpc/react-query/rsc";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { cache } from "react";
 
 import { createCaller, type AppRouter } from "@/server/api/root";
 import { createTRPCContext } from "@/server/api/trpc";
 import { createQueryClient } from "./query-client";
+import { AUTH_COOKIE_NAME } from "@/server/service/auth";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -16,7 +17,9 @@ const createContext = cache(async () => {
   const reqHeaders = new Headers(await headers());
   reqHeaders.set("x-trpc-source", "rsc");
 
-  return createTRPCContext(reqHeaders);
+  const authCookie = (await cookies()).get(AUTH_COOKIE_NAME)?.value;
+
+  return createTRPCContext(reqHeaders, authCookie);
 });
 
 const getQueryClient = cache(createQueryClient);

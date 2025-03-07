@@ -10,8 +10,8 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { parse as parseCookies } from "cookie";
 import { state } from "@/server/service/state";
+import { getSession } from "../service/auth";
 
 /**
  * 1. CONTEXT
@@ -25,8 +25,9 @@ import { state } from "@/server/service/state";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (reqHeaders: Headers) => {
+export const createTRPCContext = async (reqHeaders: Headers, authCookie?: string) => {
   return {
+    authCookie,
     state,
     reqHeaders,
   };
@@ -116,19 +117,16 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(async ({ ctx: { reqHeaders }, next }) => {
-    let user;
+  .use(async ({ ctx: { authCookie }, next }) => {
+    const session = await getSession(authCookie);
 
-    const cookies = parseCookies(reqHeaders.get("cookie") ?? "");
-    const authToken = cookies.token;
-
-    if (!authToken) {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Token missing." });
+    if (!session) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Auth missing." });
     }
 
     return next({
       ctx: {
-        // userId: user.id,
+        userId: session.userId,
       },
     });
   });

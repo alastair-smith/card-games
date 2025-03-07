@@ -5,13 +5,16 @@ import { appRouter } from "@/server/api/root";
 import { createTRPCContext } from "@/server/api/trpc";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { logger } from "@/utils/logger";
+import { AUTH_COOKIE_NAME, getSession } from "@/server/service/auth";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a HTTP request (e.g. when you make requests from Client Components).
  */
 const createContext = async (req: NextRequest) => {
-  return createTRPCContext(req.headers);
+  const authCookie = req.cookies.get(AUTH_COOKIE_NAME)?.value;
+
+  return createTRPCContext(req.headers, authCookie);
 };
 
 const handler = (req: NextRequest) =>
@@ -20,7 +23,7 @@ const handler = (req: NextRequest) =>
     req,
     router: appRouter,
     createContext: () => createContext(req),
-    onError: ({path, error, type}) => {
+    onError: ({ path, error, type }) => {
       const errorStatus = getHTTPStatusCodeFromError(error);
 
       const logType = errorStatus >= 400 && errorStatus < 500 ? "warn" : "error";
