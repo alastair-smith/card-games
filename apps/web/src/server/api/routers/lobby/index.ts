@@ -15,7 +15,9 @@ export const lobbyRouter = createTRPCRouter({
       }),
     )
     .mutation(async (opts) => {
-      return {};
+      return {
+        code: '<todo-replace>'
+      };
     }),
 
   setReadyStatus: protectedProcedure

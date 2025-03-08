@@ -1,3 +1,4 @@
+// This file is imported in middleware, so use edge-friendly packages only!
 import { env } from "@/env";
 import { SignJWT, jwtVerify } from 'jose'
 
