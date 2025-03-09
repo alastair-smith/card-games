@@ -92,7 +92,7 @@ export function NewGame({ className }: { className?: string }) {
       )}
     >
       {games.map((game) => (
-        <Game key={game.name} {...game} />
+        <Game key={game.gameType} {...game} />
       ))}
     </div>
   );
