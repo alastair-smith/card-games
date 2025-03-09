@@ -1,12 +1,13 @@
 {
-  "name":"@repo/main",
+  "name": "@repo/main",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "predev": "pnpm run background-services",
     "lint": "turbo run lint",
-    "start-redis": "./scripts/start-redis.sh",
+    "background-services": "docker compose up -d",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "prettier": "^3.3.2",
