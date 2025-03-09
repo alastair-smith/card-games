@@ -15,7 +15,6 @@ import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import debounce from "lodash/debounce";
-import { playerNameSchema } from "@/app/api/auth/jwt/schema";
 import { CrownIcon, EllipsisVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/toast";
@@ -41,6 +40,8 @@ import {
   EVENT_NAME as LOBBY_CHANGELOG_EVENT_NAME,
 } from "@/server/events/lobby/changelog/schema";
 import { z } from "zod";
+import { GameCode } from "@/types/game";
+import { UserId } from "@/types/entities";
 
 type Player = {
   id: string;
@@ -244,17 +245,15 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
 
 export function Players({
   className,
-  gameCode,
-  userId,
+  code,
 }: {
   className?: string;
-  gameCode: string;
-  userId: string;
+  code: GameCode;
 }) {
   const [players, setPlayers] = useState<Player[]>([]);
 
   api.lobby.subscribe.useSubscription(
-    { code: gameCode },
+    { code },
     {
       onData: (rawEvent) => {
         const { data: event, error } = z

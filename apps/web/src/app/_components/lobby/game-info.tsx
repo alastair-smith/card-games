@@ -1,15 +1,14 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api } from "@/trpc/react";
-import { useState } from "react";
+import { GameCode } from "@/types/game";
 
 export function GameInfo({
   className,
-  gameCode,
+  code,
 }: {
   className?: string;
-  gameCode: string;
+  code: GameCode;
 }) {
   return (
     <Card className={className}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { GameInfo } from "./game-info";
-import { Players } from "./players";
+import { GameInfo } from "../../../_components/lobby/game-info";
+import { Players } from "../../../_components/lobby/players";
 import { type PlayerId } from "@/types/entities";
 
 export default function LobbyClient({ joinCode, userId }: { joinCode: string, userId: PlayerId }) {

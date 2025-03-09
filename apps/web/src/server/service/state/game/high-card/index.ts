@@ -1,6 +1,7 @@
-import { lobbyExists, setLobby } from "@/server/service/data/lobby";
+import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/service/data/lobby";
 import { type UserId } from "@/types/entities";
 import { GAME_CODE_LENGTH, GameCode, GameType } from "@/types/game";
+import { generatePlayerName } from "@/utils/name-generator";
 
 const charSet = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 
@@ -17,9 +18,22 @@ export const createGame = async ({ host }: { host: UserId }) => {
     throw new Error('Error creating game: code already exists');
   }
 
-  await setLobby({ code }, { code, type: GameType.HIGH_CARD, host });
+  await setLobbySummary({ code }, { code, type: GameType.HIGH_CARD });
+  await setLobbyPlayers({ code }, { host, players: [{ id: host, name: generatePlayerName(), ready: false }] });
 
   return { code };
 }
 
-void createGame({ host: 'd3d75dcc-1a59-413e-b361-70dfa5219872' as UserId })
+export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserId }) => {
+  const lobby = await getLobbyPlayers({ code });
+
+  if (lobby.players.some(({ id }) => id === userId)) {
+    return lobby;
+  }
+
+  const updatedPlayers = [...lobby.players, { id: userId, name: generatePlayerName(), ready: false }];
+
+  const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
+
+  return updatedLobby;
+}

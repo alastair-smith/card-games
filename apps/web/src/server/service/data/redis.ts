@@ -48,7 +48,7 @@ export const dataLayer = <T extends z.ZodType, P extends Record<string, string>>
   },
 
   /** Store in redis */
-  set: async (keyArgs: P, data: z.infer<T>) => {
+  set: async (keyArgs: P, data: z.infer<T>): Promise<z.infer<T>> => {
     const key = getKey(keyArgs);
     const parsed = schema.safeParse(data);
 
@@ -57,6 +57,8 @@ export const dataLayer = <T extends z.ZodType, P extends Record<string, string>>
     }
 
     await redis.set(key, JSON.stringify(parsed.data));
+
+    return parsed.data;
   },
 })
 

@@ -17,15 +17,13 @@ const NotFound = () => (<div>Not Found</div>);
 
 const ErrorPage = () => (<div>Error joining game, check the code is correct!</div>);
 
-export default async function LobbyPage({ params }: { params: Promise<{ code?: string }> }) {
+export default async function LobbyPage({ params }: { params: Promise<{ code: string }> }) {
   try {
-    const { code: codeParam } = await params;
-
-    const code = gameCodeSchema.parse(codeParam);
+    const { code } = await params;
 
     const data = await api.lobby.getSummary({ code });
 
-    const url = getLobbyURL(data.type, code);
+    const url = getLobbyURL(data.type, data.code);
 
     redirect(url);
   } catch (error) {
