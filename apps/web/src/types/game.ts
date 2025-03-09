@@ -1,3 +1,5 @@
+import { Branded } from "./brand";
+
 export enum GameType {
   HIGH_CARD = 'HIGH_CARD',
   BLOB = 'BLOB',
@@ -21,3 +23,5 @@ export const gameDisplayName = {
   FOOL: 'Fool',
   YANIV: 'Yaniv',
 } as const satisfies Record<GameType, string>;
+
+export type GameCode = Branded<string, 'GameCode'>;
