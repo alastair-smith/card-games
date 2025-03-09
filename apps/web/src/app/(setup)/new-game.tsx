@@ -11,47 +11,42 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
-import { GameType } from "@/types/game";
+import { gameDisplayName, GameType, gameURL } from "@/types/game";
 import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 type GameProps = {
-  name: string;
   gameType: GameType;
   image: string;
 };
 
 const games: GameProps[] = [
   {
-    name: "High Card",
     gameType: GameType.HIGH_CARD,
     image: "https://placehold.co/300x200.png",
   },
   {
-    name: "Yaniv",
     gameType: GameType.YANIV,
     image: "https://placehold.co/300x200.png",
   },
   {
-    name: "Blob",
     gameType: GameType.BLOB,
     image: "https://placehold.co/300x200.png",
   },
   {
-    name: "Shithead",
     gameType: GameType.SHITHEAD,
     image: "https://placehold.co/300x200.png",
   },
   {
-    name: "Fool",
     gameType: GameType.FOOL,
     image: "https://placehold.co/300x200.png",
   },
 ];
 
-function Game({ name, gameType, image }: GameProps) {
+function Game({ gameType, image }: GameProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { mutate: create } = api.lobby.create.useMutation({
@@ -63,12 +58,8 @@ function Game({ name, gameType, image }: GameProps) {
       toast.error(err.message);
     },
   });
-
-  const launchAction = async () => {
-    setIsLoading(true);
-    // TODO login then callback to URL?
-    create({ gameType });
-  };
+  const name = gameDisplayName[gameType];
+  const url = gameURL[gameType];
 
   return (
     <Card>
@@ -82,13 +73,10 @@ function Game({ name, gameType, image }: GameProps) {
 
       <CardFooter className="justify-end gap-3">
         <Button variant="secondary">View Rules</Button>
-        <Button
-          onClick={() => {
-            void launchAction();
-          }}
-          disabled={isLoading}
-        >
-          Launch Game
+        <Button asChild disabled={isLoading}>
+          <Link href={url}>
+            Launch Game
+          </Link>
         </Button>
       </CardFooter>
     </Card>

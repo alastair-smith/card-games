@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/utils/cn";
-import { joinSchema } from "@/server/api/routers/lobby/schemas";
-import { type z } from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -18,6 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { gameCodeSchema } from "@/types/game";
+
+const joinSchema = z.object({
+  code: gameCodeSchema
+})
 
 export function JoinGame({ className }: { className?: string }) {
   const router = useRouter();

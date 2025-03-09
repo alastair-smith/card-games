@@ -1,23 +1,46 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { getLobby } from "@/server/service/data/lobby";
+import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
+import { createGame } from "@/server/service/state/game/high-card";
+import { gameCodeSchema, GameType } from "@/types/game";
+import { TRPCBuilder, TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { GameType } from "@/types/game";
-import { TRPCError } from "@trpc/server";
-import { generateGameCode } from "./generateGameCode";
-import { ee } from "@/server/events/emitter";
-import { on } from "events";
-import { lobbyChangelogPublisher } from "@/server/events/lobby/changelog/publish";
 
 export const lobbyRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(
-      z.object({
-        gameType: z.nativeEnum(GameType),
-      }),
-    )
-    .mutation(async (opts) => {
-      return {
-        code: '<todo-replace>'
-      };
+    .input(z.object({
+      gameType: z.nativeEnum(GameType),
+    }))
+    .mutation(async ({ ctx: { userId } }) => {
+      const { code } = await createGame({ host: userId });
+
+      return { code };
+    }),
+
+  getSummary: protectedProcedure
+    .input(z.object({
+      code: gameCodeSchema,
+    }))
+    .query(async ({ input }) => {
+      try {
+        const data = await getLobby({ code: input.code });
+
+        return {
+          code: data.code,
+          type: data.type,
+          host: data.host,
+        };
+      } catch (error: unknown) {
+        if (error instanceof DataServiceError && error.code === DataServiceErrorCode.NOT_FOUND) {
+          throw new TRPCError({
+            message: 'Lobby not found',
+            code: 'NOT_FOUND',
+            cause: error
+          })
+        } else {
+          throw error;
+        }
+      }
     }),
 
   setReadyStatus: protectedProcedure

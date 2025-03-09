@@ -1,5 +1,6 @@
 // This file is imported in middleware, so use edge-friendly packages only!
 import { env } from "@/env";
+import { UserId, userIdSchema } from "@/types/entities";
 import { SignJWT, jwtVerify } from 'jose'
 
 export const AUTH_COOKIE_NAME = 'auth';
@@ -12,10 +13,10 @@ const JWT_ALGORITHM = 'HS256';
 const secret = new TextEncoder().encode(env.AUTH_SECRET);
 
 const generateUserId = () => {
-  return globalThis.crypto.randomUUID();
+  return globalThis.crypto.randomUUID() as UserId;
 };
 
-export const createAuthToken = async (userId?: string) => {
+export const createAuthToken = async (userId?: UserId) => {
   const subject = userId ?? generateUserId();
   const expiry = Date.now() + AUTH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 
@@ -31,7 +32,7 @@ export const createAuthToken = async (userId?: string) => {
   return { signedJWT, userId: subject, expiry };
 };
 
-export const getSession = async (authToken?: string): Promise<{ userId: string, expiry: number } | null> => {
+export const getSession = async (authToken?: string): Promise<{ userId: UserId, expiry: number } | null> => {
   if (!authToken) return null;
 
   try {
@@ -41,7 +42,9 @@ export const getSession = async (authToken?: string): Promise<{ userId: string, 
       algorithms: [JWT_ALGORITHM]
     });
 
-    return jwt.payload.sub && jwt.payload.exp ? { userId: jwt.payload.sub, expiry: jwt.payload.exp } : null
+    const userId = userIdSchema.parse(jwt.payload.sub);
+
+    return jwt.payload.sub && jwt.payload.exp ? { userId, expiry: jwt.payload.exp } : null
   } catch {
     return null
   }
