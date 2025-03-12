@@ -1,5 +1,8 @@
-import { redis } from "@/server/redis";
+import Redis from 'ioredis';
 import { type z } from "zod";
+
+// data connection
+export const redis = new Redis();
 
 export enum DataServiceErrorCode {
   NOT_FOUND = 'NOT_FOUND',

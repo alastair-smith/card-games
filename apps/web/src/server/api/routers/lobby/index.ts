@@ -1,10 +1,12 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { getLobbySummary } from "@/server/service/data/lobby";
+import { getLobbySummary, lobbySchema } from "@/server/service/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
+import { subscriber } from "@/server/service/events/server";
 import { createGame, joinGame } from "@/server/service/state/game/high-card";
+import { playerNameSchema } from "@/types/entities";
 import { gameCodeSchema, GameType } from "@/types/game";
 import { TRPCBuilder, TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { z, ZodIssueCode } from "zod";
 
 export const lobbyRouter = createTRPCRouter({
   create: protectedProcedure
@@ -66,6 +68,15 @@ export const lobbyRouter = createTRPCRouter({
       }
     }),
 
+  updatePlayer: protectedProcedure
+    .input(z.object({
+      name: playerNameSchema,
+      ready: z.boolean()
+    }))
+    .mutation(({ input, ctx: { userId } }) => {
+
+    }),
+
   setReadyStatus: protectedProcedure
     .input(
       z.object({
@@ -84,96 +95,34 @@ export const lobbyRouter = createTRPCRouter({
         code: z.string(),
       }),
     )
-    .subscription(async function* (opts) {
-      // if (
-      //   !(await opts.ctx.db.gameInstancePlayer.findUnique({
-      //     where: {
-      //       gameInstanceJoinCode_playerUserId: {
-      //         gameInstanceJoinCode: opts.input.code,
-      //         playerUserId: opts.ctx.userId,
-      //       },
-      //     },
-      //   }))
-      // ) {
-      //   // join game if not already in it
-      //   const game = await opts.ctx.db.gameInstance.update({
-      //     where: {
-      //       joinCode: opts.input.code,
-      //     },
-      //     data: {
-      //       gameInstancePlayers: {
-      //         create: {
-      //           playerUserId: opts.ctx.userId,
-      //           ready: false,
-      //         },
-      //       },
-      //     },
-      //     select: {
-      //       joinCode: true,
-      //       hostUserId: true,
-      //       gameInstancePlayers: {
-      //         select: {
-      //           ready: true,
-      //           player: {
-      //             select: {
-      //               id: true,
-      //               name: true,
-      //             },
-      //           },
-      //         },
-      //       },
-      //     },
-      //   });
+    .subscription(async function* ({ input, ctx: { userId } }) {
+      const { code } = input;
+      const streamKey = `game-updates:${code}`;
 
-      //   lobbyChangelogPublisher({
-      //     id: game.joinCode,
-      //     players: game.gameInstancePlayers.map((player) => ({
-      //       id: player.player.id,
-      //       name: player.player.name,
-      //       isReady: player.ready,
-      //       isHost: player.player.id === game.hostUserId,
-      //     })),
-      //   }).publish();
-      // }
+      try {
+        while (true) {
+          const messages = await subscriber.xread(
+            'BLOCK',
+            0,
+            'STREAMS',
+            `game:${code}`,
+            '$'
+          );
 
-      // const game = await opts.ctx.db.gameInstance.findUniqueOrThrow({
-      //   where: {
-      //     joinCode: opts.input.code,
-      //   },
-      //   select: {
-      //     joinCode: true,
-      //     hostUserId: true,
-      //     gameInstancePlayers: {
-      //       select: {
-      //         ready: true,
-      //         player: {
-      //           select: {
-      //             id: true,
-      //             name: true,
-      //           },
-      //         },
-      //       },
-      //     },
-      //   },
-      // });
 
-      // // tell client about current state
-      // yield lobbyChangelogPublisher({
-      //   id: game.joinCode,
-      //   players: game.gameInstancePlayers.map((player) => ({
-      //     id: player.player.id,
-      //     name: player.player.name,
-      //     isReady: player.ready,
-      //     isHost: player.player.id === game.hostUserId,
-      //   })),
-      // }).event;
+          const message = lobbySchema.safeParse(JSON.parse(messages?.[0]?.[1]?.[0]?.[1]?.[1] || ''));
 
-      // // subscribe to future changes
-      // for await (const [data] of on(ee, "add", {
-      //   // Passing the AbortSignal from the request automatically cancels the event emitter when the request is aborted
-      //   signal: opts.signal,
-      // })) {
-      //   yield data;
-      // }
+          if (message.data) {
+            const players = message.data.players.map((player) => ({ ...player, isHost: player.id === message.data.host, isCurrentUser: player.id === userId }));
+            yield { ...message, players };
+          } else {
+            console.log('bad message?', message.error, JSON.stringify(messages, null, 2))
+          }
+        }
+      } catch (error) {
+        console.log('error', error)
+      } finally {
+        console.log(`Client unsubscribed from ${streamKey}`);
+      }
     }),
 });

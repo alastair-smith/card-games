@@ -1,4 +1,5 @@
 import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/service/data/lobby";
+import { publishGameUpdate, subscriber } from "@/server/service/events/server";
 import { type UserId } from "@/types/entities";
 import { GAME_CODE_LENGTH, GameCode, GameType } from "@/types/game";
 import { generatePlayerName } from "@/utils/name-generator";
@@ -19,7 +20,7 @@ export const createGame = async ({ host }: { host: UserId }) => {
   }
 
   await setLobbySummary({ code }, { code, type: GameType.HIGH_CARD });
-  await setLobbyPlayers({ code }, { host, players: [{ id: host, name: generatePlayerName(), ready: false }] });
+  await setLobbyPlayers({ code }, { host, players: [{ id: host, name: generatePlayerName(), isReady: false }] });
 
   return { code };
 }
@@ -31,9 +32,15 @@ export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserI
     return lobby;
   }
 
-  const updatedPlayers = [...lobby.players, { id: userId, name: generatePlayerName(), ready: false }];
+  const updatedPlayers = [...lobby.players, { id: userId, name: generatePlayerName(), isReady: false }];
 
   const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
+
+  try {
+    await publishGameUpdate(code, updatedLobby);
+  } catch (e) {
+    console.error(e)
+  }
 
   return updatedLobby;
 }

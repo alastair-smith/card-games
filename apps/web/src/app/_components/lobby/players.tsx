@@ -44,7 +44,7 @@ import { GameCode } from "@/types/game";
 import { UserId } from "@/types/entities";
 
 type Player = {
-  id: string;
+  id: UserId;
   name: string;
   isReady: boolean;
   isCurrentUser: boolean;
@@ -88,29 +88,28 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
     [setReadyStatusMutation],
   );
 
-  const { mutate: nameMutation } = api.user.update.useMutation();
   const [currentPlayerName, setCurrentPlayerName] = useState(
     players.find(({ isCurrentUser }) => isCurrentUser)?.name ?? "",
   );
-  const debounceUpdateName = useMemo(
-    () => debounce((name: string) => nameMutation({ name }), 300),
-    [nameMutation],
-  );
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = event.target.value;
+  // const debounceUpdateName = useMemo(
+  //   () => debounce((name: string) => nameMutation({ name }), 300),
+  //   [nameMutation],
+  // );
+  // const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newName = event.target.value;
 
-    if (newName === "") {
-      setCurrentPlayerName("");
-    } else {
-      const { error, data: validatedName } =
-        playerNameSchema.safeParse(newName);
+  //   if (newName === "") {
+  //     setCurrentPlayerName("");
+  //   } else {
+  //     const { error, data: validatedName } =
+  //       playerNameSchema.safeParse(newName);
 
-      if (!error) {
-        setCurrentPlayerName(validatedName);
-        debounceUpdateName(validatedName);
-      }
-    }
-  };
+  //     if (!error) {
+  //       setCurrentPlayerName(validatedName);
+  //       debounceUpdateName(validatedName);
+  //     }
+  //   }
+  // };
 
   return (
     <Table>
@@ -137,7 +136,8 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
             </TableCell>
             <TableCell className="flex gap-2">
               {player.isCurrentUser ? (
-                <Input value={currentPlayerName} onChange={handleNameChange} />
+                <Input value={currentPlayerName} />
+                // <Input value={currentPlayerName} onChange={handleNameChange} />
               ) : (
                 <span className="border border-transparent px-3">
                   {player.name}
@@ -252,35 +252,12 @@ export function Players({
 }) {
   const [players, setPlayers] = useState<Player[]>([]);
 
-  api.lobby.subscribe.useSubscription(
-    { code },
-    {
-      onData: (rawEvent) => {
-        const { data: event, error } = z
-          .object({
-            name: z.string(),
-            data: z.any(),
-          })
-          .safeParse(rawEvent);
+  api.lobby.subscribe.useSubscription({ code }, {
+    onData: ({ players }) => {
+      setPlayers(players)
+    }
+  })
 
-        if (error) {
-          console.error(error);
-          return;
-        }
-
-        if (event.name === LOBBY_CHANGELOG_EVENT_NAME) {
-          const players = lobbyChangelogEventSchema
-            .parse(event?.data)
-            .players.map((player) => ({
-              ...player,
-              isCurrentUser: player.id === userId,
-            }));
-
-          setPlayers(players);
-        }
-      },
-    },
-  );
   const params = useParams<{ code: string }>();
 
   return (

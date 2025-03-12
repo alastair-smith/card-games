@@ -11,13 +11,16 @@ export const { get: getLobbySummary, set: setLobbySummary, exists: lobbyExists }
   })
 );
 
+export const lobbySchema = z.object({
+  host: userIdSchema,
+  players: z.array(z.object({
+    id: userIdSchema,
+    name: playerNameSchema,
+    isReady: z.boolean()
+  }))
+});
+
 export const { get: getLobbyPlayers, set: setLobbyPlayers } = dataLayer(
   ({ code }: { code: GameCode }) => `lobby:${code}`,
-  z.object({
-    host: userIdSchema,
-    players: z.array(z.object({
-      id: userIdSchema,
-      name: playerNameSchema,
-      ready: z.boolean()
-    }))
-  }));
+  lobbySchema
+);
