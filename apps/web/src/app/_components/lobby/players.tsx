@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import { CrownIcon, EllipsisVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -252,10 +252,21 @@ export function Players({
 }) {
   const [players, setPlayers] = useState<Player[]>([]);
 
+  const { data: playerData } = api.lobby.getPlayers.useQuery({ code });
+
+  // initial player state
+  useEffect(() => {
+    if (playerData) {
+      setPlayers(playerData);
+    }
+  }, [playerData]);
+
+  // stream of updated player state
   api.lobby.subscribe.useSubscription({ code }, {
+    enabled: !!players,
     onData: ({ players }) => {
       setPlayers(players)
-    }
+    },
   })
 
   const params = useParams<{ code: string }>();

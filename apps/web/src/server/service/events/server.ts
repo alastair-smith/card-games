@@ -15,8 +15,6 @@ export const publishGameUpdate = async (code: GameCode, state: z.infer<typeof lo
   // Ensure the state follows the schema
   const validatedState = lobbySchema.parse(state);
 
-
-  console.log('joining')
   // Add the state update to the Redis Stream
   await redisPub.xadd(
     `game:${code}`,  // Stream key

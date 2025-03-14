@@ -36,11 +36,7 @@ export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserI
 
   const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
 
-  try {
-    await publishGameUpdate(code, updatedLobby);
-  } catch (e) {
-    console.error(e)
-  }
+  await publishGameUpdate(code, updatedLobby);
 
   return updatedLobby;
 }
