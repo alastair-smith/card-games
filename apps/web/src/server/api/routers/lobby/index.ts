@@ -2,9 +2,9 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/service/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
 import { subscriber } from "@/server/service/events/server";
-import { createGame, joinGame } from "@/server/service/state/game/high-card";
+import { createGame, joinGame, updatePlayer } from "@/server/service/state/game/high-card";
 import { playerNameSchema } from "@/types/entities";
-import { gameCodeSchema, GameType } from "@/types/game";
+import { gameCodeSchema, GameType, GameCode } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -69,12 +69,20 @@ export const lobbyRouter = createTRPCRouter({
     }),
 
   updatePlayer: protectedProcedure
-    .input(z.object({
-      name: playerNameSchema,
-      ready: z.boolean()
-    }))
-    .mutation(({ input, ctx: { userId } }) => {
-
+    .input(z.union([
+      z.object({
+        code: gameCodeSchema,
+        field: z.literal('name'),
+        value: playerNameSchema
+      }),
+      z.object({
+        code: gameCodeSchema,
+        field: z.literal('isReady'),
+        value: z.boolean()
+      })
+    ]))
+    .mutation(async ({ input, ctx: { userId } }) => {
+      await updatePlayer({ userId, ...input });
     }),
 
   setReadyStatus: protectedProcedure
@@ -100,7 +108,7 @@ export const lobbyRouter = createTRPCRouter({
 
       const data = await getLobbyPlayers({ code });
 
-      const players = data.players.map((player) => ({ ...player, isHost: player.id === data.host, isCurrentUser: player.id === userId }));
+      const players = data.players.map((player) => ({ ...player, isHost: player.id === data.host, isUser: player.id === userId }));
 
       return players;
     }),
@@ -129,7 +137,8 @@ export const lobbyRouter = createTRPCRouter({
           const message = lobbySchema.safeParse(JSON.parse(messages?.[0]?.[1]?.[0]?.[1]?.[1] || ''));
 
           if (message.data) {
-            const players = message.data.players.map((player) => ({ ...player, isHost: player.id === message.data.host, isCurrentUser: player.id === userId }));
+            console.log('send message')
+            const players = message.data.players.map((player) => ({ ...player, isHost: player.id === message.data.host, isUser: player.id === userId }));
             yield { ...message, players };
           } else {
             console.log('bad message?', message.error, JSON.stringify(messages, null, 2))

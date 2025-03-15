@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/trpc/react";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import { CrownIcon, EllipsisVertical } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -35,19 +35,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  schema as lobbyChangelogEventSchema,
-  EVENT_NAME as LOBBY_CHANGELOG_EVENT_NAME,
-} from "@/server/events/lobby/changelog/schema";
-import { z } from "zod";
 import { GameCode } from "@/types/game";
-import { UserId } from "@/types/entities";
+import { playerNameSchema, UserId } from "@/types/entities";
 
 type Player = {
   id: UserId;
   name: string;
   isReady: boolean;
-  isCurrentUser: boolean;
+  isUser: boolean;
   isHost: boolean;
 };
 
@@ -79,38 +74,16 @@ const InvitePlayers = ({ code }: { code: string }) => {
   );
 };
 
-const PlayerTable = ({ players }: { players: Player[] }) => {
-  const [currentPlayerReady, setCurrentPlayerReady] = useState(false);
-  const { mutate: setReadyStatusMutation } =
-    api.lobby.setReadyStatus.useMutation();
-  const debounceUpdateReadyStatus = useMemo(
-    () => debounce((ready: boolean) => setReadyStatusMutation({ ready }), 300),
-    [setReadyStatusMutation],
-  );
+const getInitialPlayerData = (players: Player[]) => {
+  const player = players.find(({ isUser }) => isUser);
 
-  const [currentPlayerName, setCurrentPlayerName] = useState(
-    players.find(({ isCurrentUser }) => isCurrentUser)?.name ?? "",
-  );
-  // const debounceUpdateName = useMemo(
-  //   () => debounce((name: string) => nameMutation({ name }), 300),
-  //   [nameMutation],
-  // );
-  // const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const newName = event.target.value;
+  return {
+    isReady: player?.isReady ?? false,
+    name: player?.name ?? ''
+  }
+}
 
-  //   if (newName === "") {
-  //     setCurrentPlayerName("");
-  //   } else {
-  //     const { error, data: validatedName } =
-  //       playerNameSchema.safeParse(newName);
-
-  //     if (!error) {
-  //       setCurrentPlayerName(validatedName);
-  //       debounceUpdateName(validatedName);
-  //     }
-  //   }
-  // };
-
+const PlayerTable = ({ players, userIsReady, userName, userNameError, handleNameChange, handleReadyChange }: { players: Player[], userIsReady: boolean, userName: string; userNameError: string | null; handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void; handleReadyChange: (isReady: boolean) => void }) => {
   return (
     <Table>
       <TableHeader>
@@ -135,9 +108,8 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
               )}
             </TableCell>
             <TableCell className="flex gap-2">
-              {player.isCurrentUser ? (
-                <Input value={currentPlayerName} />
-                // <Input value={currentPlayerName} onChange={handleNameChange} />
+              {player.isUser ? (
+                <Input value={userName} onChange={handleNameChange} />
               ) : (
                 <span className="border border-transparent px-3">
                   {player.name}
@@ -146,14 +118,11 @@ const PlayerTable = ({ players }: { players: Player[] }) => {
             </TableCell>
             <TableCell>
               <Switch
-                disabled={!player.isCurrentUser}
+                disabled={!player.isUser}
                 checked={
-                  player.isCurrentUser ? currentPlayerReady : player.isReady
+                  player.isUser ? userIsReady : player.isReady
                 }
-                onCheckedChange={(ready) => {
-                  setCurrentPlayerReady(ready);
-                  debounceUpdateReadyStatus(ready);
-                }}
+                onCheckedChange={handleReadyChange}
               />
             </TableCell>
             <TableCell>
@@ -252,7 +221,36 @@ export function Players({
 }) {
   const [players, setPlayers] = useState<Player[]>([]);
 
-  const { data: playerData } = api.lobby.getPlayers.useQuery({ code });
+  const [userIsReady, setUserIsReady] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userNameError, setUserNameError] = useState<string | null>(null)
+
+  const { data: playerData } = api.lobby.getPlayers.useQuery({ code }, { refetchOnWindowFocus: true });
+  const updatePlayer = api.lobby.updatePlayer.useMutation();
+
+  const debounceNameChange = useCallback(debounce((name: string) => {
+    const { data, error } = playerNameSchema.safeParse(name);
+
+    if (error) {
+      setUserNameError(error.message)
+    } else {
+      updatePlayer.mutate({ field: 'name', value: data, code })
+    }
+  }, 1000), []);
+
+  const handleNameChange = ({ target: { value: name } }: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(name);
+    debounceNameChange(name);
+  }
+
+  const debounceReadyChange = useCallback(debounce((ready: boolean) => {
+    updatePlayer.mutate({ field: 'isReady', value: ready, code })
+  }, 1000), []);
+
+  const handleReadyChange = (isReady: boolean) => {
+    setUserIsReady(isReady);
+    debounceReadyChange(isReady);
+  }
 
   // initial player state
   useEffect(() => {
@@ -265,6 +263,7 @@ export function Players({
   api.lobby.subscribe.useSubscription({ code }, {
     enabled: !!players,
     onData: ({ players }) => {
+      console.log('getting data', JSON.stringify(players, null, 2))
       setPlayers(players)
     },
   })
@@ -277,8 +276,11 @@ export function Players({
         <CardTitle>Players</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
+        <div>
+          {JSON.stringify(players, null, 2)}
+        </div>
         <InvitePlayers code={params.code} />
-        <PlayerTable players={players} />
+        <PlayerTable players={players} userIsReady={userIsReady} userName={userName} userNameError={userNameError} handleNameChange={handleNameChange} handleReadyChange={handleReadyChange} />
         <Button disabled>Start Game</Button>
       </CardContent>
     </Card>

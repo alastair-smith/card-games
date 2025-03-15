@@ -40,3 +40,21 @@ export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserI
 
   return updatedLobby;
 }
+
+export const updatePlayer = async ({ code, userId, field, value }: { code: GameCode; userId: UserId; field: 'name'; value: string } | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
+  const lobby = await getLobbyPlayers({ code });
+
+  const playerInGame = lobby.players.some(({ id }) => id === userId);
+
+  if (!playerInGame) {
+    throw new Error('player not in game');
+  }
+
+  const updatedPlayers = lobby.players.map(player => player.id === userId ? { ...player, [field]: value } : player)
+
+  const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
+
+  await publishGameUpdate(code, updatedLobby);
+
+  return updatedLobby;
+}
