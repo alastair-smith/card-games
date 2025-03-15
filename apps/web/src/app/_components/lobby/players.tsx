@@ -46,6 +46,8 @@ type Player = {
   isHost: boolean;
 };
 
+const FIELD_UPDATE_DELAY_MILLISECONDS = 500;
+
 const copyUrlToClipboard = async () => {
   const { origin, pathname } = new URL(window.location.href);
   await navigator.clipboard.writeText(`${origin}${pathname}`);
@@ -236,7 +238,7 @@ export function Players({
     } else {
       updatePlayer.mutate({ field: 'name', value: data, code })
     }
-  }, 1000), []);
+  }, FIELD_UPDATE_DELAY_MILLISECONDS), []);
 
   const handleNameChange = ({ target: { value: name } }: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(name);
@@ -245,7 +247,7 @@ export function Players({
 
   const debounceReadyChange = useCallback(debounce((ready: boolean) => {
     updatePlayer.mutate({ field: 'isReady', value: ready, code })
-  }, 1000), []);
+  }, FIELD_UPDATE_DELAY_MILLISECONDS), []);
 
   const handleReadyChange = (isReady: boolean) => {
     setUserIsReady(isReady);
@@ -256,6 +258,8 @@ export function Players({
   useEffect(() => {
     if (playerData) {
       setPlayers(playerData);
+      setUserName(playerData.find(({ isUser }) => isUser)?.name ?? '');
+      setUserIsReady(playerData.find(({ isUser }) => isUser)?.isReady ?? false);
     }
   }, [playerData]);
 
@@ -263,7 +267,6 @@ export function Players({
   api.lobby.subscribe.useSubscription({ code }, {
     enabled: !!players,
     onData: ({ players }) => {
-      console.log('getting data', JSON.stringify(players, null, 2))
       setPlayers(players)
     },
   })
@@ -276,9 +279,6 @@ export function Players({
         <CardTitle>Players</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
-        <div>
-          {JSON.stringify(players, null, 2)}
-        </div>
         <InvitePlayers code={params.code} />
         <PlayerTable players={players} userIsReady={userIsReady} userName={userName} userNameError={userNameError} handleNameChange={handleNameChange} handleReadyChange={handleReadyChange} />
         <Button disabled>Start Game</Button>

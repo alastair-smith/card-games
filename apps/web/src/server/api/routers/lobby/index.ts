@@ -1,11 +1,11 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/service/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
-import { subscriber } from "@/server/service/events/server";
 import { createGame, joinGame, updatePlayer } from "@/server/service/state/game/high-card";
 import { playerNameSchema } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
 import { TRPCError } from "@trpc/server";
+import Redis from "ioredis";
 import { z } from "zod";
 
 export const lobbyRouter = createTRPCRouter({
@@ -123,6 +123,8 @@ export const lobbyRouter = createTRPCRouter({
       const { code } = input;
       const streamKey = `game-updates:${code}`;
 
+      const subscriber = new Redis();
+
       try {
         while (true) {
           const messages = await subscriber.xread(
@@ -137,7 +139,6 @@ export const lobbyRouter = createTRPCRouter({
           const message = lobbySchema.safeParse(JSON.parse(messages?.[0]?.[1]?.[0]?.[1]?.[1] || ''));
 
           if (message.data) {
-            console.log('send message')
             const players = message.data.players.map((player) => ({ ...player, isHost: player.id === message.data.host, isUser: player.id === userId }));
             yield { ...message, players };
           } else {
