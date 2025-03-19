@@ -76,16 +76,7 @@ const InvitePlayers = ({ code }: { code: string }) => {
   );
 };
 
-const getInitialPlayerData = (players: Player[]) => {
-  const player = players.find(({ isUser }) => isUser);
-
-  return {
-    isReady: player?.isReady ?? false,
-    name: player?.name ?? ''
-  }
-}
-
-const PlayerTable = ({ players, userIsReady, userName, userNameError, handleNameChange, handleReadyChange }: { players: Player[], userIsReady: boolean, userName: string; userNameError: string | null; handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void; handleReadyChange: (isReady: boolean) => void }) => {
+const PlayerTable = ({ players, userIsReady, userName, userNameError, userIsHost, handleNameChange, handleReadyChange }: { players: Player[], userIsReady: boolean, userName: string; userNameError: string | null; userIsHost: boolean; handleNameChange: (event: React.ChangeEvent<HTMLInputElement>) => void; handleReadyChange: (isReady: boolean) => void }) => {
   return (
     <Table>
       <TableHeader>
@@ -128,84 +119,7 @@ const PlayerTable = ({ players, userIsReady, userName, userNameError, handleName
               />
             </TableCell>
             <TableCell>
-              <DropdownMenu>
-                <Button asChild variant="secondary" size="sm">
-                  <DropdownMenuTrigger>
-                    <EllipsisVertical />
-                  </DropdownMenuTrigger>
-                </Button>
-                <DropdownMenuContent>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        Leave
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you sure you want to leave the game?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          You can rejoin by re-visiting the url.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        Kick
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Kick{" "}
-                          <span className="font-semibold">{player.name}</span>{" "}
-                          from the game?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          They will be able to rejoin by re-visiting the url.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        Make Host
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Make{" "}
-                          <span className="font-semibold">{player.name}</span>{" "}
-                          the new host?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          You will remain in the game, but lose host powers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Continue</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <PlayerDropdown player={player} userIsHost={userIsHost} />
             </TableCell>
           </TableRow>
         ))}
@@ -213,6 +127,98 @@ const PlayerTable = ({ players, userIsReady, userName, userNameError, handleName
     </Table>
   );
 };
+
+function PlayerDropdown({ player, userIsHost }: { player: Player; userIsHost: boolean }) {
+  const showLeave = player.isUser;
+  const showKick = userIsHost && !player.isUser;
+  const showMakeHost = userIsHost && !player.isHost;
+
+  if (!showLeave && !showKick && !showMakeHost) {
+    return null;
+  }
+
+  return (
+    <DropdownMenu>
+      <Button asChild variant="secondary" size="sm">
+        <DropdownMenuTrigger>
+          <EllipsisVertical />
+        </DropdownMenuTrigger>
+      </Button>
+      <DropdownMenuContent>
+        {showLeave &&
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                Leave
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure you want to leave the game?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  You can rejoin by re-visiting the url.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>}
+
+        {showKick && <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              Kick
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Kick{" "}
+                <span className="font-semibold">{player.name}</span>{" "}
+                from the game?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                They will be able to rejoin by re-visiting the url.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>}
+
+        {showMakeHost && <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              Make Host
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Make{" "}
+                <span className="font-semibold">{player.name}</span>{" "}
+                the new host?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                You will remain in the game, but lose host powers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
 
 export function Players({
   className,
@@ -271,7 +277,7 @@ export function Players({
     },
   })
 
-  const params = useParams<{ code: string }>();
+  const userIsHost = useMemo(() => players.some(({ isHost, isUser }) => isHost && isUser), [players]);
 
   return (
     <Card className={className}>
@@ -279,8 +285,8 @@ export function Players({
         <CardTitle>Players</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-6">
-        <InvitePlayers code={params.code} />
-        <PlayerTable players={players} userIsReady={userIsReady} userName={userName} userNameError={userNameError} handleNameChange={handleNameChange} handleReadyChange={handleReadyChange} />
+        <InvitePlayers code={code} />
+        <PlayerTable players={players} userIsReady={userIsReady} userName={userName} userNameError={userNameError} userIsHost={userIsHost} handleNameChange={handleNameChange} handleReadyChange={handleReadyChange} />
         <Button disabled>Start Game</Button>
       </CardContent>
     </Card>
