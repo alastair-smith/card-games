@@ -44,7 +44,6 @@ export const PLAYER_NAMES = [
   "Studly",
   "Braggo",
   "Chippy",
-  "Flicka",
   "Shufflez",
   "Cutey",
   "BigBet",
