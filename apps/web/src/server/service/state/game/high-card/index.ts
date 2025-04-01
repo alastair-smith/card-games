@@ -1,5 +1,5 @@
 import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/service/data/lobby";
-import { publishGameUpdate, subscriber } from "@/server/service/events/server";
+import { publishLobbyState } from "@/server/service/events/server";
 import { type UserId } from "@/types/entities";
 import { GAME_CODE_LENGTH, GameCode, GameType } from "@/types/game";
 import { generatePlayerName } from "@/utils/name-generator";
@@ -36,7 +36,7 @@ export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserI
 
   const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
 
-  await publishGameUpdate(code, updatedLobby);
+  await publishLobbyState(code, updatedLobby);
 
   return updatedLobby;
 }
@@ -54,7 +54,7 @@ export const updatePlayer = async ({ code, userId, field, value }: { code: GameC
 
   const updatedLobby = await setLobbyPlayers({ code }, { ...lobby, players: updatedPlayers });
 
-  await publishGameUpdate(code, updatedLobby);
+  await publishLobbyState(code, updatedLobby);
 
   return updatedLobby;
 }

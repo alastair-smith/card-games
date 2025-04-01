@@ -2,11 +2,24 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/service/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
 import { createGame, joinGame, updatePlayer } from "@/server/service/state/game/high-card";
-import { playerNameSchema } from "@/types/entities";
+import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import Redis from "ioredis";
 import { z } from "zod";
+
+
+const subscriber = new Redis();
+
+type LobbySubscription = {
+  players: {
+    name: string;
+    isReady: boolean;
+    isHost: boolean;
+    isUser: boolean;
+    id: UserId;
+  }[]
+}
 
 export const lobbyRouter = createTRPCRouter({
   create: protectedProcedure
@@ -119,36 +132,67 @@ export const lobbyRouter = createTRPCRouter({
         code: gameCodeSchema
       }),
     )
-    .subscription(async function* ({ input, ctx: { userId } }) {
-      const { code } = input;
-      const streamKey = `game-updates:${code}`;
-
-      const subscriber = new Redis();
-
+    .subscription(async function* ({ input, ctx: { userId } }): AsyncGenerator<LobbySubscription> {
       try {
-        while (true) {
-          const messages = await subscriber.xread(
-            'BLOCK',
-            0,
-            'STREAMS',
-            `game:${code}`,
-            '$'
-          );
+        const { code } = input;
+        const streamKey = `game:${code}`;
 
-
-          const message = lobbySchema.safeParse(JSON.parse(messages?.[0]?.[1]?.[0]?.[1]?.[1] || ''));
-
-          if (message.data) {
-            const players = message.data.players.map((player) => ({ ...player, isHost: player.id === message.data.host, isUser: player.id === userId }));
-            yield { ...message, players };
+        // TODO cleanup old subscriptions
+        // TODO handle errors
+        // TODO handle reconnections
+        const subscription = subscriber.subscribe(streamKey, (err, count) => {
+          if (err) {
+            console.error('Error subscribing to stream:', err);
+            throw new TRPCError({
+              message: 'Error subscribing to stream',
+              code: 'INTERNAL_SERVER_ERROR',
+              cause: err
+            });
           } else {
-            console.log('bad message?', message.error, JSON.stringify(messages, null, 2))
+            console.log(`Subscribed to ${streamKey}, count: ${count}`);
+          }
+        });
+
+        const messageQueue: LobbySubscription[] = [];
+
+        function handler(channel: string, message: string) {
+          if (channel === streamKey) {
+            const parsedMessage = JSON.parse(message);
+            const messageData = lobbySchema.safeParse(parsedMessage);
+
+            if (messageData.success) {
+              const players = messageData.data.players.map((player) => ({
+                ...player,
+                isHost: player.id === messageData.data.host,
+                isUser: player.id === userId
+              }));
+              messageQueue.push({ players });
+            } else {
+              console.error('Invalid message format:', messageData.error);
+            }
           }
         }
+
+        subscriber.on('message', handler)
+
+        while (true) {
+          if (messageQueue.length > 0) {
+            const message = messageQueue.shift();
+            if (message) {
+              yield message;
+            }
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for new messages
+          }
+        }
+
       } catch (error) {
-        console.log('error', error)
-      } finally {
-        console.log(`Client unsubscribed from ${streamKey}`);
+        console.error('Error in subscription:', error);
+        throw new TRPCError({
+          message: 'Error in subscription',
+          code: 'INTERNAL_SERVER_ERROR',
+          cause: error
+        });
       }
     }),
 });
