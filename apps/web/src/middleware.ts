@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { AUTH_COOKIE_NAME, nearExpiry, getSession, createAuthToken } from './server/service/auth';
+import { AUTH_COOKIE_NAME, nearExpiry, getSession, createAuthToken } from './server/auth';
 
 export async function middleware(request: NextRequest) {
   const authCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value;

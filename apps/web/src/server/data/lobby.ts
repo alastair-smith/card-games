@@ -1,6 +1,6 @@
 import { type GameCode, gameCodeSchema, GameType, gameTypeSchema } from '@/types/game';
 import { z } from 'zod';
-import { dataLayer } from '@/server/service/data/redis';
+import { dataLayer } from '@/server/data/redis';
 import { playerNameSchema, userIdSchema } from '@/types/entities';
 
 export const { get: getLobbySummary, set: setLobbySummary, exists: lobbyExists } = dataLayer(

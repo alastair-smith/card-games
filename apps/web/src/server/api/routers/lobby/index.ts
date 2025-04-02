@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/service/data/lobby";
-import { DataServiceError, DataServiceErrorCode } from "@/server/service/data/redis";
-import { createGame, joinGame, updatePlayer } from "@/server/service/state/game/high-card";
+import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/data/lobby";
+import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
+import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
 import { TRPCError } from "@trpc/server";

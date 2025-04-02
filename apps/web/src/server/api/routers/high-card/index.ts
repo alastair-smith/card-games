@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { createGame } from "@/server/service/state/game/high-card";
+import { createGame } from "@/server/state/game/high-card";
 
 export const lobbyRouter = createTRPCRouter({
   create: protectedProcedure

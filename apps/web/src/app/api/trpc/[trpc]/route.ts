@@ -5,7 +5,7 @@ import { appRouter } from "@/server/api/root";
 import { createTRPCContext } from "@/server/api/trpc";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { logger } from "@/utils/logger";
-import { AUTH_COOKIE_NAME, getSession } from "@/server/service/auth";
+import { AUTH_COOKIE_NAME, getSession } from "@/server/auth";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when

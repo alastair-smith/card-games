@@ -1,5 +1,5 @@
-import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/service/data/lobby";
-import { publishLobbyState } from "@/server/service/events/server";
+import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/data/lobby";
+import { publishLobbyState } from "@/server/events/server";
 import { type UserId } from "@/types/entities";
 import { GAME_CODE_LENGTH, GameCode, GameType } from "@/types/game";
 import { generatePlayerName } from "@/utils/name-generator";
