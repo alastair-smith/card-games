@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
-import { getLobbyChannel, subscriber } from "@/server/events/lobby";
+import { getLobbyChannel, subscriber, subscribeToLobbyState } from "@/server/events/lobby";
 import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
@@ -133,6 +133,8 @@ export const lobbyRouter = createTRPCRouter({
       const { code } = input;
 
       const messageQueue: LobbySubscription[] = [];
+
+      await subscribeToLobbyState();
 
       function handler(_pattern: string, channel: string, message: string) {
         if (channel === getLobbyChannel(code)) {
