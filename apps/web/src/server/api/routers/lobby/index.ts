@@ -1,15 +1,12 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
+import { subscriber } from "@/server/events/lobby";
 import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
 import { TRPCError } from "@trpc/server";
-import Redis from "ioredis";
 import { z } from "zod";
-
-
-const subscriber = new Redis();
 
 type LobbySubscription = {
   players: {
@@ -133,48 +130,36 @@ export const lobbyRouter = createTRPCRouter({
       }),
     )
     .subscription(async function* ({ input, ctx: { userId } }): AsyncGenerator<LobbySubscription> {
-      try {
-        const { code } = input;
-        const streamKey = `game:${code}`;
+      const { code } = input;
+      const streamKey = `lobby`;
 
-        // TODO cleanup old subscriptions
-        // TODO handle errors
-        // TODO handle reconnections
-        const subscription = subscriber.subscribe(streamKey, (err, count) => {
-          if (err) {
-            console.error('Error subscribing to stream:', err);
-            throw new TRPCError({
-              message: 'Error subscribing to stream',
-              code: 'INTERNAL_SERVER_ERROR',
-              cause: err
-            });
-          } else {
-            console.log(`Subscribed to ${streamKey}, count: ${count}`);
-          }
-        });
+      // TODO cleanup old subscriptions
+      // TODO handle errors
+      // TODO handle reconnections
 
-        const messageQueue: LobbySubscription[] = [];
+      const messageQueue: LobbySubscription[] = [];
 
-        function handler(channel: string, message: string) {
-          if (channel === streamKey) {
-            const parsedMessage = JSON.parse(message);
-            const messageData = lobbySchema.safeParse(parsedMessage);
+      function handler(channel: string, message: string) {
+        // if (channel === streamKey) {
+        const parsedMessage = JSON.parse(message);
+        const messageData = lobbySchema.safeParse(parsedMessage);
 
-            if (messageData.success) {
-              const players = messageData.data.players.map((player) => ({
-                ...player,
-                isHost: player.id === messageData.data.host,
-                isUser: player.id === userId
-              }));
-              messageQueue.push({ players });
-            } else {
-              console.error('Invalid message format:', messageData.error);
-            }
-          }
+        if (messageData.success) {
+          const players = messageData.data.players.map((player) => ({
+            ...player,
+            isHost: player.id === messageData.data.host,
+            isUser: player.id === userId
+          }));
+          messageQueue.push({ players });
+        } else {
+          console.error('Invalid message format:', messageData.error);
         }
+      }
+      // }
 
-        subscriber.on('message', handler)
+      subscriber.on('message', handler)
 
+      try {
         while (true) {
           if (messageQueue.length > 0) {
             const message = messageQueue.shift();
@@ -185,7 +170,6 @@ export const lobbyRouter = createTRPCRouter({
             await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for new messages
           }
         }
-
       } catch (error) {
         console.error('Error in subscription:', error);
         throw new TRPCError({
@@ -193,6 +177,10 @@ export const lobbyRouter = createTRPCRouter({
           code: 'INTERNAL_SERVER_ERROR',
           cause: error
         });
+      }
+      finally {
+        subscriber.off('message', handler);
+        console.log('unsubscribed')
       }
     }),
 });

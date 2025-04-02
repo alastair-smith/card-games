@@ -28,16 +28,16 @@ const startServer = async () => {
   const app = next({ dev: nodeEnv === "development" });
   const handle = app.getRequestHandler();
 
-  await app.prepare().then(() => {
-    const server = createServer((req, res) => {
-      const parsedUrl = parse(req.url ?? "", true);
-      void handle(req, res, parsedUrl);
-    });
+  await app.prepare()
 
-    server.listen(port, () => {
-      console.log(greetings);
-      console.log(`✓ Ready on http://localhost:${port}`);
-    });
+  const server = createServer((req, res) => {
+    const parsedUrl = parse(req.url ?? "", true);
+    void handle(req, res, parsedUrl);
+  });
+
+  server.listen(port, () => {
+    console.log(greetings);
+    console.log(`✓ Ready on http://localhost:${port}`);
   });
 };
 
