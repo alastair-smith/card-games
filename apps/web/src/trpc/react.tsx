@@ -13,6 +13,7 @@ import { useState } from "react";
 import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
+
 import { createQueryClient } from "./query-client";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;

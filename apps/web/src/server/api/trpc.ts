@@ -10,7 +10,8 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { getSession } from "../auth";
+
+import { getSession } from "@/server/auth";
 
 /**
  * 1. CONTEXT
