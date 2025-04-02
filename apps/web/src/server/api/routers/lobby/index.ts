@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
-import { subscriber } from "@/server/events/lobby";
+import { getLobbyChannel, subscriber } from "@/server/events/lobby";
 import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";
@@ -131,33 +131,28 @@ export const lobbyRouter = createTRPCRouter({
     )
     .subscription(async function* ({ input, ctx: { userId } }): AsyncGenerator<LobbySubscription> {
       const { code } = input;
-      const streamKey = `lobby`;
-
-      // TODO cleanup old subscriptions
-      // TODO handle errors
-      // TODO handle reconnections
 
       const messageQueue: LobbySubscription[] = [];
 
-      function handler(channel: string, message: string) {
-        // if (channel === streamKey) {
-        const parsedMessage = JSON.parse(message);
-        const messageData = lobbySchema.safeParse(parsedMessage);
+      function handler(_pattern: string, channel: string, message: string) {
+        if (channel === getLobbyChannel(code)) {
+          const parsedMessage = JSON.parse(message);
+          const messageData = lobbySchema.safeParse(parsedMessage);
 
-        if (messageData.success) {
-          const players = messageData.data.players.map((player) => ({
-            ...player,
-            isHost: player.id === messageData.data.host,
-            isUser: player.id === userId
-          }));
-          messageQueue.push({ players });
-        } else {
-          console.error('Invalid message format:', messageData.error);
+          if (messageData.success) {
+            const players = messageData.data.players.map((player) => ({
+              ...player,
+              isHost: player.id === messageData.data.host,
+              isUser: player.id === userId
+            }));
+            messageQueue.push({ players });
+          } else {
+            console.error('Invalid message format:', messageData.error);
+          }
         }
       }
-      // }
 
-      subscriber.on('message', handler)
+      subscriber.on('pmessage', handler)
 
       try {
         while (true) {
@@ -179,7 +174,7 @@ export const lobbyRouter = createTRPCRouter({
         });
       }
       finally {
-        subscriber.off('message', handler);
+        subscriber.off('pmessage', handler);
         console.log('unsubscribed')
       }
     }),
