@@ -12,6 +12,7 @@ export const { get: getLobbySummary, set: setLobbySummary, exists: lobbyExists }
 );
 
 export const lobbySchema = z.object({
+  code: gameCodeSchema,
   host: userIdSchema,
   players: z.array(z.object({
     id: userIdSchema,

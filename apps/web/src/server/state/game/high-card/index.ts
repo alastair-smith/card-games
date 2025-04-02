@@ -20,7 +20,7 @@ export const createGame = async ({ host }: { host: UserId }) => {
   }
 
   await setLobbySummary({ code }, { code, type: GameType.HIGH_CARD });
-  await setLobbyPlayers({ code }, { host, players: [{ id: host, name: generatePlayerName(), isReady: false }] });
+  await setLobbyPlayers({ code }, { code, host, players: [{ id: host, name: generatePlayerName(), isReady: false }] });
 
   return { code };
 }
