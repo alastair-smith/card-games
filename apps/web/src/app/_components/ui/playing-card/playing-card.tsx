@@ -26,7 +26,7 @@ export function PlayingCard({ card }: { card: Card }) {
       {/* Top left */}
       <div className="flex flex-col items-center">
         <div className="font-bold">{card.rank}</div>
-        <SuitSymbol size='small' fill={color} />
+        <SuitSymbol size='1.5ch' fill={color} />
       </div>
 
       {/* Middle */}
