@@ -149,3 +149,10 @@ function JokerCard({ color }: { color: Joker['suit'] }) {
     </div>
   );
 }
+
+export function PlayingCardBack() {
+  return (
+    <div className="flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-orange-800">
+    </div>
+  );
+}
