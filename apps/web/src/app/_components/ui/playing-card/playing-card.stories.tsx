@@ -11,6 +11,8 @@ const deck = [Suit['spades'], Suit['hearts'], Suit['diamonds'], Suit['clubs']].f
 export const AceOfSpades = () => {
   return (
     <div className="bg-felt-texture p-10 flex flex-wrap gap-4">
+      <PlayingCard card={{ rank: 'Joker', suit: 'red' }} />
+      <PlayingCard card={{ rank: 'Joker', suit: 'black' }} />
       {deck.map((card, index) => (
         <PlayingCard key={index} card={card} />
       ))}
