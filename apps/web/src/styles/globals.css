@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 230 33% 93%; /* Light blue (#E8EBF7) */
+    --foreground: 210 33% 18%; /* Deeper slate blue for text (#12212E) */
+
+    --muted: 210 40% 90%; /* Subtle muted blue */
+    --muted-foreground: 210 33% 18%; /* Same deep slate blue for muted text (#12212E) */
+
+    --popover: 230 33% 93%; /* Matches background for popovers */
+    --popover-foreground: 210 33% 18%; /* Deeper slate blue for popover text (#12212E) */
+
+    --border: 210 33% 18%; /* Border in deep slate blue (#12212E) */
+    --input: 210 40% 90%; /* Light muted blue for inputs */
+
+    --card: 0 0% 100%; /* Matches background for cards */
+    --card-foreground: 210 33% 18%; /* Text on cards in deep slate blue (#12212E) */
+
+    --primary-background: 33 85% 60%; /* Bold orange for buttons (#D78521) */
+    --primary:  210 33% 18%; /* Deep slate blue for text (#12212E) */
+
+    --secondary: 210 40% 90%; /* Light muted blue for secondary elements */
+    --secondary-foreground: 210 33% 18%; /* Deep slate blue for text (#12212E) */
+
+    --accent: 33 71% 48%; /* Matches primary for decorative accents (#D78521) */
+    --accent-foreground: 230 33% 93%; /* Light blue for accent foreground */
+
+    --destructive: 0 65% 50%; /* Rich red for destructive elements */
+    --destructive-foreground: 230 33% 93%; /* Light blue text for destructive */
+
+    --ring: 33 71% 48%; /* Matches primary for focus ring */
+
+    --radius: 0.5rem; /* Standard corner radius for elements */
+}
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+}
+
+.bg-felt-texture {
+  background-size: cover;
+  background-image: linear-gradient(#570808de, #570808de), url("/felt_grey.jpg"),
+    linear-gradient(#631818, #631818);
+  /*     linear-gradient(#6d1c1c, #8d2424);
+ */
+}

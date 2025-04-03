@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: docker.io/redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
