@@ -1,5 +1,5 @@
 import { type Card, Joker, Rank, Suit } from "@/types/cards";
-import { ClubIcon, DiamondIcon, HeartIcon, SpadeIcon } from "lucide-react";
+import { BotIcon, BotMessageSquareIcon, ClubIcon, DiamondIcon, HeartIcon, SpadeIcon, SwordsIcon } from "lucide-react";
 
 const suitSymbol = {
   [Suit.spades]: SpadeIcon,
@@ -14,6 +14,12 @@ const suitColor = {
   [Suit.diamonds]: '#ff0000',
   [Suit.clubs]: '#12212E',
 } as const;
+
+const pictureCardSymbol = {
+  'K': BotIcon,
+  'Q': BotMessageSquareIcon,
+  'J': SwordsIcon,
+}
 
 function isPictureCard(rank: Rank): rank is 'A' | 'K' | 'Q' | 'J' {
   const singularRanks: Rank[] = ['A', 'K', 'Q', 'J'];
@@ -37,9 +43,7 @@ export function PlayingCard({ card }: { card: Card }) {
       {/* Middle */}
       <div className="grid place-items-center px-4 py-2 border rounded flex-1">
         {isPictureCard(card.rank) ?
-          (
-            <SuitSymbol size='large' fill={color} />
-          ) : (
+          <PictureCardContent rank={card.rank} SuitSymbol={SuitSymbol} color={color} /> : (
             <RankContent
               rank={Number(card.rank)}
               SuitSymbol={SuitSymbol}
@@ -49,6 +53,13 @@ export function PlayingCard({ card }: { card: Card }) {
       </div>
     </div>
   );
+}
+
+function PictureCardContent({ rank, SuitSymbol, color }: { rank: 'A' | 'K' | 'Q' | 'J', SuitSymbol: typeof suitSymbol[Suit], color: string }) {
+  const PictureSymbol = rank === 'A' ? SuitSymbol : pictureCardSymbol[rank];
+  const useFill = rank === 'A' || rank === 'J';
+
+  return <PictureSymbol size='large' fill={useFill ? color : 'none'} />;
 }
 
 function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: typeof suitSymbol[Suit], color: string }) {
