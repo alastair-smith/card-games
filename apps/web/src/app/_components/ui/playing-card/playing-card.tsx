@@ -116,6 +116,7 @@ function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: ty
             ))
         }
         {
+          // sneaky hack as the middle col of 7 is not centered
           rank === 7 && <SuitSymbol size='3ch' fill={color} className='invisible' />
         }
       </div>
