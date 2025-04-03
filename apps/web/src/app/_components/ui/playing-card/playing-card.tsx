@@ -27,15 +27,15 @@ export function PlayingCard({ card }: { card: Card }) {
   const color = suitColor[card.suit];
 
   return (
-    <div className="grid grid-cols-[2ch,1fr,2ch] w-40 h-60 bg-white p-2 rounded-lg" style={{ color }}>
+    <div className="flex flex-col w-40 h-60 bg-white p-2 rounded-lg" style={{ color }}>
       {/* Top left */}
-      <div className="flex flex-col items-center">
-        <div className="font-bold">{card.rank}</div>
-        <SuitSymbol size='1.5ch' fill={color} />
+      <div className="flex items-center gap-0.5 pb-1">
+        <div className="font-bold text-4xl">{card.rank}</div>
+        <SuitSymbol className='h-8' fill={color} />
       </div>
 
       {/* Middle */}
-      <div className="grid place-items-center">
+      <div className="grid place-items-center px-4 py-2 border rounded flex-1">
         {isPictureCard(card.rank) ?
           (
             <SuitSymbol size='large' fill={color} />
@@ -49,18 +49,6 @@ export function PlayingCard({ card }: { card: Card }) {
       </div>
     </div>
   );
-}
-
-/** Helper function to determine grid layout for number cards */
-function getGridCols(rank: number): string {
-  switch (rank) {
-    case 1: case 2: case 3:
-      return "grid-cols-1";
-    case 4: case 6:
-      return "grid-cols-2";
-    default:
-      return "grid-cols-3";
-  }
 }
 
 function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: typeof suitSymbol[Suit], color: string }) {
@@ -97,7 +85,7 @@ function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: ty
 
 
   return (
-    <div className='grid grid-cols-3 w-full h-full place-items-center py-8'>
+    <div className='grid grid-cols-3 w-full h-full place-items-center'>
       <div className='h-full flex flex-col justify-between'>
         {
           Array
