@@ -35,13 +35,13 @@ export function PlayingCard({ card }: { card: Card }) {
   return (
     <div className="flex flex-col w-40 h-60 bg-white p-2 rounded-lg" style={{ color }}>
       {/* Top left */}
-      <div className="flex items-center gap-0.5 pb-1">
+      <div className="flex items-center gap-1 pb-1">
         <div className="font-bold text-4xl">{card.rank}</div>
         <SuitSymbol className='h-8' fill={color} />
       </div>
 
       {/* Middle */}
-      <div className="grid place-items-center px-4 py-2 border rounded flex-1">
+      <div className="grid place-items-center p-4 border rounded flex-1">
         {isPictureCard(card.rank) ?
           <PictureCardContent rank={card.rank} SuitSymbol={SuitSymbol} color={color} /> : (
             <RankContent
