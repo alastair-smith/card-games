@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 import cssAnimate from "tailwindcss-animate";
 
 export default {
-  content: ["./src/**/*.tsx"],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     container: {
       center: true,
