@@ -59,7 +59,7 @@ function PictureCardContent({ rank, SuitSymbol, color }: { rank: 'A' | 'K' | 'Q'
   const PictureSymbol = rank === 'A' ? SuitSymbol : pictureCardSymbol[rank];
   const useFill = rank === 'A' || rank === 'J';
 
-  return <PictureSymbol size='large' fill={useFill ? color : 'none'} />;
+  return <PictureSymbol className='size-full' fill={useFill ? color : 'none'} />;
 }
 
 function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: typeof suitSymbol[Suit], color: string }) {
@@ -144,7 +144,7 @@ function JokerCard({ color }: { color: Joker['suit'] }) {
 
       {/* Middle */}
       <div className="grid place-items-center px-4 py-2 border rounded flex-1">
-        <ScanFaceIcon size='large' />
+        <ScanFaceIcon className="size-full" />
       </div>
     </div>
   );
