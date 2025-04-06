@@ -27,30 +27,52 @@ function isPictureCard(rank: Rank): rank is 'A' | 'K' | 'Q' | 'J' {
   return singularRanks.includes(rank);
 }
 
-export function PlayingCard({ card }: { card: Card }) {
-  if (card.rank === 'Joker') { return <JokerCard color={card.suit} />; }
+export function PlayingCard({ card }: { card: Card | null }) {
+  return (
+    <div className="w-40 h-60 [perspective:1000px]">
+      <div
+        className={cn(
+          'relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d]',
+          card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]'
+        )}
+      >
+        {/* Front */}
+        <div className="absolute w-full h-full [backface-visibility:hidden]">
+          <PlayingCardFace card={card} />
+        </div>
+
+        {/* Back */}
+        <div className="absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <PlayingCardBack />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PlayingCardFace({ card }: { card: Card | null }) {
+  if (!card) return <div className="w-full h-full bg-white rounded-lg" />;
+
+  if (card.rank === 'Joker') return <JokerCard color={card.suit} />;
 
   const SuitSymbol = suitSymbol[card.suit];
   const color = suitColor[card.suit];
 
   return (
-    <div className="flex flex-col w-40 h-60 bg-white p-2 rounded-lg" style={{ color }}>
-      {/* Top left */}
+    <div
+      className="flex flex-col bg-white p-2 rounded-lg w-full h-full"
+      style={{ color }}
+    >
       <div className="flex items-center gap-1 pb-1">
         <div className="font-bold text-4xl">{card.rank}</div>
-        <SuitSymbol className='h-8' fill={color} />
+        <SuitSymbol className="h-8" fill={color} />
       </div>
-
-      {/* Middle */}
       <div className="grid place-items-center p-4 border rounded flex-1">
-        {isPictureCard(card.rank) ?
-          <PictureCardContent rank={card.rank} SuitSymbol={SuitSymbol} color={color} /> : (
-            <RankContent
-              rank={Number(card.rank)}
-              SuitSymbol={SuitSymbol}
-              color={color}
-            />
-          )}
+        {isPictureCard(card.rank) ? (
+          <PictureCardContent rank={card.rank} SuitSymbol={SuitSymbol} color={color} />
+        ) : (
+          <RankContent rank={Number(card.rank)} SuitSymbol={SuitSymbol} color={color} />
+        )}
       </div>
     </div>
   );
@@ -135,7 +157,7 @@ function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: ty
 
 function JokerCard({ color }: { color: Joker['suit'] }) {
   return (
-    <div className="flex flex-col w-40 h-60 bg-white p-2 rounded-lg" style={{ color }}>
+    <div className="flex flex-col w-full h-full bg-white p-2 rounded-lg" style={{ color }}>
       {/* Top left */}
       <div className="flex items-center gap-0.5 pb-1">
         <div className="font-bold text-4xl w-full flex justify-center">

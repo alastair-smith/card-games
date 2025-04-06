@@ -1,5 +1,7 @@
 import { ranks, Suit } from "@/types/cards";
 import { PlayingCard, PlayingCardBack } from "./playing-card";
+import { Button } from "../button";
+import { useState } from "react";
 
 const decreasingOrder = [...ranks].reverse();
 const deck = [Suit['spades'], Suit['hearts'], Suit['diamonds'], Suit['clubs']].flatMap(suit => {
@@ -8,7 +10,7 @@ const deck = [Suit['spades'], Suit['hearts'], Suit['diamonds'], Suit['clubs']].f
   })
 });
 
-export const AceOfSpades = () => {
+export const WholeDeck = () => {
   return (
     <div className="bg-felt-texture p-10 flex flex-wrap gap-4">
       <PlayingCardBack />
@@ -19,4 +21,17 @@ export const AceOfSpades = () => {
       ))}
     </div>
   );
+}
+
+export const FlipCard = () => {
+  const [cardHasValue, setCardHasValue] = useState(false);
+
+  return (
+    <div className="bg-felt-texture p-10 flex flex-col gap-8">
+      <Button onClick={() => { setCardHasValue(!cardHasValue) }}>Flip card</Button>
+      <div className="flex flex-wrap gap-4">
+        <PlayingCard card={cardHasValue ? { rank: 'A', suit: Suit['spades'] } : null} />
+      </div>
+    </div>
+  )
 }
