@@ -1,11 +1,23 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { createGame } from "@/server/state/game/high-card";
+import { gameCodeSchema } from "@/types/game";
+import { z } from "zod";
 
-export const lobbyRouter = createTRPCRouter({
-  create: protectedProcedure
-    .mutation(async ({ ctx: { userId } }) => {
-      const { code } = await createGame({ host: userId });
+export const highCardRouter = createTRPCRouter({
+  pickupCard: protectedProcedure.input(z.object({
+    code: gameCodeSchema
+  })).mutation(({ input: { code }, ctx: { userId } }) => {
+    // auth: check user is in game
 
-      return { code };
-    }),
+    // state: check it is user's turn
+
+    // state: draw a card from the deck
+
+    // state:data assign the card to the player
+
+    // state:event emit the update
+  }),
+
+  subscription: protectedProcedure.input(z.object({
+    code: gameCodeSchema
+  })).subscription(async function* () { })
 });
