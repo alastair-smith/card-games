@@ -1,5 +1,5 @@
-import { Card, Suit } from "@/types/cards";
-import Game from "./game";
+import { PlayingCardValue, Rank, StandardPlayingCard, Suit } from "@/types/cards";
+import Game from "./game-view";
 import { toast } from "@/components/ui/toast";
 import { UserId } from "@/types/entities";
 import { useState } from "react";
@@ -23,17 +23,17 @@ export const Turn1 = () => {
 }
 
 export const Turn2 = () => {
-  const [card2, setCard2] = useState<Card | null>(null)
+  const [card2, setCard2] = useState<StandardPlayingCard | null>(null)
   return (
     <div className="bg-felt-texture p-10 flex flex-wrap gap-4 h-screen">
       <Game
         pickupCard={() => {
-          setCard2({ suit: Suit['spades'], rank: 'Q' });
+          setCard2({ suit: Suit.SPADES, rank: Rank.QUEEN });
           toast.success('Card picked up!');
         }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit['hearts'], rank: '3' } },
+            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
             { userId: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
             { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
@@ -51,8 +51,8 @@ export const Turn3 = () => {
         pickupCard={() => { toast.success('Card picked up!'); }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit['hearts'], rank: '3' } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit['spades'], rank: 'Q' } },
+            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
+            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
             { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
           winner: null,
@@ -69,9 +69,9 @@ export const Turn4 = () => {
         pickupCard={() => { toast.success('Card picked up!'); }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit['hearts'], rank: '3' } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit['spades'], rank: 'Q' } },
-            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: { suit: Suit['clubs'], rank: '10' } },
+            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
+            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
+            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: { suit: Suit.CLUBS, rank: Rank.TEN } },
           ],
           winner: '2' as UserId,
         }}

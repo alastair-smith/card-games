@@ -1,5 +1,9 @@
-import { PlayingCard, PlayingCardBack } from "@/components/ui/playing-card/playing-card";
-import { Card } from "@/types/cards"
+'use client';
+
+import { PlayingCard } from "@/components/ui/playing-card/playing-card";
+import { Player } from "@/server/data/high-card";
+import { GameState } from "@/server/state/game/high-card";
+import { RANK_FULL_NAME, StandardPlayingCard } from "@/types/cards";
 import { UserId } from "@/types/entities";
 import { useMemo } from "react";
 
@@ -7,16 +11,9 @@ export type HighCardGameProps = {
   state: GameState;
   pickupCard: () => void;
   playerUserId?: UserId;
-}
-
-type Player = { userId: UserId, name: string, isUser: boolean, card: Card | null };
-
-export type GameState = {
-  players: Player[],
-  winner: UserId | null,
 };
 
-export default function HighCardGame({
+export default function HighCardGameView({
   state,
   pickupCard,
 }: HighCardGameProps) {
@@ -52,7 +49,7 @@ export default function HighCardGame({
 function Winner({ player }: { player: Player }) {
   return (
     <div className="text-3xl text-green-500">
-      {player.name} wins with a {player.card?.rank} of {player.card?.suit}!
+      {player.name} wins{player.card && ` with a ${RANK_FULL_NAME[player.card.rank]} of ${player.card.suit}`}!
     </div>
   )
 }

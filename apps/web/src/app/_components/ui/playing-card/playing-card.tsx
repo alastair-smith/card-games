@@ -1,33 +1,22 @@
-import { type Card, Joker, Rank, Suit } from "@/types/cards";
+import { type PlayingCardValue, Joker, JOKER_RANK, JokerSuit, PictureCardRank, Rank, RANK_DISPLAY, Suit, suitColor } from "@/types/cards";
+import { isPictureCard } from "@/utils/cards";
 import { cn } from "@/utils/cn";
 import { BotIcon, BotMessageSquareIcon, ClubIcon, DiamondIcon, HeartIcon, ScanFaceIcon, SpadeIcon, SwordsIcon } from "lucide-react";
 
 const suitSymbol = {
-  [Suit.spades]: SpadeIcon,
-  [Suit.hearts]: HeartIcon,
-  [Suit.diamonds]: DiamondIcon,
-  [Suit.clubs]: ClubIcon,
-} as const;
-
-const suitColor = {
-  [Suit.spades]: '#12212E',
-  [Suit.hearts]: '#ff0000',
-  [Suit.diamonds]: '#ff0000',
-  [Suit.clubs]: '#12212E',
-} as const;
+  [Suit.SPADES]: SpadeIcon,
+  [Suit.HEARTS]: HeartIcon,
+  [Suit.DIAMONDS]: DiamondIcon,
+  [Suit.CLUBS]: ClubIcon,
+} satisfies Record<Suit, any>;
 
 const pictureCardSymbol = {
-  'K': BotIcon,
-  'Q': BotMessageSquareIcon,
-  'J': SwordsIcon,
+  [Rank.KING]: BotIcon,
+  [Rank.QUEEN]: BotMessageSquareIcon,
+  [Rank.JACK]: SwordsIcon,
 }
 
-function isPictureCard(rank: Rank): rank is 'A' | 'K' | 'Q' | 'J' {
-  const singularRanks: Rank[] = ['A', 'K', 'Q', 'J'];
-  return singularRanks.includes(rank);
-}
-
-export function PlayingCard({ card, className, onClick }: { card: Card | null; className?: string; onClick?: () => void; }) {
+export function PlayingCard({ card, className, onClick }: { card: PlayingCardValue | null; className?: string; onClick?: () => void; }) {
   return (
     <div onClick={onClick} className={cn("w-40 h-60 [perspective:1000px]", onClick ? 'cursor-pointer' : '', className)}>
       <div
@@ -50,10 +39,10 @@ export function PlayingCard({ card, className, onClick }: { card: Card | null; c
   );
 }
 
-function PlayingCardFace({ card }: { card: Card | null }) {
+function PlayingCardFace({ card }: { card: PlayingCardValue | null }) {
   if (!card) return <div className="w-full h-full bg-white rounded-lg" />;
 
-  if (card.rank === 'Joker') return <JokerCard color={card.suit} />;
+  if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
 
   const SuitSymbol = suitSymbol[card.suit];
   const color = suitColor[card.suit];
@@ -64,11 +53,11 @@ function PlayingCardFace({ card }: { card: Card | null }) {
       style={{ color }}
     >
       <div className="flex items-center gap-1 pb-1">
-        <div className="font-bold text-4xl">{card.rank}</div>
+        <div className="font-bold text-4xl">{RANK_DISPLAY[card.rank]}</div>
         <SuitSymbol className="h-8" fill={color} />
       </div>
       <div className="grid place-items-center p-4 border rounded flex-1">
-        {isPictureCard(card.rank) ? (
+        {isPictureCard(card) ? (
           <PictureCardContent rank={card.rank} SuitSymbol={SuitSymbol} color={color} />
         ) : (
           <RankContent rank={Number(card.rank)} SuitSymbol={SuitSymbol} color={color} />
@@ -78,9 +67,9 @@ function PlayingCardFace({ card }: { card: Card | null }) {
   );
 }
 
-function PictureCardContent({ rank, SuitSymbol, color }: { rank: 'A' | 'K' | 'Q' | 'J', SuitSymbol: typeof suitSymbol[Suit], color: string }) {
-  const PictureSymbol = rank === 'A' ? SuitSymbol : pictureCardSymbol[rank];
-  const useFill = rank === 'A' || rank === 'J';
+function PictureCardContent({ rank, SuitSymbol, color }: { rank: PictureCardRank, SuitSymbol: typeof suitSymbol[Suit], color: string }) {
+  const PictureSymbol = rank === Rank.ACE ? SuitSymbol : pictureCardSymbol[rank];
+  const useFill = rank === Rank.ACE || rank === Rank.JACK;
 
   return <PictureSymbol className='size-full' fill={useFill ? color : 'none'} />;
 }
@@ -155,7 +144,7 @@ function RankContent({ rank, SuitSymbol, color }: { rank: number, SuitSymbol: ty
   )
 }
 
-function JokerCard({ color }: { color: Joker['suit'] }) {
+function JokerCard({ color }: { color: JokerSuit }) {
   return (
     <div className="flex flex-col w-full h-full bg-white p-2 rounded-lg" style={{ color }}>
       {/* Top left */}

@@ -1,3 +1,4 @@
+import { Player } from "@/server/data/high-card";
 import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/data/lobby";
 import { publishLobbyState } from "@/server/events/lobby";
 import { type UserId } from "@/types/entities";
@@ -58,3 +59,12 @@ export const updatePlayer = async ({ code, userId, field, value }: { code: GameC
 
   return updatedLobby;
 }
+
+export type GamePlayer = Player & {
+  isUser: boolean;
+}
+
+export type GameState = {
+  players: GamePlayer[],
+  winner: UserId | null,
+};

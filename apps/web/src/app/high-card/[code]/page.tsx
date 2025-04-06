@@ -2,6 +2,7 @@
 
 import Lobby from "@/components/lobby/lobby";
 import { api } from "@/trpc/server";
+import HighCardGameController from "./game/game-controller";
 
 type GameStage = 'LOBBY' | 'IN_PROGRESS' | 'FINISHED';
 
@@ -18,9 +19,7 @@ export default async function HighCardPage({ params }: { params: Promise<{ code:
       await api.lobby.join({ code });
       return (<Lobby type={game.type} code={game.code} />);
     case 'IN_PROGRESS':
-      return (<div>Game in progress</div>);
-    case 'FINISHED':
-      return (<div>Game finished</div>);
+      return (<HighCardGameController code={game.code} />);
     default:
       return <div>Error</div>
   }

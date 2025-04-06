@@ -1,11 +1,10 @@
-import { ranks, Suit } from "@/types/cards";
-import { PlayingCard, PlayingCardBack } from "./playing-card";
+import { JOKER_RANK, JokerSuit, Rank, RANKS, Suit, SUITS } from "@/types/cards";
+import { PlayingCard } from "./playing-card";
 import { Button } from "../button";
 import { useState } from "react";
 
-const decreasingOrder = [...ranks].reverse();
-const deck = [Suit['spades'], Suit['hearts'], Suit['diamonds'], Suit['clubs']].flatMap(suit => {
-  return decreasingOrder.map(rank => {
+const deck = SUITS.flatMap(suit => {
+  return RANKS.map(rank => {
     return { rank, suit };
   })
 });
@@ -13,9 +12,9 @@ const deck = [Suit['spades'], Suit['hearts'], Suit['diamonds'], Suit['clubs']].f
 export const WholeDeck = () => {
   return (
     <div className="bg-felt-texture p-10 flex flex-wrap gap-4">
-      <PlayingCardBack />
-      <PlayingCard card={{ rank: 'Joker', suit: 'red' }} />
-      <PlayingCard card={{ rank: 'Joker', suit: 'black' }} />
+      <PlayingCard card={null} />
+      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} />
+      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }} />
       {deck.map((card, index) => (
         <PlayingCard key={index} card={card} />
       ))}
@@ -32,7 +31,7 @@ export const FlipCard = () => {
       <Button onClick={() => setShowCard(!showCard)}>Deal card</Button>
       <Button onClick={() => { setCardHasValue(!cardHasValue) }}>Flip card</Button>
       <div className="flex flex-wrap gap-4">
-        {showCard && <PlayingCard card={cardHasValue ? { rank: 'A', suit: Suit['spades'] } : null} />}
+        {showCard && <PlayingCard card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null} />}
       </div>
     </div>
   )
