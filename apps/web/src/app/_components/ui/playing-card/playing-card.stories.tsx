@@ -24,13 +24,15 @@ export const WholeDeck = () => {
 }
 
 export const FlipCard = () => {
+  const [showCard, setShowCard] = useState(false);
   const [cardHasValue, setCardHasValue] = useState(false);
 
   return (
     <div className="bg-felt-texture p-10 flex flex-col gap-8">
+      <Button onClick={() => setShowCard(!showCard)}>Deal card</Button>
       <Button onClick={() => { setCardHasValue(!cardHasValue) }}>Flip card</Button>
       <div className="flex flex-wrap gap-4">
-        <PlayingCard card={cardHasValue ? { rank: 'A', suit: Suit['spades'] } : null} />
+        {showCard && <PlayingCard card={cardHasValue ? { rank: 'A', suit: Suit['spades'] } : null} />}
       </div>
     </div>
   )
