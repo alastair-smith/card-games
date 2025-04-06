@@ -1,7 +1,8 @@
-import { Suit } from "@/types/cards";
+import { Card, Suit } from "@/types/cards";
 import Game from "./game";
 import { toast } from "@/components/ui/toast";
 import { UserId } from "@/types/entities";
+import { useState } from "react";
 
 export const Turn1 = () => {
   return (
@@ -22,14 +23,18 @@ export const Turn1 = () => {
 }
 
 export const Turn2 = () => {
+  const [card2, setCard2] = useState<Card | null>(null)
   return (
     <div className="bg-felt-texture p-10 flex flex-wrap gap-4 h-screen">
       <Game
-        pickupCard={() => { toast.success('Card picked up!'); }}
+        pickupCard={() => {
+          setCard2({ suit: Suit['spades'], rank: 'Q' });
+          toast.success('Card picked up!');
+        }}
         state={{
           players: [
             { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit['hearts'], rank: '3' } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: null },
+            { userId: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
             { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
           winner: null,

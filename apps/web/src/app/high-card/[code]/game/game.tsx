@@ -35,11 +35,7 @@ export default function HighCardGame({
           <div key={player.userId} className='grid grid-cols-2 gap-2 p-4'>
             <div className="col-start-1">{player.name}{player.isUser && " (You)"}</div>
             <div className="col-start-1">
-              {
-                player.card
-                  ? <PlayingCard card={player.card} />
-                  : <PlayingCardBack onClick={canPickup ? pickupCard : undefined} />
-              }
+              <PlayingCard card={player.card} onClick={canPickup ? pickupCard : undefined} />
             </div>
             {canPickup &&
               <div className="col-start-2">

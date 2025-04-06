@@ -27,9 +27,9 @@ function isPictureCard(rank: Rank): rank is 'A' | 'K' | 'Q' | 'J' {
   return singularRanks.includes(rank);
 }
 
-export function PlayingCard({ card }: { card: Card | null }) {
+export function PlayingCard({ card, className, onClick }: { card: Card | null; className?: string; onClick?: () => void; }) {
   return (
-    <div className="w-40 h-60 [perspective:1000px]">
+    <div onClick={onClick} className={cn("w-40 h-60 [perspective:1000px]", onClick ? 'cursor-pointer' : '', className)}>
       <div
         className={cn(
           'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
@@ -173,17 +173,10 @@ function JokerCard({ color }: { color: Joker['suit'] }) {
   );
 }
 
-export function PlayingCardBack({
-  className,
-  onClick,
-}: {
-  className?: string,
-  onClick?: () => void;
-}) {
+export function PlayingCardBack() {
   return (
     <div
-      onClick={onClick}
-      className={cn("flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]", onClick ? 'cursor-pointer' : '', className)}
+      className="flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]"
     />
   );
 }
