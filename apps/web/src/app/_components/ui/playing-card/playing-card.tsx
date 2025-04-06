@@ -32,7 +32,7 @@ export function PlayingCard({ card }: { card: Card | null }) {
     <div className="w-40 h-60 [perspective:1000px]">
       <div
         className={cn(
-          'relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d]',
+          'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
           card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]'
         )}
       >
