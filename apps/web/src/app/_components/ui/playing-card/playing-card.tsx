@@ -1,4 +1,5 @@
 import { type Card, Joker, Rank, Suit } from "@/types/cards";
+import { cn } from "@/utils/cn";
 import { BotIcon, BotMessageSquareIcon, ClubIcon, DiamondIcon, HeartIcon, ScanFaceIcon, SpadeIcon, SwordsIcon } from "lucide-react";
 
 const suitSymbol = {
@@ -150,8 +151,17 @@ function JokerCard({ color }: { color: Joker['suit'] }) {
   );
 }
 
-export function PlayingCardBack() {
+export function PlayingCardBack({
+  className,
+  onClick,
+}: {
+  className?: string,
+  onClick?: () => void;
+}) {
   return (
-    <div className="flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]" />
+    <div
+      onClick={onClick}
+      className={cn("flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]", onClick ? 'cursor-pointer' : '', className)}
+    />
   );
 }
