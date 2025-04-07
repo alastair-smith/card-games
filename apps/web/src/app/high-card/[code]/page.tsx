@@ -12,7 +12,7 @@ export default async function HighCardPage({ params }: { params: Promise<{ code:
   const game = await api.lobby.getSummary({ code });
 
   // TODO get from state
-  const gameStage = 'LOBBY' as GameStage;
+  const gameStage = 'IN_PROGRESS' as GameStage;
 
   switch (gameStage) {
     case 'LOBBY':
