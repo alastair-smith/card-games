@@ -3,7 +3,7 @@
 import { PlayingCard } from "@/components/ui/playing-card/playing-card";
 import { Player } from "@/server/data/high-card";
 import { GameState } from "@/server/state/game/high-card";
-import { RANK_FULL_NAME, StandardPlayingCard } from "@/types/cards";
+import { RANK_FULL_NAME } from "@/types/cards";
 import { UserId } from "@/types/entities";
 import { useMemo } from "react";
 
@@ -19,7 +19,7 @@ export default function HighCardGameView({
 }: HighCardGameProps) {
   const winner = useMemo(() => {
     if (state.winner) {
-      return state.players.find(player => player.userId === state.winner)
+      return state.players.find(player => player.id === state.winner)
     }
   }, [state.winner]);
 
@@ -29,7 +29,7 @@ export default function HighCardGameView({
         const canPickup = player.isUser && !player.card && (index === 0 || state.players[index - 1]?.card);
 
         return (
-          <div key={player.userId} className='grid grid-cols-2 gap-2 p-4'>
+          <div key={player.id} className='grid grid-cols-2 gap-2 p-4'>
             <div className="col-start-1">{player.name}{player.isUser && " (You)"}</div>
             <div className="col-start-1">
               <PlayingCard card={player.card} onClick={canPickup ? pickupCard : undefined} />

@@ -10,7 +10,7 @@ export type StoredGameState = {
 };
 
 const playerSchema = z.object({
-  userId: userIdSchema,
+  id: userIdSchema,
   name: playerNameSchema,
   card: standardPlayingCardSchema.nullable(),
 });
@@ -18,8 +18,8 @@ const playerSchema = z.object({
 export type Player = z.infer<typeof playerSchema>;
 
 export const gameStateSchema = z.object({
-  players: playerSchema,
-  winner: userIdSchema
+  players: z.array(playerSchema),
+  winner: userIdSchema.nullable()
 })
 
 export const { get: getHighCardState, set: setHighCardState, exists: highCardStateExists } = dataLayer(

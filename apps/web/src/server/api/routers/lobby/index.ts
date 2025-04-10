@@ -1,7 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { getLobbyPlayers, getLobbySummary, lobbySchema } from "@/server/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
-import { getLobbyChannel, subscriber, subscribeToLobbyState } from "@/server/events/lobby";
+import { subscriber } from "@/server/events/connections";
+import { getLobbyChannel, subscribeToLobbyState } from "@/server/events/lobby";
 import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
 import { gameCodeSchema, GameType, GameCode } from "@/types/game";

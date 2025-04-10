@@ -1,11 +1,8 @@
-import Redis from "ioredis";
 import { z } from "zod";
 import { lobbySchema } from "@/server/data/lobby";
 import { GameCode } from "@/types/game";
 import { logger } from "@/utils/logger";
-
-const publisher = new Redis();
-export const subscriber = new Redis();
+import { publisher, subscriber } from "./connections";
 
 export const getLobbyChannel = (code: GameCode | '*'): `lobby:${GameCode | '*'}` => `lobby:${code}`;
 
@@ -16,6 +13,7 @@ export const publishLobbyState = async (code: GameCode, state: z.infer<typeof lo
 };
 
 let subscription = false;
+
 export const subscribeToLobbyState = async () => {
   if (!subscription) {
     subscription = await new Promise((resolve, reject) => {

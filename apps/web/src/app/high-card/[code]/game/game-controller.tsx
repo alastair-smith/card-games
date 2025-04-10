@@ -9,12 +9,14 @@ import { GameState } from "@/server/state/game/high-card";
 export default function HighCardGameController({ code }: { code: GameCode }) {
   const [gameState, setGameState] = useState<GameState>();
 
-  const gameSubscription = api.highCard.subscription.useSubscription({ code },
+  api.highCard.subscription.useSubscription({ code },
     { onData: (data) => { setGameState(data) } }
   );
   const pickupCardMutation = api.highCard.pickupCard.useMutation();
 
-  const pickupCard = () => { };
+  const pickupCard = () => {
+    pickupCardMutation.mutate({ code });
+  };
 
   return (
     !!gameState
