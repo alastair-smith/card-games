@@ -2,7 +2,7 @@
 
 import Lobby from "@/components/lobby/lobby";
 import { api } from "@/trpc/server";
-import HighCardGameController from "./game/game-controller";
+import HighCardGameController from "./_game/game-controller";
 
 type GameStage = 'LOBBY' | 'IN_PROGRESS' | 'FINISHED';
 

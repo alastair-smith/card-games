@@ -5,6 +5,7 @@ import HighCardGameView from "./game-view";
 import { GameCode } from "@/types/game";
 import { api } from "@/trpc/react";
 import { GameState } from "@/server/state/game/high-card";
+import Loading from "./loading";
 
 export default function HighCardGameController({ code }: { code: GameCode }) {
   const [gameState, setGameState] = useState<GameState>();
@@ -21,6 +22,6 @@ export default function HighCardGameController({ code }: { code: GameCode }) {
   return (
     !!gameState
       ? <HighCardGameView state={gameState} pickupCard={pickupCard} />
-      : <div>Loading</div>
+      : <Loading />
   );
 }
