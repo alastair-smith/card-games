@@ -205,9 +205,3 @@ export default function Loading() {
     </div>
   )
 }
-
-// blank card moves into screen
-// card flips
-// card moves off screen
-// loop
-
