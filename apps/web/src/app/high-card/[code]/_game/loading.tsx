@@ -1,7 +1,6 @@
 import { PlayingCard } from "@/components/ui/playing-card/playing-card";
-import { JOKER_RANK, JokerSuit, PlayingCardValue, Rank, Suit } from "@/types/cards";
-import { debounce } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { PlayingCardValue, Rank, Suit } from "@/types/cards";
+import { useEffect, useState } from "react";
 
 const LOADING_TICK_RATE_MS = 300;
 
