@@ -37,3 +37,23 @@ export const gameCodeSchema = z.string()
   .toUpperCase()
   .regex(/^[A-NP-Z1-9]*$/, 'Code should only contain alphanumeric characters.')
   .transform((code: string) => code as GameCode);
+
+export enum GameStage {
+  LOADING = 'LOADING',
+  LOBBY = 'LOBBY',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINISHED = 'FINISHED'
+};
+
+export const gameStageSchema = z.nativeEnum(GameStage);
+
+export enum GameUpdate {
+  KICKED = 'KICKED',
+  LEFT_GAME = 'LEFT_GAME',
+  GAME_UNAVAILABLE = 'GAME_UNAVAILABLE',
+  LOBBY_UPDATE = 'LOBBY_UPDATE',
+  STATE_UPDATE = 'STATE_UPDATE',
+  FINISHED = 'FINISHED'
+}
+
+export const gameUpdateSchema = z.nativeEnum(GameUpdate);

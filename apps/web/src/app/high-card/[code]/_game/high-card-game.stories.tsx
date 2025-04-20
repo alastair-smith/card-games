@@ -1,4 +1,4 @@
-import { PlayingCardValue, Rank, StandardPlayingCard, Suit } from "@/types/cards";
+import { Rank, StandardPlayingCard, Suit } from "@/types/cards";
 import Game from "./game-view";
 import { toast } from "@/components/ui/toast";
 import { UserId } from "@/types/entities";
@@ -11,9 +11,9 @@ export const Turn1 = () => {
         pickupCard={() => { toast.success('Card picked up!'); }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: null },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: null },
-            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+            { id: '1' as UserId, name: 'Alice', isUser: false, card: null },
+            { id: '2' as UserId, name: 'Bob', isUser: true, card: null },
+            { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
           winner: null,
         }}
@@ -33,9 +33,9 @@ export const Turn2 = () => {
         }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
-            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+            { id: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
+            { id: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
+            { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
           winner: null,
         }}
@@ -51,9 +51,9 @@ export const Turn3 = () => {
         pickupCard={() => { toast.success('Card picked up!'); }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
-            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+            { id: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
+            { id: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
+            { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
           winner: null,
         }}
@@ -69,9 +69,9 @@ export const Turn4 = () => {
         pickupCard={() => { toast.success('Card picked up!'); }}
         state={{
           players: [
-            { userId: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
-            { userId: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
-            { userId: '3' as UserId, name: 'Zoe', isUser: false, card: { suit: Suit.CLUBS, rank: Rank.TEN } },
+            { id: '1' as UserId, name: 'Alice', isUser: false, card: { suit: Suit.HEARTS, rank: Rank.THREE } },
+            { id: '2' as UserId, name: 'Bob', isUser: true, card: { suit: Suit.SPADES, rank: Rank.QUEEN } },
+            { id: '3' as UserId, name: 'Zoe', isUser: false, card: { suit: Suit.CLUBS, rank: Rank.TEN } },
           ],
           winner: '2' as UserId,
         }}

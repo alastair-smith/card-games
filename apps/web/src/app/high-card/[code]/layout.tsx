@@ -1,23 +1,22 @@
-import { HydrateClient } from "@/trpc/server";
-import Link from "next/link";
+'use client';
+
+import { GameProvider } from "../_game-context";
 
 export default function SetupLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <HydrateClient>
+    <GameProvider code='123456'>
       <div className="flex min-h-dvh justify-center text-white">
         <div className="flex h-screen w-full max-w-[80rem] flex-col items-center gap-6 px-4">
           <header className="self-start pt-6">
-            <Link href="/">
-              <h1 className="font-bold">Card Games</h1>
-            </Link>
+            <h1 className="font-bold">High Card</h1>
           </header>
           <main className="flex w-full h-full flex-1 flex-col gap-6 pb-6">
             {children}
           </main>
         </div>
       </div>
-    </HydrateClient>
+    </GameProvider>
   );
 }

@@ -4,7 +4,7 @@ import React from 'react'
 import { Toaster } from "../src/app/_components/ui/toast";
 
 export const Provider: GlobalProvider = ({ children, globalState }) => (
-  <div>
+  <div className='bg-[#631818] bg-felt-texture h-screen p-4'>
     <Toaster />
     {children}
   </div>

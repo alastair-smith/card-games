@@ -190,7 +190,7 @@ const loadingState = [
 export default function Loading() {
   const [loadingStateIndex, setLoadingStateIndex] = useState(0);
 
-  const updateCard = useEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       setLoadingStateIndex((loadingStateIndex + 1) % loadingState.length);
     }, LOADING_TICK_RATE_MS);
@@ -201,7 +201,7 @@ export default function Loading() {
       <div className={`duration-300 ${loadingState[loadingStateIndex]?.offScreen ? 'opacity-0' : ''}`}>
         <PlayingCard card={loadingState[loadingStateIndex]?.card ?? null} />
       </div>
-      <span className='text-lg font-semibold'>Loading...</span>
+      <span className='text-lg font-semibold text-white'>Loading...</span>
     </div>
   )
 }
