@@ -1,6 +1,6 @@
 'use client';
 
-import Lobby from "@/app/high-card/[code]/_lobby/lobby";
+import Lobby from "@/app/high-card/[code]/_lobby/lobby.view";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { skipToken } from "@tanstack/react-query";

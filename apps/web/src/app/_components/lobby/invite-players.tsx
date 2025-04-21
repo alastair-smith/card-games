@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "../ui/toast";
 import { Card, CardHeader } from "../ui/card";
+import { cn } from "@/utils/cn";
 
 async function copyUrlToClipboard() {
   const { origin, pathname } = new URL(window.location.href);
@@ -12,20 +13,21 @@ async function copyUrlToClipboard() {
   toast.success("Copied to clipboard.");
 };
 
-export default function InvitePlayers({ code }: { code: GameCode }) {
+// TODO fix spacing on smaller screens
+export default function InvitePlayers({ code, className }: { code: GameCode, className?: string }) {
   return (
-    <Card className='w-fit'>
+    <Card className={cn('w-fit', className)}>
       <CardHeader>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <Input
             placeholder="Code"
-            className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase"
+            className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase flex-grow-[9999] basis-2"
             name="code"
             value={code}
             readOnly
           />
           <Button
-            className="h-auto"
+            className="w-full grow basis-1 h-auto max-w-80"
             onClick={() => {
               void copyUrlToClipboard();
             }}

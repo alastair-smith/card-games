@@ -1,6 +1,6 @@
 import { UserId } from "@/types/entities";
 import { toast } from "../ui/toast";
-import Players from "./players.client";
+import Players from "./players.view";
 
 export const MinPlayersNotMet = () => (
   <Players

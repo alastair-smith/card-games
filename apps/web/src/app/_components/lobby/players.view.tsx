@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 import { useMemo } from "react";
 
-type Player = {
+export type Player = {
   id: UserId;
   name: PlayerName;
   isReady: boolean;
