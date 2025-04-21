@@ -5,7 +5,7 @@ import { Branded } from "./brand";
 export type UserId = Branded<string, "UserId">;
 
 const MIN_NAME_LENGTH = 1;
-const MAX_NAME_LENGTH = 20;
+export const MAX_NAME_LENGTH = 20;
 
 export const userIdSchema = z.string().uuid().transform(
   (value) => value as UserId
