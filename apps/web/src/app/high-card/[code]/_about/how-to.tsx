@@ -11,7 +11,7 @@ function HowToContent() {
 
 export function HowToSection({ className }: { className?: string }) {
   return (
-    <Card className={cn('max-w-reading w-fit min-w-[32rem]', className)}>
+    <Card className={cn('max-w-reading w-fit min-w-full', className)}>
       <CardHeader>How to play High Card</CardHeader>
       <CardContent>
         <HowToContent />

@@ -146,6 +146,7 @@ function getButtonText({
 }
 
 export default function Players({
+  className,
   players,
   minPlayers,
   maxPlayers,
@@ -157,6 +158,7 @@ export default function Players({
   handleKick,
   handleMakeHost,
 }: {
+  className?: string;
   players: Player[];
   minPlayers: number;
   maxPlayers: number;
@@ -186,7 +188,7 @@ export default function Players({
   })
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         Players
       </CardHeader>
