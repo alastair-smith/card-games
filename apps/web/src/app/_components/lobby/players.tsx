@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/trpc/react";
-import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import { CrownIcon, EllipsisVertical } from "lucide-react";
@@ -36,11 +35,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { GameCode } from "@/types/game";
-import { playerNameSchema, UserId } from "@/types/entities";
+import { PlayerName, playerNameSchema, UserId } from "@/types/entities";
 
 type Player = {
   id: UserId;
-  name: string;
+  name: PlayerName;
   isReady: boolean;
   isUser: boolean;
   isHost: boolean;
