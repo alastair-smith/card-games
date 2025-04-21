@@ -28,8 +28,8 @@ export default function Lobby({
   handleMakeHost: (userId: UserId) => void;
 }) {
   return (
-    <div className='flex flex-row justify-center w-full items-center h-full'>
-      <div className="w-full flex flex-row gap-6 justify-center max-w-[80rem]">
+    <div className='flex flex-row justify-center w-full items-center min-h-full'>
+      <div className="w-full flex flex-row flex-wrap gap-6 justify-center max-w-[80rem]">
         <h1 className="sr-only">High Card Lobby</h1>
         <div className='flex flex-col flex-wrap gap-6'>
           <InvitePlayers code={code} />
