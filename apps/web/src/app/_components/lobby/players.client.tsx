@@ -17,7 +17,19 @@ type Player = {
   isHost: boolean;
 };
 
-function PlayerDropdown({ player, userIsHost }: { player: Player; userIsHost: boolean }) {
+function PlayerDropdown({
+  player,
+  userIsHost,
+  handleLeave,
+  handleKick,
+  handleMakeHost,
+}: {
+  player: Player;
+  userIsHost: boolean;
+  handleLeave: (userId: UserId) => void;
+  handleKick: (userId: UserId) => void;
+  handleMakeHost: (userId: UserId) => void;
+}) {
   const showLeave = player.isUser;
   const showKick = userIsHost && !player.isUser;
   const showMakeHost = userIsHost && !player.isHost;
@@ -53,7 +65,7 @@ function PlayerDropdown({ player, userIsHost }: { player: Player; userIsHost: bo
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Continue</AlertDialogAction>
+                <AlertDialogAction onClick={() => handleLeave(player.id)}>Continue</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>}
@@ -77,7 +89,7 @@ function PlayerDropdown({ player, userIsHost }: { player: Player; userIsHost: bo
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Continue</AlertDialogAction>
+              <AlertDialogAction onClick={() => handleKick(player.id)}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>}
@@ -101,7 +113,7 @@ function PlayerDropdown({ player, userIsHost }: { player: Player; userIsHost: bo
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Continue</AlertDialogAction>
+              <AlertDialogAction onClick={() => handleMakeHost(player.id)}>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>}
@@ -141,6 +153,9 @@ export default function Players({
   handleNameChange,
   handleReadyChange,
   handleStartGame,
+  handleLeave,
+  handleKick,
+  handleMakeHost,
 }: {
   players: Player[];
   minPlayers: number;
@@ -153,6 +168,9 @@ export default function Players({
   handleNameChange: () => void;
   handleReadyChange: () => void;
   handleStartGame: () => void;
+  handleLeave: (userId: UserId) => void;
+  handleKick: (userId: UserId) => void;
+  handleMakeHost: (userId: UserId) => void;
 }) {
   const requiredPlayers = Math.max(minPlayers - players.length, 0);
   const optionalPlayers = maxPlayers - (players.length + requiredPlayers);
@@ -214,7 +232,13 @@ export default function Players({
                   />
                 </TableCell>
                 <TableCell>
-                  <PlayerDropdown player={player} userIsHost={userIsHost} />
+                  <PlayerDropdown
+                    player={player}
+                    userIsHost={userIsHost}
+                    handleLeave={handleLeave}
+                    handleKick={handleKick}
+                    handleMakeHost={handleMakeHost}
+                  />
                 </TableCell>
               </TableRow>
             ))}

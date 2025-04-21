@@ -27,6 +27,15 @@ export const MinPlayersNotMet = () => (
     handleStartGame={() => {
       toast.success('game started')
     }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
+    }}
   />
 );
 
@@ -61,6 +70,15 @@ export const MinPlayersMet = () => (
     }}
     handleStartGame={() => {
       toast.success('game started')
+    }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
     }}
   />
 );
@@ -104,6 +122,15 @@ export const MaxPlayers = () => (
     handleStartGame={() => {
       toast.success('game started')
     }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
+    }}
   />
 );
 
@@ -145,6 +172,15 @@ export const SomePlayersReady = () => (
     }}
     handleStartGame={() => {
       toast.success('game started')
+    }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
     }}
   />
 );
@@ -188,6 +224,15 @@ export const AllPlayersReadyIsHost = () => (
     handleStartGame={() => {
       toast.success('game started')
     }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
+    }}
   />
 );
 
@@ -230,6 +275,15 @@ export const AllPlayersReadyIsNotHost = () => (
     handleStartGame={() => {
       toast.success('game started')
     }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
+    }}
   />
 );
 
@@ -258,6 +312,15 @@ export const AllPlayersReadyButNotEnough = () => (
     handleStartGame={() => {
       toast.success('game started')
     }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
+    }}
   />
 )
 
@@ -285,6 +348,15 @@ export const NameError = () => (
     }}
     handleStartGame={() => {
       toast.success('game started')
+    }}
+    handleKick={(id: UserId) => {
+      toast.success(`kicked ${id}`)
+    }}
+    handleLeave={(id: UserId) => {
+      toast.success(`leave ${id}`)
+    }}
+    handleMakeHost={(id: UserId) => {
+      toast.success(`make host ${id}`)
     }}
   />
 );
