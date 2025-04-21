@@ -23,7 +23,11 @@ export const MinPlayersNotMet = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const MinPlayersMet = () => (
@@ -54,7 +58,11 @@ export const MinPlayersMet = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const MaxPlayers = () => (
@@ -92,7 +100,11 @@ export const MaxPlayers = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const SomePlayersReady = () => (
@@ -130,7 +142,11 @@ export const SomePlayersReady = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const AllPlayersReadyIsHost = () => (
@@ -168,7 +184,11 @@ export const AllPlayersReadyIsHost = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const AllPlayersReadyIsNotHost = () => (
@@ -206,7 +226,11 @@ export const AllPlayersReadyIsNotHost = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );
 
 export const AllPlayersReadyButNotEnough = () => (
@@ -230,7 +254,11 @@ export const AllPlayersReadyButNotEnough = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 )
 
 export const NameError = () => (
@@ -254,5 +282,9 @@ export const NameError = () => (
     }}
     handleReadyChange={() => {
       toast.success('ready')
-    }} />
+    }}
+    handleStartGame={() => {
+      toast.success('game started')
+    }}
+  />
 );

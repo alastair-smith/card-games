@@ -140,6 +140,7 @@ export default function Players({
   user,
   handleNameChange,
   handleReadyChange,
+  handleStartGame,
 }: {
   players: Player[];
   minPlayers: number;
@@ -151,6 +152,7 @@ export default function Players({
   };
   handleNameChange: () => void;
   handleReadyChange: () => void;
+  handleStartGame: () => void;
 }) {
   const requiredPlayers = Math.max(minPlayers - players.length, 0);
   const optionalPlayers = maxPlayers - (players.length + requiredPlayers);
@@ -242,7 +244,7 @@ export default function Players({
         </Table>
       </CardContent>
       <CardFooter className='flex gap-4 justify-end'>
-        <Button disabled={buttonText !== 'Start Game'}>
+        <Button disabled={buttonText !== 'Start Game'} onClick={() => handleStartGame()}>
           {buttonText}
         </Button>
       </CardFooter>
