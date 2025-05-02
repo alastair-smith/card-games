@@ -13,12 +13,11 @@ async function copyUrlToClipboard() {
   toast.success("Copied to clipboard.");
 };
 
-// TODO fix spacing on smaller screens
 export default function InvitePlayers({ code, className }: { code: GameCode, className?: string }) {
   return (
     <Card className={cn('w-fit', className)}>
       <CardHeader>
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-3 flex-wrap justify-center">
           <Input
             placeholder="Code"
             className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase flex-grow-[9999] basis-2"
