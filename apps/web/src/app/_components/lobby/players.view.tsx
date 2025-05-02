@@ -192,19 +192,19 @@ export default function Players({
       <CardHeader>
         Players
       </CardHeader>
-      <CardContent className='px-2 sm:px-6'>
+      <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className='hidden sm:flex'>
+            <TableRow>
               <TableHead className="sr-only w-[1ch]">Host</TableHead>
-              <TableHead className="pl-14 flex-1">Name</TableHead>
+              <TableHead className="pl-7">Name</TableHead>
               <TableHead>Ready</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {players.map((player) => (
-              <TableRow key={player.id} className='flex-col sm:flex-row flex'>
+              <TableRow key={player.id}>
                 <TableCell className="w-[1ch]">
                   {player.isHost ? (
                     <>
@@ -215,7 +215,7 @@ export default function Players({
                     ""
                   )}
                 </TableCell>
-                <TableCell className="flex gap-2 flex-1 sm:px-4 px-0">
+                <TableCell className="flex gap-2">
                   {player.isUser ? (
                     <Input value={user.name} onChange={handleNameChange} />
                   ) : (
@@ -224,7 +224,7 @@ export default function Players({
                     </span>
                   )}
                 </TableCell>
-                <TableCell className="before:content-['Ready']">
+                <TableCell>
                   <Switch
                     disabled={!player.isUser}
                     checked={
