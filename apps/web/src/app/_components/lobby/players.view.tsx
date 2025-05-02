@@ -18,12 +18,14 @@ export type Player = {
 };
 
 function PlayerDropdown({
+  className,
   player,
   userIsHost,
   handleLeave,
   handleKick,
   handleMakeHost,
 }: {
+  className?: string;
   player: Player;
   userIsHost: boolean;
   handleLeave: (userId: UserId) => void;
@@ -42,7 +44,7 @@ function PlayerDropdown({
     <DropdownMenu>
       <Button asChild variant="secondary" size="sm">
         <DropdownMenuTrigger>
-          <EllipsisVertical />
+          <EllipsisVertical className={className} />
         </DropdownMenuTrigger>
       </Button>
 
@@ -193,7 +195,64 @@ export default function Players({
         Players
       </CardHeader>
       <CardContent>
-        <Table>
+        <div className="flex flex-col sm:hidden divide-y">
+          {players.map((player) => (
+            <div key={player.id} className="flex flex-col items-start gap-4 py-8">
+              {player.isHost ? (
+                <div className="flex gap-2 items-center">
+                  <CrownIcon size={22} />
+                  <span>Host</span>
+                </div>
+              ) : (
+                ""
+              )}
+              {player.isUser ? (
+                <Input value={user.name} onChange={handleNameChange} />
+              ) : (
+                <div className="w-full overflow-hidden">
+                  <span className="truncate block">
+                    {player.name}
+                  </span>
+                </div>
+              )}
+              <div className="flex gap-2 items-center justify-between w-full">
+                <div className="flex gap-2 items-center">
+                  <span>Ready</span>
+                  <Switch
+                    disabled={!player.isUser}
+                    checked={
+                      player.isUser ? user.isReady : player.isReady
+                    }
+                    onCheckedChange={handleReadyChange}
+                  />
+                </div>
+                <PlayerDropdown
+                  player={player}
+                  userIsHost={userIsHost}
+                  handleLeave={handleLeave}
+                  handleKick={handleKick}
+                  handleMakeHost={handleMakeHost}
+                />
+              </div>
+            </div>
+          ))}
+
+
+          {Array.from({ length: requiredPlayers }).map((_, index) => (
+            <div key={index} className="flex justify-center gap-4 py-4">
+              <UserIcon size={22} />
+              <span>Player required</span>
+            </div>
+          ))}
+
+          {Array.from({ length: optionalPlayers }).map((_, index) => (
+            <div key={index} className='flex justify-center gap-4 opacity-50 py-4'>
+              <UserIcon size={22} />
+              <span>Optional Player</span>
+            </div>
+          ))}
+        </div>
+        <Table className="hidden sm:table">
           <TableHeader>
             <TableRow>
               <TableHead className="sr-only w-[1ch]">Host</TableHead>
