@@ -1,9 +1,9 @@
 'use client';
 
-import { GameCode, GameType } from "@/types/game";
+import { GameCode, GameType, Player } from "@/types/game";
 import { HowToSection } from "../_about/how-to";
 import InvitePlayers from "@/components/lobby/invite-players";
-import Players, { Player } from "@/components/lobby/players.view";
+import Players from "@/components/lobby/players.view";
 import { UserId } from "@/types/entities";
 
 const MIN_PLAYERS = 2;

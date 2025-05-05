@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Branded } from "./brand";
+import { PlayerName, UserId } from "./entities";
 
 export enum GameType {
   HIGH_CARD = 'HIGH_CARD',
@@ -52,8 +53,16 @@ export enum GameUpdate {
   LEFT_GAME = 'LEFT_GAME',
   GAME_UNAVAILABLE = 'GAME_UNAVAILABLE',
   LOBBY_UPDATE = 'LOBBY_UPDATE',
-  STATE_UPDATE = 'STATE_UPDATE',
+  GAME_STATE_UPDATE = 'GAME_STATE_UPDATE',
   FINISHED = 'FINISHED'
 }
 
 export const gameUpdateSchema = z.nativeEnum(GameUpdate);
+
+export type Player = {
+  id: UserId;
+  name: PlayerName;
+  isReady: boolean;
+  isUser: boolean;
+  isHost: boolean;
+};

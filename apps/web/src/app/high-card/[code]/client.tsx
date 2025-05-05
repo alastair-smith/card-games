@@ -48,7 +48,7 @@ export default function HighCard({ code }: { code: GameCode }) {
           setLobby(newGameState.lobby);
           return;
 
-        case GameUpdate.STATE_UPDATE:
+        case GameUpdate.GAME_STATE_UPDATE:
           setState(newGameState.state);
           return;
 
@@ -63,8 +63,8 @@ export default function HighCard({ code }: { code: GameCode }) {
   });
 
   switch (stage) {
-    case 'LOBBY':
-      return (<Lobby lobby={lobby} code={code} />);
+    case 'LOBBY': case 'FINISHED':
+      return (<Lobby code={code} />);
     case 'IN_PROGRESS':
       return (<HighCardGame state={state} />);
     case 'LOADING':
