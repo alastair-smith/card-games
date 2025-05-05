@@ -6,7 +6,8 @@ import { useState } from "react";
 import { skipToken } from "@tanstack/react-query";
 import { GameCode, GameStage, GameUpdate } from "@/types/game";
 import { toast } from "@/components/ui/toast";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import Loading from "./loading";
 
 export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
@@ -66,6 +67,8 @@ export default function HighCard({ code }: { code: GameCode }) {
       return (<Lobby lobby={lobby} code={code} />);
     case 'IN_PROGRESS':
       return (<HighCardGame state={state} />);
+    case 'LOADING':
+      return <Loading />;
     default:
       return <div>Error</div>
   }
