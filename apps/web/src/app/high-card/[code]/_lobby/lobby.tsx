@@ -18,10 +18,14 @@ export default function Lobby({
   code: GameCode,
   players: Player[]
 }) {
-  const [user, setUser] = useState({
-    isReady: false,
-    name: '',
-    nameError: ''
+  const [user, setUser] = useState(() => {
+    const currentPlayer = players.find(player => player.isUser);
+
+    return {
+      isReady: currentPlayer?.isReady ?? false,
+      name: currentPlayer?.name ?? '',
+      nameError: ''
+    };
   });
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
