@@ -29,13 +29,13 @@ export default function Lobby({
 }) {
   return (
     <div className='flex flex-row justify-center w-full items-center min-h-full'>
-      <div className="w-full flex flex-row flex-wrap gap-6 justify-center max-w-[80rem]">
+      <div className="w-full flex flex-row flex-wrap gap-3 justify-center max-w-[80rem]">
         <h1 className="sr-only">High Card Lobby</h1>
-        <div className='flex flex-col flex-wrap gap-6 max-w-[30rem]'>
+        <div className='flex flex-col gap-3 min-w-[20rem] flex-1 basis-[30rem]'>
           <InvitePlayers code={code} className="w-full" />
           <HowToSection className='flex-1 w-full' />
         </div>
-        <Players className='flex-1' minPlayers={MIN_PLAYERS} maxPlayers={MAX_PLAYERS} {...playerProps} />
+        <Players className='flex-1 min-w-[20rem] basis-[30rem]' minPlayers={MIN_PLAYERS} maxPlayers={MAX_PLAYERS} {...playerProps} />
       </div>
     </div>
   )

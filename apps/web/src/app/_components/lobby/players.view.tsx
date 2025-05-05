@@ -241,7 +241,7 @@ export default function Players({
           {Array.from({ length: requiredPlayers }).map((_, index) => (
             <div key={index} className="flex justify-center gap-4 py-4">
               <UserIcon size={22} />
-              <span>Player required</span>
+              <span>Required player</span>
             </div>
           ))}
 
@@ -309,7 +309,7 @@ export default function Players({
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
-                    <span>Player required</span>
+                    <span>Required player</span>
                   </div>
                 </TableCell>
               </TableRow>
