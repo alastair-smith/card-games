@@ -15,6 +15,11 @@ const config = {
     ],
   },
   poweredByHeader: false,
+  serverExternalPackages: [
+    'sequelize',
+    'pino',
+    'pino-pretty',
+  ]
 };
 
 export default config;

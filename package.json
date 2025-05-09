@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run --log-prefix=none dev",
     "predev": "pnpm run background-services",
     "lint": "turbo run lint",
     "background-services": "docker compose up -d",
