@@ -6,7 +6,7 @@
   "scripts": {
     "build": "next build",
     "check": "next lint && tsc --noEmit",
-    "dev": "concurrently --kill-others 'pnpm dev:app' 'pnpm dev:stories'",
+    "dev": "concurrently --kill-others --names 'app,stories' 'pnpm dev:app' 'pnpm dev:stories'",
     "dev:app": "node --env-file .env ./src/server.js",
     "dev:stories": "ladle serve",
     "lint": "next lint",
