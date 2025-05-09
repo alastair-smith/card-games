@@ -5,7 +5,7 @@ import { getHighCardChannel, subscribeToHighCard } from "@/server/events/high-ca
 import { GameState } from "@/server/state/game/high-card";
 import { Rank, Suit } from "@/types/cards";
 import { UserId } from "@/types/entities";
-import { gameCodeSchema } from "@/types/game";
+import { gameCodeSchema, GameUpdate, HighCardGameState, Player } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -24,26 +24,53 @@ export const highCardRouter = createTRPCRouter({
     // state:event emit the update
   }),
 
-  subscription: protectedProcedure.input(z.object({
+  gameState: protectedProcedure.input(z.object({
     code: gameCodeSchema
-  })).subscription(async function* ({ input: { code }, ctx: { userId } }): AsyncGenerator<GameState> {
-    // TODO check user is in game
+  })).subscription(async function* ({ input: { code }, ctx: { userId } }): AsyncGenerator<{
+    update: GameUpdate;
+    players: Player[];
+    state: HighCardGameState;
+  }> {
+    // get current game state data
 
-    const messageQueue: GameState[] = [];
+    // deal with kicked/left/not available
 
-    await subscribeToHighCard();
+    // if lobby state
+
+    // join game if not in it
+
+    // yield current lobby state
+
+    // subscribe to lobby state
+
+    // proceed to game state once game started
+
+    // if game state
+
+    // yield current game state
+
+    // subscribe to game state
+
+    // unsubscribe when game ends
+
+    // below is old code but in the working pattern for a subscription
+
+    const messageQueue: LobbySubscription[] = [];
+
+    await subscribeToLobbyState();
 
     function handler(_pattern: string, channel: string, message: string) {
-      if (channel === getHighCardChannel(code)) {
+      if (channel === getLobbyChannel(code)) {
         const parsedMessage = JSON.parse(message);
-        const messageData = gameStateSchema.safeParse(parsedMessage);
+        const messageData = lobbySchema.safeParse(parsedMessage);
 
         if (messageData.success) {
           const players = messageData.data.players.map((player) => ({
             ...player,
+            isHost: player.id === messageData.data.host,
             isUser: player.id === userId
           }));
-          messageQueue.push({ ...messageData.data, players });
+          messageQueue.push({ players });
         } else {
           console.error('Invalid message format:', messageData.error);
         }
@@ -75,69 +102,5 @@ export const highCardRouter = createTRPCRouter({
       subscriber.off('pmessage', handler);
       console.log('unsubscribed')
     }
-    // state: check user is in game
-
-    // subscribe to the game state
-
-    // yield {
-    //   players: [{
-    //     userId: "1" as UserId,
-    //     name: "Player 1",
-    //     card: null,
-    //     isUser: false,
-    //   }, {
-    //     userId: "2" as UserId,
-    //     name: "Player 2",
-    //     card: null,
-    //     isUser: true,
-    //   }],
-    //   winner: null,
-    // };
-
-
-    // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    // yield {
-    //   players: [{
-    //     userId: "1" as UserId,
-    //     name: "Player 1",
-    //     card: {
-    //       suit: Suit.HEARTS,
-    //       rank: Rank.FOUR
-    //     },
-    //     isUser: false,
-    //   }, {
-    //     userId: "2" as UserId,
-    //     name: "Player 2",
-    //     card: null,
-    //     isUser: true,
-    //   }],
-    //   winner: null,
-    // };
-
-    // await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    // yield {
-    //   players: [{
-    //     userId: "1" as UserId,
-    //     name: "Player 1",
-    //     card: {
-    //       suit: Suit.HEARTS,
-    //       rank: Rank.FOUR
-    //     },
-    //     isUser: false,
-    //   }, {
-    //     userId: "2" as UserId,
-    //     name: "Player 2",
-    //     card: {
-    //       suit: Suit.DIAMONDS,
-    //       rank: Rank.SIX
-    //     },
-    //     isUser: true,
-    //   }],
-    //   winner: "2" as UserId,
-    // };
-
-    // return;
   })
 });

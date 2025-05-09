@@ -96,18 +96,6 @@ export const lobbyRouter = createTRPCRouter({
       await updatePlayer({ userId, ...input });
     }),
 
-  setReadyStatus: protectedProcedure
-    .input(
-      z.object({
-        ready: z.boolean(),
-      }),
-    )
-    .mutation((opts) => {
-      return {
-        ready: opts.input.ready,
-      };
-    }),
-
   getPlayers: protectedProcedure
     .input(
       z.object({

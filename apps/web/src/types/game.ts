@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { Branded } from "./brand";
 import { PlayerName, UserId } from "./entities";
+import { StandardPlayingCard } from "./cards";
 
 export enum GameType {
   HIGH_CARD = 'HIGH_CARD',
@@ -65,4 +66,18 @@ export type Player = {
   isReady: boolean;
   isUser: boolean;
   isHost: boolean;
+};
+
+export type HighCardGameState = {
+  winnners: {
+    name: PlayerName;
+    isPlayer: boolean;
+    card: StandardPlayingCard
+  }[];
+  hands: {
+    player: PlayerName;
+    playerId: UserId;
+    card: StandardPlayingCard | null;
+    isUser: boolean;
+  }[];
 };

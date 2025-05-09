@@ -1,10 +1,10 @@
 'use client';
 
-import Lobby from "@/app/high-card/[code]/_lobby/lobby.view";
+import Lobby from "@/app/high-card/[code]/_lobby/lobby";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { skipToken } from "@tanstack/react-query";
-import { GameCode, GameStage, GameUpdate } from "@/types/game";
+import { GameCode, GameStage, GameUpdate, HighCardGameState, Player } from "@/types/game";
 import { toast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Loading from "./loading";
@@ -13,10 +13,10 @@ export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
 
   const [stage, setStage] = useState<GameStage>(GameStage.LOADING);
-  const [lobby, setLobby] = useState<Lobby | null>(null);
-  const [state, setState] = useState<GameState | null>(null);
+  const [players, setPlayers] = useState<Player[] | null>(null);
+  const [state, setState] = useState<HighCardGameState | null>(null);
 
-  const x = api.lobby.subscribe.useSubscription(stage === GameStage.FINISHED ? skipToken : { code }, {
+  api.highCard.gameState.useSubscription(stage === GameStage.FINISHED ? skipToken : { code }, {
     onStarted: () => {
       console.log(`Subscription to game ${code} started`)
     },
@@ -45,7 +45,7 @@ export default function HighCard({ code }: { code: GameCode }) {
           return;
 
         case GameUpdate.LOBBY_UPDATE:
-          setLobby(newGameState.lobby);
+          setPlayers(newGameState.players);
           return;
 
         case GameUpdate.GAME_STATE_UPDATE:
@@ -62,14 +62,13 @@ export default function HighCard({ code }: { code: GameCode }) {
     },
   });
 
-  switch (stage) {
-    case 'LOBBY': case 'FINISHED':
-      return (<Lobby code={code} />);
-    case 'IN_PROGRESS':
-      return (<HighCardGame state={state} />);
-    case 'LOADING':
-      return <Loading />;
-    default:
-      return <div>Error</div>
+  if (stage === GameStage.LOADING || players === null || state === null) {
+    return <Loading />;
   }
+
+  if (stage === GameStage.LOBBY) {
+    return <Lobby code={code} players={players} />;
+  }
+
+  return <HighCardGame state={state} />
 };

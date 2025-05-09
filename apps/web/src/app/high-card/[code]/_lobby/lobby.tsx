@@ -29,10 +29,10 @@ export default function Lobby({
   });
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
-  const startGameMutation = api.lobby.startGame.useMutation();
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
   const kickPlayerMutation = api.lobby.kickPlayer.useMutation();
   const makeHostMutation = api.lobby.makeHost.useMutation();
+  const startGameMutation = api.highCard.startGame.useMutation();
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
