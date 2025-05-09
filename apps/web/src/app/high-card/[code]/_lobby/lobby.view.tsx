@@ -1,7 +1,7 @@
 'use client';
 
-import { GameCode, GameType, Player } from "@/types/game";
-import { HowToSection } from "../_about/how-to";
+import { GameCode, Player } from "@/types/game";
+import { HowToSection } from "@/app/high-card/[code]/_about/how-to";
 import InvitePlayers from "@/components/lobby/invite-players";
 import Players from "@/components/lobby/players.view";
 import { UserId } from "@/types/entities";
