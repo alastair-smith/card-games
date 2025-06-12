@@ -1,7 +1,16 @@
 import { GameCode } from "@/types/game"
-import Lobby from "./lobby.view"
+import Lobby, { LobbyProps } from "./lobby.view"
 import { UserId } from "@/types/entities"
-import { toast } from "sonner"
+import { action } from "@ladle/react"
+
+const handlers = {
+  handleNameChange: action('handleNameChange'),
+  handleReadyChange: action('handleReadyChange'),
+  handleStartGame: action('handleStartGame'),
+  handleKick: action('handleKick'),
+  handleLeave: action('handleLeave'),
+  handleMakeHost: action('handleMakeHost')
+} as const satisfies Partial<LobbyProps>;
 
 export const HighCardLobby = () => {
   return <Lobby
@@ -18,23 +27,6 @@ export const HighCardLobby = () => {
       name: "Frank",
       nameError: ''
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 };

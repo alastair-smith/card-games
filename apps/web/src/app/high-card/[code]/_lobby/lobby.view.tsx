@@ -9,10 +9,7 @@ import { UserId } from "@/types/entities";
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 10;
 
-export default function Lobby({
-  code,
-  ...playerProps
-}: {
+export type LobbyProps = {
   code: GameCode;
   players: Player[];
   user: {
@@ -20,13 +17,18 @@ export default function Lobby({
     name: string;
     nameError: string;
   };
-  handleNameChange: () => void;
-  handleReadyChange: () => void;
+  handleNameChange: (name: string) => void;
+  handleReadyChange: (readyStatus: boolean) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
-}) {
+};
+
+export default function Lobby({
+  code,
+  ...playerProps
+}: LobbyProps) {
   return (
     <div className='flex flex-row justify-center w-full items-center min-h-full'>
       <div className="w-full flex flex-row flex-wrap gap-3 justify-center max-w-[80rem]">
