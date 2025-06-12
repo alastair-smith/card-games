@@ -5,7 +5,7 @@ import { subscriber } from "@/server/events/connections";
 import { getLobbyChannel, subscribeToLobbyState } from "@/server/events/lobby";
 import { createGame, joinGame, updatePlayer } from "@/server/state/game/high-card";
 import { playerNameSchema, UserId } from "@/types/entities";
-import { gameCodeSchema, GameType, GameCode } from "@/types/game";
+import { gameCodeSchema, GameType } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

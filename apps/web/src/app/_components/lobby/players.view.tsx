@@ -140,6 +140,24 @@ function getButtonText({
   return 'Awaiting Host'
 }
 
+export type PlayersProps = {
+  className?: string;
+  players: Player[];
+  minPlayers: number;
+  maxPlayers: number;
+  user: {
+    isReady: boolean;
+    name: string;
+    nameError: string;
+  };
+  handleNameChange: (name: string) => void;
+  handleReadyChange: (readyStatus: boolean) => void;
+  handleStartGame: () => void;
+  handleLeave: (userId: UserId) => void;
+  handleKick: (userId: UserId) => void;
+  handleMakeHost: (userId: UserId) => void;
+};
+
 export default function Players({
   className,
   players,
@@ -152,23 +170,7 @@ export default function Players({
   handleLeave,
   handleKick,
   handleMakeHost,
-}: {
-  className?: string;
-  players: Player[];
-  minPlayers: number;
-  maxPlayers: number;
-  user: {
-    isReady: boolean;
-    name: string;
-    nameError: string;
-  };
-  handleNameChange: () => void;
-  handleReadyChange: () => void;
-  handleStartGame: () => void;
-  handleLeave: (userId: UserId) => void;
-  handleKick: (userId: UserId) => void;
-  handleMakeHost: (userId: UserId) => void;
-}) {
+}: PlayersProps) {
   const requiredPlayers = Math.max(minPlayers - players.length, 0);
   const optionalPlayers = maxPlayers - (players.length + requiredPlayers);
 
@@ -200,7 +202,7 @@ export default function Players({
                 ""
               )}
               {player.isUser ? (
-                <Input value={user.name} onChange={handleNameChange} />
+                <Input value={user.name} onChange={(e) => handleNameChange(e.target.value)} />
               ) : (
                 <div className="w-full overflow-hidden">
                   <span className="truncate block">
@@ -269,7 +271,7 @@ export default function Players({
                 </TableCell>
                 <TableCell className="flex gap-2">
                   {player.isUser ? (
-                    <Input value={user.name} onChange={handleNameChange} />
+                    <Input value={user.name} onChange={(e) => handleNameChange(e.target.value)} />
                   ) : (
                     <span className="border border-transparent px-3">
                       {player.name}

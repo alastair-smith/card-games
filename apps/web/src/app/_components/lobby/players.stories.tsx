@@ -1,6 +1,16 @@
 import { MAX_NAME_LENGTH, PlayerName, UserId } from "@/types/entities";
-import { toast } from "../ui/toast";
-import Players from "./players.view";
+import Players, { type PlayersProps } from "./players.view";
+
+import { action } from '@ladle/react'
+
+const handlers = {
+  handleNameChange: action('handleNameChange'),
+  handleReadyChange: action('handleReadyChange'),
+  handleStartGame: action('handleStartGame'),
+  handleKick: action('handleKick'),
+  handleLeave: action('handleLeave'),
+  handleMakeHost: action('handleMakeHost'),
+} as const satisfies Partial<PlayersProps>;
 
 export const MinPlayersNotMet = () => (
   <Players
@@ -18,24 +28,7 @@ export const MinPlayersNotMet = () => (
       name: "Frank",
       nameError: ''
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -62,24 +55,7 @@ export const MinPlayersMet = () => (
       name: "Roz",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -113,24 +89,7 @@ export const MaxPlayers = () => (
       name: "Roz",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -164,24 +123,7 @@ export const SomePlayersReady = () => (
       name: "Frank",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -215,24 +157,7 @@ export const AllPlayersReadyIsHost = () => (
       name: "Frank",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -266,24 +191,7 @@ export const AllPlayersReadyIsNotHost = () => (
       name: "Roz",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -303,24 +211,7 @@ export const AllPlayersReadyButNotEnough = () => (
       name: "Frank",
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 )
 
@@ -340,24 +231,7 @@ export const NameError = () => (
       name: "",
       nameError: "Min length not met"
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 );
 
@@ -393,23 +267,6 @@ export const LongPlayerNames = () => (
       name: longName,
       nameError: ""
     }}
-    handleNameChange={() => {
-      toast.success('name changed')
-    }}
-    handleReadyChange={() => {
-      toast.success('ready')
-    }}
-    handleStartGame={() => {
-      toast.success('game started')
-    }}
-    handleKick={(id: UserId) => {
-      toast.success(`kicked ${id}`)
-    }}
-    handleLeave={(id: UserId) => {
-      toast.success(`leave ${id}`)
-    }}
-    handleMakeHost={(id: UserId) => {
-      toast.success(`make host ${id}`)
-    }}
+    {...handlers}
   />
 )
