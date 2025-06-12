@@ -3,7 +3,7 @@ import { protectedProcedure } from "../../trpc";
 import { GameType } from "@/types/game";
 import { createGame } from "@/server/state/game/high-card";
 
-export default protectedProcedure
+export const create = protectedProcedure
   .input(z.object({
     gameType: z.nativeEnum(GameType),
   }))

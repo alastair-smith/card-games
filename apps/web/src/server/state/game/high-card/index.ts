@@ -42,7 +42,7 @@ export const joinGame = async ({ code, userId }: { code: GameCode, userId: UserI
   return updatedLobby;
 }
 
-export const updatePlayer = async ({ code, userId, field, value }: { code: GameCode; userId: UserId; field: 'name'; value: string } | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
+export const updatePlayerState = async ({ code, userId, field, value }: { code: GameCode; userId: UserId; field: 'name'; value: string } | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
   const lobby = await getLobbyPlayers({ code });
 
   const playerInGame = lobby.players.some(({ id }) => id === userId);

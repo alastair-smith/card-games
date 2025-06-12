@@ -5,7 +5,7 @@ import { getLobbySummary } from "@/server/data/lobby";
 import { DataServiceError, DataServiceErrorCode } from "@/server/data/redis";
 import { TRPCError } from "@trpc/server";
 
-export default protectedProcedure
+export const getSummary = protectedProcedure
   .input(z.object({
     code: gameCodeSchema,
   }))
