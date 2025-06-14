@@ -8,15 +8,17 @@ import { GameCode, GameStage, GameUpdate, HighCardGameState, Player } from "@/ty
 import { toast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Loading from "./loading";
+import HighCardGameController from "./_game/game-controller";
+import { GameState } from "@/server/state/game/high-card";
 
 export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
 
   const [stage, setStage] = useState<GameStage>(GameStage.LOADING);
   const [players, setPlayers] = useState<Player[] | null>(null);
-  const [state, setState] = useState<HighCardGameState | null>(null);
+  const [state, setState] = useState<GameState | null>(null);
 
-  api.highCard.gameState.useSubscription(stage === GameStage.FINISHED ? skipToken : { code }, {
+  api.highCard.state.useSubscription(stage === GameStage.FINISHED ? skipToken : { code }, {
     onStarted: () => {
       console.log(`Subscription to game ${code} started`)
     },
@@ -70,5 +72,5 @@ export default function HighCard({ code }: { code: GameCode }) {
     return <Lobby code={code} players={players} />;
   }
 
-  return <HighCardGame state={state} />
+  return <HighCardGameController code={code} state={state} />
 };

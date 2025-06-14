@@ -1,27 +1,15 @@
 'use client';
 
-import { useState } from "react";
 import HighCardGameView from "./game-view";
 import { GameCode } from "@/types/game";
 import { api } from "@/trpc/react";
 import { GameState } from "@/server/state/game/high-card";
-import Loading from "../../../_components/loading";
 
-export default function HighCardGameController({ code }: { code: GameCode }) {
-  const [gameState, setGameState] = useState<GameState>();
-
-  api.highCard.subscription.useSubscription({ code },
-    { onData: (data) => { setGameState(data) } }
-  );
+export default function HighCardGameController({ code, state }: { code: GameCode, state: GameState }) {
   const pickupCardMutation = api.highCard.pickupCard.useMutation();
 
-  const pickupCard = () => {
-    pickupCardMutation.mutate({ code });
-  };
-
-  return (
-    !!gameState
-      ? <HighCardGameView state={gameState} pickupCard={pickupCard} />
-      : <Loading />
-  );
+  return <HighCardGameView
+    state={state}
+    pickupCard={() => { pickupCardMutation.mutate({ code }); }}
+  />
 }
