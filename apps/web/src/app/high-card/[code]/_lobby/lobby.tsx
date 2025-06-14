@@ -79,11 +79,11 @@ export default function Lobby({
     handleLeave={() => {
       leaveGameMutation.mutate({ code });
     }}
-    handleKick={(userId: UserId) => {
-      kickPlayerMutation.mutate({ userId, code });
+    handleKick={(playerId: UserId) => {
+      kickPlayerMutation.mutate({ playerId, code });
     }}
-    handleMakeHost={(userId: UserId) => {
-      makeHostMutation.mutate({ userId, code });
+    handleMakeHost={(playerId: UserId) => {
+      makeHostMutation.mutate({ playerId, code });
     }}
   />;
 }

@@ -1,15 +1,12 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { gameStateSchema } from "@/server/data/high-card";
 import { subscriber } from "@/server/events/connections";
-import { getHighCardChannel, subscribeToHighCard } from "@/server/events/high-card";
-import { GameState } from "@/server/state/game/high-card";
-import { Rank, Suit } from "@/types/cards";
-import { UserId } from "@/types/entities";
 import { gameCodeSchema, GameUpdate, HighCardGameState, Player } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { startGame } from "./start-game";
 
 export const highCardRouter = createTRPCRouter({
+  startGame: startGame,
   pickupCard: protectedProcedure.input(z.object({
     code: gameCodeSchema
   })).mutation(({ input: { code }, ctx: { userId } }) => {
