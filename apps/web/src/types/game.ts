@@ -52,7 +52,8 @@ export const gameStageSchema = z.nativeEnum(GameStage);
 export enum GameUpdate {
   KICKED = 'KICKED',
   LEFT_GAME = 'LEFT_GAME',
-  GAME_UNAVAILABLE = 'GAME_UNAVAILABLE',
+  GAME_NOT_FOUND = 'GAME_NOT_FOUND',
+  LOBBY_FULL = 'LOBBY_FULL',
   LOBBY_UPDATE = 'LOBBY_UPDATE',
   GAME_STATE_UPDATE = 'GAME_STATE_UPDATE',
   FINISHED = 'FINISHED'

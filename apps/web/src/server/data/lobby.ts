@@ -21,6 +21,8 @@ export const lobbySchema = z.object({
   }))
 });
 
+export type Lobby = z.infer<typeof lobbySchema>;
+
 export const { get: getLobbyPlayers, set: setLobbyPlayers } = dataLayer(
   ({ code }: { code: GameCode }) => `lobby:${code}`,
   lobbySchema

@@ -4,7 +4,7 @@ import Lobby from "@/app/high-card/[code]/_lobby/lobby";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { skipToken } from "@tanstack/react-query";
-import { GameCode, GameStage, GameUpdate, HighCardGameState, Player } from "@/types/game";
+import { GameCode, GameStage, GameUpdate, Player } from "@/types/game";
 import { toast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Loading from "./loading";
@@ -36,7 +36,7 @@ export default function HighCard({ code }: { code: GameCode }) {
           router.push('/');
           return;
 
-        case GameUpdate.GAME_UNAVAILABLE:
+        case GameUpdate.GAME_NOT_FOUND:
           setStage(GameStage.FINISHED);
           toast.warning('This game is not available!');
           router.push('/');
@@ -54,8 +54,15 @@ export default function HighCard({ code }: { code: GameCode }) {
           setState(newGameState.state);
           return;
 
+        case GameUpdate.LOBBY_FULL:
+          setStage(GameStage.FINISHED);
+          toast.warning('The lobby is full!');
+          router.push('/');
+          return;
+
         default:
-          console.error(new Error('Unexpected game update type.'))
+          const exhaustiveCheck: never = newGameState;
+          console.error(new Error(`Unexpected game update type: ${exhaustiveCheck}`))
           return;
       }
     },
