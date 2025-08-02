@@ -1,13 +1,13 @@
-import { Player } from "@/server/data/high-card";
+import { type Player } from "@/server/data/high-card";
 import { getLobbyPlayers, lobbyExists, setLobbyPlayers, setLobbySummary } from "@/server/data/lobby";
 import { publishLobbyState } from "@/server/events/lobby";
 import { type UserId } from "@/types/entities";
-import { GAME_CODE_LENGTH, GameCode, GameType } from "@/types/game";
+import { GAME_CODE_LENGTH, type GameCode, GameType } from "@/types/game";
 import { generatePlayerName } from "@/utils/name-generator";
 
 const charSet = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 
-const randomChar = () => charSet[Math.floor(Math.random() * charSet.length)] as string;
+const randomChar = () => charSet[Math.floor(Math.random() * charSet.length)]!;
 
 const generateLobbyCode = (): GameCode => {
   return Array.from({ length: GAME_CODE_LENGTH }, randomChar).join('') as GameCode;

@@ -14,9 +14,14 @@ export const publishLobbyState = async (code: GameCode, state: z.infer<typeof lo
 
 let subscription = false;
 
+/**
+ * A subscription is required in order to listen to the messages.
+ * The same subscription can be shared between multiple games.
+ */
 export const subscribeToLobbyState = async () => {
   if (!subscription) {
     subscription = await new Promise((resolve, reject) => {
+      // subscribe for all lobbies
       subscriber.psubscribe(getLobbyChannel('*'), (error, count) => {
         if (error) {
           reject(new Error(`Error subscribing to stream: ${error.message}`, { cause: error }));

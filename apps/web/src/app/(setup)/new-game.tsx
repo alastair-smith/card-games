@@ -16,7 +16,6 @@ import { toast } from "@/components/ui/toast";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 
 type GameProps = {
   gameType: GameType;
@@ -49,9 +48,9 @@ const games: GameProps[] = [
 function Game({ gameType, image }: GameProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { mutate: create } = api.lobby.create.useMutation({
+  const { mutate: createGame } = api.lobby.create.useMutation({
     onSuccess: ({ code }) => {
-      router.push(`/lobby/${code}`);
+      router.push(`${gameURL[gameType]}/${code}`);
     },
     onError: (err) => {
       setIsLoading(false);
@@ -59,7 +58,6 @@ function Game({ gameType, image }: GameProps) {
     },
   });
   const name = gameDisplayName[gameType];
-  const url = gameURL[gameType];
 
   return (
     <Card>
@@ -72,11 +70,18 @@ function Game({ gameType, image }: GameProps) {
       </CardContent>
 
       <CardFooter className="justify-end gap-3">
-        <Button variant="secondary">View Rules</Button>
-        <Button asChild disabled={isLoading}>
-          <Link href={url}>
+        <Button variant="secondary" disabled>View Rules</Button>
+        <Button
+          disabled={true}
+          isLoading={true}
+          onClick={() => {
+            setIsLoading(true);
+            createGame({
+              gameType
+            })
+          }}
+        >
             Launch Game
-          </Link>
         </Button>
       </CardFooter>
     </Card>

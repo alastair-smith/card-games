@@ -4,7 +4,7 @@ import { subscriber } from "@/server/events/connections";
 import { getLobbyChannel, subscribeToLobbyState } from "@/server/events/lobby";
 import { GameState, joinGame } from "@/server/state/game/high-card";
 import { UserId } from "@/types/entities";
-import { gameCodeSchema, GameUpdate, Player } from "@/types/game";
+import { GameCode, gameCodeSchema, GameUpdate, Player } from "@/types/game";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -18,6 +18,12 @@ enum GameStatus {
   USER_IN_GAME = 'USER_IN_GAME',
   USER_NOT_IN_GAME = 'USER_NOT_IN_GAME',
 }
+
+function getHighCardGameStateChannel(code: GameCode): `high-card:${GameCode}` {
+  return `high-card:${code}`;
+}
+
+const TICK_RATE_MS = 100;
 
 type StateSubscription = {
   update:
@@ -45,9 +51,12 @@ const addAdditionalPlayerFields = (players: Lobby['players'], userId: UserId, ho
   }));
 };
 
-// should do multiple yields on joining a running game that you are already in (i.e. refreshing the page)
+// TODO move this function elsewhere
+function subscriptionKey(code: GameCode): `high-card:${GameCode}` {
+  return `high-card:${code}`;
+}
 
-// TODO create flow chart of game states
+// should do multiple yields on joining a running game that you are already in (i.e. refreshing the page)
 
 export const state = protectedProcedure.input(z.object({
   code: gameCodeSchema
@@ -71,9 +80,11 @@ export const state = protectedProcedure.input(z.object({
       return;
     }
     case GameStatus.GAME_FINISHED_USER_IN_GAME: {
+      const gameState = await getGameState(code, userId)
+
       yield {
         update: GameUpdate.FINISHED,
-        state: {} as GameState // TODO: pass state
+        state: gameState
       }
       return;
     }
@@ -118,7 +129,12 @@ export const state = protectedProcedure.input(z.object({
      * GAME STATUSES
      * ===================================== */
     case GameStatus.USER_IN_GAME: {
-      const x = 'x'
+      const gameState = await getGameState(code, userId);
+
+      yield {
+        update: GameUpdate.GAME_STATE_UPDATE,
+        state: gameState
+      }
       break;
     }
     default: {
@@ -127,34 +143,7 @@ export const state = protectedProcedure.input(z.object({
     }
   }
 
-
-  // get current game state data
-
-  // deal with kicked/left/not available
-
-  // if lobby state
-
-  // join game if not in it
-
-  // yield current lobby state
-
-  // subscribe to lobby state
-
-  // proceed to game state once game started
-
-  // if game state
-
-  // yield current game state
-
-  // subscribe to game state
-
-  // unsubscribe when game ends
-
-  // below is old code but in the working pattern for a subscription
-
-  const messageQueue: LobbySubscription[] = [];
-
-  await subscribeToLobbyState();
+  const messageQueue: StateSubscription[] = [];
 
   function handler(_pattern: string, channel: string, message: string) {
     if (channel === getLobbyChannel(code)) {
@@ -167,12 +156,21 @@ export const state = protectedProcedure.input(z.object({
           isHost: player.id === messageData.data.host,
           isUser: player.id === userId
         }));
-        messageQueue.push({ players });
+        messageQueue.push({
+          update: GameUpdate.LOBBY_UPDATE,
+          players
+        });
       } else {
         console.error('Invalid message format:', messageData.error);
       }
+    } else if (channel === getHighCardGameStateChannel(code)) {
+
     }
+
+    // if game event
   }
+
+  await subscribeToLobbyState();
 
   subscriber.on('pmessage', handler)
 
@@ -184,7 +182,7 @@ export const state = protectedProcedure.input(z.object({
           yield message;
         }
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for new messages
+        await new Promise((resolve) => setTimeout(resolve, TICK_RATE_MS));
       }
     }
   } catch (error) {
