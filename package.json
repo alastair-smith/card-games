@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "background-services": "docker compose up -d",
     "build": "turbo run build",
     "dev": "turbo run --log-prefix=none dev",
-    "predev": "pnpm run background-services",
-    "lint": "turbo run lint",
-    "background-services": "docker compose up -d",
+    "dev:tmux": "./scripts/start-tmux.sh",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
+    "lint": "turbo run lint",
+    "predev": "pnpm run background-services",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5"
   },
