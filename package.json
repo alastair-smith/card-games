@@ -7,14 +7,13 @@
     "build": "turbo run build",
     "dev": "turbo run --log-prefix=none dev",
     "dev:tmux": "./scripts/start-tmux.sh",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
+    "format:check": "biome check",
+    "format:write": "biome check --write",
     "lint": "turbo run lint",
-    "predev": "pnpm run background-services",
-    "prettier": "^3.3.2",
-    "prettier-plugin-tailwindcss": "^0.6.5"
+    "predev": "pnpm run background-services"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.3",
     "tsx": "^4.19.3",
     "turbo": "^2.4.4"
   },
