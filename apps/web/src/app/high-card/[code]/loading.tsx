@@ -1,3 +1,3 @@
 'use client';
 
-export { default } from "@/components/loading";
+export { default } from '~/components/loading';

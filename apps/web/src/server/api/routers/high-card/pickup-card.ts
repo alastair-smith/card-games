@@ -1,11 +1,13 @@
-import { gameCodeSchema } from "@/types/game";
-import { protectedProcedure } from "@/server/api/trpc";
-import { z } from "zod";
+import { z } from 'zod';
+import { protectedProcedure } from '~/server/api/trpc';
+import { gameCodeSchema } from '~/types/game';
 
 export const pickupCard = protectedProcedure
-  .input(z.object({
-    code: gameCodeSchema,
-  }))
+  .input(
+    z.object({
+      code: gameCodeSchema,
+    }),
+  )
   .mutation(async ({ input: { code }, ctx: { userId } }) => {
     return;
-  })
+  });

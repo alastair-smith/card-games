@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /* [---------------- Suits ----------------] */
 
@@ -6,26 +6,26 @@ export enum Suit {
   CLUBS = 'clubs',
   DIAMONDS = 'diamonds',
   HEARTS = 'hearts',
-  SPADES = 'spades'
-};
+  SPADES = 'spades',
+}
 
 export const SUITS = [
   Suit.CLUBS,
   Suit.DIAMONDS,
   Suit.HEARTS,
-  Suit.SPADES
+  Suit.SPADES,
 ] as const satisfies Suit[];
 
 export const suitSchema = z.nativeEnum(Suit);
 
 export enum JokerSuit {
   RED = 'red',
-  BLACK = 'black'
+  BLACK = 'black',
 }
 
 export const JOKER_SUITS = [
   JokerSuit.RED,
-  JokerSuit.BLACK
+  JokerSuit.BLACK,
 ] as const satisfies JokerSuit[];
 
 export const jokerSuitSchema = z.nativeEnum(JokerSuit);
@@ -40,20 +40,20 @@ export const suitColor = {
 /* [---------------- Ranks ----------------] */
 
 export enum Rank {
-  'TWO' = 2,
-  'THREE' = 3,
-  'FOUR' = 4,
-  'FIVE' = 5,
-  'SIX' = 6,
-  'SEVEN' = 7,
-  'EIGHT' = 8,
-  'NINE' = 9,
-  'TEN' = 10,
-  'JACK' = 11,
-  'QUEEN' = 12,
-  'KING' = 13,
-  'ACE' = 14
-};
+  TWO = 2,
+  THREE = 3,
+  FOUR = 4,
+  FIVE = 5,
+  SIX = 6,
+  SEVEN = 7,
+  EIGHT = 8,
+  NINE = 9,
+  TEN = 10,
+  JACK = 11,
+  QUEEN = 12,
+  KING = 13,
+  ACE = 14,
+}
 
 export const RANK_DISPLAY = {
   [Rank.TWO]: '2',
@@ -68,7 +68,7 @@ export const RANK_DISPLAY = {
   [Rank.JACK]: 'J',
   [Rank.QUEEN]: 'Q',
   [Rank.KING]: 'K',
-  [Rank.ACE]: 'A'
+  [Rank.ACE]: 'A',
 } as const satisfies Record<Rank, string>;
 
 export const RANK_FULL_NAME = {
@@ -84,8 +84,8 @@ export const RANK_FULL_NAME = {
   [Rank.JACK]: 'Jack',
   [Rank.QUEEN]: 'Queen',
   [Rank.KING]: 'King',
-  [Rank.ACE]: 'Ace'
-}
+  [Rank.ACE]: 'Ace',
+};
 
 export const rankSchema = z.nativeEnum(Rank);
 
@@ -102,17 +102,17 @@ export const RANKS = [
   Rank.JACK,
   Rank.QUEEN,
   Rank.KING,
-  Rank.ACE
+  Rank.ACE,
 ] as const satisfies Rank[];
 
 export const pictureCardRank = [
   Rank.JACK,
   Rank.QUEEN,
   Rank.KING,
-  Rank.ACE
+  Rank.ACE,
 ] as const satisfies Rank[];
 
-export type PictureCardRank = typeof pictureCardRank[number];
+export type PictureCardRank = (typeof pictureCardRank)[number];
 
 export const numberCardRank = [
   Rank.TWO,
@@ -123,10 +123,10 @@ export const numberCardRank = [
   Rank.SEVEN,
   Rank.EIGHT,
   Rank.NINE,
-  Rank.TEN
+  Rank.TEN,
 ] as const satisfies Rank[];
 
-export type NumberCardRank = typeof numberCardRank[number];
+export type NumberCardRank = (typeof numberCardRank)[number];
 
 export const JOKER_RANK = 'JOKER';
 
@@ -134,24 +134,25 @@ export const jokerRankSchema = z.literal(JOKER_RANK);
 
 export type JokerRank = z.infer<typeof jokerRankSchema>;
 
-
 /* [---------------- Cards ----------------] */
 
 export const standardPlayingCardSchema = z.object({
   suit: suitSchema,
-  rank: rankSchema
+  rank: rankSchema,
 });
 
 export type StandardPlayingCard = z.infer<typeof standardPlayingCardSchema>;
 
 export const JokerSchema = z.object({
   suit: jokerSuitSchema,
-  rank: jokerRankSchema
+  rank: jokerRankSchema,
 });
 
 export type Joker = z.infer<typeof JokerSchema>;
 
-export const playingCardValueSchema = z.union([standardPlayingCardSchema, JokerSchema]);
+export const playingCardValueSchema = z.union([
+  standardPlayingCardSchema,
+  JokerSchema,
+]);
 
 export type PlayingCardValue = z.infer<typeof playingCardValueSchema>;
-

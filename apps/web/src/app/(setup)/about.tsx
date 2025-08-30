@@ -1,14 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/utils/cn";
-import Link from "next/link";
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { cn } from '~/utils/cn';
 
 export function About({ className }: { className?: string }) {
   return (
-    <Card className={cn("min-w-80", className)}>
+    <Card className={cn('min-w-80', className)}>
       <CardHeader>
         <CardTitle>About</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-2">
+      <CardContent className='flex flex-col gap-2'>
         <p>
           This is an online platform to play multiplayer card games where the
           dealing and scoring is managed for you.
@@ -21,7 +21,7 @@ export function About({ className }: { className?: string }) {
         </p>
 
         <p>
-          You can find out more about this website <Link href="#">here</Link>.
+          You can find out more about this website <Link href='#'>here</Link>.
         </p>
       </CardContent>
     </Card>

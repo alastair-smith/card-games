@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { type z } from "zod";
+import type { z } from 'zod';
 
 // data connection
 export const redis = new Redis();
@@ -7,15 +7,18 @@ export const redis = new Redis();
 export enum DataServiceErrorCode {
   NOT_FOUND = 'NOT_FOUND',
   INVALID_KEY = 'INVALID_KEY',
-  SERVER_ERROR = 'SERVER_ERROR'
-};
+  SERVER_ERROR = 'SERVER_ERROR',
+}
 
 export class DataServiceError extends Error {
   static name: 'DataServiceError';
 
   code: DataServiceErrorCode;
 
-  constructor(message: string, opts: { cause?: unknown, code: DataServiceErrorCode }) {
+  constructor(
+    message: string,
+    opts: { cause?: unknown; code: DataServiceErrorCode },
+  ) {
     super(message, opts.cause ? { cause: opts.cause } : undefined);
 
     this.code = opts.code;
@@ -23,7 +26,13 @@ export class DataServiceError extends Error {
 }
 
 /** Generate typed redis data interaction functions with validation layers. */
-export const dataLayer = <T extends z.ZodType, P extends Record<string, string>>(getKey: (keyArgs: P) => string, schema: T) => ({
+export const dataLayer = <
+  T extends z.ZodType,
+  P extends Record<string, string>,
+>(
+  getKey: (keyArgs: P) => string,
+  schema: T,
+) => ({
   exists: async (keyArgs: P) => {
     const key = getKey(keyArgs);
     const exists = await redis.exists(key);
@@ -38,13 +47,18 @@ export const dataLayer = <T extends z.ZodType, P extends Record<string, string>>
     const raw = await redis.get(key);
 
     if (!raw) {
-      throw new DataServiceError(`Data not found for key: ${key}`, { code: DataServiceErrorCode.NOT_FOUND });
+      throw new DataServiceError(`Data not found for key: ${key}`, {
+        code: DataServiceErrorCode.NOT_FOUND,
+      });
     }
 
     const parsed = schema.safeParse(JSON.parse(raw));
 
     if (parsed.error) {
-      throw new DataServiceError(`GetDataError for key: ${key} is invalid.`, { cause: parsed.error, code: DataServiceErrorCode.INVALID_KEY });
+      throw new DataServiceError(`GetDataError for key: ${key} is invalid.`, {
+        cause: parsed.error,
+        code: DataServiceErrorCode.INVALID_KEY,
+      });
     }
 
     return parsed.data;
@@ -56,12 +70,14 @@ export const dataLayer = <T extends z.ZodType, P extends Record<string, string>>
     const parsed = schema.safeParse(data);
 
     if (parsed.error) {
-      throw new DataServiceError(`SetData for key: ${key} is invalid.`, { cause: parsed.error, code: DataServiceErrorCode.INVALID_KEY });
+      throw new DataServiceError(`SetData for key: ${key} is invalid.`, {
+        cause: parsed.error,
+        code: DataServiceErrorCode.INVALID_KEY,
+      });
     }
 
     await redis.set(key, JSON.stringify(parsed.data));
 
     return parsed.data;
   },
-})
-
+});

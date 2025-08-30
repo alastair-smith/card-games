@@ -1,4 +1,4 @@
-import { HowToModal, HowToSection } from "./how-to";
+import { HowToModal, HowToSection } from './how-to';
 
 export function Modal() {
   return <HowToModal />;

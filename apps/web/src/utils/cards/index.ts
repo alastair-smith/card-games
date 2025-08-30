@@ -1,5 +1,13 @@
-import { JOKER_RANK, JokerRank, pictureCardRank, PictureCardRank, PlayingCardValue, Rank, Suit } from "@/types/cards";
+import {
+  type PictureCardRank,
+  type PlayingCardValue,
+  pictureCardRank,
+} from '~/types/cards';
 
-export const isPictureCard = (card: PlayingCardValue): card is PlayingCardValue & { rank: PictureCardRank } => {
-  return pictureCardRank.some((pictureCardRank) => pictureCardRank === card.rank);
-}
+export const isPictureCard = (
+  card: PlayingCardValue,
+): card is PlayingCardValue & { rank: PictureCardRank } => {
+  return pictureCardRank.some(
+    (pictureCardRank) => pictureCardRank === card.rank,
+  );
+};

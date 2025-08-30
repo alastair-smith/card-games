@@ -1,15 +1,23 @@
-import { z } from "zod";
-import { gameStateSchema } from "@/server/data/high-card";
-import { GameCode } from "@/types/game";
-import { logger } from "@/utils/logger";
-import { publisher, subscriber } from "./connections";
+import type { z } from 'zod';
+import { gameStateSchema } from '~/server/data/high-card';
+import type { GameCode } from '~/types/game';
+import { logger } from '~/utils/logger';
+import { publisher, subscriber } from './connections';
 
-export const getHighCardChannel = (code: GameCode | '*'): `high-card:${GameCode | '*'}` => `high-card:${code}`;
+export const getHighCardChannel = (
+  code: GameCode | '*',
+): `high-card:${GameCode | '*'}` => `high-card:${code}`;
 
-export const publishHighCard = async (code: GameCode, state: z.infer<typeof gameStateSchema>) => {
+export const publishHighCard = async (
+  code: GameCode,
+  state: z.infer<typeof gameStateSchema>,
+) => {
   const validatedState = gameStateSchema.parse(state);
 
-  await publisher.publish(getHighCardChannel(code), JSON.stringify(validatedState));
+  await publisher.publish(
+    getHighCardChannel(code),
+    JSON.stringify(validatedState),
+  );
 };
 
 let subscription = false;
@@ -19,12 +27,18 @@ export const subscribeToHighCard = async () => {
     subscription = await new Promise((resolve, reject) => {
       subscriber.psubscribe(getHighCardChannel('*'), (error, count) => {
         if (error) {
-          reject(new Error(`Error subscribing to stream: ${error.message}`, { cause: error }));
+          reject(
+            new Error(`Error subscribing to stream: ${error.message}`, {
+              cause: error,
+            }),
+          );
         } else {
-          logger.info(`Subscribed to ${getHighCardChannel('*')}, count: ${count}`);
+          logger.info(
+            `Subscribed to ${getHighCardChannel('*')}, count: ${count}`,
+          );
           resolve(true);
         }
       });
     });
   }
-}
+};

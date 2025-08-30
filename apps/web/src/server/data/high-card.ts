@@ -1,12 +1,12 @@
-import { type GameCode } from '@/types/game';
 import { z } from 'zod';
-import { dataLayer } from '@/server/data/redis';
-import { playerNameSchema, UserId, userIdSchema } from '@/types/entities';
-import { standardPlayingCardSchema } from '@/types/cards';
+import { dataLayer } from '~/server/data/redis';
+import { standardPlayingCardSchema } from '~/types/cards';
+import { playerNameSchema, type UserId, userIdSchema } from '~/types/entities';
+import type { GameCode } from '~/types/game';
 
 export type StoredGameState = {
-  players: Player[],
-  winner: UserId | null,
+  players: Player[];
+  winner: UserId | null;
 };
 
 const playerSchema = z.object({
@@ -19,10 +19,14 @@ export type Player = z.infer<typeof playerSchema>;
 
 export const gameStateSchema = z.object({
   players: z.array(playerSchema),
-  winner: userIdSchema.nullable()
-})
+  winner: userIdSchema.nullable(),
+});
 
-export const { get: getHighCardState, set: setHighCardState, exists: highCardStateExists } = dataLayer(
+export const {
+  get: getHighCardState,
+  set: setHighCardState,
+  exists: highCardStateExists,
+} = dataLayer(
   ({ code }: { code: GameCode }) => `high-card:${code}`,
   gameStateSchema,
 );

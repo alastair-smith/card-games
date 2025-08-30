@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { Branded } from "./brand";
-import { PlayerName, UserId } from "./entities";
-import { StandardPlayingCard } from "./cards";
+import { z } from 'zod';
+import type { Branded } from './brand';
+import type { StandardPlayingCard } from './cards';
+import type { PlayerName, UserId } from './entities';
 
 export enum GameType {
   HIGH_CARD = 'HIGH_CARD',
@@ -9,7 +9,7 @@ export enum GameType {
   SHITHEAD = 'SHITHEAD',
   FOOL = 'FOOL',
   YANIV = 'YANIV',
-};
+}
 
 export const gameTypeSchema = z.nativeEnum(GameType);
 
@@ -33,9 +33,13 @@ export type GameCode = Branded<string, 'GameCode'>;
 
 export const GAME_CODE_LENGTH = 6;
 
-export const gameCodeSchema = z.string()
+export const gameCodeSchema = z
+  .string()
   .trim()
-  .length(GAME_CODE_LENGTH, `Code should be ${GAME_CODE_LENGTH} characters long.`)
+  .length(
+    GAME_CODE_LENGTH,
+    `Code should be ${GAME_CODE_LENGTH} characters long.`,
+  )
   .toUpperCase()
   .regex(/^[A-NP-Z1-9]*$/, 'Code should only contain alphanumeric characters.')
   .transform((code: string) => code as GameCode);
@@ -44,8 +48,8 @@ export enum GameStage {
   LOADING = 'LOADING',
   LOBBY = 'LOBBY',
   IN_PROGRESS = 'IN_PROGRESS',
-  FINISHED = 'FINISHED'
-};
+  FINISHED = 'FINISHED',
+}
 
 export const gameStageSchema = z.nativeEnum(GameStage);
 
@@ -56,7 +60,7 @@ export enum GameUpdate {
   LOBBY_FULL = 'LOBBY_FULL',
   LOBBY_UPDATE = 'LOBBY_UPDATE',
   GAME_STATE_UPDATE = 'GAME_STATE_UPDATE',
-  FINISHED = 'FINISHED'
+  FINISHED = 'FINISHED',
 }
 
 export const gameUpdateSchema = z.nativeEnum(GameUpdate);
@@ -73,7 +77,7 @@ export type HighCardGameState = {
   winnners: {
     name: PlayerName;
     isPlayer: boolean;
-    card: StandardPlayingCard
+    card: StandardPlayingCard;
   }[];
   hands: {
     player: PlayerName;

@@ -1,6 +1,6 @@
-import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { lobbyRouter } from "@/server/api/routers/lobby";
-import { highCardRouter } from "./routers/high-card";
+import { lobbyRouter } from '~/server/api/routers/lobby';
+import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
+import { highCardRouter } from './routers/high-card';
 
 /**
  * This is the primary router for your server.

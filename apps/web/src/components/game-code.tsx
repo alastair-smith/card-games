@@ -1,4 +1,4 @@
-import { Input } from "@/components/ui/input";
+import { Input } from '~/components/ui/input';
 
 export function GameCode({
   code,
@@ -9,11 +9,11 @@ export function GameCode({
 }) {
   return (
     <Input
-      placeholder="Code"
-      className="h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase"
-      name="code"
+      placeholder='Code'
+      className='h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase'
+      name='code'
       data-1p-ignore
-      autoComplete="off"
+      autoComplete='off'
       value={code}
       onChange={
         setCode

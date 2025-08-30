@@ -8,7 +8,7 @@
     "dev": "turbo run --log-prefix=none dev",
     "dev:tmux": "./scripts/start-tmux.sh",
     "format:check": "biome check",
-    "format:write": "biome check --write",
+    "format:fix": "biome check --write",
     "lint": "turbo run lint",
     "predev": "pnpm run background-services"
   },

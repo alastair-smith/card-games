@@ -1,7 +1,7 @@
-import { createTRPCRouter } from "@/server/api/trpc";
-import { startGame } from "./start-game";
-import { pickupCard } from "./pickup-card";
-import { state } from "./state";
+import { createTRPCRouter } from '~/server/api/trpc';
+import { pickupCard } from './pickup-card';
+import { startGame } from './start-game';
+import { state } from './state';
 
 export const highCardRouter = createTRPCRouter({
   startGame,

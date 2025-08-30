@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/utils/cn";
-import { z } from "zod";
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Form,
   FormControl,
@@ -14,21 +14,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-import { gameCodeSchema } from "@/types/game";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { gameCodeSchema } from '~/types/game';
+import { cn } from '~/utils/cn';
 
 const joinSchema = z.object({
-  code: gameCodeSchema
-})
+  code: gameCodeSchema,
+});
 
 export function JoinGame({ className }: { className?: string }) {
   const router = useRouter();
   const form = useForm<z.infer<typeof joinSchema>>({
     resolver: zodResolver(joinSchema),
     defaultValues: {
-      code: "",
+      code: '',
     },
   });
 
@@ -37,30 +37,30 @@ export function JoinGame({ className }: { className?: string }) {
   };
 
   return (
-    <Card className={cn("flex flex-col", className)}>
+    <Card className={cn('flex flex-col', className)}>
       <CardHeader>
         <CardTitle>Join Game</CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col justify-center">
+      <CardContent className='flex flex-1 flex-col justify-center'>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-1.5"
+            className='flex flex-col gap-1.5'
           >
             <FormField
               control={form.control}
-              name="code"
+              name='code'
               render={({ field }) => (
                 <FormItem>
                   <FormItem>
-                    <FormLabel className="sr-only">Code</FormLabel>
+                    <FormLabel className='sr-only'>Code</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Code"
-                        className="h-20 min-w-60 text-center font-mono text-4xl uppercase"
+                        placeholder='Code'
+                        className='h-20 min-w-60 text-center font-mono text-4xl uppercase'
                         data-1p-ignore
-                        autoComplete="off"
+                        autoComplete='off'
                         {...field}
                       />
                     </FormControl>
@@ -70,7 +70,7 @@ export function JoinGame({ className }: { className?: string }) {
               )}
             ></FormField>
 
-            <Button type="submit">Join</Button>
+            <Button type='submit'>Join</Button>
           </form>
         </Form>
       </CardContent>

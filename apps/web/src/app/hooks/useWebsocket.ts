@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
 
 // TODO swap to wss protocol
-const WEBSOCKET_URL = "ws://localhost:3001/socket";
+const WEBSOCKET_URL = 'ws://localhost:3001/socket';
 
 export const useWebSocket = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -13,7 +13,7 @@ export const useWebSocket = () => {
     const socket = new WebSocket(`${WEBSOCKET_URL}?token=123`);
     setSocket(socket);
 
-    socket.addEventListener("message", (event) => {
+    socket.addEventListener('message', (event) => {
       const message = z.string().parse(event.data);
       setMessages((prevMessages: string[]) => [...prevMessages, message]);
     });
