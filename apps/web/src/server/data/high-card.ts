@@ -3,6 +3,7 @@ import { dataLayer } from '~/server/data/redis';
 import { standardPlayingCardSchema } from '~/types/cards';
 import { playerNameSchema, type UserId, userIdSchema } from '~/types/entities';
 import type { GameCode } from '~/types/game';
+import { gameStageSchema } from '~/types/games/high-card';
 
 export type StoredGameState = {
   players: Player[];
@@ -19,6 +20,7 @@ export type Player = z.infer<typeof playerSchema>;
 
 export const gameStateSchema = z.object({
   players: z.array(playerSchema),
+  stage: gameStageSchema,
   winner: userIdSchema.nullable(),
 });
 

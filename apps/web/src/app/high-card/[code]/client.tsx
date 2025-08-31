@@ -9,7 +9,7 @@ import type { GameState } from '~/server/state/game/high-card';
 import { api } from '~/trpc/react';
 import {
   type GameCode,
-  GameStage,
+  GameStatus,
   GameUpdate,
   type Player,
 } from '~/types/game';
@@ -19,12 +19,12 @@ import Loading from './loading';
 export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
 
-  const [stage, setStage] = useState<GameStage>(GameStage.LOADING);
+  const [status, setStatus] = useState<GameStatus>(GameStatus.LOADING);
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [state, setState] = useState<GameState | null>(null);
 
   api.highCard.state.useSubscription(
-    stage === GameStage.FINISHED ? skipToken : { code },
+    status === GameStatus.FINISHED ? skipToken : { code },
     {
       onStarted: () => {
         console.log(`Subscription to game ${code} started`);
@@ -32,25 +32,25 @@ export default function HighCard({ code }: { code: GameCode }) {
       onData: (newGameState) => {
         switch (newGameState.update) {
           case GameUpdate.KICKED:
-            setStage(GameStage.FINISHED);
+            setStatus(GameStatus.FINISHED);
             toast.warning('You have been kicked from the game!');
             router.push('/');
             return;
 
           case GameUpdate.LEFT_GAME:
-            setStage(GameStage.FINISHED);
+            setStatus(GameStatus.FINISHED);
             toast.info('You have left the game!');
             router.push('/');
             return;
 
           case GameUpdate.GAME_NOT_FOUND:
-            setStage(GameStage.FINISHED);
+            setStatus(GameStatus.FINISHED);
             toast.warning('This game is not available!');
             router.push('/');
             return;
 
           case GameUpdate.FINISHED:
-            setStage(GameStage.FINISHED);
+            setStatus(GameStatus.FINISHED);
             return;
 
           case GameUpdate.LOBBY_UPDATE:
@@ -62,7 +62,7 @@ export default function HighCard({ code }: { code: GameCode }) {
             return;
 
           case GameUpdate.LOBBY_FULL:
-            setStage(GameStage.FINISHED);
+            setStatus(GameStatus.FINISHED);
             toast.warning('The lobby is full!');
             router.push('/');
             return;
@@ -82,11 +82,11 @@ export default function HighCard({ code }: { code: GameCode }) {
     },
   );
 
-  if (stage === GameStage.LOADING || players === null || state === null) {
+  if (status === GameStatus.LOADING || players === null || state === null) {
     return <Loading />;
   }
 
-  if (stage === GameStage.LOBBY) {
+  if (status === GameStatus.LOBBY) {
     return <Lobby code={code} players={players} />;
   }
 

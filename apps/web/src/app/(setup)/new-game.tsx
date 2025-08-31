@@ -69,11 +69,9 @@ function Game({ gameType, image }: GameProps) {
       </CardContent>
 
       <CardFooter className='justify-end gap-3'>
-        <Button variant='secondary' disabled>
-          View Rules
-        </Button>
+        <Button variant='secondary'>View Rules</Button>
         <Button
-          disabled={true}
+          disabled={isLoading}
           isLoading={true}
           onClick={() => {
             setIsLoading(true);

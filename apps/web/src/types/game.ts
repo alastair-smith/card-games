@@ -44,14 +44,14 @@ export const gameCodeSchema = z
   .regex(/^[A-NP-Z1-9]*$/, 'Code should only contain alphanumeric characters.')
   .transform((code: string) => code as GameCode);
 
-export enum GameStage {
+export enum GameStatus {
   LOADING = 'LOADING',
   LOBBY = 'LOBBY',
   IN_PROGRESS = 'IN_PROGRESS',
   FINISHED = 'FINISHED',
 }
 
-export const gameStageSchema = z.nativeEnum(GameStage);
+export const gameStatusSchema = z.nativeEnum(GameStatus);
 
 export enum GameUpdate {
   KICKED = 'KICKED',

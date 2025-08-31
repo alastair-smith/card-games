@@ -51,7 +51,7 @@ const getGameStatus = async (
   code: string,
   userId: string,
 ): Promise<GameStatus> => {
-  return Promise.resolve(GameStatus.GAME_NOT_FOUND);
+  return Promise.resolve(GameStatus.USER_IN_LOBBY);
 };
 
 const addAdditionalPlayerFields = (

@@ -11,11 +11,11 @@ export const startGame = protectedProcedure
     }),
   )
   .mutation(async ({ input: { code }, ctx: { userId } }) => {
-    try {
-      // TODO implement start game logic
-      // This should check if the user is the host, if the game is ready to start, etc.
-      return;
-    }
+    // try {
+    // TODO implement start game logic
+    // This should check if the user is the host, if the game is ready to start, etc.
+    return null;
+    // }
     // } catch (error: unknown) {
     //   if (
     //     error instanceof DataServiceError &&
