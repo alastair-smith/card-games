@@ -41,15 +41,13 @@ export const dataLayer = <
   },
 
   /** Retrieve from redis */
-  get: async (keyArgs: P): Promise<z.infer<T>> => {
+  get: async (keyArgs: P): Promise<z.infer<T> | null> => {
     const key = getKey(keyArgs);
 
     const raw = await redis.get(key);
 
     if (!raw) {
-      throw new DataServiceError(`Data not found for key: ${key}`, {
-        code: DataServiceErrorCode.NOT_FOUND,
-      });
+      return null;
     }
 
     const parsed = schema.safeParse(JSON.parse(raw));

@@ -1,7 +1,12 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
+import {
+  getHighCardState,
+  type GameState as HighCardGameState,
+} from '~/server/data/high-card';
 import { getLobbyPlayers, type Lobby, lobbySchema } from '~/server/data/lobby';
+import { DataServiceError, DataServiceErrorCode } from '~/server/data/redis';
 import { subscriber } from '~/server/events/connections';
 import { getLobbyChannel, subscribeToLobbyState } from '~/server/events/lobby';
 import { type GameState, joinGame } from '~/server/state/game/high-card';
@@ -12,17 +17,7 @@ import {
   gameCodeSchema,
   type Player,
 } from '~/types/game';
-
-enum GameStatus {
-  GAME_NOT_FOUND = 'GAME_NOT_FOUND',
-  GAME_FINISHED_USER_NOT_IN_GAME = 'GAME_FINISHED_USER_NOT_IN_GAME',
-  GAME_FINISHED_USER_IN_GAME = 'GAME_FINISHED_USER_IN_GAME',
-  USER_IN_LOBBY = 'USER_IN_LOBBY',
-  NO_ROOM_IN_LOBBY = 'NO_ROOM_IN_LOBBY',
-  USER_NOT_IN_LOBBY = 'USER_NOT_IN_LOBBY',
-  USER_IN_GAME = 'USER_IN_GAME',
-  USER_NOT_IN_GAME = 'USER_NOT_IN_GAME',
-}
+import { GameStage, MAX_PLAYERS } from '~/types/games/high-card';
 
 function getHighCardGameStateChannel(code: GameCode): `high-card:${GameCode}` {
   return `high-card:${code}`;
@@ -46,13 +41,6 @@ type StateSubscription =
       update: GameUpdate.GAME_STATE_UPDATE | GameUpdate.FINISHED;
       state: GameState;
     };
-
-const getGameStatus = async (
-  code: string,
-  userId: string,
-): Promise<GameStatus> => {
-  return Promise.resolve(GameStatus.USER_IN_LOBBY);
-};
 
 const addAdditionalPlayerFields = (
   players: Lobby['players'],
@@ -83,41 +71,70 @@ export const state = protectedProcedure
     input: { code },
     ctx: { userId },
   }): AsyncGenerator<StateSubscription> {
-    const gameStatus = await getGameStatus(code, userId);
+    const initialState = await getHighCardState({ code });
 
-    switch (gameStatus) {
+    if (!initialState) {
+      return {
+        update: GameUpdate.GAME_NOT_FOUND,
+      };
+    }
+
+    switch (initialState.stage) {
       /** ====================================
        * TERMINATING STATUSES
        * ===================================== */
-      case GameStatus.GAME_NOT_FOUND: {
-        yield {
+      case GameStage.FINISHED: {
+        if (initialState.players.some((user) => user.id === userId)) {
+          return {
+            update: GameUpdate.FINISHED,
+            state: initialState,
+          };
+        }
+        return {
           update: GameUpdate.GAME_NOT_FOUND,
         };
-        return;
       }
-      case GameStatus.GAME_FINISHED_USER_NOT_IN_GAME: {
-        yield {
-          update: GameUpdate.GAME_NOT_FOUND,
-        };
-        return;
-      }
-      case GameStatus.GAME_FINISHED_USER_IN_GAME: {
-        const gameState = await getGameState(code, userId);
+      case GameStage.LOBBY: {
+        const lobby = await getLobbyPlayers({ code });
 
+        if (!lobby) {
+          throw new TRPCError({
+            message: `Lobby not found for code: ${code}`,
+            code: 'INTERNAL_SERVER_ERROR',
+          });
+        }
+
+        if (lobby.players.some(user => user.id === userId) {
+          yield {
+            update: GameUpdate.LOBBY_UPDATE,
+            players: addAdditionalPlayerFields(lobby.players, userId, lobby.host),
+          };
+          break
+        }
+        if (lobby.players.length === MAX_PLAYERS) {
+          return {
+            update: GameUpdate.LOBBY_FULL,
+          };
+        }
+
+        const { players, host } = await joinGame({
+          code,
+          userId,
+        });
         yield {
-          update: GameUpdate.FINISHED,
-          state: gameState,
+          update: GameUpdate.LOBBY_UPDATE,
+          players: addAdditionalPlayerFields(players, userId, host),
         };
-        return;
+        break;
       }
-      case GameStatus.NO_ROOM_IN_LOBBY: {
+
+      case GamePlayerStatus.NO_ROOM_IN_LOBBY: {
         yield {
           update: GameUpdate.LOBBY_FULL,
         };
         return;
       }
-      case GameStatus.USER_NOT_IN_GAME: {
-        const x = gameStatus;
+      case GamePlayerStatus.USER_NOT_IN_GAME: {
         yield {
           update: GameUpdate.GAME_NOT_FOUND,
         };
@@ -127,7 +144,7 @@ export const state = protectedProcedure
       /** ====================================
        * LOBBY STATUSES
        * ===================================== */
-      case GameStatus.USER_IN_LOBBY: {
+      case GamePlayerStatus.USER_IN_LOBBY: {
         const { players, host } = await getLobbyPlayers({ code });
         yield {
           update: GameUpdate.LOBBY_UPDATE,
@@ -135,7 +152,7 @@ export const state = protectedProcedure
         };
         break;
       }
-      case GameStatus.USER_NOT_IN_LOBBY: {
+      case GamePlayerStatus.USER_NOT_IN_LOBBY: {
         const { players, host } = await joinGame({
           code,
           userId,
@@ -150,17 +167,15 @@ export const state = protectedProcedure
       /** ====================================
        * GAME STATUSES
        * ===================================== */
-      case GameStatus.USER_IN_GAME: {
-        const gameState = await getGameState(code, userId);
-
+      case GamePlayerStatus.USER_IN_GAME: {
         yield {
           update: GameUpdate.GAME_STATE_UPDATE,
-          state: gameState,
+          state: initialState,
         };
         break;
       }
       default: {
-        const exhaustiveCheck: never = gameStatus;
+        const exhaustiveCheck: never = gamePlayerStatus;
         throw new Error(`Unexpected game status: ${exhaustiveCheck}`);
       }
     }

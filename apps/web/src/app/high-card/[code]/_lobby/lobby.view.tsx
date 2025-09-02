@@ -5,9 +5,7 @@ import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 10;
+import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
 
 export type LobbyProps = {
   code: GameCode;

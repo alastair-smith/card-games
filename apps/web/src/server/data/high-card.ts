@@ -1,14 +1,9 @@
 import { z } from 'zod';
 import { dataLayer } from '~/server/data/redis';
 import { standardPlayingCardSchema } from '~/types/cards';
-import { playerNameSchema, type UserId, userIdSchema } from '~/types/entities';
+import { playerNameSchema, userIdSchema } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { gameStageSchema } from '~/types/games/high-card';
-
-export type StoredGameState = {
-  players: Player[];
-  winner: UserId | null;
-};
 
 const playerSchema = z.object({
   id: userIdSchema,
@@ -23,6 +18,8 @@ export const gameStateSchema = z.object({
   stage: gameStageSchema,
   winner: userIdSchema.nullable(),
 });
+
+export type GameState = z.infer<typeof gameStateSchema>;
 
 export const {
   get: getHighCardState,
