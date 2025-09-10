@@ -1,17 +1,11 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
-import {
-  getHighCardState,
-  type GameState as HighCardGameState,
-} from '~/server/data/high-card';
-import { getLobbyPlayers, type Lobby, lobbySchema } from '~/server/data/lobby';
-import { DataServiceError, DataServiceErrorCode } from '~/server/data/redis';
+import { lobbySchema } from '~/server/data/lobby';
 import { subscriber } from '~/server/events/connections';
 import { getLobbyChannel, subscribeToLobbyState } from '~/server/events/lobby';
 import { getGameState } from '~/server/state/game/high-card/get-game-state';
 import { joinGame } from '~/server/state/game/high-card/join-game';
-import type { UserId } from '~/types/entities';
 import {
   type GameCode,
   GameUpdate,
@@ -21,8 +15,9 @@ import {
 import {
   GameStage,
   type GameState,
-  MAX_PLAYERS,
+  gameStateSchema,
 } from '~/types/games/high-card';
+import { logger } from '~/utils/logger';
 
 function getHighCardGameStateChannel(code: GameCode): `high-card:${GameCode}` {
   return `high-card:${code}`;
@@ -46,25 +41,6 @@ type StateSubscription =
       update: GameUpdate.GAME_STATE_UPDATE | GameUpdate.FINISHED;
       state: GameState;
     };
-
-const addAdditionalPlayerFields = (
-  players: Lobby['players'],
-  userId: UserId,
-  host: UserId,
-): Player[] => {
-  return players.map((player) => ({
-    ...player,
-    isUser: player.id === userId,
-    isHost: player.id === host,
-  }));
-};
-
-// TODO move this function elsewhere
-function subscriptionKey(code: GameCode): `high-card:${GameCode}` {
-  return `high-card:${code}`;
-}
-
-// should do multiple yields on joining a running game that you are already in (i.e. refreshing the page)
 
 export const state = protectedProcedure
   .input(
@@ -145,12 +121,29 @@ export const state = protectedProcedure
             players,
           });
         } else {
-          console.error('Invalid message format:', messageData.error);
+          logger.error(
+            new Error('Invalid message format for high card lobby', {
+              cause: messageData.error,
+            }),
+          );
         }
       } else if (channel === getHighCardGameStateChannel(code)) {
-      }
+        const parsedMessage = JSON.parse(message);
+        const messageData = gameStateSchema.safeParse(parsedMessage);
 
-      // if game event
+        if (messageData.success) {
+          messageQueue.push({
+            update: GameUpdate.GAME_STATE_UPDATE,
+            state: messageData.data,
+          });
+        } else {
+          logger.error(
+            new Error('Invalid message format for high card game', {
+              cause: messageData.error,
+            }),
+          );
+        }
+      }
     }
 
     await subscribeToLobbyState();
@@ -169,12 +162,13 @@ export const state = protectedProcedure
         }
       }
     } catch (error) {
-      console.error('Error in subscription:', error);
-      throw new TRPCError({
-        message: 'Error in subscription',
+      const subscriptionError = new TRPCError({
+        message: 'Error in High Card subscription',
         code: 'INTERNAL_SERVER_ERROR',
         cause: error,
       });
+      logger.error(subscriptionError);
+      throw subscriptionError;
     } finally {
       subscriber.off('pmessage', handler);
       console.log('unsubscribed');

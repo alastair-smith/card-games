@@ -16,7 +16,7 @@ export type Player = z.infer<typeof playerSchema>;
 export const gameStateSchema = z.object({
   players: z.array(playerSchema),
   stage: gameStageSchema,
-  winner: userIdSchema.nullable(),
+  winners: z.array(userIdSchema),
 });
 
 export type GameState = z.infer<typeof gameStateSchema>;
