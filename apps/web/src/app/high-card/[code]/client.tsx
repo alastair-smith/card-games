@@ -12,9 +12,9 @@ import {
   GameUpdate,
   type Player,
 } from '~/types/game';
+import type { GameState } from '~/types/games/high-card';
 import HighCardGameController from './_game/game-controller';
 import Loading from './loading';
-import { GameState } from '~/types/games/high-card';
 
 export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
@@ -89,6 +89,10 @@ export default function HighCard({ code }: { code: GameCode }) {
 
   if (status === GameStatus.LOBBY) {
     return <Lobby code={code} players={players} />;
+  }
+
+  if (state === null) {
+    return <Loading />;
   }
 
   return <HighCardGameController code={code} state={state} />;

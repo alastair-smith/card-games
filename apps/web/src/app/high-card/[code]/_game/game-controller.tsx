@@ -1,8 +1,8 @@
 'use client';
 
-import type { GameState } from '~/server/state/game/high-card';
 import { api } from '~/trpc/react';
 import type { GameCode } from '~/types/game';
+import type { GameState } from '~/types/games/high-card';
 import HighCardGameView from './game-view';
 
 export default function HighCardGameController({
