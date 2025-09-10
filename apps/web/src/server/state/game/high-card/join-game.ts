@@ -1,0 +1,79 @@
+import {
+  getLobbyPlayers,
+  type Lobby,
+  setLobbyPlayers,
+} from '~/server/data/lobby';
+import { publishLobbyState } from '~/server/events/lobby';
+import type { UserId } from '~/types/entities';
+import { type GameCode, GameUpdate, type Player } from '~/types/game';
+import { MAX_PLAYERS } from '~/types/games/high-card';
+import { generatePlayerName } from '~/utils/name-generator';
+
+const enrichPlayerData = (
+  players: Lobby['players'],
+  host: UserId,
+  userId: UserId,
+): Player[] => {
+  return players.map((player) => {
+    return {
+      ...player,
+      isHost: player.id === host,
+      isUser: player.id === userId,
+      name: player.name,
+    };
+  });
+};
+
+export const joinGame = async ({
+  code,
+  userId,
+}: {
+  code: GameCode;
+  userId: UserId;
+}): Promise<
+  | {
+      update: GameUpdate.LOBBY_FULL;
+    }
+  | {
+      update: GameUpdate.LOBBY_UPDATE;
+      players: Player[];
+    }
+> => {
+  const lobby = await getLobbyPlayers({ code });
+
+  if (!lobby) {
+    throw new Error('lobby not found');
+  }
+
+  // already in game
+  if (lobby.players.some(({ id }) => id === userId)) {
+    return {
+      update: GameUpdate.LOBBY_UPDATE,
+      players: enrichPlayerData(lobby.players, lobby.host, userId),
+    };
+  }
+
+  // full
+  if (lobby.players.length === MAX_PLAYERS) {
+    return { update: GameUpdate.LOBBY_FULL };
+  }
+
+  // else join
+
+  const updatedPlayers = [
+    ...lobby.players,
+    { id: userId, name: generatePlayerName(), isReady: false },
+  ];
+
+  const updatedLobby = await setLobbyPlayers(
+    { code },
+    { ...lobby, players: updatedPlayers },
+  );
+
+  await publishLobbyState(code, updatedLobby);
+
+  return {
+    update: GameUpdate.LOBBY_UPDATE,
+    players: enrichPlayerData(lobby.players, lobby.host, userId),
+  };
+};

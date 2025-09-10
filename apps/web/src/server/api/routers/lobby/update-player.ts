@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
-import { updatePlayerState } from '~/server/state/game/high-card';
+import { updatePlayerState } from '~/server/state/game/high-card/update-player-state';
 import { playerNameSchema } from '~/types/entities';
 import { gameCodeSchema } from '~/types/game';
 

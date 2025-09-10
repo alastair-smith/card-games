@@ -45,7 +45,7 @@ export default function Lobby({
         },
       );
     }, PLAYER_NAME_UPDATE_DELAY_MS),
-    [code, updatePlayerMutation],
+    [code, updatePlayerMutation.mutate],
   );
 
   const debouncedUpdatePlayerReady = useCallback(
@@ -60,7 +60,7 @@ export default function Lobby({
         },
       );
     }, PLAYER_READY_UPDATE_DELAY_MS),
-    [code, updatePlayerMutation],
+    [code, updatePlayerMutation.mutate],
   );
 
   const handleNameChange = (name: string) => {

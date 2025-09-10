@@ -9,7 +9,8 @@ import { getLobbyPlayers, type Lobby, lobbySchema } from '~/server/data/lobby';
 import { DataServiceError, DataServiceErrorCode } from '~/server/data/redis';
 import { subscriber } from '~/server/events/connections';
 import { getLobbyChannel, subscribeToLobbyState } from '~/server/events/lobby';
-import { type GameState, joinGame } from '~/server/state/game/high-card';
+import { getGameState } from '~/server/state/game/high-card/get-game-state';
+import { joinGame } from '~/server/state/game/high-card/join-game';
 import type { UserId } from '~/types/entities';
 import {
   type GameCode,
@@ -17,7 +18,11 @@ import {
   gameCodeSchema,
   type Player,
 } from '~/types/game';
-import { GameStage, MAX_PLAYERS } from '~/types/games/high-card';
+import {
+  GameStage,
+  type GameState,
+  MAX_PLAYERS,
+} from '~/types/games/high-card';
 
 function getHighCardGameStateChannel(code: GameCode): `high-card:${GameCode}` {
   return `high-card:${code}`;
@@ -71,7 +76,7 @@ export const state = protectedProcedure
     input: { code },
     ctx: { userId },
   }): AsyncGenerator<StateSubscription> {
-    const initialState = await getHighCardState({ code });
+    const initialState = await getGameState(code, userId);
 
     if (!initialState) {
       return {
@@ -80,9 +85,6 @@ export const state = protectedProcedure
     }
 
     switch (initialState.stage) {
-      /** ====================================
-       * TERMINATING STATUSES
-       * ===================================== */
       case GameStage.FINISHED: {
         if (initialState.players.some((user) => user.id === userId)) {
           return {
@@ -94,80 +96,25 @@ export const state = protectedProcedure
           update: GameUpdate.GAME_NOT_FOUND,
         };
       }
+
       case GameStage.LOBBY: {
-        const lobby = await getLobbyPlayers({ code });
+        const lobbyData = await joinGame({ code, userId });
 
-        if (!lobby) {
-          throw new TRPCError({
-            message: `Lobby not found for code: ${code}`,
-            code: 'INTERNAL_SERVER_ERROR',
-          });
-        }
-
-        if (lobby.players.some(user => user.id === userId) {
-          yield {
-            update: GameUpdate.LOBBY_UPDATE,
-            players: addAdditionalPlayerFields(lobby.players, userId, lobby.host),
-          };
-          break
-        }
-        if (lobby.players.length === MAX_PLAYERS) {
+        if (lobbyData.update === GameUpdate.LOBBY_FULL) {
           return {
             update: GameUpdate.LOBBY_FULL,
           };
         }
 
-        const { players, host } = await joinGame({
-          code,
-          userId,
-        });
         yield {
-          update: GameUpdate.LOBBY_UPDATE,
-          players: addAdditionalPlayerFields(players, userId, host),
+          update: lobbyData.update,
+          players: lobbyData.players,
         };
+
         break;
       }
 
-      case GamePlayerStatus.NO_ROOM_IN_LOBBY: {
-        yield {
-          update: GameUpdate.LOBBY_FULL,
-        };
-        return;
-      }
-      case GamePlayerStatus.USER_NOT_IN_GAME: {
-        yield {
-          update: GameUpdate.GAME_NOT_FOUND,
-        };
-        return;
-      }
-
-      /** ====================================
-       * LOBBY STATUSES
-       * ===================================== */
-      case GamePlayerStatus.USER_IN_LOBBY: {
-        const { players, host } = await getLobbyPlayers({ code });
-        yield {
-          update: GameUpdate.LOBBY_UPDATE,
-          players: addAdditionalPlayerFields(players, userId, host),
-        };
-        break;
-      }
-      case GamePlayerStatus.USER_NOT_IN_LOBBY: {
-        const { players, host } = await joinGame({
-          code,
-          userId,
-        });
-        yield {
-          update: GameUpdate.LOBBY_UPDATE,
-          players: addAdditionalPlayerFields(players, userId, host),
-        };
-        break;
-      }
-
-      /** ====================================
-       * GAME STATUSES
-       * ===================================== */
-      case GamePlayerStatus.USER_IN_GAME: {
+      case GameStage.IN_PROGRESS: {
         yield {
           update: GameUpdate.GAME_STATE_UPDATE,
           state: initialState,
@@ -175,8 +122,8 @@ export const state = protectedProcedure
         break;
       }
       default: {
-        const exhaustiveCheck: never = gamePlayerStatus;
-        throw new Error(`Unexpected game status: ${exhaustiveCheck}`);
+        const exhaustiveCheck: never = initialState.stage;
+        throw new Error(`Unexpected initial game stage: ${exhaustiveCheck}`);
       }
     }
 

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Lobby from '~/app/high-card/[code]/_lobby/lobby';
 import { toast } from '~/components/ui/toast';
-import type { GameState } from '~/server/state/game/high-card';
 import { api } from '~/trpc/react';
 import {
   type GameCode,
@@ -15,6 +14,7 @@ import {
 } from '~/types/game';
 import HighCardGameController from './_game/game-controller';
 import Loading from './loading';
+import { GameState } from '~/types/games/high-card';
 
 export default function HighCard({ code }: { code: GameCode }) {
   const router = useRouter();
@@ -54,6 +54,7 @@ export default function HighCard({ code }: { code: GameCode }) {
             return;
 
           case GameUpdate.LOBBY_UPDATE:
+            setStatus(GameStatus.LOBBY);
             setPlayers(newGameState.players);
             return;
 
@@ -82,7 +83,7 @@ export default function HighCard({ code }: { code: GameCode }) {
     },
   );
 
-  if (status === GameStatus.LOADING || players === null || state === null) {
+  if (status === GameStatus.LOADING || players === null) {
     return <Loading />;
   }
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
-import { createGame } from '~/server/state/game/high-card';
+import { createGame } from '~/server/state/game/high-card/create-game';
 import { GameType } from '~/types/game';
 
 export const create = protectedProcedure
