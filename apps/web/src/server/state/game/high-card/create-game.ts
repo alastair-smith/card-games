@@ -45,7 +45,7 @@ export const createGame = async ({ host }: { host: UserId }) => {
     ),
     setHighCardState(
       { code },
-      { stage: GameStage.LOBBY, winner: null, players: [] },
+      { stage: GameStage.LOBBY, winners: [], players: [] },
     ),
   ]);
 

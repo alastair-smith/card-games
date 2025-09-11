@@ -20,11 +20,11 @@
     --card-foreground: 210 33% 18%; /* Text on cards in deep slate blue (#12212E) */
 
     --primary-background: 33 85% 60%; /* Bold orange for buttons (#D78521) */
-    --primary-background-disabled: 33.41 84.62% 79.61%/* Lighter orange for disabled buttons (#F7D09F) */
-    --primary:  210 33% 18%; /* Deep slate blue for text (#12212E) */
+    --primary-background-disabled: 33.41 84.62% 79.61%; /* Lighter orange for disabled buttons (#F7D09F) */
+    --primary: 210 33% 18%; /* Deep slate blue for text (#12212E) */
 
     --secondary: 210 40% 90%; /* Light muted blue for secondary elements */
-    --secondary-disabled: 204 38.46% 97.45% /* Lighter blue for disabled buttons (#F6F9FB) */
+    --secondary-disabled: 204 38.46% 97.45%; /* Lighter blue for disabled buttons (#F6F9FB) */
     --secondary-foreground: 210 33% 18%; /* Deep slate blue for text (#12212E) */
 
     --accent: 33 71% 48%; /* Matches primary for decorative accents (#D78521) */
@@ -36,7 +36,7 @@
     --ring: 33 71% 48%; /* Matches primary for focus ring */
 
     --radius: 0.5rem; /* Standard corner radius for elements */
-}
+  }
 }
 
 @layer base {
@@ -53,8 +53,7 @@
 
 .bg-felt-texture {
   background-size: cover;
-  background-image: linear-gradient(#570808de, #570808de), url("/felt_grey.jpg"),
+  background-image:
+    linear-gradient(#570808de, #570808de), url("/felt_grey.jpg"),
     linear-gradient(#631818, #631818);
-  /*     linear-gradient(#6d1c1c, #8d2424);
- */
 }

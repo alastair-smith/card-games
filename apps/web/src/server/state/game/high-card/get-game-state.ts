@@ -21,7 +21,7 @@ export const getGameState = async (
   });
 
   return {
-    winner: rawState.winner,
+    winners: rawState.winners,
     players: gamePlayers,
     stage: rawState.stage,
   };

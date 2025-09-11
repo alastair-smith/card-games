@@ -3,7 +3,7 @@ import { getHTTPStatusCodeFromError } from '@trpc/server/http';
 import type { NextRequest } from 'next/server';
 import { appRouter } from '~/server/api/root';
 import { createTRPCContext } from '~/server/api/trpc';
-import { AUTH_COOKIE_NAME, getSession } from '~/server/auth';
+import { AUTH_COOKIE_NAME } from '~/server/auth';
 import { logger } from '~/utils/logger';
 
 /**

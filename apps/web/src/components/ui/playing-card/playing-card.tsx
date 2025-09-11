@@ -143,6 +143,7 @@ function RankContent({
     return (
       <div className='grid grid-cols-1 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
           <SuitSymbol key={i} size='3ch' fill={color} />
         ))}
       </div>
@@ -153,6 +154,7 @@ function RankContent({
     return (
       <div className='grid grid-cols-2 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
           <SuitSymbol key={i} size='3ch' fill={color} />
         ))}
       </div>
@@ -166,11 +168,13 @@ function RankContent({
     <div className='grid grid-cols-3 w-full h-full place-items-center'>
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
           <SuitSymbol key={i} size='3ch' fill={color} />
         ))}
       </div>
       <div className='h-full flex flex-col justify-around'>
         {Array.from({ length: shortColLength }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
           <SuitSymbol key={i} size='3ch' fill={color} />
         ))}
         {
@@ -182,6 +186,7 @@ function RankContent({
       </div>
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
           <SuitSymbol key={i} size='3ch' fill={color} />
         ))}
       </div>

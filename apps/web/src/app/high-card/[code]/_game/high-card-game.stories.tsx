@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
+import { GameStage } from '~/types/games/high-card';
 import Game from './game-view';
 
 export const Turn1 = () => {
@@ -17,7 +18,8 @@ export const Turn1 = () => {
             { id: '2' as UserId, name: 'Bob', isUser: true, card: null },
             { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
-          winner: null,
+          winners: [],
+          stage: GameStage.IN_PROGRESS,
         }}
       />
     </div>
@@ -44,7 +46,8 @@ export const Turn2 = () => {
             { id: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
             { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
-          winner: null,
+          winners: [],
+          stage: GameStage.IN_PROGRESS,
         }}
       />
     </div>
@@ -74,7 +77,8 @@ export const Turn3 = () => {
             },
             { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
           ],
-          winner: null,
+          winners: [],
+          stage: GameStage.IN_PROGRESS,
         }}
       />
     </div>
@@ -109,7 +113,8 @@ export const Turn4 = () => {
               card: { suit: Suit.CLUBS, rank: Rank.TEN },
             },
           ],
-          winner: '2' as UserId,
+          winners: ['2'] as UserId[],
+          stage: GameStage.FINISHED,
         }}
       />
     </div>

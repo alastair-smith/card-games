@@ -342,6 +342,7 @@ export default function Players({
             ))}
 
             {Array.from({ length: requiredPlayers }).map((_, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index}>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4'>
@@ -353,6 +354,7 @@ export default function Players({
             ))}
 
             {Array.from({ length: optionalPlayers }).map((_, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index}>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4 opacity-50'>

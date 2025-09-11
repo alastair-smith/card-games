@@ -15,8 +15,8 @@ export const WholeDeck = () => {
       <PlayingCard card={null} />
       <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} />
       <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }} />
-      {deck.map((card, index) => (
-        <PlayingCard key={index} card={card} />
+      {deck.map((card) => (
+        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} />
       ))}
     </div>
   );

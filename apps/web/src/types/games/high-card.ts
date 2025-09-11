@@ -23,7 +23,7 @@ export const gameStateSchema = z.object({
     z.object({
       id: userIdSchema,
       name: playerNameSchema,
-      card: standardPlayingCardSchema,
+      card: standardPlayingCardSchema.nullable(),
       isUser: z.boolean(),
     }),
   ),

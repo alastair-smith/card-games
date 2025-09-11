@@ -8,6 +8,6 @@ export const pickupCard = protectedProcedure
       code: gameCodeSchema,
     }),
   )
-  .mutation(async ({ input: { code }, ctx: { userId } }) => {
+  .mutation(() => {
     return;
   });

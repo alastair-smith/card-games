@@ -3,12 +3,7 @@
 import { TRPCError } from '@trpc/server';
 import { redirect } from 'next/navigation';
 import { api } from '~/trpc/server';
-import {
-  type GameCode,
-  type GameType,
-  gameCodeSchema,
-  gameURL,
-} from '~/types/game';
+import { type GameCode, type GameType, gameURL } from '~/types/game';
 
 const getLobbyURL = (type: GameType, code: GameCode) => {
   const baseUrl = gameURL[type];
