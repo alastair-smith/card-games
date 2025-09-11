@@ -1,0 +1,29 @@
+layout {
+    tab name="dev" focus=true {
+        pane split_direction="vertical" {
+            pane command="pnpm" {
+                args "dev:app"
+                cwd "apps/web"
+            }
+            pane command="pnpm" {
+                args "dev:stories"
+                cwd "apps/web"
+            }
+        }
+    }
+    tab name="ci" {
+        pane split_direction="vertical" {
+            pane command="pnpm" {
+                args "test"
+            }
+            pane command="pnpm" {
+                args "lint"
+            }
+        }
+    }
+    tab name="git" {
+        pane command="zsh" {
+            args "-c" "git --no-pager log -1; exec zsh"
+        }
+    }
+}

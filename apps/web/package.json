@@ -9,7 +9,6 @@
     "dev:app": "node --env-file .env ./src/server.js",
     "dev:stories": "ladle serve",
     "preview": "next build && next start",
-    "check-types": "tsc --noEmit",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit"
   },
