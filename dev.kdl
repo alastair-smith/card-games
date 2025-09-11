@@ -2,8 +2,7 @@ layout {
     tab name="dev" focus=true {
         pane split_direction="vertical" {
             pane command="pnpm" {
-                args "dev:app"
-                cwd "apps/web"
+                args "dev"
             }
             pane command="pnpm" {
                 args "dev:stories"
