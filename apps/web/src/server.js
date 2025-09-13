@@ -25,7 +25,7 @@ const startServer = async () => {
   const nodeEnv = env.NODE_ENV;
   const port = env.PORT;
 
-  const app = next({ dev: nodeEnv === 'development' });
+  const app = next({ dev: nodeEnv === 'development', turbo: true });
   const handle = app.getRequestHandler();
 
   await app.prepare();

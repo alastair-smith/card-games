@@ -1,0 +1,36 @@
+import { action } from '@ladle/react';
+import { Button } from './button';
+
+export default {
+  title: 'Components / Button',
+};
+
+const onClick = action('onClick');
+
+export const PrimaryButton = () => {
+  return <Button onClick={onClick}>Example</Button>;
+};
+
+export const PrimaryDisabledButton = () => {
+  return (
+    <Button onClick={onClick} disabled>
+      Example
+    </Button>
+  );
+};
+
+export const SecondaryButton = () => {
+  return (
+    <Button variant='secondary' onClick={onClick}>
+      Example
+    </Button>
+  );
+};
+
+export const SecondaryDisabledButton = () => {
+  return (
+    <Button variant='secondary' onClick={onClick} disabled>
+      Example
+    </Button>
+  );
+};

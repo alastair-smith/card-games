@@ -25,11 +25,8 @@ const joinSchema = z.object({
 
 export function JoinGame({ className }: { className?: string }) {
   const router = useRouter();
-  const form = useForm<z.infer<typeof joinSchema>>({
+  const form = useForm({
     resolver: zodResolver(joinSchema),
-    defaultValues: {
-      code: '',
-    },
   });
 
   const onSubmit = (values: z.infer<typeof joinSchema>) => {
