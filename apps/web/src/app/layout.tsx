@@ -18,11 +18,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang='en'
-      className={`${GeistSans.variable} bg-dark-red text-primary`}
-    >
-      <body className='bg-felt-texture'>
+    <html lang='en' className={`${GeistSans.variable} bg-red text-primary`}>
+      <body className="bg-[linear-gradient(hsl(from_var(--color-red)_h_s_l_/_0.85),hsl(from_var(--color-red)_h_s_l_/_0.85)),url('/felt_grey.webp'),linear-gradient(var(--color-red),var(--color-red))]">
         <TRPCReactProvider>{children}</TRPCReactProvider>
         <Toaster />
       </body>
