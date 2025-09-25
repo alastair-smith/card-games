@@ -12,7 +12,7 @@ export enum GameStage {
   FINISHED = 'FINISHED',
 }
 
-export const gameStageSchema = z.nativeEnum(GameStage);
+export const gameStageSchema = z.enum(GameStage);
 
 export type GamePlayer = Player & {
   isUser: boolean;

@@ -6,7 +6,7 @@ import { GameType } from '~/types/game';
 export const create = protectedProcedure
   .input(
     z.object({
-      gameType: z.nativeEnum(GameType),
+      gameType: z.enum(GameType),
     }),
   )
   .mutation(async ({ ctx: { userId }, input: { gameType } }) => {

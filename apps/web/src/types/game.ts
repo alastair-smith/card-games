@@ -11,7 +11,7 @@ export enum GameType {
   YANIV = 'YANIV',
 }
 
-export const gameTypeSchema = z.nativeEnum(GameType);
+export const gameTypeSchema = z.enum(GameType);
 
 export const gameURL = {
   HIGH_CARD: '/high-card',
@@ -51,7 +51,7 @@ export enum GameStatus {
   FINISHED = 'FINISHED',
 }
 
-export const gameStatusSchema = z.nativeEnum(GameStatus);
+export const gameStatusSchema = z.enum(GameStatus);
 
 export enum GameUpdate {
   KICKED = 'KICKED',
@@ -63,7 +63,7 @@ export enum GameUpdate {
   FINISHED = 'FINISHED',
 }
 
-export const gameUpdateSchema = z.nativeEnum(GameUpdate);
+export const gameUpdateSchema = z.enum(GameUpdate);
 
 export type Player = {
   id: UserId;

@@ -16,7 +16,7 @@ export const SUITS = [
   Suit.SPADES,
 ] as const satisfies Suit[];
 
-export const suitSchema = z.nativeEnum(Suit);
+export const suitSchema = z.enum(Suit);
 
 export enum JokerSuit {
   RED = 'red',
@@ -28,7 +28,7 @@ export const JOKER_SUITS = [
   JokerSuit.BLACK,
 ] as const satisfies JokerSuit[];
 
-export const jokerSuitSchema = z.nativeEnum(JokerSuit);
+export const jokerSuitSchema = z.enum(JokerSuit);
 
 export const suitColor = {
   [Suit.SPADES]: '#12212E',
@@ -87,7 +87,7 @@ export const RANK_FULL_NAME = {
   [Rank.ACE]: 'Ace',
 };
 
-export const rankSchema = z.nativeEnum(Rank);
+export const rankSchema = z.enum(Rank);
 
 export const RANKS = [
   Rank.TWO,
