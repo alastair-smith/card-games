@@ -74,6 +74,6 @@ export const joinGame = async ({
 
   return {
     update: GameUpdate.LOBBY_UPDATE,
-    players: enrichPlayerData(lobby.players, lobby.host, userId),
+    players: enrichPlayerData(updatedLobby.players, updatedLobby.host, userId),
   };
 };
