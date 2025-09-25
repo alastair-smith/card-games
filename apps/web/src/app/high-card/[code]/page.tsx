@@ -7,7 +7,14 @@ export default async function HighCardPage({
   params: Promise<{ code: string }>;
 }) {
   const { code: codeFromUrl } = await params;
-  const code = gameCodeSchema.parse(codeFromUrl);
+  const { data: code, error: gameCodeParsingError } =
+    gameCodeSchema.safeParse(codeFromUrl);
+
+  if (gameCodeParsingError) {
+    throw new Error(`Invalid game code syntax: '${codeFromUrl}'`, {
+      cause: gameCodeParsingError,
+    });
+  }
 
   return <HighCard code={code} />;
 }
