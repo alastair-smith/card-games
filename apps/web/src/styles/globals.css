@@ -8,6 +8,8 @@
   --color-red: hsl(0 83% 19%);
   --color-rich-red: hsl(0 65% 50%);
 
+  --color-dark-green: hsl(157, 96%, 10%);
+
   --color-white: hsl(0 0 100%);
 
   --color-light-blue: hsl(230 33% 93%);
@@ -18,6 +20,7 @@
   --color-orange: hsl(33 85% 60%);
   --color-muted-orange: hsl(33 85% 90%);
 
+  --color-background: var(--color-dark-green);
   --color-primary: var(--color-slate-blue);
 
   --color-popover: var(--color-light-blue);
