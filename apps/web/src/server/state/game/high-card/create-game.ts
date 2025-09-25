@@ -5,15 +5,18 @@ import {
   setLobbySummary,
 } from '~/server/data/lobby';
 import type { UserId } from '~/types/entities';
-import { GAME_CODE_LENGTH, type GameCode, GameType } from '~/types/game';
+import {
+  GAME_CODE_CHARSET,
+  GAME_CODE_LENGTH,
+  type GameCode,
+  GameType,
+} from '~/types/game';
 import { GameStage } from '~/types/games/high-card';
 import { generatePlayerName } from '~/utils/name-generator';
 
-const charSet = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-
 const randomChar = () => {
-  const index = Math.floor(Math.random() * charSet.length);
-  const char = charSet[index];
+  const index = Math.floor(Math.random() * GAME_CODE_CHARSET.length);
+  const char = GAME_CODE_CHARSET[index];
   if (char === undefined) {
     throw new Error('Failed to generate random character');
   }

@@ -33,6 +33,8 @@ export type GameCode = Branded<string, 'GameCode'>;
 
 export const GAME_CODE_LENGTH = 6;
 
+export const GAME_CODE_CHARSET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+
 export const gameCodeSchema = z
   .string()
   .trim()
@@ -41,7 +43,10 @@ export const gameCodeSchema = z
     `Code should be ${GAME_CODE_LENGTH} characters long.`,
   )
   .toUpperCase()
-  .regex(/^[A-NP-Z1-9]*$/, 'Code should only contain alphanumeric characters.')
+  .regex(
+    new RegExp(`^[${GAME_CODE_CHARSET}]*$`),
+    'Code should only contain alphanumeric characters.',
+  )
   .transform((code: string) => code as GameCode);
 
 export enum GameStatus {
