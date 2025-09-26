@@ -22,7 +22,11 @@ export const publishHighCard = async (
 
 let subscription = false;
 
-export const subscribeToHighCard = async () => {
+/**
+ * A subscription is required in order to listen to the messages.
+ * The same subscription can be shared between multiple games.
+ */
+export const subscribeToHighCardState = async () => {
   if (!subscription) {
     subscription = await new Promise((resolve, reject) => {
       subscriber.psubscribe(getHighCardChannel('*'), (error, count) => {

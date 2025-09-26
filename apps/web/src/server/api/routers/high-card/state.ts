@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
 import { lobbySchema } from '~/server/data/lobby';
 import { subscriber } from '~/server/events/connections';
+import { subscribeToHighCardState } from '~/server/events/high-card';
 import { getLobbyChannel, subscribeToLobbyState } from '~/server/events/lobby';
 import { getGameState } from '~/server/state/game/high-card/get-game-state';
 import { joinGame } from '~/server/state/game/high-card/join-game';
@@ -147,6 +148,7 @@ export const state = protectedProcedure
     }
 
     await subscribeToLobbyState();
+    await subscribeToHighCardState();
 
     subscriber.on('pmessage', handler);
 
