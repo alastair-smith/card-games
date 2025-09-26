@@ -43,7 +43,7 @@ export function JoinGame({ className }: { className?: string }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-col gap-1.5'
+            className='flex flex-row gap-1.5'
           >
             <FormField
               control={form.control}
@@ -67,7 +67,9 @@ export function JoinGame({ className }: { className?: string }) {
               )}
             ></FormField>
 
-            <Button type='submit'>Join</Button>
+            <Button type='submit' className='h-20 text-xl' size='lg'>
+              Join
+            </Button>
           </form>
         </Form>
       </CardContent>

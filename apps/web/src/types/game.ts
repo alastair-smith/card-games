@@ -36,16 +36,13 @@ export const GAME_CODE_LENGTH = 6;
 export const GAME_CODE_CHARSET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 
 export const gameCodeSchema = z
-  .string()
+  .string('Game code is missing!')
   .trim()
-  .length(
-    GAME_CODE_LENGTH,
-    `Code should be ${GAME_CODE_LENGTH} characters long.`,
-  )
+  .length(GAME_CODE_LENGTH, `Must be ${GAME_CODE_LENGTH} characters long.`)
   .toUpperCase()
   .regex(
     new RegExp(`^[${GAME_CODE_CHARSET}]*$`),
-    'Code should only contain alphanumeric characters.',
+    'Must only include letters and numbers.',
   )
   .transform((code: string) => code as GameCode);
 

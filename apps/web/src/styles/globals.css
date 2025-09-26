@@ -4,38 +4,28 @@
 
 /* biome-ignore lint/suspicious/noUnknownAtRules: used by tailwind, currently biome doesn't have tailwind rules */
 @theme {
-  --color-dark-red: hsl(99 24% 10%);
-  --color-red: hsl(0 83% 19%);
-  --color-rich-red: hsl(0 65% 50%);
+  --color-white: hsl(290 25% 95%);
+  --color-slate: hsl(210 33% 18%);
+  --color-dark-green: hsl(157 96% 10%);
+  --color-red: hsl(3 85% 57%);
+  --color-lily-white: hsl(186, 71%, 94%);
+  --color-yellow: hsl(49 90% 62%);
 
-  --color-dark-green: hsl(157, 96%, 10%);
+  --color-main-background: var(--color-dark-green);
+  --color-card-background: var(--color-white);
+  --color-input-background: var(--color-lily-white);
 
-  --color-white: hsl(0 0 100%);
+  --color-light-text: var(--color-slate);
+  --color-dark-text: var(--color-white);
 
-  --color-light-blue: hsl(230 33% 93%);
-  --color-slate-blue: hsl(210 33% 18%);
-  --color-muted-blue: hsl(210 40% 90%);
-  --color-lighter-blue: hsl(204 38.46% 97.45%);
+  --color-border: var(--color-slate);
 
-  --color-orange: hsl(33 85% 60%);
-  --color-muted-orange: hsl(33 85% 90%);
-
-  --color-background: var(--color-dark-green);
-  --color-primary: var(--color-slate-blue);
-
-  --color-popover: var(--color-light-blue);
-  --color-popover-foreground: var(--color-slate-blue);
-
-  --color-accent: hsl(--var-color-orange);
-
-  --color-input: var(--color-muted-blue);
-  --color-card: var(--color-white);
-
-  --color-action: var(--color-orange);
-  --color-action-disabled: var(--color-muted-orange);
-  --color-secondary: var(--color-light-blue);
-  --color-secondary-disabled: var(--color-lighter-blue);
-  --color-destructive: var(--color-red);
+  --color-primary: var(--color-yellow);
+  --color-primary-disabled: hsl(from var(--color-yellow) h s 90%);
+  --color-secondary: var(--color-lily-white);
+  --color-secondary-disabled: hsl(from var(--color-lily-white) h s 90%);
+  --color-danger: var(--color-red);
+  --color-danger-disabled: hsl(from var(--color-red) h s 90%);
 
   --animate-accoridion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -57,4 +47,10 @@
       height: 0;
     }
   }
+}
+
+/* custom classes */
+
+.background-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='p' width='10' height='10' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='5' cy='5' r='1' fill='white' opacity='0.1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23p)'/%3E%3C/svg%3E");
 }

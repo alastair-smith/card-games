@@ -24,23 +24,23 @@ type GameProps = {
 const games: GameProps[] = [
   {
     gameType: GameType.HIGH_CARD,
-    image: 'https://placehold.co/300x200.png',
+    image: 'https://placehold.co/400x400.png',
   },
   {
     gameType: GameType.YANIV,
-    image: 'https://placehold.co/300x200.png',
+    image: 'https://placehold.co/400x400.png',
   },
   {
     gameType: GameType.BLOB,
-    image: 'https://placehold.co/300x200.png',
+    image: 'https://placehold.co/400x400.png',
   },
   {
     gameType: GameType.SHITHEAD,
-    image: 'https://placehold.co/300x200.png',
+    image: 'https://placehold.co/400x400.png',
   },
   {
     gameType: GameType.FOOL,
-    image: 'https://placehold.co/300x200.png',
+    image: 'https://placehold.co/400x400.png',
   },
 ];
 
@@ -65,10 +65,10 @@ function Game({ gameType, image }: GameProps) {
       </CardHeader>
 
       <CardContent>
-        <Image src={image} alt={name} width={300} height={200} />
+        <Image src={image} alt={name} width={400} height={400} />
       </CardContent>
 
-      <CardFooter className='justify-end gap-3'>
+      <CardFooter className='justify-end gap-1.5'>
         <Button variant='secondary'>View Rules</Button>
         <Button
           disabled={isLoading}
