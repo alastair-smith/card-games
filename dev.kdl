@@ -9,6 +9,9 @@ layout {
                 cwd "apps/web"
             }
         }
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
     }
     tab name="ci" {
         pane split_direction="vertical" {
@@ -19,10 +22,16 @@ layout {
                 args "lint"
             }
         }
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
     }
     tab name="git" {
         pane command="zsh" {
             args "-c" "git --no-pager log -1; exec zsh"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
         }
     }
 }
