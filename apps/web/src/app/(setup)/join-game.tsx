@@ -23,6 +23,7 @@ const joinSchema = z.object({
   code: gameCodeSchema,
 });
 
+// fix button location on smaller screens
 export function JoinGame({ className }: { className?: string }) {
   const router = useRouter();
   const form = useForm({

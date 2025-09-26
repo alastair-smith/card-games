@@ -95,6 +95,7 @@ const games: GameProps[] = [
   },
 ];
 
+// TODO fix card structure on smaller screens
 function Game({
   className,
   gameType,
@@ -179,16 +180,12 @@ export function NewGame({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'flex flex-wrap gap-6 items-center justify-stretch',
+        'grid gap-6 grid-cols-[repeat(auto-fit,minmax(37.5rem,1fr))]',
         className,
       )}
     >
       {games.map((game) => (
-        <Game
-          className='flex-1 basis-[37.5rem] min-w-[37.5rem] max-w-[50rem]'
-          key={game.gameType}
-          {...game}
-        />
+        <Game className='max-w-[50rem]' key={game.gameType} {...game} />
       ))}
     </div>
   );
