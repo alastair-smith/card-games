@@ -16,6 +16,7 @@
   --color-input-background: var(--color-lily-white);
 
   --color-light-text: var(--color-slate);
+  --color-light-text-disabled: hsl(from var(--color-slate) h s 40%);
   --color-dark-text: var(--color-white);
 
   --color-border: var(--color-slate);
@@ -23,7 +24,7 @@
   --color-primary: var(--color-yellow);
   --color-primary-disabled: hsl(from var(--color-yellow) h s 90%);
   --color-secondary: var(--color-lily-white);
-  --color-secondary-disabled: hsl(from var(--color-lily-white) h s 90%);
+  --color-secondary-disabled: hsl(from var(--color-lily-white) h s 100%);
   --color-danger: var(--color-red);
   --color-danger-disabled: hsl(from var(--color-red) h s 90%);
 

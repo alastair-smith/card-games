@@ -50,3 +50,27 @@ export const SecondaryLoadingButton = () => {
     </Button>
   );
 };
+
+export const DangerButton = () => {
+  return (
+    <Button variant='danger' onClick={onClick}>
+      Example
+    </Button>
+  );
+};
+
+export const DangerDisabledButton = () => {
+  return (
+    <Button variant='danger' onClick={onClick} disabled>
+      Example
+    </Button>
+  );
+};
+
+export const DangerLoadingButton = () => {
+  return (
+    <Button variant='danger' onClick={onClick} isLoading>
+      Example
+    </Button>
+  );
+};

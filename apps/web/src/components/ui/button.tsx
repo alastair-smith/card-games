@@ -4,15 +4,17 @@ import { LoaderIcon } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '~/utils/cn';
 
-// TODO fix colors and then fix loading bar state
 const buttonVariants = cva(
   'cursor-pointer overflow-hidden border-2 font-semibold active:scale-95 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-light-text disabled:bg-primary-disabled',
+        default:
+          'bg-primary text-light-text disabled:bg-primary-disabled disabled:text-light-text-disabled disabled:border-light-text-disabled',
         secondary:
-          'bg-secondary text-light-text disabled:bg-secondary-disabled',
+          'bg-secondary text-light-text disabled:bg-secondary-disabled disabled:text-light-text-disabled disabled:border-light-text-disabled',
+        danger:
+          'bg-danger text-dark-text disabled:bg-danger-disabled disabled:text-light-text-disabled border-border disabled:border-light-text-disabled',
       },
       size: {
         default: 'h-10 rounded-lg px-4 py-2',
@@ -60,7 +62,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <Slottable>
           <div className='relative inline-flex items-center justify-center gap-2'>
             {isLoading && <LoaderIcon className='relative animate-spin' />}
-            <span className='relative'>{children}</span>
+            <div className='relative'>{children}</div>
           </div>
         </Slottable>
       </Comp>
