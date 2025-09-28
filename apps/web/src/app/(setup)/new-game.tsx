@@ -131,8 +131,7 @@ function Game({
 
           <Button variant='secondary'>View Rules</Button>
           <Button
-            disabled={isLoading}
-            isLoading={true}
+            isLoading={isLoading}
             onClick={() => {
               setIsLoading(true);
               createGame({

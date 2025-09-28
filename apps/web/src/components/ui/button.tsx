@@ -1,11 +1,12 @@
 import { Root as SlotRoot, Slottable } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { LoaderIcon } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '~/utils/cn';
 
 // TODO fix colors and then fix loading bar state
 const buttonVariants = cva(
-  'cursor-pointer relative overflow-hidden border-2 font-semibold active:scale-95 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'cursor-pointer overflow-hidden border-2 font-semibold active:scale-95 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -41,6 +42,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       variant,
       size,
       isLoading,
+      disabled,
       asChild = false,
       children,
       ...props
@@ -52,16 +54,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        disabled={isLoading || disabled}
         {...props}
       >
-        <span
-          className={cn(
-            'absolute inset-y-0 left-0 bg-primary-background transition-all duration-500',
-            isLoading ? 'w-full' : 'w-0',
-          )}
-        />
         <Slottable>
-          <span className='relative'>{children}</span>
+          <div className='relative inline-flex items-center justify-center gap-2'>
+            {isLoading && <LoaderIcon className='relative animate-spin' />}
+            <span className='relative'>{children}</span>
+          </div>
         </Slottable>
       </Comp>
     );
