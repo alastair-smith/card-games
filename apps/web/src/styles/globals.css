@@ -4,6 +4,7 @@
 
 /* biome-ignore lint/suspicious/noUnknownAtRules: used by tailwind, currently biome doesn't have tailwind rules */
 @theme {
+  /* base colors */
   --color-white: hsl(290 25% 95%);
   --color-slate: hsl(210 33% 18%);
   --color-dark-green: hsl(157 96% 10%);
@@ -11,16 +12,24 @@
   --color-lily-white: hsl(186, 71%, 94%);
   --color-yellow: hsl(49 90% 62%);
 
+  /* variant colors */
+  --color-light-slate: hsl(from var(--color-slate) h s 40%);
+
+  /* background colors*/
   --color-main-background: var(--color-dark-green);
   --color-card-background: var(--color-white);
   --color-input-background: var(--color-lily-white);
+  --color-switch: var(--color-light-slate);
 
+  /* text colors*/
   --color-light-text: var(--color-slate);
-  --color-light-text-disabled: hsl(from var(--color-slate) h s 40%);
+  --color-light-text-disabled: var(--color-light-slate);
   --color-dark-text: var(--color-white);
 
+  /* border colors*/
   --color-border: var(--color-slate);
 
+  /* interaction colors  */
   --color-primary: var(--color-yellow);
   --color-primary-disabled: hsl(from var(--color-yellow) h s 90%);
   --color-secondary: var(--color-lily-white);
