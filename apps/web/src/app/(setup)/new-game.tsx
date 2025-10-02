@@ -1,22 +1,11 @@
 'use client';
 
-import {
-  ClockIcon,
-  PersonStandingIcon,
-  UserIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { ClockIcon, UsersIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import { GameType, gameDisplayName, gameURL } from '~/types/game';
@@ -24,9 +13,9 @@ import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
 
 enum GameLength {
-  short = 'quick game',
-  medium = 'average game',
-  long = 'longer game',
+  short = 'Fast Game',
+  medium = 'Average Game',
+  long = 'Longer Game',
 }
 
 type GameProps = {
@@ -163,7 +152,7 @@ function GameStats({
       <div className='flex gap-1 items-center'>
         <UsersIcon size='18' />
         <span>
-          {players.min}-{players.max} players
+          {players.min}-{players.max} Players
         </span>
       </div>
 
