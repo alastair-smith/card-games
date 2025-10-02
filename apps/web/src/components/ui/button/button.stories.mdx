@@ -1,0 +1,118 @@
+import { Meta, Story, action } from '@ladle/react';
+import { Button } from './';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from '../table';
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '../card';
+
+<Meta title="Components/Button" component={Button} />
+
+# Button
+
+Used for triggering actions.
+
+<Card>
+  <CardContent>
+    <Table className="w-fit">
+      <TableCaption>Variations of the Button component</TableCaption>
+
+      <TableHeader>
+        <TableRow>
+          <TableHead>Variant</TableHead>
+          <TableHead>Enabled</TableHead>
+          <TableHead>Loading</TableHead>
+          <TableHead>Disabled</TableHead>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        <TableRow>
+          <TableCell>Primary</TableCell>
+          <TableCell>
+            <Story name="Button Variants/Primary">
+              <Button onClick={action('onClick')}>Example</Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Primary Loading">
+              <Button onClick={action('onClick')} isLoading>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Primary Disabled">
+              <Button onClick={action('onClick')} disabled>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell>Secondary</TableCell>
+          <TableCell>
+            <Story name="Button Variants/Secondary">
+              <Button variant="secondary" onClick={action('onClick')}>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Secondary Loading">
+              <Button variant="secondary" onClick={action('onClick')} isLoading>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Secondary Disabled">
+              <Button variant="secondary" onClick={action('onClick')} disabled>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell>Danger</TableCell>
+          <TableCell>
+            <Story name="Button Variants/Danger">
+              <Button variant="danger" onClick={action('onClick')}>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Danger Loading">
+              <Button variant="danger" onClick={action('onClick')} isLoading>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Button Variants/Danger Disabled">
+              <Button variant="danger" onClick={action('onClick')} disabled>
+                Example
+              </Button>
+            </Story>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </CardContent>
+</Card>
