@@ -19,7 +19,7 @@ const onClick = action('onClick');
 
 export const Docs = () => (
   <Card>
-    <CardHeader>Button</CardHeader>
+    <CardHeader className='text-2xl font-medium'>Button</CardHeader>
     <CardContent>
       <Table className='w-fit'>
         <TableCaption>Variations of the Button component</TableCaption>
