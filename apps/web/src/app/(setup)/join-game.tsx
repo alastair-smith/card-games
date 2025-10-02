@@ -66,7 +66,10 @@ export function JoinGame({ className }: { className?: string }) {
               )}
             ></FormField>
 
-            <Button type='submit' className='h-20 text-xl px-3 w-full'>
+            <Button
+              type='submit'
+              className='h-20 text-xl px-3 w-full max-w-3xs'
+            >
               Join
             </Button>
           </form>
