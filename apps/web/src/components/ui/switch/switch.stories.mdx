@@ -1,0 +1,74 @@
+import { Meta, Story } from '@ladle/react';
+import { Switch } from '.';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "../table";
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '../card';
+
+<Meta title="Components/Switch" component={Switch} />
+
+# Switch
+
+Used for toggling between two states.
+
+Should not be used for interactions that are hard to reverse.
+
+<Card>
+  <CardContent>
+    <Table className='w-fit'>
+      <TableCaption>Variations of the Switch component</TableCaption>
+
+      <TableHeader>
+        <TableRow>
+          <TableHead>Enabled</TableHead>
+          <TableHead>Checked</TableHead>
+          <TableHead>Unchecked</TableHead>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        <TableRow>
+          <TableCell>Enabled</TableCell>
+          <TableCell>
+            <Story name="Switch Variants/Checked">
+              <Switch defaultChecked />
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Switch Variants/Unchecked">
+              <Switch />
+            </Story>
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell>Disabled</TableCell>
+          <TableCell>
+            <Story name="Switch Variants/DisabledChecked">
+              <Switch defaultChecked disabled />
+            </Story>
+          </TableCell>
+          <TableCell>
+            <Story name="Switch Variants/DisabledUnchecked">
+              <Switch disabled />
+            </Story>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </CardContent>
+</Card>

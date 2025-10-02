@@ -2,6 +2,9 @@
 
 @import "tailwindcss";
 
+/* biome-ignore lint/suspicious/noUnknownAtRules: used by tailwind */
+@plugin "@tailwindcss/typography";
+
 /* biome-ignore lint/suspicious/noUnknownAtRules: used by tailwind, currently biome doesn't have tailwind rules */
 @theme {
   /* base colors */
@@ -14,12 +17,15 @@
 
   /* variant colors */
   --color-light-slate: hsl(from var(--color-slate) h s 40%);
+  --color-lighter-slate: hsl(from var(--color-slate) h s 80%);
+  --color-grey-lily-white: hsl(from var(--color-lily-white) h 20% 30%);
+  --color-dark-yellow: hsl(from var(--color-yellow) h s 50%);
 
   /* background colors*/
   --color-main-background: var(--color-dark-green);
   --color-card-background: var(--color-white);
   --color-input-background: var(--color-lily-white);
-  --color-switch: var(--color-light-slate);
+  --color-switch: var(--color-grey-lily-white);
 
   /* text colors*/
   --color-light-text: var(--color-slate);
@@ -28,6 +34,7 @@
 
   /* border colors*/
   --color-border: var(--color-slate);
+  --color-ring: var(--color-dark-yellow);
 
   /* interaction colors  */
   --color-primary: var(--color-yellow);
