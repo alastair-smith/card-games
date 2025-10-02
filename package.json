@@ -7,7 +7,7 @@
     "build": "turbo run build",
     "dev": "turbo run --log-prefix=none dev",
     "dev:tmux": "./scripts/start-tmux.sh",
-    "dev:zellij": "zellij --layout dev.kdl attach --create card-games",
+    "dev:zellij": "./scripts/start-zellij.sh",
     "format:check": "biome check",
     "format:fix": "biome check --write",
     "lint": "pnpm format:check && pnpm typecheck",
