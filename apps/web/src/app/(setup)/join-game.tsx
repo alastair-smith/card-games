@@ -44,31 +44,29 @@ export function JoinGame({ className }: { className?: string }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-row gap-1.5'
+            className='flex flex-row gap-3'
           >
             <FormField
               control={form.control}
               name='code'
               render={({ field }) => (
                 <FormItem>
-                  <FormItem>
-                    <FormLabel className='sr-only'>Code</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Code'
-                        className='h-20 min-w-60 text-center font-mono text-4xl uppercase'
-                        data-1p-ignore
-                        autoComplete='off'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <FormLabel className='sr-only'>Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='Code'
+                      className='h-20 min-w-60 text-center font-mono text-4xl uppercase'
+                      data-1p-ignore
+                      autoComplete='off'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             ></FormField>
 
-            <Button type='submit' className='h-20 text-xl' size='lg'>
+            <Button type='submit' className='h-20 text-xl px-2 w-full'>
               Join
             </Button>
           </form>
