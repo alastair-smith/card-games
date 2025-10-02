@@ -1,4 +1,5 @@
 import { action } from '@ladle/react';
+import { EllipsisVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../card';
 import {
   Table,
@@ -66,6 +67,44 @@ export const Docs = () => (
             </TableCell>
             <TableCell>
               <DangerDisabled />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+
+      <Table className='w-fit mt-8'>
+        <TableCaption>Sizes of the Button component</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Size</TableHead>
+            <TableHead>Example</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>Small (sm)</TableCell>
+            <TableCell>
+              <Button size='sm'>Example</Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Default</TableCell>
+            <TableCell>
+              <Button>Example</Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Large (lg)</TableCell>
+            <TableCell>
+              <Button size='lg'>Example</Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Icon</TableCell>
+            <TableCell>
+              <Button size='icon'>
+                <EllipsisVertical />
+              </Button>
             </TableCell>
           </TableRow>
         </TableBody>

@@ -57,11 +57,11 @@ function PlayerDropdown({
 
   return (
     <DropdownMenu>
-      <Button asChild variant='secondary' size='sm'>
-        <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
+        <Button variant='secondary' size='icon'>
           <EllipsisVertical className={className} />
-        </DropdownMenuTrigger>
-      </Button>
+        </Button>
+      </DropdownMenuTrigger>
 
       <DropdownMenuContent>
         {showLeave && (
