@@ -12,7 +12,7 @@ export type HighCardGameProps = {
   pickupCard: () => void;
   playerUserId?: UserId;
 };
-
+// todo add tooltip for when it is your go rather than just text
 export default function HighCardGameView({
   state,
   pickupCard,
