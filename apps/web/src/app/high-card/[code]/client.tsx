@@ -59,6 +59,7 @@ export default function HighCard({ code }: { code: GameCode }) {
             return;
 
           case GameUpdate.GAME_STATE_UPDATE:
+            setStatus(GameStatus.IN_PROGRESS);
             setState(newGameState.state);
             return;
 

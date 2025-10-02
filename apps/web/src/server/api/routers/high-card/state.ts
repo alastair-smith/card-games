@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
+import { gameStateSchema as gameStateRawDataSchema } from '~/server/data/high-card';
 import { lobbySchema } from '~/server/data/lobby';
 import { subscriber } from '~/server/events/connections';
 import { subscribeToHighCardState } from '~/server/events/high-card';
@@ -13,12 +14,20 @@ import {
   gameCodeSchema,
   type Player,
 } from '~/types/game';
-import {
-  GameStage,
-  type GameState,
-  gameStateSchema,
-} from '~/types/games/high-card';
+import { GameStage, type GameState } from '~/types/games/high-card';
 import { logger } from '~/utils/logger';
+
+type RawGameState = z.infer<typeof gameStateRawDataSchema>;
+
+function toClientGameState(rawState: RawGameState, userId: string): GameState {
+  return {
+    ...rawState,
+    players: rawState.players.map((player) => ({
+      ...player,
+      isUser: player.id === userId,
+    })),
+  };
+}
 
 function getHighCardGameStateChannel(code: GameCode): `high-card:${GameCode}` {
   return `high-card:${code}`;
@@ -130,12 +139,12 @@ export const state = protectedProcedure
         }
       } else if (channel === getHighCardGameStateChannel(code)) {
         const parsedMessage = JSON.parse(message);
-        const messageData = gameStateSchema.safeParse(parsedMessage);
+        const messageData = gameStateRawDataSchema.safeParse(parsedMessage);
 
         if (messageData.success) {
           messageQueue.push({
             update: GameUpdate.GAME_STATE_UPDATE,
-            state: messageData.data,
+            state: toClientGameState(messageData.data, userId),
           });
         } else {
           logger.error(
