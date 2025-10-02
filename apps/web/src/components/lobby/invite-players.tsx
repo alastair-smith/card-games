@@ -32,7 +32,7 @@ export default function InvitePlayers({
             readOnly
           />
           <Button
-            className='w-full grow basis-1 h-auto max-w-80'
+            className='w-full grow basis-1 h-auto max-w-80 text-2xl'
             onClick={() => {
               void copyUrlToClipboard();
             }}
