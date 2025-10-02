@@ -24,7 +24,7 @@ export function About({ className }: { className?: string }) {
         </p>
       </CardContent>
 
-      <CardFooter className='gap-1.5 justify-end'>
+      <CardFooter className='gap-3 justify-end'>
         <Button asChild variant='secondary'>
           <Link href='/about'>Learn More</Link>
         </Button>

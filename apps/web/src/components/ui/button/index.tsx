@@ -5,7 +5,7 @@ import * as React from 'react';
 import { cn } from '~/utils/cn';
 
 const buttonVariants = cva(
-  'cursor-pointer overflow-hidden border-2 font-semibold active:scale-95 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'flex gap-2 items-center justify-center cursor-pointer overflow-hidden border-2 font-semibold active:scale-95 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -59,12 +59,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isLoading || disabled}
         {...props}
       >
-        <Slottable>
-          <div className='relative inline-flex items-center justify-center gap-2 h-full'>
-            {isLoading && <LoaderIcon className='relative animate-spin' />}
-            <div className='relative'>{children}</div>
-          </div>
-        </Slottable>
+        {isLoading && <LoaderIcon className='relative animate-spin' />}
+        <Slottable>{children}</Slottable>
       </Comp>
     );
   },
