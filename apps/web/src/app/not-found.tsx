@@ -22,14 +22,14 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className='flex min-h-dvh justify-center text-dark-text pt-[10vh]'>
-      <div className='flex h-full w-full max-w-[80rem] flex-col items-center justify-center gap-6 p-4'>
-        <div className='flex gap-3'>
+      <div className='flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 p-4'>
+        <div className='flex justify-between gap-3 transform scale-65 sm:scale-100 w-full'>
           <PlayingCard card={{ suit: Suit.DIAMONDS, rank: 4 }} />
           <ZeroPlayingCard suit={Suit.CLUBS} />
           <PlayingCard card={{ suit: Suit.HEARTS, rank: 4 }} />
         </div>
 
-        <Card>
+        <Card className='w-full'>
           <CardHeader className='text-4xl font-semibold'>Not Found</CardHeader>
           <CardContent className='flex gap-3 flex-col'>
             <p>Sorry, we couldn't find the page you are looking for.</p>
