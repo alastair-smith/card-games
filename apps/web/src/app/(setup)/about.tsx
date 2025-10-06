@@ -11,7 +11,7 @@ import { cn } from '~/utils/cn';
 
 export function About({ className }: { className?: string }) {
   return (
-    <Card className={cn('min-w-80', className)}>
+    <Card className={cn('sm:min-w-80', className)}>
       <CardHeader>
         <CardTitle>About</CardTitle>
       </CardHeader>

@@ -28,6 +28,9 @@ export function JoinGame({ className }: { className?: string }) {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(joinSchema),
+    defaultValues: {
+      code: '',
+    },
   });
 
   const onSubmit = (values: z.infer<typeof joinSchema>) => {
@@ -44,18 +47,18 @@ export function JoinGame({ className }: { className?: string }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-row gap-3'
+            className='flex flex-row gap-x-3 flex-wrap sm:flex-nowrap'
           >
             <FormField
               control={form.control}
               name='code'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='sr-only'>Code</FormLabel>
+                <FormItem className='w-full min-w-[12rem] sm:min-w-xs'>
+                  <FormLabel className='sr-only'>Join game code</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Code'
-                      className='h-20 min-w-60 text-center font-mono text-4xl uppercase'
+                      className='h-20 text-center font-mono text-4xl uppercase'
                       data-1p-ignore
                       autoComplete='off'
                       {...field}
@@ -68,7 +71,7 @@ export function JoinGame({ className }: { className?: string }) {
 
             <Button
               type='submit'
-              className='h-20 text-xl px-3 w-full max-w-3xs'
+              className='sm:h-20 sm:text-xl px-6 w-full sm:max-w-3xs'
             >
               Join
             </Button>

@@ -116,6 +116,14 @@ function Game({
         <div className='flex flex-col gap-3 justify-between w-full'>
           <GameStats players={players} length={length} />
 
+          <Image
+            className='block sm:hidden self-center'
+            src={image}
+            alt={name}
+            width={250}
+            height={250}
+          />
+
           <p className='flex-1'>{summary}</p>
 
           <Button variant='secondary'>View Rules</Button>
@@ -132,7 +140,13 @@ function Game({
           </Button>
         </div>
 
-        <Image src={image} alt={name} width={250} height={250} />
+        <Image
+          className='hidden sm:block'
+          src={image}
+          alt={name}
+          width={250}
+          height={250}
+        />
       </CardContent>
     </Card>
   );
@@ -168,12 +182,12 @@ export function NewGame({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'grid gap-6 grid-cols-[repeat(auto-fit,minmax(37.5rem,1fr))]',
+        'grid gap-6 sm:grid-cols-[repeat(auto-fit,minmax(37.5rem,1fr))]',
         className,
       )}
     >
       {games.map((game) => (
-        <Game className='max-w-[50rem]' key={game.gameType} {...game} />
+        <Game className='max-w-2xl' key={game.gameType} {...game} />
       ))}
     </div>
   );
