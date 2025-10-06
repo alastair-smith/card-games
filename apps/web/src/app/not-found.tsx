@@ -1,0 +1,61 @@
+import { HouseIcon, RefreshCwIcon } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { CurrentUrlLink, CurrentUrlText } from '~/components/current-url';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '~/components/ui/card';
+import {
+  PlayingCard,
+  ZeroPlayingCard,
+} from '~/components/ui/playing-card/playing-card';
+import { Suit } from '~/types/cards';
+
+export const metadata: Metadata = {
+  title: '404 Not Found',
+};
+
+export default function NotFound() {
+  return (
+    <div className='flex min-h-dvh justify-center text-dark-text pt-[10vh]'>
+      <div className='flex h-full w-full max-w-[80rem] flex-col items-center justify-center gap-6 p-4'>
+        <div className='flex gap-3'>
+          <PlayingCard card={{ suit: Suit.DIAMONDS, rank: 4 }} />
+          <ZeroPlayingCard suit={Suit.CLUBS} />
+          <PlayingCard card={{ suit: Suit.HEARTS, rank: 4 }} />
+        </div>
+
+        <Card>
+          <CardHeader className='text-4xl font-semibold'>Not Found</CardHeader>
+          <CardContent className='flex gap-3 flex-col'>
+            <p>Sorry, we couldn't find the page you are looking for.</p>
+
+            <p>
+              If you've copied the URL from somewhere please check it is
+              correct.
+            </p>
+
+            <CurrentUrlText />
+          </CardContent>
+
+          <CardFooter className='flex gap-3 justify-end'>
+            <CurrentUrlLink>
+              <RefreshCwIcon />
+              Refresh
+            </CurrentUrlLink>
+            <Button asChild>
+              <Link href='/'>
+                <HouseIcon />
+                Go Home
+              </Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  );
+}

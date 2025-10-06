@@ -220,3 +220,38 @@ export function PlayingCardBack() {
     <div className='flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]' />
   );
 }
+
+export function ZeroPlayingCard({
+  suit,
+  className,
+  onClick,
+}: {
+  suit: Suit;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const SuitSymbol = suitSymbol[suit];
+  const color = suitColor[suit];
+
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: todo
+    // biome-ignore lint/a11y/useKeyWithClickEvents: todo
+    <div
+      onClick={onClick}
+      className={cn('w-40 h-60', onClick ? 'cursor-pointer' : '', className)}
+    >
+      <div
+        className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
+        style={{ color }}
+      >
+        <div className='flex items-center gap-1 pb-1'>
+          <div className='font-bold text-4xl'>0</div>
+          <SuitSymbol className='h-8' fill={color} />
+        </div>
+        <div className='grid place-items-center p-4 border rounded flex-1'>
+          <div className='font-bold text-9xl'>0</div>
+        </div>
+      </div>
+    </div>
+  );
+}
