@@ -43,7 +43,7 @@ export default function NotFound() {
           </CardContent>
 
           <CardFooter className='flex gap-3 justify-end'>
-            <CurrentUrlLink>
+            <CurrentUrlLink variant='secondary'>
               <RefreshCwIcon />
               Refresh
             </CurrentUrlLink>

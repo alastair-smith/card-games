@@ -1,10 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
+import { Button, type ButtonProps } from './ui/button';
 
-export function CurrentUrlLink({ children }: { children: React.ReactNode }) {
+export function CurrentUrlLink({
+  variant,
+  children,
+}: {
+  children: React.ReactNode;
+  variant: ButtonProps['variant'];
+}) {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
@@ -12,8 +17,8 @@ export function CurrentUrlLink({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <Button asChild variant='secondary'>
-      <Link href={url}>{children}</Link>
+    <Button asChild variant={variant}>
+      <a href={url}>{children}</a>
     </Button>
   );
 }
