@@ -16,11 +16,11 @@ export function About({ className }: { className?: string }) {
         <CardTitle>About</CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-2'>
-        <p>Play multiplayer card games online.</p>
+        <p>Play multiplayer card games online with friends.</p>
 
         <p>
-          Launch one of the games below and then share the lobby link with your
-          friends so they can each join from their own device.
+          Start a game and share the lobby link to invite them to join from
+          their own device.
         </p>
       </CardContent>
 
