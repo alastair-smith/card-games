@@ -34,7 +34,7 @@ export default function HighCardGameView({
         const canPickup =
           player.isUser &&
           !player.card &&
-          (index === 0 || state.players[index - 1]?.card);
+          !!(index === 0 || state.players[index - 1]?.card);
 
         return (
           <div key={player.id} className='flex flex-col gap-2 p-4'>
@@ -43,18 +43,17 @@ export default function HighCardGameView({
               {player.isUser && ' (You)'}
             </div>
             <div>
-              {canPickup ? (
-                <Tooltip open={true}>
-                  <TooltipTrigger asChild>
-                    <PlayingCard card={player.card} onClick={pickupCard} />
-                  </TooltipTrigger>
-                  <TooltipContent side='bottom'>
-                    Tap your card to reveal!
-                  </TooltipContent>
-                </Tooltip>
-              ) : (
-                <PlayingCard card={player.card} />
-              )}
+              <Tooltip open={canPickup}>
+                <TooltipTrigger asChild>
+                  <PlayingCard
+                    card={player.card}
+                    onClick={canPickup ? pickupCard : undefined}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side='bottom'>
+                  Tap your card to reveal!
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         );
@@ -70,7 +69,7 @@ function Winner({ players }: { players: Player[] }) {
   return (
     <div className='text-3xl text-green-500'>
       {players.map(({ name }) => name).join(' & ')}
-      {players.length > 1 ? 'win' : 'wins'}
+      {players.length > 1 ? ' win' : ' wins'}
       {players[0].card && ` with a ${RANK_FULL_NAME[players[0].card.rank]}`}!
     </div>
   );
