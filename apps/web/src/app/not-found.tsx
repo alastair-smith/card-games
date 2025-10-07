@@ -48,10 +48,10 @@ export default function NotFound() {
               Refresh
             </CurrentUrlLink>
             <Button asChild>
-              <Link href='/'>
+              <a href='/'>
                 <HouseIcon />
                 Go Home
-              </Link>
+              </a>
             </Button>
           </CardFooter>
         </Card>

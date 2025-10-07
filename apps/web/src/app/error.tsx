@@ -51,15 +51,15 @@ export default function ErrorPage() {
 
           <CardFooter className='flex gap-3 justify-end'>
             <Button variant='secondary' asChild>
-              <Link href='/contact'>
+              <a href='/contact'>
                 <MessageCircleQuestionMarkIcon /> Contact Us
-              </Link>
+              </a>
             </Button>
             <Button asChild variant='secondary'>
-              <Link href='/'>
+              <a href='/'>
                 <HouseIcon />
                 Go Home
-              </Link>
+              </a>
             </Button>
             <CurrentUrlLink variant='default'>
               <RefreshCwIcon />
