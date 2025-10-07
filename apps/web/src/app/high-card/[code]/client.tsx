@@ -84,11 +84,14 @@ export default function HighCard({ code }: { code: GameCode }) {
     },
   );
 
-  if (status === GameStatus.LOADING || players === null) {
+  if (status === GameStatus.LOADING) {
     return <Loading />;
   }
 
   if (status === GameStatus.LOBBY) {
+    if (players === null) {
+      return <Loading />;
+    }
     return <Lobby code={code} players={players} />;
   }
 
