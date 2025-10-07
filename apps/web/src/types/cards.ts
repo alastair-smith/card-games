@@ -156,3 +156,20 @@ export const playingCardValueSchema = z.union([
 ]);
 
 export type PlayingCardValue = z.infer<typeof playingCardValueSchema>;
+
+/* [---------------- Decks ----------------] */
+
+export const standardDeck = SUITS.flatMap((suit) =>
+  RANKS.map((rank) => ({
+    suit,
+    rank,
+  })),
+);
+export type StandardDeck = typeof standardDeck;
+
+export const deckWithJokers = [
+  ...standardDeck,
+  { suit: JokerSuit.RED, rank: JOKER_RANK },
+  { suit: JokerSuit.BLACK, rank: JOKER_RANK },
+];
+export type DeckWithJokers = typeof deckWithJokers;

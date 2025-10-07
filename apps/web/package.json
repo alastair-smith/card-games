@@ -11,7 +11,8 @@
     "dev:stories": "ladle serve",
     "preview": "next build && next start",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -45,6 +46,7 @@
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "vitest": "^3.2.4",
     "zod": "^4.1.8"
   },
   "devDependencies": {
