@@ -1,3 +1,4 @@
+import { BookOpenTextIcon, MessageCircleQuestionMarkIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
 import {
@@ -26,11 +27,15 @@ export function About({ className }: { className?: string }) {
 
       <CardFooter className='gap-3 justify-end'>
         <Button asChild variant='secondary'>
-          <Link href='/about'>Learn More</Link>
+          <Link href='/about'>
+            <BookOpenTextIcon /> Learn More
+          </Link>
         </Button>
 
         <Button asChild variant='secondary'>
-          <Link href='/contact'>Contact Us</Link>
+          <Link href='/contact'>
+            <MessageCircleQuestionMarkIcon /> Contact Us
+          </Link>
         </Button>
       </CardFooter>
     </Card>

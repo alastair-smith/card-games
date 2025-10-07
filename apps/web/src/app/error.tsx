@@ -52,7 +52,7 @@ export default function ErrorPage() {
           <CardFooter className='flex gap-3 justify-end'>
             <Button variant='secondary' asChild>
               <Link href='/contact'>
-                <MessageCircleQuestionMarkIcon /> Contact
+                <MessageCircleQuestionMarkIcon /> Contact Us
               </Link>
             </Button>
             <Button asChild variant='secondary'>
