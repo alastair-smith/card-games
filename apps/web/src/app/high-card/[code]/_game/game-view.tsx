@@ -2,6 +2,11 @@
 
 import { useMemo } from 'react';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '~/components/ui/tooltip';
 import type { Player } from '~/server/data/high-card';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
@@ -32,20 +37,25 @@ export default function HighCardGameView({
           (index === 0 || state.players[index - 1]?.card);
 
         return (
-          <div key={player.id} className='grid grid-cols-2 gap-2 p-4'>
-            <div className='col-start-1'>
+          <div key={player.id} className='flex flex-col gap-2 p-4'>
+            <div>
               {player.name}
               {player.isUser && ' (You)'}
             </div>
-            <div className='col-start-1'>
-              <PlayingCard
-                card={player.card}
-                onClick={canPickup ? pickupCard : undefined}
-              />
+            <div>
+              {canPickup ? (
+                <Tooltip open={true}>
+                  <TooltipTrigger asChild>
+                    <PlayingCard card={player.card} onClick={pickupCard} />
+                  </TooltipTrigger>
+                  <TooltipContent side='bottom'>
+                    Tap your card to reveal!
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <PlayingCard card={player.card} />
+              )}
             </div>
-            {canPickup && (
-              <div className='col-start-2'>Tap your card to flip it!</div>
-            )}
           </div>
         );
       })}
