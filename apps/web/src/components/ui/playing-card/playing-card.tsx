@@ -39,10 +39,14 @@ export function PlayingCard({
   card,
   className,
   onClick,
+  selected,
+  highlighted,
 }: {
   card: PlayingCardValue | null;
   className?: string;
   onClick?: () => void;
+  selected?: boolean;
+  highlighted?: boolean;
 }) {
   return (
     // TODO fix accessibility issues
@@ -52,7 +56,9 @@ export function PlayingCard({
       onClick={onClick}
       className={cn(
         'w-40 h-60 [perspective:1000px]',
+        'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
+        selected && '-translate-y-12',
         className,
       )}
     >
@@ -60,6 +66,8 @@ export function PlayingCard({
         className={cn(
           'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
           card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
+          'rounded-lg',
+          highlighted && 'ring-4 ring-ring',
         )}
       >
         {/* Front */}
