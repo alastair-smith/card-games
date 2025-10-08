@@ -1,0 +1,13 @@
+# See https://www.robotstxt.org/robotstxt.html for documentation
+#
+# Allow all crawlers full access to the site, except for the
+# areas specifically disallowed below.
+User-agent: *
+
+# Disallow crawling of the API endpoints.
+Disallow: /api/
+
+# Disallow crawling of active game and lobby pages.
+# These are not useful as search results.
+Disallow: /high-card/
+Disallow: /lobby/
