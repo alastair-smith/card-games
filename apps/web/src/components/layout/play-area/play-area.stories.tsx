@@ -1,18 +1,30 @@
+import { Card, CardHeader } from '~/components/ui/card';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
 import { RANKS, Suit } from '~/types/cards';
 import { PlayAreaPlayerName, PlayAreaPlayerZone, PlayAreaRoot } from '.';
 
 const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
+  const players = Array.from({ length: zoneCount }, (_, i) => {
+    return {
+      name: `Player ${i}`,
+      // biome-ignore lint/style/noNonNullAssertion: rank will always exist
+      card: { suit: Suit.SPADES, rank: RANKS[i % (RANKS.length - 1)]! },
+    };
+  });
   return (
     <PlayAreaRoot>
-      {Array.from({ length: zoneCount }, (_, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: only for story of generated players
-        <PlayAreaPlayerZone key={i}>
+      {players.map((player) => (
+        <PlayAreaPlayerZone key={player.name}>
           <PlayingCard
-            card={{ suit: Suit.SPADES, rank: RANKS[i]! }}
-            className='scale-80'
+            card={player.name === 'Player 3' ? null : player.card}
+            highlighted={player.name === 'Player 3'}
           />
-          <PlayAreaPlayerName>Player{i + 1}</PlayAreaPlayerName>
+          <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>
+          {player.name === 'Player 3' && (
+            <Card className='rounded'>
+              <CardHeader className='p-2'>Your Turn</CardHeader>
+            </Card>
+          )}
         </PlayAreaPlayerZone>
       ))}
     </PlayAreaRoot>
@@ -20,5 +32,9 @@ const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
 };
 
 export const TenPlayers = () => {
-  return <RenderZones zoneCount={10} />;
+  return (
+    <div className='w-full h-full flex justify-center items-center'>
+      <RenderZones zoneCount={10} />
+    </div>
+  );
 };

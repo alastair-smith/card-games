@@ -22,6 +22,10 @@ import {
 import { isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
+const RANK_FACE_SYMBOL_SIZE = '1.375rem';
+const CARD_WIDTH = 'w-34';
+const CARD_HEIGHT = 'h-48';
+
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
   [Suit.HEARTS]: HeartIcon,
@@ -55,7 +59,9 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        'w-40 h-60 [perspective:1000px]',
+        CARD_WIDTH,
+        CARD_HEIGHT,
+        '[perspective:1000px]',
         'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
@@ -152,7 +158,7 @@ function RankContent({
       <div className='grid grid-cols-1 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size='3ch' fill={color} />
+          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
         ))}
       </div>
     );
@@ -163,7 +169,7 @@ function RankContent({
       <div className='grid grid-cols-2 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size='3ch' fill={color} />
+          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
         ))}
       </div>
     );
@@ -177,25 +183,29 @@ function RankContent({
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size='3ch' fill={color} />
+          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
         ))}
       </div>
       <div className='h-full flex flex-col justify-around'>
         {Array.from({ length: shortColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size='3ch' fill={color} />
+          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
         ))}
         {
           // sneaky hack as the middle col of 7 is not centered
           rank === 7 && (
-            <SuitSymbol size='3ch' fill={color} className='invisible' />
+            <SuitSymbol
+              size={RANK_FACE_SYMBOL_SIZE}
+              fill={color}
+              className='invisible'
+            />
           )
         }
       </div>
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size='3ch' fill={color} />
+          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
         ))}
       </div>
     </div>
@@ -225,7 +235,13 @@ function JokerCard({ color }: { color: JokerSuit }) {
 
 export function PlayingCardBack() {
   return (
-    <div className='flex flex-col w-40 h-60 rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]' />
+    <div
+      className={cn(
+        CARD_WIDTH,
+        CARD_HEIGHT,
+        'flex flex-col rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]',
+      )}
+    />
   );
 }
 
@@ -246,7 +262,12 @@ export function ZeroPlayingCard({
     // biome-ignore lint/a11y/useKeyWithClickEvents: todo
     <div
       onClick={onClick}
-      className={cn('w-40 h-60', onClick ? 'cursor-pointer' : '', className)}
+      className={cn(
+        CARD_WIDTH,
+        CARD_HEIGHT,
+        onClick ? 'cursor-pointer' : '',
+        className,
+      )}
     >
       <div
         className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
