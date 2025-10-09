@@ -6,35 +6,65 @@ import { PlayAreaPlayerName, PlayAreaPlayerZone, PlayAreaRoot } from '.';
 const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
   const players = Array.from({ length: zoneCount }, (_, i) => {
     return {
-      name: `Player ${i}`,
+      name: `Player ${i + 1}`,
       // biome-ignore lint/style/noNonNullAssertion: rank will always exist
       card: { suit: Suit.SPADES, rank: RANKS[i % (RANKS.length - 1)]! },
     };
   });
   return (
-    <PlayAreaRoot>
-      {players.map((player) => (
-        <PlayAreaPlayerZone key={player.name}>
-          <PlayingCard
-            card={player.name === 'Player 3' ? null : player.card}
-            highlighted={player.name === 'Player 3'}
-          />
-          <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>
-          {/*{player.name === 'Player 3' && (
+    <div className='w-full h-full flex justify-center items-center'>
+      <PlayAreaRoot>
+        {players.map((player) => (
+          <PlayAreaPlayerZone key={player.name}>
+            <PlayingCard
+              card={player.name === 'Player 3' ? null : player.card}
+              highlighted={player.name === 'Player 3'}
+            />
+            <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>
+            {/*{player.name === 'Player 3' && (
             <Card className='rounded'>
               <CardHeader className='p-2'>Your Turn</CardHeader>
             </Card>
           )}*/}
-        </PlayAreaPlayerZone>
-      ))}
-    </PlayAreaRoot>
+          </PlayAreaPlayerZone>
+        ))}
+      </PlayAreaRoot>
+    </div>
   );
 };
 
-export const TenPlayers = () => {
-  return (
-    <div className='w-full h-full flex justify-center items-center'>
-      <RenderZones zoneCount={10} />
-    </div>
-  );
+export const PlayArea10 = () => {
+  return <RenderZones zoneCount={10} />;
+};
+
+export const PlayArea9 = () => {
+  return <RenderZones zoneCount={9} />;
+};
+
+export const PlayArea8 = () => {
+  return <RenderZones zoneCount={8} />;
+};
+
+export const PlayArea7 = () => {
+  return <RenderZones zoneCount={7} />;
+};
+
+export const PlayArea6 = () => {
+  return <RenderZones zoneCount={6} />;
+};
+
+export const PlayArea5 = () => {
+  return <RenderZones zoneCount={5} />;
+};
+
+export const PlayArea4 = () => {
+  return <RenderZones zoneCount={4} />;
+};
+
+export const PlayArea3 = () => {
+  return <RenderZones zoneCount={3} />;
+};
+
+export const PlayArea2 = () => {
+  return <RenderZones zoneCount={2} />;
 };
