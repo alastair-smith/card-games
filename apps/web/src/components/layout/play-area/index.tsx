@@ -14,28 +14,28 @@ function getGridPosition(
     return 'row-start-5 col-start-2';
   }
   if (playerIndex === 2) {
-    return 'row-start-2 col-start-3';
+    return 'row-start-2 col-start-4';
   }
   if (playerIndex === 3) {
-    return 'row-start-1 col-start-5';
-  }
-  if (playerIndex === 4) {
     return 'row-start-1 col-start-7';
   }
+  if (playerIndex === 4) {
+    return 'row-start-1 col-start-10';
+  }
   if (playerIndex === 5) {
-    return 'row-start-1 col-start-9';
+    return 'row-start-1 col-start-13';
   }
   if (playerIndex === 6) {
-    return 'row-start-1 col-start-11';
+    return 'row-start-1 col-start-16';
   }
   if (playerIndex === 7) {
-    return 'row-start-2 col-start-13';
+    return 'row-start-2 col-start-19';
   }
   if (playerIndex === 8) {
-    return 'row-start-5 col-start-14';
+    return 'row-start-5 col-start-21';
   }
   if (playerIndex === 9) {
-    return 'row-start-8 col-start-15';
+    return 'row-start-8 col-start-22';
   }
   return '';
 }
@@ -46,13 +46,13 @@ export type PlayAreaRootProps = {
 };
 export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
   return (
-    <div className={cn('grid w-full h-full gap-1', className)}>
+    <div className={cn('grid w-full h-full gap-3', className)}>
       {Children.map(children, (child, index) => {
         if (!isValidElement(child)) return child;
 
         return cloneElement(child, {
           className: cn(
-            'row-span-3 col-span-2 self-start',
+            'row-span-3 col-span-3 self-start',
             getGridPosition(index, 4),
             child.props.className,
           ),

@@ -20,11 +20,11 @@ const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
             highlighted={player.name === 'Player 3'}
           />
           <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>
-          {player.name === 'Player 3' && (
+          {/*{player.name === 'Player 3' && (
             <Card className='rounded'>
               <CardHeader className='p-2'>Your Turn</CardHeader>
             </Card>
-          )}
+          )}*/}
         </PlayAreaPlayerZone>
       ))}
     </PlayAreaRoot>
