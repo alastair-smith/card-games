@@ -48,7 +48,7 @@ export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
   return (
     <div className={cn('grid w-full h-full gap-3', className)}>
       {Children.map(children, (child, index) => {
-        if (!isValidElement(child)) return child;
+        if (!isValidElement<{ className?: string }>(child)) return child;
 
         return cloneElement(child, {
           className: cn(
