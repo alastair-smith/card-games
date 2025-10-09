@@ -25,6 +25,10 @@ import { cn } from '~/utils/cn';
 const RANK_FACE_SYMBOL_SIZE = '1.375rem';
 const CARD_WIDTH = 'w-34';
 const CARD_HEIGHT = 'h-48';
+const FONT_SIZE = 'text-4xl';
+const SMALL_CARD_WIDTH = 'w-16';
+const SMALL_CARD_HEIGHT = 'h-22.5';
+const SMALL_FONT_SIZE = 'text-2xl';
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -45,13 +49,20 @@ export function PlayingCard({
   onClick,
   selected,
   highlighted,
+  size,
 }: {
   card: PlayingCardValue | null;
   className?: string;
   onClick?: () => void;
   selected?: boolean;
   highlighted?: boolean;
+  size?: 'default' | 'sm';
 }) {
+  const [cardHeight, cardWidth] =
+    size === 'sm'
+      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
+      : [CARD_HEIGHT, CARD_WIDTH];
+
   return (
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
@@ -59,8 +70,8 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        CARD_WIDTH,
-        CARD_HEIGHT,
+        cardWidth,
+        cardHeight,
         '[perspective:1000px]',
         'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
@@ -78,19 +89,25 @@ export function PlayingCard({
       >
         {/* Front */}
         <div className='absolute w-full h-full [backface-visibility:hidden]'>
-          <PlayingCardFace card={card} />
+          <PlayingCardFace card={card} size={size} />
         </div>
 
         {/* Back */}
         <div className='absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
-          <PlayingCardBack />
+          <PlayingCardBack size={size} />
         </div>
       </div>
     </div>
   );
 }
 
-function PlayingCardFace({ card }: { card: PlayingCardValue | null }) {
+function PlayingCardFace({
+  card,
+  size,
+}: {
+  card: PlayingCardValue | null;
+  size?: 'default' | 'sm';
+}) {
   if (!card) return <div className='w-full h-full bg-white rounded-lg' />;
 
   if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
@@ -103,25 +120,39 @@ function PlayingCardFace({ card }: { card: PlayingCardValue | null }) {
       className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
       style={{ color }}
     >
-      <div className='flex items-center gap-1 pb-1'>
-        <div className='font-bold text-4xl'>{RANK_DISPLAY[card.rank]}</div>
+      <div
+        className={cn(
+          'flex items-center gap-1 pb-1',
+          size === 'sm' ? 'h-full w-full justify-center' : '',
+        )}
+      >
+        <div
+          className={cn(
+            'font-bold',
+            size === 'sm' ? SMALL_FONT_SIZE : FONT_SIZE,
+          )}
+        >
+          {RANK_DISPLAY[card.rank]}
+        </div>
         <SuitSymbol className='h-8' fill={color} />
       </div>
-      <div className='grid place-items-center p-4 border rounded flex-1'>
-        {isPictureCard(card) ? (
-          <PictureCardContent
-            rank={card.rank}
-            SuitSymbol={SuitSymbol}
-            color={color}
-          />
-        ) : (
-          <RankContent
-            rank={Number(card.rank)}
-            SuitSymbol={SuitSymbol}
-            color={color}
-          />
-        )}
-      </div>
+      {size !== 'sm' && (
+        <div className='grid place-items-center p-4 border rounded flex-1'>
+          {isPictureCard(card) ? (
+            <PictureCardContent
+              rank={card.rank}
+              SuitSymbol={SuitSymbol}
+              color={color}
+            />
+          ) : (
+            <RankContent
+              rank={Number(card.rank)}
+              SuitSymbol={SuitSymbol}
+              color={color}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -233,12 +264,17 @@ function JokerCard({ color }: { color: JokerSuit }) {
   );
 }
 
-export function PlayingCardBack() {
+export function PlayingCardBack({ size }: { size?: 'default' | 'sm' }) {
+  const [cardHeight, cardWidth] =
+    size === 'sm'
+      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
+      : [CARD_HEIGHT, CARD_WIDTH];
+
   return (
     <div
       className={cn(
-        CARD_WIDTH,
-        CARD_HEIGHT,
+        cardWidth,
+        cardHeight,
         'flex flex-col rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]',
       )}
     />
@@ -249,11 +285,18 @@ export function ZeroPlayingCard({
   suit,
   className,
   onClick,
+  size,
 }: {
   suit: Suit;
   className?: string;
   onClick?: () => void;
+  size?: 'default' | 'sm';
 }) {
+  const [cardHeight, cardWidth] =
+    size === 'sm'
+      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
+      : [CARD_HEIGHT, CARD_WIDTH];
+
   const SuitSymbol = suitSymbol[suit];
   const color = suitColor[suit];
 
@@ -263,8 +306,8 @@ export function ZeroPlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        CARD_WIDTH,
-        CARD_HEIGHT,
+        cardWidth,
+        cardHeight,
         onClick ? 'cursor-pointer' : '',
         className,
       )}
