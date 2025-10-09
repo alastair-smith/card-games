@@ -1,6 +1,12 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Hand } from '~/components/layout/hand';
+import {
+  PlayAreaPlayerName,
+  PlayAreaPlayerZone,
+  PlayAreaRoot,
+} from '~/components/layout/play-area';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
 import type { Player } from '~/server/data/high-card';
 import { RANK_FULL_NAME } from '~/types/cards';
@@ -23,31 +29,36 @@ export default function HighCardGameView({
     );
   }, [state.winners, state.players]);
 
-  return (
-    <div className='flex flex-col gap-4 text-white items-start'>
-      {state.players.map((player, index) => {
-        const canPickup =
-          player.isUser &&
-          !player.card &&
-          !!(index === 0 || state.players[index - 1]?.card);
+  const userIndex = state.players.findIndex((player) => player.isUser);
+  // biome-ignore lint/style/noNonNullAssertion: element exists as index is fetched just before
+  const user = state.players[userIndex]!;
+  const userCanPickup =
+    (userIndex === 0 || !!state.players[userIndex - 1]?.card) && !user.card;
 
-        return (
-          <div key={player.id} className='flex flex-col gap-2 p-4'>
-            <div>
-              {player.name}
-              {player.isUser && ' (You)'}
-            </div>
-            <div>
-              <PlayingCard
-                card={player.card}
-                onClick={canPickup ? pickupCard : undefined}
-                highlighted={canPickup}
-              />
-              {canPickup && <div>Your go</div>}
-            </div>
-          </div>
-        );
-      })}
+  return (
+    <div>
+      <PlayAreaRoot>
+        {state.players.map((player) => {
+          return (
+            <PlayAreaPlayerZone key={player.id}>
+              <PlayingCard card={player.card} size='sm' />
+              <PlayAreaPlayerName>
+                {player.name}
+                {player.isUser && ' (You)'}
+              </PlayAreaPlayerName>
+            </PlayAreaPlayerZone>
+          );
+        })}
+      </PlayAreaRoot>
+      <Hand>
+        {user?.card === null && (
+          <PlayingCard
+            card={user?.card}
+            onClick={userCanPickup ? pickupCard : undefined}
+            highlighted={userCanPickup}
+          />
+        )}
+      </Hand>
       {winners.length && <Winner players={winners} />}
     </div>
   );

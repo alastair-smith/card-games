@@ -61,7 +61,6 @@ export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
       className={cn(
         'grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3',
         'lg:grid-cols-none',
-        'w-full h-full',
         className,
       )}
     >
