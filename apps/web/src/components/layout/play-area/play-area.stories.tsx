@@ -12,7 +12,7 @@ const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
     };
   });
   return (
-    <div className='w-full h-full flex justify-center items-center'>
+    <div className='w-full h-[70vh] flex justify-center items-center'>
       <PlayAreaRoot>
         {players.map((player) => (
           <PlayAreaPlayerZone key={player.name}>
