@@ -2,37 +2,37 @@ import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
 import { Card, CardHeader } from '~/components/ui/card';
 import { cn } from '~/utils/cn';
 
-const evenPlayerPositions = [
-  'row-start-8 col-start-1',
-  'row-start-5 col-start-2',
-  'row-start-2 col-start-4',
-  'row-start-1 col-start-7',
-  'row-start-1 col-start-10',
-  'row-start-1 col-start-13',
-  'row-start-1 col-start-16',
-  'row-start-2 col-start-19',
-  'row-start-5 col-start-21',
-  'row-start-8 col-start-22',
-] as const satisfies `row-start-${number} col-start-${number}`[];
+const evenPlayerArchPositions = [
+  'lg:row-start-8 lg:col-start-1',
+  'lg:row-start-5 lg:col-start-2',
+  'lg:row-start-2 lg:col-start-4',
+  'lg:row-start-1 lg:col-start-7',
+  'lg:row-start-1 lg:col-start-10',
+  'lg:row-start-1 lg:col-start-13',
+  'lg:row-start-1 lg:col-start-16',
+  'lg:row-start-2 lg:col-start-19',
+  'lg:row-start-5 lg:col-start-21',
+  'lg:row-start-8 lg:col-start-22',
+] as const satisfies `lg:row-start-${number} lg:col-start-${number}`[];
 
-const oddPlayerPositions = [
-  'row-start-8 col-start-1',
-  'row-start-5 col-start-2',
-  'row-start-2 col-start-4',
-  'row-start-1 col-start-7',
-  'row-start-1 col-start-10',
-  'row-start-1 col-start-13',
-  'row-start-2 col-start-16',
-  'row-start-5 col-start-18',
-  'row-start-8 col-start-19',
-] as const satisfies `row-start-${number} col-start-${number}`[];
+const oddPlayerArchPositions = [
+  'lg:row-start-8 lg:col-start-1',
+  'lg:row-start-5 lg:col-start-2',
+  'lg:row-start-2 lg:col-start-4',
+  'lg:row-start-1 lg:col-start-7',
+  'lg:row-start-1 lg:col-start-10',
+  'lg:row-start-1 lg:col-start-13',
+  'lg:row-start-2 lg:col-start-16',
+  'lg:row-start-5 lg:col-start-18',
+  'lg:row-start-8 lg:col-start-19',
+] as const satisfies `lg:row-start-${number} lg:col-start-${number}`[];
 
-function getGridPosition(
+function getArchPosition(
   playerIndex: number,
   totalPlayers: number,
-): `row-start-${number} col-start-${number}` | '' {
+): `lg:row-start-${number} lg:col-start-${number}` | '' {
   const positions =
-    totalPlayers % 2 === 0 ? evenPlayerPositions : oddPlayerPositions;
+    totalPlayers % 2 === 0 ? evenPlayerArchPositions : oddPlayerArchPositions;
 
   if (totalPlayers === 1) {
     return positions[4];
@@ -57,14 +57,21 @@ export type PlayAreaRootProps = {
 export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
   const totalPlayers = Children.count(children);
   return (
-    <div className={cn('grid w-full h-full gap-3', className)}>
+    <div
+      className={cn(
+        'grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3',
+        'lg:grid-cols-none',
+        'w-full h-full',
+        className,
+      )}
+    >
       {Children.map(children, (child, index) => {
         if (!isValidElement<{ className?: string }>(child)) return child;
 
         return cloneElement(child, {
           className: cn(
-            'row-span-3 col-span-3 self-start',
-            getGridPosition(index, totalPlayers),
+            'lg:row-span-3 lg:col-span-3 lg:self-start',
+            getArchPosition(index, totalPlayers),
             child.props.className,
           ),
         });
