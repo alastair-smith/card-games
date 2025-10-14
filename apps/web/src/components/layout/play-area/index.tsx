@@ -59,7 +59,7 @@ export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
   return (
     <div
       className={cn(
-        'grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-3',
+        'grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-3',
         'lg:grid-cols-none',
         className,
       )}

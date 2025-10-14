@@ -39,7 +39,7 @@ export default function HighCardGameView({
     (userIndex === 0 || !!state.players[userIndex - 1]?.card) && !user.card;
 
   return (
-    <div className={cn('flex flex-col h-full', className)}>
+    <div className={cn('flex flex-col h-full gap-3', className)}>
       <PlayAreaRoot className='flex-1'>
         {state.players.map((player) => {
           return (
@@ -62,7 +62,7 @@ export default function HighCardGameView({
           />
         )}
       </Hand>
-      {winners.length && <Winner players={winners} />}
+      {winners.length > 0 && <Winner players={winners} />}
     </div>
   );
 }
