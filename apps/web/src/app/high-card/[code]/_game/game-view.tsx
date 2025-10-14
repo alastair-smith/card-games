@@ -12,14 +12,17 @@ import type { Player } from '~/server/data/high-card';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameState } from '~/types/games/high-card';
+import { cn } from '~/utils/cn';
 
 export type HighCardGameProps = {
+  className?: string;
   state: GameState;
   pickupCard: () => void;
   playerUserId?: UserId;
 };
 
 export default function HighCardGameView({
+  className,
   state,
   pickupCard,
 }: HighCardGameProps) {
@@ -36,8 +39,8 @@ export default function HighCardGameView({
     (userIndex === 0 || !!state.players[userIndex - 1]?.card) && !user.card;
 
   return (
-    <div>
-      <PlayAreaRoot>
+    <div className={cn('flex flex-col h-full', className)}>
+      <PlayAreaRoot className='flex-1'>
         {state.players.map((player) => {
           return (
             <PlayAreaPlayerZone key={player.id}>

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { MIN_CARD_HEIGHT } from '~/components/ui/playing-card/playing-card';
 import { cn } from '~/utils/cn';
 
 export type HandProps = {
@@ -6,5 +7,20 @@ export type HandProps = {
   className?: string;
 };
 export function Hand({ children, className }: HandProps) {
-  return <div className={cn(className)}>{children}</div>;
+  return (
+    <div>
+      <div className={cn('border-t-2 ', className)}>
+        <h2>Your hand</h2>
+        <div
+          className={cn(
+            'flex w-full items-center justify-center pt-3',
+            MIN_CARD_HEIGHT,
+          )}
+        >
+          {children}
+          {!children && <div className='text-4xl'>[ Empty Hand ]</div>}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -25,6 +25,7 @@ import { cn } from '~/utils/cn';
 const RANK_FACE_SYMBOL_SIZE = '1.375rem';
 const CARD_WIDTH = 'w-34';
 const CARD_HEIGHT = 'h-48';
+export const MIN_CARD_HEIGHT = 'min-h-48'; // used to reserve space
 const FONT_SIZE = 'text-4xl';
 const SMALL_CARD_WIDTH = 'w-16';
 const SMALL_CARD_HEIGHT = 'h-22.5';
