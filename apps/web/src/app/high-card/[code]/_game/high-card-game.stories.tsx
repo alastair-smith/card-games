@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
-import type { UserId } from '~/types/entities';
+import { MAX_NAME_LENGTH, type UserId } from '~/types/entities';
 import { GameStage } from '~/types/games/high-card';
 import Game from './game-view';
 
@@ -181,6 +181,31 @@ export const MaxPlayers = () => {
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.NINE },
           },
+        ],
+        winners: [],
+        stage: GameStage.IN_PROGRESS,
+      }}
+    />
+  );
+};
+
+export const LongName = () => {
+  const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join('');
+  return (
+    <Game
+      pickupCard={() => {
+        toast.success('Card picked up!');
+      }}
+      state={{
+        players: [
+          { id: '1' as UserId, name: longName, isUser: false, card: null },
+          {
+            id: '2' as UserId,
+            name: longName,
+            isUser: true,
+            card: null,
+          },
+          { id: '3' as UserId, name: longName, isUser: false, card: null },
         ],
         winners: [],
         stage: GameStage.IN_PROGRESS,

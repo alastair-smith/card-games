@@ -1,5 +1,6 @@
 import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
 import { Card, CardHeader } from '~/components/ui/card';
+import { MAX_NAME_LENGTH } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
 const evenPlayerArchPositions = [
@@ -96,13 +97,22 @@ export function PlayAreaPlayerZone({
 }
 
 export type PlayAreaPlayerNameProps = {
+  className?: string;
   children: ReactNode;
 };
 
-export function PlayAreaPlayerName({ children }: PlayAreaPlayerNameProps) {
+export function PlayAreaPlayerName({
+  className,
+  children,
+}: PlayAreaPlayerNameProps) {
   return (
-    <Card className='rounded'>
-      <CardHeader className='p-2'>{children}</CardHeader>
-    </Card>
+    <div
+      className={cn(
+        'p-2 text-sm bg-alt-background rounded-lg text-center w-[calc(100%-1.5rem)]',
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }

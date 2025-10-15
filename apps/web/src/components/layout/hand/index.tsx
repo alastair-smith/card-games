@@ -29,7 +29,7 @@ export function VerticalHand({ children, className }: HandProps) {
   return (
     <div
       className={cn(
-        'flex flex-wrap w-full items-center justify-center pt-3',
+        'flex flex-wrap w-full h-full items-center justify-center pt-3',
         className,
       )}
     >

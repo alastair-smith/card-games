@@ -21,6 +21,7 @@
   /* background colors*/
   --color-main-background: var(--color-dark-green);
   --color-card-background: var(--color-white);
+  --color-alt-background: var(--color-grey-lily-white);
   --color-input-background: var(--color-lily-white);
   --color-switch: var(--color-grey-lily-white);
 

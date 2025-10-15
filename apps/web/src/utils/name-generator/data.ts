@@ -1,4 +1,4 @@
-export const FALLBACK_PLAYER_NAME = 'Unknown Player';
+export const FALLBACK_PLAYER_NAME = 'Unknown';
 
 export const PLAYER_NAMES = [
   'Ace',
