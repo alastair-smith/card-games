@@ -5,7 +5,6 @@ import {
   MessageCircleQuestionMarkIcon,
   RefreshCwIcon,
 } from 'lucide-react';
-import Link from 'next/link';
 import { CurrentUrlLink } from '~/components/current-url';
 import { Button } from '~/components/ui/button';
 import {

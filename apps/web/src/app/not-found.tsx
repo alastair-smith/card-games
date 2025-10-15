@@ -1,6 +1,5 @@
 import { HouseIcon, RefreshCwIcon } from 'lucide-react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { CurrentUrlLink, CurrentUrlText } from '~/components/current-url';
 import { Button } from '~/components/ui/button';
 import {
