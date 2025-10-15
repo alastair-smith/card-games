@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
 import {
@@ -7,6 +8,16 @@ import {
   PlayAreaPlayerZone,
   PlayAreaRoot,
 } from '~/components/layout/play-area';
+import { Button } from '~/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
@@ -82,6 +93,29 @@ export default function HighCardGameView({
 
   return (
     <div className={cn('h-svh p-3', className)}>
+      {winners[0] && (
+        <Dialog>
+          <DialogTrigger>Open</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Game Summary</DialogTitle>
+              <DialogDescription>
+                {winners.map(({ name }) => name).join(' & ')}{' '}
+                {winners.length > 1 ? 'win' : 'wins'}
+                {winners[0].card?.rank
+                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+                  : '!'}
+              </DialogDescription>
+              <DialogFooter>
+                <Button asChild>
+                  <Link href='/'>Pick Another Game</Link>
+                </Button>
+              </DialogFooter>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Mobile view with tabs */}
       <div className='flex h-full flex-col lg:hidden'>
         <Tabs
@@ -135,18 +169,6 @@ export default function HighCardGameView({
         {PlayArea}
         <HorizontalHand>{PlayerHandContent}</HorizontalHand>
       </div>
-    </div>
-  );
-}
-
-function Winner({ players }: { players: Player[] }) {
-  if (!players[0]) return null;
-
-  return (
-    <div className='text-3xl text-green-500'>
-      {players.map(({ name }) => name).join(' & ')}
-      {players.length > 1 ? ' win' : ' wins'}
-      {players[0].card && ` with a ${RANK_FULL_NAME[players[0].card.rank]}`}!
     </div>
   );
 }

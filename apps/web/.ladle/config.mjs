@@ -15,4 +15,5 @@ export default {
   theme: {
     defaultState: 'dark',
   },
+  viteConfig: `${process.cwd()}/.ladle/vite.config.ts`,
 };
