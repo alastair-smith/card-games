@@ -3,7 +3,7 @@ import '~/styles/globals.css';
 import { Toaster } from '../src/components/ui/toast';
 
 export const Provider: GlobalProvider = ({ children }) => (
-  <div className='bg-main-background background-noise min-h-screen p-4 prose text-dark-text'>
+  <div className='bg-main-background background-noise prose text-dark-text'>
     <Toaster />
     {children}
   </div>

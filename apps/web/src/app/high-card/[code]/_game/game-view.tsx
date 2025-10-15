@@ -81,7 +81,7 @@ export default function HighCardGameView({
   );
 
   return (
-    <div className={cn('h-full', className)}>
+    <div className={cn('h-svh', className)}>
       {/* Mobile view with tabs */}
       <div className='flex h-full flex-col lg:hidden'>
         <Tabs
@@ -117,14 +117,16 @@ export default function HighCardGameView({
               <VerticalHand>{PlayerHandContent}</VerticalHand>
             </TabsContent>
           </div>
-          <TabsList className='w-full'>
-            <TabsTrigger value='board' className='flex-1'>
-              Board
-            </TabsTrigger>
-            <TabsTrigger value='hand' className='flex-1'>
-              Hand
-            </TabsTrigger>
-          </TabsList>
+          <div className='pb-[calc(env(safe-area-inset-bottom)+1rem)]'>
+            <TabsList className='w-full'>
+              <TabsTrigger value='board' className='flex-1'>
+                Board
+              </TabsTrigger>
+              <TabsTrigger value='hand' className='flex-1'>
+                Hand
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </Tabs>
       </div>
 
