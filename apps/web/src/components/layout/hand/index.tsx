@@ -6,7 +6,7 @@ export type HandProps = {
   children?: ReactNode;
   className?: string;
 };
-export function Hand({ children, className }: HandProps) {
+export function HorizontalHand({ children, className }: HandProps) {
   return (
     <div>
       <div className={cn('border-t-2 ', className)}>
@@ -21,6 +21,20 @@ export function Hand({ children, className }: HandProps) {
           {!children && <div className='text-4xl'>[ Empty Hand ]</div>}
         </div>
       </div>
+    </div>
+  );
+}
+
+export function VerticalHand({ children, className }: HandProps) {
+  return (
+    <div
+      className={cn(
+        'flex flex-wrap w-full items-center justify-center pt-3',
+        className,
+      )}
+    >
+      {children}
+      {!children && <div className='text-4xl'>[ Empty Hand ]</div>}
     </div>
   );
 }

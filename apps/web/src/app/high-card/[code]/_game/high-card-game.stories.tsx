@@ -8,7 +8,7 @@ import Game from './game-view';
 export const Turn1 = () => {
   return (
     <Game
-      className='min-h-screen'
+      className='h-screen'
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -29,7 +29,7 @@ export const Turn2 = () => {
   const [card2, setCard2] = useState<StandardPlayingCard | null>(null);
   return (
     <Game
-      className='min-h-screen'
+      className='h-screen'
       pickupCard={() => {
         setCard2({ suit: Suit.SPADES, rank: Rank.QUEEN });
         toast.success('Card picked up!');
@@ -55,7 +55,7 @@ export const Turn2 = () => {
 export const Turn3 = () => {
   return (
     <Game
-      className='min-h-screen'
+      className='h-screen'
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -85,7 +85,7 @@ export const Turn3 = () => {
 export const Turn4 = () => {
   return (
     <Game
-      className='min-h-screen'
+      className='h-screen'
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -120,7 +120,7 @@ export const Turn4 = () => {
 export const MaxPlayers = () => {
   return (
     <Game
-      className='min-h-screen'
+      className='h-screen'
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
