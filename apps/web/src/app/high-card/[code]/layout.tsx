@@ -9,7 +9,7 @@ export default function SetupLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className='flex min-h-dvh justify-center text-white'>
-      <div className='flex h-screen w-full max-w-[80rem] flex-col items-center gap-6 px-4'>
+      <div className='flex h-dvh w-full max-w-[80rem] flex-col items-center gap-6 px-4'>
         <header className='self-start pt-6'>
           <h1 className='font-bold'>High Card</h1>
         </header>

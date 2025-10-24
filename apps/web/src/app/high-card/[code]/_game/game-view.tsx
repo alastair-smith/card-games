@@ -91,7 +91,7 @@ export default function HighCardGameView({
   );
 
   return (
-    <div className={cn('h-svh p-3', className)}>
+    <div className={cn('h-full p-3', className)}>
       {winners[0] && (
         <Dialog>
           <DialogTrigger>Open</DialogTrigger>
