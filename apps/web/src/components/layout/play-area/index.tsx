@@ -1,6 +1,4 @@
 import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
-import { Card, CardHeader } from '~/components/ui/card';
-import { MAX_NAME_LENGTH } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
 const evenPlayerArchPositions = [

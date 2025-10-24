@@ -21,7 +21,6 @@ import {
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
-import type { Player } from '~/server/data/high-card';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameState } from '~/types/games/high-card';
