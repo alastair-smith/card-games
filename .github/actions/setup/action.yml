@@ -1,0 +1,25 @@
+name: 'Setup Environment'
+description: 'Checkout, setup node and pnpm, and install dependencies'
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Read versions
+      id: versions
+      shell: bash
+      run: |
+        echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+        echo "PNPM_VERSION=$(grep pnpm .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+    - name: Setup PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ steps.versions.outputs.PNPM_VERSION }}
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ steps.versions.outputs.NODE_VERSION }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
