@@ -1,9 +1,9 @@
 // @ts-check
-import { createServer } from "http";
-import { parse } from "url";
-import next from "next";
 
-import { env } from "./env.js";
+import { createServer } from 'node:http';
+import { parse } from 'node:url';
+import next from 'next';
+import { env } from './env.js';
 
 const greetings = `
 \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m \x1b[47m\x1b[30m.------.\x1b[0m
@@ -25,13 +25,13 @@ const startServer = async () => {
   const nodeEnv = env.NODE_ENV;
   const port = env.PORT;
 
-  const app = next({ dev: nodeEnv === "development" });
+  const app = next({ dev: nodeEnv === 'development', turbo: true });
   const handle = app.getRequestHandler();
 
-  await app.prepare()
+  await app.prepare();
 
   const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url ?? "", true);
+    const parsedUrl = parse(req.url ?? '', true);
     void handle(req, res, parsedUrl);
   });
 

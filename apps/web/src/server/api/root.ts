@@ -1,5 +1,6 @@
-import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
-import { lobbyRouter } from "@/server/api/routers/lobby";
+import { lobbyRouter } from '~/server/api/routers/lobby';
+import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
+import { highCardRouter } from './routers/high-card';
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { lobbyRouter } from "@/server/api/routers/lobby";
  */
 export const appRouter = createTRPCRouter({
   lobby: lobbyRouter,
+  highCard: highCardRouter,
 });
 
 // export type definition of API

@@ -1,0 +1,12 @@
+.------. .------. .------. .------.
+|A _   | |A     | |A_  _ | |A .   |
+| ( )  | |  /\  | |( \/ )| | /.\  |
+|(_'_) | |  \/  | | \  / | |(_._) |
+|  |  A| |     A| |  \/ A| |  |  A|
+.------. .------. .------. .------.
+
+https://playcards.games is developed and maintained by Alastair Smith, https://alsmith.dev
+
+Big thanks to my friends and family who have taught me different games over the years, and to the open source community whose tools and libraries make this possible.
+
+Last updated: 2025-09-30

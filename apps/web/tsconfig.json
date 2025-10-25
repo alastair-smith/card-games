@@ -26,12 +26,10 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["./src/app/_components/*"],
-      "@/*": ["./src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": [
-    ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
 
 export const env = createEnv({
   /**
@@ -8,13 +8,17 @@ export const env = createEnv({
    */
   server: {
     AUTH_SECRET: z.string().min(32),
+    LOG_LEVEL: z
+      .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+      .default('info'),
     NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+      .enum(['development', 'test', 'production'])
+      .default('development'),
     PORT: z
       .string()
-      .default("3000")
+      .default('3000')
       .transform((val) => z.number().int().positive().parse(Number(val))),
+    GIT_COMMIT_HASH: z.string().default('unknown'),
   },
 
   /**
@@ -33,7 +37,9 @@ export const env = createEnv({
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
     NODE_ENV: process.env.NODE_ENV,
+    LOG_LEVEL: process.env.LOG_LEVEL,
     PORT: process.env.PORT,
+    GIT_COMMIT_HASH: process.env.GIT_COMMIT_HASH,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

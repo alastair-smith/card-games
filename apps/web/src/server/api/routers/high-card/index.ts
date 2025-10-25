@@ -1,11 +1,10 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { createGame } from "@/server/state/game/high-card";
+import { createTRPCRouter } from '~/server/api/trpc';
+import { pickupCard } from './pickup-card';
+import { startGameMutation as startGame } from './start-game';
+import { state } from './state';
 
-export const lobbyRouter = createTRPCRouter({
-  create: protectedProcedure
-    .mutation(async ({ ctx: { userId } }) => {
-      const { code } = await createGame({ host: userId });
-
-      return { code };
-    }),
+export const highCardRouter = createTRPCRouter({
+  startGame,
+  pickupCard,
+  state,
 });
