@@ -1,23 +1,29 @@
 'use server';
 
-import { api } from "@/trpc/server";
-import { GameCode, gameCodeSchema, GameType, gameURL } from "@/types/game";
-import { TRPCError } from "@trpc/server";
-import { redirect } from "next/navigation";
+import { TRPCError } from '@trpc/server';
+import { redirect } from 'next/navigation';
+import { api } from '~/trpc/server';
+import { type GameCode, type GameType, gameURL } from '~/types/game';
 
 const getLobbyURL = (type: GameType, code: GameCode) => {
   const baseUrl = gameURL[type];
 
   if (!baseUrl) throw new Error('No game exists for this type');
 
-  return `${baseUrl}/${code}`
-}
+  return `${baseUrl}/${code}`;
+};
 
-const NotFound = () => (<div>Not Found</div>);
+const NotFound = () => <div>Not Found</div>;
 
-const ErrorPage = () => (<div>Error joining game, check the code is correct!</div>);
+const ErrorPage = () => (
+  <div>Error joining game, check the code is correct!</div>
+);
 
-export default async function LobbyPage({ params }: { params: Promise<{ code: string }> }) {
+export default async function LobbyPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
   try {
     const { code } = await params;
 
@@ -28,9 +34,9 @@ export default async function LobbyPage({ params }: { params: Promise<{ code: st
     redirect(url);
   } catch (error) {
     if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
-      return <NotFound />
+      return <NotFound />;
     }
 
-    return <ErrorPage />
+    return <ErrorPage />;
   }
 }

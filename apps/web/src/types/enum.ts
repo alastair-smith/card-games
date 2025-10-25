@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const createEnumFromObject = <T extends Record<string, string>>(
   obj: T,

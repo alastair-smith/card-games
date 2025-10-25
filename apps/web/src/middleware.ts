@@ -1,7 +1,11 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-import { AUTH_COOKIE_NAME, nearExpiry, getSession, createAuthToken } from '@/server/auth';
+import { NextResponse } from 'next/server';
+import {
+  AUTH_COOKIE_NAME,
+  createAuthToken,
+  getSession,
+  nearExpiry,
+} from '~/server/auth';
 
 export async function middleware(request: NextRequest) {
   const authCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -16,7 +20,12 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
 
     // set in response for future requests
-    response.cookies.set(AUTH_COOKIE_NAME, signedJWT, { expires: expiry, httpOnly: true, secure: true, sameSite: 'strict' });
+    response.cookies.set(AUTH_COOKIE_NAME, signedJWT, {
+      expires: expiry,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
 
     return response;
   } else {

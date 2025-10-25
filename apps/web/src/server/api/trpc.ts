@@ -7,11 +7,10 @@
  * need to use are documented accordingly near the end.
  */
 
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { ZodError } from "zod";
-
-import { getSession } from "@/server/auth";
+import { initTRPC, TRPCError } from '@trpc/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
+import { getSession } from '~/server/auth';
 
 /**
  * 1. CONTEXT
@@ -25,7 +24,10 @@ import { getSession } from "@/server/auth";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (reqHeaders: Headers, authCookie?: string) => {
+export const createTRPCContext = async (
+  reqHeaders: Headers,
+  authCookie?: string,
+) => {
   return {
     authCookie,
     reqHeaders,
@@ -120,7 +122,7 @@ export const protectedProcedure = t.procedure
     const session = await getSession(authCookie);
 
     if (!session) {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Auth missing." });
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Auth missing.' });
     }
 
     return next({
