@@ -8,6 +8,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - name: Run lint
         run: pnpm lint
@@ -16,6 +18,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - name: Run test
         run: pnpm test
@@ -24,6 +28,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build

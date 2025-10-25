@@ -3,8 +3,6 @@ description: 'Checkout, setup node and pnpm, and install dependencies'
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
     - name: Read versions
       id: versions
       shell: bash
