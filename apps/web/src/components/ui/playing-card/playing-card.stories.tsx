@@ -115,7 +115,7 @@ export const HighLightedAndSelectedBackCard = () => {
 
 export const WholeDeck = () => {
   return (
-    <div className='bg-felt-texture p-10 flex flex-wrap gap-4'>
+    <div className='p-10 flex flex-wrap gap-4'>
       <PlayingCard card={null} />
       <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} />
       <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }} />
@@ -131,7 +131,7 @@ export const FlipCard = () => {
   const [cardHasValue, setCardHasValue] = useState(false);
 
   return (
-    <div className='bg-felt-texture p-10 flex flex-col gap-8'>
+    <div className='p-10 flex flex-col gap-8'>
       <Button onClick={() => setShowCard(!showCard)}>Deal card</Button>
       <Button
         onClick={() => {
