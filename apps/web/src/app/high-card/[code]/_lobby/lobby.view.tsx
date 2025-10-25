@@ -25,7 +25,7 @@ export type LobbyProps = {
 
 export default function Lobby({ code, ...playerProps }: LobbyProps) {
   return (
-    <div className='flex flex-row justify-center w-full items-center min-h-full'>
+    <div className='flex flex-row justify-center w-full items-center h-full'>
       <div className='w-full flex flex-row flex-wrap gap-3 justify-center max-w-[80rem]'>
         <h1 className='sr-only'>High Card Lobby</h1>
         <div className='flex flex-col gap-3 min-w-[20rem] flex-1 basis-[30rem]'>
