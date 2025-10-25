@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
+    "build": "SKIP_ENV_VALIDATION=true next build",
     "dev": "pnpm run dev:app",
     "dev:all": "concurrently --kill-others --names 'app,stories' --prefix-colors 'yellow.bold,magenta.bold' 'pnpm dev:app' 'pnpm dev:stories'",
     "dev:app": "node --env-file .env ./src/server.js",
