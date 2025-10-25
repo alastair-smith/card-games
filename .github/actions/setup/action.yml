@@ -9,8 +9,11 @@ runs:
       run: |
         echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
         echo "PNPM_VERSION=$(grep pnpm .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
-        echo "NODE_VERSION set as $NODE_VERSION from .tool-versions"
-        echo "PNPM_VERSION set as $PNPM_VERSION from .tool-versions"
+    - name: Announce versions
+      shell: bash
+      run: |
+        echo "Using Node.js version: ${{ steps.versions.outputs.NODE_VERSION }}"
+        echo "Using PNPM version: ${{ steps.versions.outputs.PNPM_VERSION }}"
     - name: Setup PNPM
       uses: pnpm/action-setup@v4
       with:
