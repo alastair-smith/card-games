@@ -13,6 +13,14 @@ layout {
             plugin location="zellij:compact-bar"
         }
     }
+    tab name="ai" {
+      pane command="npx" {
+          args "@google/gemini-cli"
+      }
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+    }
     tab name="ci" {
         pane split_direction="vertical" {
             pane command="pnpm" {
