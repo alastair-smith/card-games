@@ -1,27 +1,59 @@
-# Create T3 App
+# Play Cards
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a web application for playing multiplayer card games online with friends. Start a game and share the lobby link to invite them to join from their own device.
 
-## What's next? How do I make an app with this?
+It is hosted at [playcards.games](https://playcards.games).
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Tech Stack
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+This project is built with the T3 Stack, and includes the following technologies:
 
 - [Next.js](https://nextjs.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Docker](https://www.docker.com/)
+- [pnpm](https://pnpm.io/)
+- [Turbo](https://turbo.build/)
 
-## Learn More
+## Development
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+To get started, you will need to have `pnpm` and `docker` installed.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+1.  Install dependencies:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+    ```bash
+    pnpm install
+    ```
 
-## How do I deploy this?
+2.  Start the development server:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+    ```bash
+    pnpm dev
+    ```
+
+    This will start the Next.js application and a Redis instance in a Docker container.
+
+    For a better development experience, you can use the `dev:zellij` command:
+
+    ```bash
+    pnpm dev:zellij
+    ```
+
+    This command uses [Zellij](https://zellij.dev/) to manage multiple terminal sessions in a structured way, providing a more organized and efficient development workflow.
+
+## Building
+
+To build the application for production, run the following command:
+
+```bash
+pnpm build
+```
+
+## Testing
+
+To run the tests, run the following command:
+
+```bash
+pnpm test
+```
