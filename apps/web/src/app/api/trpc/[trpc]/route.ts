@@ -13,7 +13,11 @@ import { logger } from '~/utils/logger';
 const createContext = async (req: NextRequest) => {
   const authCookie = req.cookies.get(AUTH_COOKIE_NAME)?.value;
 
-  return createTRPCContext(req.headers, authCookie);
+  return createTRPCContext({
+    signal: req.signal,
+    headers: req.headers,
+    authCookie,
+  });
 };
 
 const handler = (req: NextRequest) =>
