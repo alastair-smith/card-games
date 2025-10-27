@@ -24,13 +24,13 @@ import { getSession } from '~/server/auth';
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (
-  reqHeaders: Headers,
-  authCookie?: string,
-) => {
+export const createTRPCContext = async (opts: {
+  signal?: AbortSignal; // not available when calling trpc from the server
+  headers: Headers;
+  authCookie?: string;
+}) => {
   return {
-    authCookie,
-    reqHeaders,
+    ...opts,
   };
 };
 
@@ -41,19 +41,21 @@ export const createTRPCContext = async (
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
-});
+const t = initTRPC
+  .context<Awaited<ReturnType<typeof createTRPCContext>>>()
+  .create({
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          zodError:
+            error.cause instanceof ZodError ? error.cause.flatten() : null,
+        },
+      };
+    },
+  });
 
 /**
  * Create a server-side caller.

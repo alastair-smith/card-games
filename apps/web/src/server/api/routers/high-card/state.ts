@@ -59,7 +59,7 @@ export const state = protectedProcedure
   )
   .subscription(async function* ({
     input: { code },
-    ctx: { userId },
+    ctx: { userId, signal },
   }): AsyncGenerator<StateSubscription> {
     const initialState = await getGameState(code, userId);
 
@@ -160,7 +160,7 @@ export const state = protectedProcedure
     emitter.on(gameChannel, gameHandler);
 
     try {
-      while (true) {
+      while (!signal?.aborted) {
         if (messageQueue.length > 0) {
           const message = messageQueue.shift();
           if (message) {
