@@ -18,7 +18,10 @@ const createContext = cache(async () => {
 
   const authCookie = (await cookies()).get(AUTH_COOKIE_NAME)?.value;
 
-  return createTRPCContext(reqHeaders, authCookie);
+  return createTRPCContext({
+    headers: reqHeaders,
+    authCookie,
+  });
 });
 
 const getQueryClient = cache(createQueryClient);
