@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
 import {
   PlayAreaPlayerName,
@@ -23,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
+import { GameType } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
 
@@ -90,31 +92,37 @@ export default function HighCardGameView({
     />
   );
 
-  return (
-    <div className={cn('h-full p-3', className)}>
-      {winners[0] && (
-        <Dialog>
-          <DialogTrigger>Open</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Game Summary</DialogTitle>
-              <DialogDescription>
-                {winners.map(({ name }) => name).join(' & ')}{' '}
-                {winners.length > 1 ? 'win' : 'wins'}
-                {winners[0].card?.rank
-                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
-                  : '!'}
-              </DialogDescription>
-              <DialogFooter>
-                <Button asChild>
-                  <Link href='/'>Pick Another Game</Link>
-                </Button>
-              </DialogFooter>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )}
+  const gameActions = winners[0] ? (
+    <Dialog defaultOpen>
+      <DialogTrigger asChild>
+        <Button>View End Screen</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Game Summary</DialogTitle>
+          <DialogDescription>
+            {winners.map(({ name }) => name).join(' & ')}{' '}
+            {winners.length > 1 ? 'win' : 'wins'}
+            {winners[0].card?.rank
+              ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+              : '!'}
+          </DialogDescription>
+          <DialogFooter>
+            <Button asChild>
+              <Link href='/'>Pick Another Game</Link>
+            </Button>
+          </DialogFooter>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  ) : null;
 
+  return (
+    <GameLayout
+      gameType={GameType.HIGH_CARD}
+      actions={gameActions}
+      className={className}
+    >
       {/* Mobile view with tabs */}
       <div className='flex h-full flex-col lg:hidden'>
         <Tabs
@@ -168,6 +176,6 @@ export default function HighCardGameView({
         {PlayArea}
         <HorizontalHand>{PlayerHandContent}</HorizontalHand>
       </div>
-    </div>
+    </GameLayout>
   );
 }
