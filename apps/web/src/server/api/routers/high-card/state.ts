@@ -3,9 +3,8 @@ import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
 import { gameStateSchema as gameStateRawDataSchema } from '~/server/data/high-card';
 import { lobbySchema } from '~/server/data/lobby';
-import { subscriber } from '~/server/events/connections';
-import { subscribeToHighCardState } from '~/server/events/high-card';
-import { getLobbyChannel, subscribeToLobbyState } from '~/server/events/lobby';
+import emitter from '~/server/events/emitter';
+import { getLobbyChannel } from '~/server/events/lobby';
 import { getGameState } from '~/server/state/game/high-card/get-game-state';
 import { joinGame } from '~/server/state/game/high-card/join-game';
 import {
@@ -115,51 +114,50 @@ export const state = protectedProcedure
 
     const messageQueue: StateSubscription[] = [];
 
-    function handler(_pattern: string, channel: string, message: string) {
-      if (channel === getLobbyChannel(code)) {
-        const parsedMessage = JSON.parse(message);
-        const messageData = lobbySchema.safeParse(parsedMessage);
+    function lobbyHandler(message: unknown) {
+      const messageData = lobbySchema.safeParse(message);
 
-        if (messageData.success) {
-          const players = messageData.data.players.map((player) => ({
-            ...player,
-            isHost: player.id === messageData.data.host,
-            isUser: player.id === userId,
-          }));
-          messageQueue.push({
-            update: GameUpdate.LOBBY_UPDATE,
-            players,
-          });
-        } else {
-          logger.error(
-            new Error('Invalid message format for high card lobby', {
-              cause: messageData.error,
-            }),
-          );
-        }
-      } else if (channel === getHighCardGameStateChannel(code)) {
-        const parsedMessage = JSON.parse(message);
-        const messageData = gameStateRawDataSchema.safeParse(parsedMessage);
-
-        if (messageData.success) {
-          messageQueue.push({
-            update: GameUpdate.GAME_STATE_UPDATE,
-            state: toClientGameState(messageData.data, userId),
-          });
-        } else {
-          logger.error(
-            new Error('Invalid message format for high card game', {
-              cause: messageData.error,
-            }),
-          );
-        }
+      if (messageData.success) {
+        const players = messageData.data.players.map((player) => ({
+          ...player,
+          isHost: player.id === messageData.data.host,
+          isUser: player.id === userId,
+        }));
+        messageQueue.push({
+          update: GameUpdate.LOBBY_UPDATE,
+          players,
+        });
+      } else {
+        logger.error(
+          new Error('Invalid message format for high card lobby', {
+            cause: messageData.error,
+          }),
+        );
       }
     }
 
-    await subscribeToLobbyState();
-    await subscribeToHighCardState();
+    function gameHandler(message: unknown) {
+      const messageData = gameStateRawDataSchema.safeParse(message);
 
-    subscriber.on('pmessage', handler);
+      if (messageData.success) {
+        messageQueue.push({
+          update: GameUpdate.GAME_STATE_UPDATE,
+          state: toClientGameState(messageData.data, userId),
+        });
+      } else {
+        logger.error(
+          new Error('Invalid message format for high card game', {
+            cause: messageData.error,
+          }),
+        );
+      }
+    }
+
+    const lobbyChannel = getLobbyChannel(code);
+    const gameChannel = getHighCardGameStateChannel(code);
+
+    emitter.on(lobbyChannel, lobbyHandler);
+    emitter.on(gameChannel, gameHandler);
 
     try {
       while (true) {
@@ -181,7 +179,7 @@ export const state = protectedProcedure
       logger.error(subscriptionError);
       throw subscriptionError;
     } finally {
-      subscriber.off('pmessage', handler);
-      console.log('unsubscribed');
+      emitter.off(lobbyChannel, lobbyHandler);
+      emitter.off(gameChannel, gameHandler);
     }
   });
