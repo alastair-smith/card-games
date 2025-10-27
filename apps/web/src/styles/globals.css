@@ -17,6 +17,7 @@
   --color-lighter-slate: hsl(from var(--color-slate) h s 80%);
   --color-grey-lily-white: hsl(from var(--color-lily-white) h 20% 30%);
   --color-dark-yellow: hsl(from var(--color-yellow) h s 50%);
+  --color-dark-white: hsl(from var(--color-white) h s 80%);
 
   /* background colors*/
   --color-main-background: var(--color-dark-green);
@@ -29,6 +30,7 @@
   --color-light-text: var(--color-slate);
   --color-light-text-disabled: var(--color-light-slate);
   --color-dark-text: var(--color-white);
+  --color-dark-text-disabled: var(--color-dark-white);
 
   /* border colors*/
   --color-border: var(--color-slate);
