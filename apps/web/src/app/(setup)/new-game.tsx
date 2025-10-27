@@ -3,25 +3,14 @@
 import { ClockIcon, UsersIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import { GameType, gameDisplayName, gameURL } from '~/types/game';
 import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
-import { HowToContent as HighCardHowToContent } from '../high-card/_components/how-to';
 
 enum GameLength {
   short = 'Fast Game',
@@ -38,7 +27,6 @@ type GameProps = {
   };
   length: GameLength;
   summary: string;
-  howTo: ReactNode;
 };
 
 // TODO update min + max players
@@ -52,7 +40,6 @@ const games: GameProps[] = [
     },
     length: GameLength.short,
     summary: 'Draw the highest card to win the game.',
-    howTo: <HighCardHowToContent />,
   },
   {
     gameType: GameType.YANIV,
@@ -63,7 +50,6 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Win hands hands worth under 7 points and call Yaniv!',
-    howTo: <div>TODO</div>,
   },
   {
     gameType: GameType.BLOB,
@@ -74,7 +60,6 @@ const games: GameProps[] = [
     },
     length: GameLength.long,
     summary: 'Predict how many hands you will win in this trumps-like game.',
-    howTo: <div>TODO</div>,
   },
   {
     gameType: GameType.SHITHEAD,
@@ -86,7 +71,6 @@ const games: GameProps[] = [
     length: GameLength.short,
     summary:
       'Play your cards and hope you have enough magic to avoid picking up too many.',
-    howTo: <div>TODO</div>,
   },
   {
     gameType: GameType.FOOL,
@@ -97,7 +81,6 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Gang up on other players to rid yourself of all your cards.',
-    howTo: <div>TODO</div>,
   },
 ];
 
@@ -108,7 +91,6 @@ function Game({
   players,
   length,
   summary,
-  howTo,
 }: GameProps & { className?: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -143,25 +125,6 @@ function Game({
 
           <p className='flex-1'>{summary}</p>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant='secondary'>View Rules</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  How to play {gameDisplayName[gameType]}
-                </DialogTitle>
-                <DialogDescription>{howTo}</DialogDescription>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button>Close</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-
           <Button
             isLoading={isLoading}
             onClick={() => {
@@ -171,7 +134,7 @@ function Game({
               });
             }}
           >
-            Launch Game
+            Create Game
           </Button>
         </div>
 
