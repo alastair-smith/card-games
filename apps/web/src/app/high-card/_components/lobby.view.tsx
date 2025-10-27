@@ -1,6 +1,6 @@
 'use client';
 
-import { HowToSection } from '~/app/high-card/[code]/_about/how-to';
+import { HowToSection } from '~/app/high-card/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
