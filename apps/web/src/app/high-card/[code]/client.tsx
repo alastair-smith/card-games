@@ -3,7 +3,7 @@
 import { skipToken } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Lobby from '~/app/high-card/[code]/_lobby/lobby';
+import Lobby from '~/app/high-card/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import {
@@ -13,7 +13,7 @@ import {
   type Player,
 } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
-import HighCardGameController from './_game/game-controller';
+import HighCardGameController from '../_components/game-controller';
 import Loading from './loading';
 
 export default function HighCard({ code }: { code: GameCode }) {

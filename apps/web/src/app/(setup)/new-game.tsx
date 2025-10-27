@@ -84,7 +84,6 @@ const games: GameProps[] = [
   },
 ];
 
-// TODO fix card structure on smaller screens
 function Game({
   className,
   gameType,
@@ -126,7 +125,6 @@ function Game({
 
           <p className='flex-1'>{summary}</p>
 
-          <Button variant='secondary'>View Rules</Button>
           <Button
             isLoading={isLoading}
             onClick={() => {
@@ -136,7 +134,7 @@ function Game({
               });
             }}
           >
-            Launch Game
+            Create Game
           </Button>
         </div>
 
