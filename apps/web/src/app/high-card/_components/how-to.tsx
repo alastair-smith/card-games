@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 
-function HowToContent() {
+export function HowToContent() {
   return (
     <div className='flex flex-col gap-2'>
-      <p>High Card is a fast and simple luck-based game for 2-8 players.</p>
+      <p>High Card is a fast and simple luck-based game for 2-10 players.</p>
       <p>
         Each player is dealt a random card at the start of the game and then
         they take it in turns to flip them over by clicking on their card. Once
@@ -25,13 +25,5 @@ export function HowToSection({ className }: { className?: string }) {
         <HowToContent />
       </CardContent>
     </Card>
-  );
-}
-
-export function HowToModal() {
-  return (
-    <div>
-      <HowToContent />
-    </div>
   );
 }
