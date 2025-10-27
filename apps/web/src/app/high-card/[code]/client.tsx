@@ -50,6 +50,7 @@ export default function HighCard({ code }: { code: GameCode }) {
             return;
 
           case GameUpdate.FINISHED:
+            setState(newGameState.state);
             setStatus(GameStatus.FINISHED);
             return;
 

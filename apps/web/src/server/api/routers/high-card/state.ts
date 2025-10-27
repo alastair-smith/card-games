@@ -140,9 +140,14 @@ export const state = protectedProcedure
       const messageData = gameStateRawDataSchema.safeParse(message);
 
       if (messageData.success) {
+        const state = toClientGameState(messageData.data, userId);
+        const update =
+          state.stage === GameStage.FINISHED
+            ? GameUpdate.FINISHED
+            : GameUpdate.GAME_STATE_UPDATE;
         messageQueue.push({
-          update: GameUpdate.GAME_STATE_UPDATE,
-          state: toClientGameState(messageData.data, userId),
+          update,
+          state,
         });
       } else {
         logger.error(
@@ -165,6 +170,10 @@ export const state = protectedProcedure
           const message = messageQueue.shift();
           if (message) {
             yield message;
+
+            if (message.update === GameUpdate.FINISHED) {
+              return;
+            }
           }
         } else {
           await new Promise((resolve) => setTimeout(resolve, TICK_RATE_MS));
