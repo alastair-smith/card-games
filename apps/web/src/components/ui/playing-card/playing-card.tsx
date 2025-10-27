@@ -322,7 +322,7 @@ export function ZeroPlayingCard({
           <SuitSymbol className='h-8' fill={color} />
         </div>
         <div className='grid place-items-center p-4 border rounded flex-1'>
-          <div className='font-bold text-9xl'>0</div>
+          <div className='font-bold text-8xl'>0</div>
         </div>
       </div>
     </div>
