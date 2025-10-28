@@ -28,10 +28,7 @@ export default function GameLayout({
       </Header>
 
       <main
-        className={cn(
-          'flex-1 w-full flex flex-col justify-center',
-          className,
-        )}
+        className={cn('flex-1 w-full flex flex-col justify-center', className)}
       >
         {children}
       </main>
