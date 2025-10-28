@@ -1,7 +1,15 @@
 'use client';
 
+import {
+  BrainIcon,
+  CogIcon,
+  DrumIcon,
+  PartyPopper,
+  PartyPopperIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
 import {
@@ -210,6 +218,30 @@ export default function HighCardGameView({
         className={cn('flex-grow hidden h-full flex-col gap-3 lg:flex pb-6')}
       >
         {PlayArea}
+
+        <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
+          <div className='col-start-2'>
+            {yourTurn ? (
+              <div className='animate-bounce flex gap-2 justify-center'>
+                <span>It's your turn!</span>
+                <div className='flex'>  
+                  <DrumIcon />
+                </div>
+              </div>
+            ) : (
+              <div className='flex gap-2 justify-center'>
+                <span>{playerWhoseTurnItIs} is thinking</span>
+                <div className='flex'>
+                  <CogIcon className='animate-spin' />
+                  <BrainIcon className='animate-pulse' />
+                  <CogIcon className='animate-spin' />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <EmojiReactions className='col-start-3 justify-self-center' />
+        </div>
         <HorizontalHand>{PlayerHandContent}</HorizontalHand>
       </div>
     </GameLayout>

@@ -88,3 +88,5 @@ export type HighCardGameState = {
     isUser: boolean;
   }[];
 };
+
+export const reactionEmojis = ['🎉', '🤡', '🤔', '👀', '😴', '💀'] as const;
