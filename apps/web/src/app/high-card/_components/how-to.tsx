@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 
 export function HowToContent() {
   return (
-    <div className='flex flex-col gap-2'>
+    <div className='flex flex-col gap-2 text-left'>
       <p>High Card is a fast and simple luck-based game for 2-10 players.</p>
       <p>
         Each player is dealt a random card at the start of the game and then
