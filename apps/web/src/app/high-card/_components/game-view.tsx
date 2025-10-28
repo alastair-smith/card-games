@@ -2,7 +2,7 @@
 
 import { BrainIcon, CogIcon, DrumIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
@@ -50,6 +50,11 @@ export default function HighCardGameView({
       state.winners.some((winningPlayerId) => winningPlayerId === player.id),
     );
   }, [state.winners, state.players]);
+
+  const [showWinnerDialog, setShowWinnerDialog] = useState(!!winners[0]);
+  useEffect(() => {
+    setShowWinnerDialog(!!winners[0]);
+  }, [winners]);
 
   const userIndex = state.players.findIndex((player) => player.isUser);
   // biome-ignore lint/style/noNonNullAssertion: element exists as index is fetched just before
@@ -133,28 +138,9 @@ export default function HighCardGameView({
   const notificationsContent = (
     <>
       {winners[0] ? (
-        <Dialog defaultOpen>
-          <DialogTrigger asChild>
-            <Button size='sm'>View End Screen</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Game Summary</DialogTitle>
-              <DialogDescription>
-                {winners.map(({ name }) => name).join(' & ')}{' '}
-                {winners.length > 1 ? 'win' : 'wins'}
-                {winners[0].card?.rank
-                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
-                  : '!'}
-              </DialogDescription>
-              <DialogFooter>
-                <Button asChild>
-                  <Link href='/'>Pick Another Game</Link>
-                </Button>
-              </DialogFooter>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <DialogTrigger asChild>
+          <Button size='sm'>View End Screen</Button>
+        </DialogTrigger>
       ) : userCanPickup ? (
         <div className='animate-bounce flex gap-2 justify-center'>
           <span>It's your turn!</span>
@@ -181,74 +167,94 @@ export default function HighCardGameView({
       actions={gameActions}
       className={className}
     >
-      {/* Mobile view with tabs */}
-      <div className='flex-grow flex h-full flex-col lg:hidden'>
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className='flex flex-1 flex-col'
-        >
-          <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
-            <TabsContent
-              value='board'
-              forceMount
-              className={cn(
-                'absolute inset-0 h-full w-full overflow-y-auto p-3 transition-transform duration-300 ease-in-out',
-                {
-                  'translate-x-0': activeTab === 'board',
-                  '-translate-x-full': activeTab === 'hand',
-                },
-              )}
-            >
-              {PlayArea}
-            </TabsContent>
-            <TabsContent
-              value='hand'
-              forceMount
-              className={cn(
-                'absolute inset-0 h-full w-full transition-transform duration-300 ease-in-out',
-                {
-                  'translate-x-0': activeTab === 'hand',
-                  'translate-x-full': activeTab === 'board',
-                },
-              )}
-            >
-              <VerticalHand>{PlayerHandContent}</VerticalHand>
-            </TabsContent>
-          </div>
+      <Dialog open={showWinnerDialog} onOpenChange={setShowWinnerDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Game Summary</DialogTitle>
+            <DialogDescription>
+              {winners.map(({ name }) => name).join(' & ')}{' '}
+              {winners.length > 1 ? 'win' : 'wins'}
+              {winners[0]?.card?.rank
+                ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+                : '!'}
+            </DialogDescription>
+            <DialogFooter>
+              <Button asChild>
+                <Link href='/'>Pick Another Game</Link>
+              </Button>
+            </DialogFooter>
+          </DialogHeader>
+        </DialogContent>
 
-          <div className='flex flex-col items-center gap-2'>
-            <EmojiReactions />
-            {notificationsContent}
-          </div>
+        {/* Mobile view with tabs */}
+        <div className='flex-grow flex h-full flex-col lg:hidden'>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className='flex flex-1 flex-col'
+          >
+            <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
+              <TabsContent
+                value='board'
+                forceMount
+                className={cn(
+                  'absolute inset-0 h-full w-full overflow-y-auto p-3 transition-transform duration-300 ease-in-out',
+                  {
+                    'translate-x-0': activeTab === 'board',
+                    '-translate-x-full': activeTab === 'hand',
+                  },
+                )}
+              >
+                {PlayArea}
+              </TabsContent>
+              <TabsContent
+                value='hand'
+                forceMount
+                className={cn(
+                  'absolute inset-0 h-full w-full transition-transform duration-300 ease-in-out',
+                  {
+                    'translate-x-0': activeTab === 'hand',
+                    'translate-x-full': activeTab === 'board',
+                  },
+                )}
+              >
+                <VerticalHand>{PlayerHandContent}</VerticalHand>
+              </TabsContent>
+            </div>
 
-          <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)]'>
-            <TabsList className='w-full'>
-              <TabsTrigger value='board' className='flex-1'>
-                Board
-              </TabsTrigger>
-              <TabsTrigger value='hand' className='flex-1'>
-                Hand
-              </TabsTrigger>
-            </TabsList>
-          </div>
-        </Tabs>
-      </div>
+            <div className='flex flex-col items-center gap-2'>
+              <EmojiReactions />
+              {notificationsContent}
+            </div>
 
-      {/* Desktop view */}
-      <div
-        className={cn('flex-grow hidden h-full flex-col gap-3 lg:flex pb-6')}
-      >
-        {PlayArea}
-
-        <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
-          <div className='col-start-2 justify-self-center'>
-            {notificationsContent}
-          </div>
-          <EmojiReactions className='col-start-3 justify-self-center' />
+            <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)]'>
+              <TabsList className='w-full'>
+                <TabsTrigger value='board' className='flex-1'>
+                  Board
+                </TabsTrigger>
+                <TabsTrigger value='hand' className='flex-1'>
+                  Hand
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </Tabs>
         </div>
-        <HorizontalHand>{PlayerHandContent}</HorizontalHand>
-      </div>
+
+        {/* Desktop view */}
+        <div
+          className={cn('flex-grow hidden h-full flex-col gap-3 lg:flex pb-6')}
+        >
+          {PlayArea}
+
+          <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
+            <div className='col-start-2 justify-self-center'>
+              {notificationsContent}
+            </div>
+            <EmojiReactions className='col-start-3 justify-self-center' />
+          </div>
+          <HorizontalHand>{PlayerHandContent}</HorizontalHand>
+        </div>
+      </Dialog>
     </GameLayout>
   );
 }
