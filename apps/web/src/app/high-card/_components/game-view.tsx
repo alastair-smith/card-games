@@ -1,6 +1,6 @@
 'use client';
 
-import { BrainIcon, CogIcon, DrumIcon } from 'lucide-react';
+import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { EmojiReactions } from '~/components/emoji-reactions';
@@ -50,6 +50,8 @@ export default function HighCardGameView({
       state.winners.some((winningPlayerId) => winningPlayerId === player.id),
     );
   }, [state.winners, state.players]);
+
+  const [showEmojiReactions, setShowEmojiReactions] = useState(false);
 
   const [showWinnerDialog, setShowWinnerDialog] = useState(!!winners[0]);
   useEffect(() => {
@@ -223,8 +225,22 @@ export default function HighCardGameView({
             </div>
 
             <div className='flex flex-col items-center gap-2'>
-              <EmojiReactions />
-              {notificationsContent}
+              {showEmojiReactions && (
+                <EmojiReactions className='place-self-end' />
+              )}
+
+              <div className='grid grid-cols-8 gap-2 w-full items-center justify-center'>
+                <div className='col-start-2 col-span-6 justify-self-center'>
+                  {notificationsContent}
+                </div>
+                <Button
+                  size='sm'
+                  onClick={() => setShowEmojiReactions(!showEmojiReactions)}
+                  className='bg-switch text-dark-text border-border col-start-8 w-fit justify-self-end'
+                >
+                  <SmilePlusIcon />
+                </Button>
+              </div>
             </div>
 
             <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)]'>
@@ -250,7 +266,18 @@ export default function HighCardGameView({
             <div className='col-start-2 justify-self-center'>
               {notificationsContent}
             </div>
-            <EmojiReactions className='col-start-3 justify-self-center' />
+            <div className='flex gap-3 justify-end'>
+              {showEmojiReactions && (
+                <EmojiReactions className='col-start-3 justify-self-center' />
+              )}
+              <Button
+                size='sm'
+                onClick={() => setShowEmojiReactions(!showEmojiReactions)}
+                className='bg-switch text-dark-text border-border col-start-8 w-fit justify-self-end'
+              >
+                <SmilePlusIcon />
+              </Button>
+            </div>
           </div>
           <HorizontalHand>{PlayerHandContent}</HorizontalHand>
         </div>
