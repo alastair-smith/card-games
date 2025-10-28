@@ -90,3 +90,4 @@ export type HighCardGameState = {
 };
 
 export const reactionEmojis = ['🎉', '🤡', '🤔', '👀', '⏰', '💀'] as const;
+export type ReactionEmoji = (typeof reactionEmojis)[number];

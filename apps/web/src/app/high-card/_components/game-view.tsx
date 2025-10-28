@@ -2,7 +2,8 @@
 
 import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { EmojiRain, type EmojiRainRef } from '~/components/emoji-rain/emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
@@ -27,7 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
-import { GameType } from '~/types/game';
+import { GameType, type ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
 import { HowToContent } from './how-to';
@@ -52,6 +53,10 @@ export default function HighCardGameView({
   }, [state.winners, state.players]);
 
   const [showEmojiReactions, setShowEmojiReactions] = useState(false);
+
+  const handleEmojiClick = (emoji: ReactionEmoji, targetPlayerId: UserId) => {
+    emojiRainRefs.current[targetPlayerId]?.triggerEmoji(emoji);
+  };
 
   const [showWinnerDialog, setShowWinnerDialog] = useState(!!winners[0]);
   useEffect(() => {
@@ -83,16 +88,20 @@ export default function HighCardGameView({
     onSwipedRight: handleSwipeRight,
   });
 
+  const emojiRainRefs = useRef<Record<string, EmojiRainRef | null>>({});
+
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
       {state.players.map((player) => (
-        <PlayAreaPlayerZone key={player.id}>
-          <PlayingCard card={player.card} size='sm' />
-          <PlayAreaPlayerName>
-            {player.name}
-            {player.isUser && ' (You)'}
-          </PlayAreaPlayerName>
-        </PlayAreaPlayerZone>
+        <EmojiRain ref={(el) => (emojiRainRefs.current[player.id] = el)} key={player.id}>
+          <PlayAreaPlayerZone>
+            <PlayingCard card={player.card} size='sm' />
+            <PlayAreaPlayerName>
+              {player.name}
+              {player.isUser && ' (You)'}
+            </PlayAreaPlayerName>
+          </PlayAreaPlayerZone>
+        </EmojiRain>
       ))}
     </PlayAreaRoot>
   );
@@ -225,8 +234,12 @@ export default function HighCardGameView({
             </div>
 
             <div className='flex flex-col items-center gap-2'>
-              {showEmojiReactions && (
-                <EmojiReactions className='place-self-end' />
+              {showEmojiReactions && user?.id && (
+                <EmojiReactions
+                  className='place-self-end'
+                  onEmojiClick={handleEmojiClick}
+                  targetPlayerId={user.id}
+                />
               )}
 
               <div className='grid grid-cols-8 gap-2 w-full items-center justify-center'>
@@ -267,8 +280,12 @@ export default function HighCardGameView({
               {notificationsContent}
             </div>
             <div className='flex gap-3 justify-end'>
-              {showEmojiReactions && (
-                <EmojiReactions className='col-start-3 justify-self-center' />
+              {showEmojiReactions && user?.id && (
+                <EmojiReactions
+                  className='col-start-3 justify-self-center'
+                  onEmojiClick={handleEmojiClick}
+                  targetPlayerId={user.id}
+                />
               )}
               <Button
                 size='sm'
