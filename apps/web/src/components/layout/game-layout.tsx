@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { type GameType, gameDisplayName } from '~/types/game';
-
 import { cn } from '~/utils/cn';
+import { Header, Page } from './page';
 
 type GameLayoutProps = {
   gameType: GameType;
@@ -17,14 +17,21 @@ export default function GameLayout({
   className,
 }: GameLayoutProps) {
   return (
-    <div className='flex min-h-dvh justify-center text-white'>
-      <div className='flex h-dvh w-full max-w-[80rem] flex-col items-center gap-6 px-4 py-6'>
-        <header className='flex w-full items-center justify-between self-start'>
-          <h1 className='font-bold'>{gameDisplayName[gameType]}</h1>
-          <div>{actions}</div>
-        </header>
-        <main className={cn('flex-1 w-full', className)}>{children}</main>
-      </div>
-    </div>
+    <Page>
+      <Header
+        breadcrumbs={[
+          { text: 'PlayCards.Games', href: '/' },
+          { text: gameDisplayName[gameType] },
+        ]}
+      >
+        {actions}
+      </Header>
+
+      <main
+        className={cn('flex-1 w-full flex flex-col justify-center', className)}
+      >
+        {children}
+      </main>
+    </Page>
   );
 }
