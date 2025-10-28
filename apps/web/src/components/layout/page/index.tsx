@@ -1,3 +1,4 @@
+import { HomeIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -46,7 +47,7 @@ type HeaderProps = {
 
 export function Header({ breadcrumbs, children }: HeaderProps) {
   return (
-    <header className='w-7xl max-w-full h-14 pt-1 flex justify-between items-center self-center'>
+    <header className='w-7xl max-w-full min-h-14 pt-1 flex flex-wrap gap-2 justify-between items-center self-center'>
       <Breadcrumb>
         <BreadcrumbList>
           {breadcrumbs.map(({ text, href }, index) => (
@@ -55,7 +56,16 @@ export function Header({ breadcrumbs, children }: HeaderProps) {
               <BreadcrumbItem>
                 {href ? (
                   <BreadcrumbLink asChild>
-                    <Link href={href}>{text}</Link>
+                    <Link href={href}>
+                      {href === '/' ? (
+                        <>
+                          <span className='sr-only sm:not-sr-only'>{text}</span>
+                          <HomeIcon className='block sm:hidden' size='16' />
+                        </>
+                      ) : (
+                        text
+                      )}
+                    </Link>
                   </BreadcrumbLink>
                 ) : (
                   <BreadcrumbPage>{text}</BreadcrumbPage>

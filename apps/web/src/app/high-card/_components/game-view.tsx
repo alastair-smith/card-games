@@ -12,6 +12,7 @@ import {
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -27,6 +28,7 @@ import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
+import { HowToContent } from './how-to';
 
 export type HighCardGameProps = {
   className?: string;
@@ -92,30 +94,55 @@ export default function HighCardGameView({
     />
   );
 
-  const gameActions = winners[0] ? (
-    <Dialog defaultOpen>
-      <DialogTrigger asChild>
-        <Button size='sm'>View End Screen</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Game Summary</DialogTitle>
-          <DialogDescription>
-            {winners.map(({ name }) => name).join(' & ')}{' '}
-            {winners.length > 1 ? 'win' : 'wins'}
-            {winners[0].card?.rank
-              ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
-              : '!'}
-          </DialogDescription>
-          <DialogFooter>
-            <Button asChild>
-              <Link href='/'>Pick Another Game</Link>
-            </Button>
-          </DialogFooter>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  ) : null;
+  const gameActions = (
+    <div className='flex gap-2'>
+      {winners[0] && (
+        <Dialog defaultOpen>
+          <DialogTrigger asChild>
+            <Button size='sm'>End</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Game Summary</DialogTitle>
+              <DialogDescription>
+                {winners.map(({ name }) => name).join(' & ')}{' '}
+                {winners.length > 1 ? 'win' : 'wins'}
+                {winners[0].card?.rank
+                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+                  : '!'}
+              </DialogDescription>
+              <DialogFooter>
+                <Button asChild>
+                  <Link href='/'>Pick Another Game</Link>
+                </Button>
+              </DialogFooter>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size='sm' variant='secondary'>
+            Help
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>How to play High Card</DialogTitle>
+            <DialogDescription asChild>
+              <HowToContent />
+            </DialogDescription>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button>Close</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 
   return (
     <GameLayout
