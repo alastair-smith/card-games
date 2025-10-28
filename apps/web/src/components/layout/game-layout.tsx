@@ -29,7 +29,7 @@ export default function GameLayout({
 
       <main
         className={cn(
-          'flex-1 w-full h-full flex flex-col justify-center',
+          'flex-1 w-full flex flex-col justify-center',
           className,
         )}
       >
