@@ -89,7 +89,14 @@ export default function HighCardGameView({
   const PlayerHandContent = user?.card === null && (
     <PlayingCard
       card={user?.card}
-      onClick={userCanPickup ? pickupCard : undefined}
+      onClick={
+        userCanPickup
+          ? () => {
+              pickupCard();
+              setActiveTab('board');
+            }
+          : undefined
+      }
       highlighted={userCanPickup}
     />
   );
