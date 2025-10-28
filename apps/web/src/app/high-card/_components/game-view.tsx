@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  BrainIcon,
-  CogIcon,
-  DrumIcon,
-  PartyPopper,
-  PartyPopperIcon,
-} from 'lucide-react';
+import { BrainIcon, CogIcon, DrumIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { EmojiReactions } from '~/components/emoji-reactions';
@@ -63,6 +57,8 @@ export default function HighCardGameView({
   const userCanPickup =
     (userIndex === 0 || !!state.players[userIndex - 1]?.card) && !user.card;
 
+  const currentPlayer = state.players.find(({ card }) => !card);
+
   const handleSwipeLeft = () => {
     if (activeTab === 'board') {
       setActiveTab('hand');
@@ -111,31 +107,6 @@ export default function HighCardGameView({
 
   const gameActions = (
     <div className='flex gap-2'>
-      {winners[0] && (
-        <Dialog defaultOpen>
-          <DialogTrigger asChild>
-            <Button size='sm'>End</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Game Summary</DialogTitle>
-              <DialogDescription>
-                {winners.map(({ name }) => name).join(' & ')}{' '}
-                {winners.length > 1 ? 'win' : 'wins'}
-                {winners[0].card?.rank
-                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
-                  : '!'}
-              </DialogDescription>
-              <DialogFooter>
-                <Button asChild>
-                  <Link href='/'>Pick Another Game</Link>
-                </Button>
-              </DialogFooter>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      )}
-
       <Dialog>
         <DialogTrigger asChild>
           <Button size='sm' variant='secondary'>
@@ -220,17 +191,40 @@ export default function HighCardGameView({
         {PlayArea}
 
         <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
-          <div className='col-start-2'>
-            {yourTurn ? (
+          <div className='col-start-2 justify-self-center'>
+            {winners[0] ? (
+              <Dialog defaultOpen>
+                <DialogTrigger asChild>
+                  <Button size='sm'>View End Screen</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Game Summary</DialogTitle>
+                    <DialogDescription>
+                      {winners.map(({ name }) => name).join(' & ')}{' '}
+                      {winners.length > 1 ? 'win' : 'wins'}
+                      {winners[0].card?.rank
+                        ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+                        : '!'}
+                    </DialogDescription>
+                    <DialogFooter>
+                      <Button asChild>
+                        <Link href='/'>Pick Another Game</Link>
+                      </Button>
+                    </DialogFooter>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            ) : userCanPickup ? (
               <div className='animate-bounce flex gap-2 justify-center'>
                 <span>It's your turn!</span>
-                <div className='flex'>  
+                <div className='flex'>
                   <DrumIcon />
                 </div>
               </div>
             ) : (
               <div className='flex gap-2 justify-center'>
-                <span>{playerWhoseTurnItIs} is thinking</span>
+                <span>{currentPlayer?.name} is thinking</span>
                 <div className='flex'>
                   <CogIcon className='animate-spin' />
                   <BrainIcon className='animate-pulse' />
