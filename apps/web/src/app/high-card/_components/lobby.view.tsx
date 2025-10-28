@@ -28,7 +28,7 @@ export default function Lobby({ code, ...playerProps }: LobbyProps) {
   return (
     <GameLayout
       gameType={GameType.HIGH_CARD}
-      className='flex flex-col justify-center'
+      className='flex flex-col justify-center pb-8'
     >
       <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
         <h1 className='sr-only'>High Card Lobby</h1>
