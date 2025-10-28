@@ -1,16 +1,7 @@
-import Link from 'next/link';
 import type { ReactNode } from 'react';
-import {
-  Breadcrumb,
-  BreadcrumbEllipsis,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '~/components/ui/breadcrumbs';
 import { type GameType, gameDisplayName } from '~/types/game';
 import { cn } from '~/utils/cn';
+import { Header, Page } from './page';
 
 type GameLayoutProps = {
   gameType: GameType;
@@ -26,27 +17,24 @@ export default function GameLayout({
   className,
 }: GameLayoutProps) {
   return (
-    <div className='flex min-h-dvh justify-center text-white'>
-      <div className='flex h-dvh w-full max-w-[80rem] flex-col items-start gap-6 px-4 py-6'>
-        <header className='flex w-full items-center justify-between self-start'>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href='/'>PlayCards.Games</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{gameDisplayName[gameType]}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+    <Page>
+      <Header
+        breadcrumbs={[
+          { text: 'PlayCards.Games', href: '/' },
+          { text: gameDisplayName[gameType] },
+        ]}
+      >
+        {actions}
+      </Header>
 
-          <div>{actions}</div>
-        </header>
-        <main className={cn('flex-1 w-full', className)}>{children}</main>
-      </div>
-    </div>
+      <main
+        className={cn(
+          'flex-1 w-full h-full flex flex-col justify-center',
+          className,
+        )}
+      >
+        {children}
+      </main>
+    </Page>
   );
 }

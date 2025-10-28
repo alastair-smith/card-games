@@ -95,7 +95,7 @@ export default function HighCardGameView({
   const gameActions = winners[0] ? (
     <Dialog defaultOpen>
       <DialogTrigger asChild>
-        <Button>View End Screen</Button>
+        <Button size='sm'>View End Screen</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -124,7 +124,7 @@ export default function HighCardGameView({
       className={className}
     >
       {/* Mobile view with tabs */}
-      <div className='flex h-full flex-col lg:hidden'>
+      <div className='flex-grow flex h-full flex-col lg:hidden'>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
@@ -172,7 +172,9 @@ export default function HighCardGameView({
       </div>
 
       {/* Desktop view */}
-      <div className={cn('hidden h-full flex-col gap-3 lg:flex')}>
+      <div
+        className={cn('flex-grow hidden h-full flex-col gap-3 lg:flex pb-6')}
+      >
         {PlayArea}
         <HorizontalHand>{PlayerHandContent}</HorizontalHand>
       </div>
