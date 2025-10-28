@@ -12,7 +12,12 @@ export function EmojiReactions({ className }: EmojiReactionsProps) {
   return (
     <ButtonGroup className={className}>
       {reactionEmojis.map((emoji) => (
-        <Button key={emoji} variant='secondary' size='sm' className='text-lg'>
+        <Button
+          key={emoji}
+          variant='secondary'
+          size='sm'
+          className='text-lg bg-switch'
+        >
           {emoji}
         </Button>
       ))}

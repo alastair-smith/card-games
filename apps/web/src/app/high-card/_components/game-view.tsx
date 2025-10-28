@@ -130,6 +130,51 @@ export default function HighCardGameView({
     </div>
   );
 
+  const notificationsContent = (
+    <>
+      {winners[0] ? (
+        <Dialog defaultOpen>
+          <DialogTrigger asChild>
+            <Button size='sm'>View End Screen</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Game Summary</DialogTitle>
+              <DialogDescription>
+                {winners.map(({ name }) => name).join(' & ')}{' '}
+                {winners.length > 1 ? 'win' : 'wins'}
+                {winners[0].card?.rank
+                  ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
+                  : '!'}
+              </DialogDescription>
+              <DialogFooter>
+                <Button asChild>
+                  <Link href='/'>Pick Another Game</Link>
+                </Button>
+              </DialogFooter>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      ) : userCanPickup ? (
+        <div className='animate-bounce flex gap-2 justify-center'>
+          <span>It's your turn!</span>
+          <div className='flex'>
+            <DrumIcon />
+          </div>
+        </div>
+      ) : (
+        <div className='flex gap-2 justify-center'>
+          <span>{currentPlayer?.name} is thinking</span>
+          <div className='flex'>
+            <CogIcon className='animate-spin' />
+            <BrainIcon className='animate-pulse' />
+            <CogIcon className='animate-spin' />
+          </div>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <GameLayout
       gameType={GameType.HIGH_CARD}
@@ -171,6 +216,12 @@ export default function HighCardGameView({
               <VerticalHand>{PlayerHandContent}</VerticalHand>
             </TabsContent>
           </div>
+
+          <div className='flex flex-col items-center gap-2'>
+            <EmojiReactions />
+            {notificationsContent}
+          </div>
+
           <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)]'>
             <TabsList className='w-full'>
               <TabsTrigger value='board' className='flex-1'>
@@ -192,48 +243,8 @@ export default function HighCardGameView({
 
         <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
           <div className='col-start-2 justify-self-center'>
-            {winners[0] ? (
-              <Dialog defaultOpen>
-                <DialogTrigger asChild>
-                  <Button size='sm'>View End Screen</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Game Summary</DialogTitle>
-                    <DialogDescription>
-                      {winners.map(({ name }) => name).join(' & ')}{' '}
-                      {winners.length > 1 ? 'win' : 'wins'}
-                      {winners[0].card?.rank
-                        ? ` with a ${RANK_FULL_NAME[winners[0].card?.rank]}!`
-                        : '!'}
-                    </DialogDescription>
-                    <DialogFooter>
-                      <Button asChild>
-                        <Link href='/'>Pick Another Game</Link>
-                      </Button>
-                    </DialogFooter>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            ) : userCanPickup ? (
-              <div className='animate-bounce flex gap-2 justify-center'>
-                <span>It's your turn!</span>
-                <div className='flex'>
-                  <DrumIcon />
-                </div>
-              </div>
-            ) : (
-              <div className='flex gap-2 justify-center'>
-                <span>{currentPlayer?.name} is thinking</span>
-                <div className='flex'>
-                  <CogIcon className='animate-spin' />
-                  <BrainIcon className='animate-pulse' />
-                  <CogIcon className='animate-spin' />
-                </div>
-              </div>
-            )}
+            {notificationsContent}
           </div>
-
           <EmojiReactions className='col-start-3 justify-self-center' />
         </div>
         <HorizontalHand>{PlayerHandContent}</HorizontalHand>
