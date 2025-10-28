@@ -9,7 +9,7 @@ export type HandProps = {
 export function HorizontalHand({ children, className }: HandProps) {
   return (
     <div>
-      <div className={cn('border-t-2 ', className)}>
+      <div className={cn('border-t-2', className)}>
         <h2>Your hand</h2>
         <div
           className={cn(
