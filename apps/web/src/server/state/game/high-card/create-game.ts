@@ -1,9 +1,5 @@
 import { setHighCardState } from '~/server/data/high-card';
-import {
-  lobbyExists,
-  setLobbyPlayers,
-  setLobbySummary,
-} from '~/server/data/lobby';
+import { lobbyExists, setLobby } from '~/server/data/lobby';
 import type { UserId } from '~/types/entities';
 import {
   GAME_CODE_CHARSET,
@@ -37,11 +33,11 @@ export const createGame = async ({ host }: { host: UserId }) => {
   }
 
   await Promise.all([
-    setLobbySummary({ code }, { code, type: GameType.HIGH_CARD }),
-    setLobbyPlayers(
+    setLobby(
       { code },
       {
         code,
+        type: GameType.HIGH_CARD,
         host,
         players: [{ id: host, name: generatePlayerName(), isReady: false }],
       },

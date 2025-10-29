@@ -1,4 +1,4 @@
-import { redis } from '~/server/data/redis';
+import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
 import {
   type StandardPlayingCard,
   standardPlayingCardSchema,
@@ -19,6 +19,9 @@ export const createDeck = async (
 
   // Add all cards to the list
   pipeline.rpush(key, ...cards.map((card) => JSON.stringify(card)));
+
+  // Set expiry for the deck key
+  pipeline.expire(key, REDIS_EXPIRE_TIME_SECONDS);
 
   await pipeline.exec();
 };

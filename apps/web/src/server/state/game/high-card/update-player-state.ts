@@ -1,4 +1,4 @@
-import { getLobbyPlayers, setLobbyPlayers } from '~/server/data/lobby';
+import { getLobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -11,7 +11,7 @@ export const updatePlayerState = async ({
 }:
   | { code: GameCode; userId: UserId; field: 'name'; value: string }
   | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
-  const lobby = await getLobbyPlayers({ code });
+  const lobby = await getLobby({ code });
 
   if (!lobby) {
     throw new Error('lobby not found');
@@ -25,7 +25,7 @@ export const updatePlayerState = async ({
     player.id === userId ? { ...player, [field]: value } : player,
   );
 
-  const updatedLobby = await setLobbyPlayers(
+  const updatedLobby = await setLobby(
     { code },
     { ...lobby, players: updatedPlayers },
   );
