@@ -27,7 +27,7 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { UserId } from '~/types/entities';
@@ -97,7 +97,9 @@ export default function HighCardGameView({
     <PlayAreaRoot className='flex-1'>
       {state.players.map((player) => (
         <EmojiRain
-          ref={(el) => (emojiRainRefs.current[player.id] = el)}
+          ref={(el) => {
+            emojiRainRefs.current[player.id] = el;
+          }}
           key={player.id}
         >
           <PlayAreaPlayerZone>
