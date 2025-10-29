@@ -23,16 +23,16 @@ export default function InvitePlayers({
   return (
     <Card className={cn('w-fit', className)}>
       <CardHeader>
-        <div className='flex gap-3 flex-wrap justify-center'>
+        <div className='flex flex-row gap-3 flex-wrap sm:flex-nowrap'>
           <Input
             placeholder='Code'
-            className='h-20 min-w-60 max-w-80 text-center font-mono text-4xl uppercase flex-grow-[9999] basis-2'
+            className='h-20 text-center font-mono text-4xl uppercase'
             name='code'
             value={code}
             readOnly
           />
           <Button
-            className='w-full grow basis-1 h-auto max-w-80 text-2xl'
+            className='sm:h-20 sm:text-xl px-6 w-full sm:max-w-3xs'
             onClick={() => {
               void copyUrlToClipboard();
             }}
