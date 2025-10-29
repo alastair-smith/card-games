@@ -1,8 +1,9 @@
 import Redis from 'ioredis';
 import type { z } from 'zod';
+import { env } from '~/env';
 
 // data connection
-export const redis = new Redis();
+export const redis = new Redis(env.REDIS_CONNECTION_STRING);
 
 export const REDIS_EXPIRE_TIME_SECONDS = 60 * 60 * 24; // 24 hours
 
