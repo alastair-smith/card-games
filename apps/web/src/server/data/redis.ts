@@ -4,6 +4,8 @@ import type { z } from 'zod';
 // data connection
 export const redis = new Redis();
 
+export const REDIS_EXPIRE_TIME_SECONDS = 60 * 60 * 24; // 24 hours
+
 export enum DataServiceErrorCode {
   NOT_FOUND = 'NOT_FOUND',
   INVALID_KEY = 'INVALID_KEY',
@@ -74,7 +76,12 @@ export const dataLayer = <
       });
     }
 
-    await redis.set(key, JSON.stringify(parsed.data));
+    await redis.set(
+      key,
+      JSON.stringify(parsed.data),
+      'EX',
+      REDIS_EXPIRE_TIME_SECONDS,
+    );
 
     return parsed.data;
   },

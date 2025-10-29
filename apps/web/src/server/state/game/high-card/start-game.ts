@@ -1,5 +1,5 @@
 import { getHighCardState, setHighCardState } from '~/server/data/high-card';
-import { getLobbyPlayers } from '~/server/data/lobby';
+import { getLobby } from '~/server/data/lobby';
 import { publishHighCard } from '~/server/events/high-card';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -7,7 +7,7 @@ import { GameStage, MIN_PLAYERS } from '~/types/games/high-card';
 
 export const startGame = async (code: GameCode, userId: UserId) => {
   // 1. get current game from data layer
-  const lobby = await getLobbyPlayers({ code });
+  const lobby = await getLobby({ code });
 
   if (!lobby) {
     throw new Error('Lobby not found');
