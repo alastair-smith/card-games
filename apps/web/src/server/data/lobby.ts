@@ -3,7 +3,6 @@ import { dataLayer } from '~/server/data/redis';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
 import { type GameCode, gameCodeSchema, gameTypeSchema } from '~/types/game';
 
-// TODO limit player count
 export const lobbySchema = z.object({
   code: gameCodeSchema,
   type: gameTypeSchema,
