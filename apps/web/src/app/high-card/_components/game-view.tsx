@@ -2,11 +2,8 @@
 
 import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  EmojiRain,
-  type EmojiRainRef,
-} from '~/components/emoji-rain/emoji-rain';
+import { useEffect, useMemo, useState } from 'react';
+import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
@@ -40,13 +37,17 @@ export type HighCardGameProps = {
   className?: string;
   state: GameState;
   pickupCard: () => void;
+  onEmojiClick: (emoji: ReactionEmoji) => void;
   playerUserId?: UserId;
+  reactions: Record<UserId, { emoji: ReactionEmoji; id: number }>;
 };
 
 export default function HighCardGameView({
   className,
   state,
   pickupCard,
+  onEmojiClick,
+  reactions,
 }: HighCardGameProps) {
   const [activeTab, setActiveTab] = useState('board');
   const winners = useMemo(() => {
@@ -56,10 +57,6 @@ export default function HighCardGameView({
   }, [state.winners, state.players]);
 
   const [showEmojiReactions, setShowEmojiReactions] = useState(false);
-
-  const handleEmojiClick = (emoji: ReactionEmoji, targetPlayerId: UserId) => {
-    emojiRainRefs.current[targetPlayerId]?.triggerEmoji(emoji);
-  };
 
   const [showWinnerDialog, setShowWinnerDialog] = useState(!!winners[0]);
   useEffect(() => {
@@ -91,17 +88,10 @@ export default function HighCardGameView({
     onSwipedRight: handleSwipeRight,
   });
 
-  const emojiRainRefs = useRef<Record<string, EmojiRainRef | null>>({});
-
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
       {state.players.map((player) => (
-        <EmojiRain
-          ref={(el) => {
-            emojiRainRefs.current[player.id] = el;
-          }}
-          key={player.id}
-        >
+        <EmojiRain key={player.id} reaction={reactions[player.id]}>
           <PlayAreaPlayerZone>
             <PlayingCard card={player.card} size='sm' />
             <PlayAreaPlayerName>
@@ -234,68 +224,60 @@ export default function HighCardGameView({
           </div>
 
           <div className='flex flex-col items-center gap-2 lg:grid lg:grid-cols-3 lg:gap-6 w-full lg:my-3'>
-            <div className='w-full flex justify-end lg:hidden'>
-              {showEmojiReactions && user?.id && (
-                <EmojiReactions
-                  onEmojiClick={handleEmojiClick}
-                  targetPlayerId={user.id}
-                />
-              )}
-            </div>
+            {showEmojiReactions && user?.id && (
+              <EmojiReactions onEmojiClick={onEmojiClick} />
+            )}
+          </div>
 
-            <div className='w-full grid grid-cols-8 gap-2 pb-2 lg:pb-0 items-center lg:col-start-2 lg:w-auto lg:justify-self-center'>
-              <div className='col-start-2 col-span-6 justify-self-center'>
-                {notificationsContent}
-              </div>
-              <div className='col-start-8 justify-self-end lg:hidden'>
-                <Button
-                  size='sm'
-                  onClick={() => setShowEmojiReactions(!showEmojiReactions)}
-                  className='bg-switch text-dark-text border-border w-fit'
-                >
-                  <span className='sr-only'>Open emoji reactions menu</span>
-                  <SmilePlusIcon />
-                </Button>
-              </div>
+          <div className='w-full grid grid-cols-8 gap-2 pb-2 lg:pb-0 items-center lg:col-start-2 lg:w-auto lg:justify-self-center'>
+            <div className='col-start-2 col-span-6 justify-self-center'>
+              {notificationsContent}
             </div>
-
-            <div className='hidden lg:flex col-start-3 justify-self-end gap-3 items-center'>
-              {showEmojiReactions && user?.id && (
-                <EmojiReactions
-                  onEmojiClick={handleEmojiClick}
-                  targetPlayerId={user.id}
-                />
-              )}
+            <div className='col-start-8 justify-self-end lg:hidden'>
               <Button
                 size='sm'
                 onClick={() => setShowEmojiReactions(!showEmojiReactions)}
                 className='bg-switch text-dark-text border-border w-fit'
               >
+                <span className='sr-only'>Open emoji reactions menu</span>
                 <SmilePlusIcon />
               </Button>
             </div>
           </div>
 
-          <div className='hidden lg:block pb-6'>
-            <HorizontalHand>{PlayerHandContent}</HorizontalHand>
-          </div>
-
-          <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:hidden'>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className='w-full'
+          <div className='hidden lg:flex col-start-3 justify-self-end gap-3 items-center'>
+            {showEmojiReactions && user?.id && (
+              <EmojiReactions onEmojiClick={onEmojiClick} />
+            )}{' '}
+            <Button
+              size='sm'
+              onClick={() => setShowEmojiReactions(!showEmojiReactions)}
+              className='bg-switch text-dark-text border-border w-fit'
             >
-              <TabsList className='w-full'>
-                <TabsTrigger value='board' className='flex-1'>
-                  Board
-                </TabsTrigger>
-                <TabsTrigger value='hand' className='flex-1'>
-                  Hand
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+              <SmilePlusIcon />
+            </Button>
           </div>
+        </div>
+
+        <div className='hidden lg:block pb-6'>
+          <HorizontalHand>{PlayerHandContent}</HorizontalHand>
+        </div>
+
+        <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:hidden'>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className='w-full'
+          >
+            <TabsList className='w-full'>
+              <TabsTrigger value='board' className='flex-1'>
+                Board
+              </TabsTrigger>
+              <TabsTrigger value='hand' className='flex-1'>
+                Hand
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </Dialog>
     </GameLayout>

@@ -63,6 +63,7 @@ export enum GameUpdate {
   LOBBY_UPDATE = 'LOBBY_UPDATE',
   GAME_STATE_UPDATE = 'GAME_STATE_UPDATE',
   FINISHED = 'FINISHED',
+  EMOJI_REACTION = 'EMOJI_REACTION',
 }
 
 export const gameUpdateSchema = z.enum(GameUpdate);

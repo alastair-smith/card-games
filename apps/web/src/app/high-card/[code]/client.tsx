@@ -6,11 +6,13 @@ import { useState } from 'react';
 import Lobby from '~/app/high-card/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
+import type { UserId } from '~/types/entities';
 import {
   type GameCode,
   GameStatus,
   GameUpdate,
   type Player,
+  type ReactionEmoji,
 } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import HighCardGameController from '../_components/game-controller';
@@ -22,6 +24,9 @@ export default function HighCard({ code }: { code: GameCode }) {
   const [status, setStatus] = useState<GameStatus>(GameStatus.LOADING);
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [state, setState] = useState<GameState | null>(null);
+  const [reactions, setReactions] = useState<
+    Record<UserId, { emoji: ReactionEmoji; id: number }>
+  >({});
 
   api.highCard.state.useSubscription(
     status === GameStatus.FINISHED ? skipToken : { code },
@@ -70,6 +75,15 @@ export default function HighCard({ code }: { code: GameCode }) {
             router.push('/');
             return;
 
+          case GameUpdate.EMOJI_REACTION: {
+            const { targetPlayerId, ...reaction } = newGameState.payload;
+            setReactions((prev) => ({
+              ...prev,
+              [targetPlayerId]: reaction,
+            }));
+            return;
+          }
+
           default: {
             const exhaustiveCheck: never = newGameState;
             console.error(
@@ -100,5 +114,7 @@ export default function HighCard({ code }: { code: GameCode }) {
     return <Loading />;
   }
 
-  return <HighCardGameController code={code} state={state} />;
+  return (
+    <HighCardGameController code={code} state={state} reactions={reactions} />
+  );
 }

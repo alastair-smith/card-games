@@ -2,19 +2,16 @@
 
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
-import type { UserId } from '~/types/entities';
 import { type ReactionEmoji, reactionEmojis } from '~/types/game';
 
 type EmojiReactionsProps = {
   className?: string;
-  onEmojiClick: (emoji: ReactionEmoji, targetPlayerId: UserId) => void;
-  targetPlayerId: UserId;
+  onEmojiClick: (emoji: ReactionEmoji) => void;
 };
 
 export function EmojiReactions({
   className,
   onEmojiClick,
-  targetPlayerId,
 }: EmojiReactionsProps) {
   return (
     <ButtonGroup className={className}>
@@ -24,7 +21,7 @@ export function EmojiReactions({
           variant='secondary'
           size='sm'
           className='text-lg bg-switch'
-          onClick={() => onEmojiClick(emoji, targetPlayerId)}
+          onClick={() => onEmojiClick(emoji)}
         >
           {emoji}
         </Button>
