@@ -273,7 +273,7 @@ export default function Players({
             // biome-ignore lint/suspicious/noArrayIndexKey: <placholder row>
             <div key={index} className='flex justify-center gap-4 py-4'>
               <UserIcon size={22} />
-              <span>Required player</span>
+              <span>Required Player</span>
             </div>
           ))}
 
@@ -347,7 +347,7 @@ export default function Players({
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
-                    <span>Required player</span>
+                    <span>Required Player</span>
                   </div>
                 </TableCell>
               </TableRow>
