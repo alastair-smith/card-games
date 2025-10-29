@@ -166,7 +166,7 @@ export default function HighCardGameView({
           </div>
         </div>
       ) : (
-        <div className='flex gap-2 justify-center'>
+        <div className='flex gap-1.5 justify-center items-center'>
           <span>{currentPlayer?.name} is thinking</span>
           <div className='flex'>
             <CogIcon className='animate-spin' />
@@ -203,59 +203,53 @@ export default function HighCardGameView({
           </DialogHeader>
         </DialogContent>
 
-        {/* Mobile view with tabs */}
-        <div className='flex-grow flex h-full flex-col lg:hidden'>
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className='flex flex-1 flex-col'
-          >
-            <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
-              <TabsContent
-                value='board'
-                forceMount
-                className={cn(
-                  'absolute inset-0 h-full w-full overflow-y-auto p-3 transition-transform duration-300 ease-in-out',
-                  {
-                    'translate-x-0': activeTab === 'board',
-                    '-translate-x-full': activeTab === 'hand',
-                  },
-                )}
-              >
-                {PlayArea}
-              </TabsContent>
-              <TabsContent
-                value='hand'
-                forceMount
-                className={cn(
-                  'absolute inset-0 h-full w-full transition-transform duration-300 ease-in-out',
-                  {
-                    'translate-x-0': activeTab === 'hand',
-                    'translate-x-full': activeTab === 'board',
-                  },
-                )}
-              >
-                <VerticalHand>{PlayerHandContent}</VerticalHand>
-              </TabsContent>
+        <div className='flex-grow flex h-full flex-col'>
+          <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
+            <div
+              className={cn(
+                'p-3 lg:p-0 h-full',
+                'absolute inset-0 w-full overflow-y-auto transition-transform duration-300 ease-in-out lg:static lg:transform-none lg:transition-none',
+                {
+                  'translate-x-0': activeTab === 'board',
+                  '-translate-x-full': activeTab === 'hand',
+                },
+              )}
+            >
+              {PlayArea}
             </div>
 
-            <div className='flex flex-col items-center gap-2'>
+            <div
+              className={cn(
+                'absolute inset-0 h-full w-full transition-transform duration-300 ease-in-out lg:hidden',
+                {
+                  'translate-x-0': activeTab === 'hand',
+                  'translate-x-full': activeTab === 'board',
+                },
+              )}
+            >
+              <VerticalHand>{PlayerHandContent}</VerticalHand>
+            </div>
+          </div>
+
+          <div className='flex flex-col items-center gap-2 lg:grid lg:grid-cols-3 lg:gap-6 w-full lg:my-3'>
+            <div className='w-full flex justify-end lg:hidden'>
               {showEmojiReactions && user?.id && (
                 <EmojiReactions
-                  className='place-self-end'
                   onEmojiClick={handleEmojiClick}
                   targetPlayerId={user.id}
                 />
               )}
+            </div>
 
-              <div className='grid grid-cols-8 gap-2 w-full items-center justify-center'>
-                <div className='col-start-2 col-span-6 justify-self-center'>
-                  {notificationsContent}
-                </div>
+            <div className='w-full grid grid-cols-8 gap-2 pb-2 lg:pb-0 items-center lg:col-start-2 lg:w-auto lg:justify-self-center'>
+              <div className='col-start-2 col-span-6 justify-self-center'>
+                {notificationsContent}
+              </div>
+              <div className='col-start-8 justify-self-end lg:hidden'>
                 <Button
                   size='sm'
                   onClick={() => setShowEmojiReactions(!showEmojiReactions)}
-                  className='bg-switch text-dark-text border-border col-start-8 w-fit justify-self-end'
+                  className='bg-switch text-dark-text border-border w-fit'
                 >
                   <span className='sr-only'>Open emoji reactions menu</span>
                   <SmilePlusIcon />
@@ -263,7 +257,33 @@ export default function HighCardGameView({
               </div>
             </div>
 
-            <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)]'>
+            <div className='hidden lg:flex col-start-3 justify-self-end gap-3 items-center'>
+              {showEmojiReactions && user?.id && (
+                <EmojiReactions
+                  onEmojiClick={handleEmojiClick}
+                  targetPlayerId={user.id}
+                />
+              )}
+              <Button
+                size='sm'
+                onClick={() => setShowEmojiReactions(!showEmojiReactions)}
+                className='bg-switch text-dark-text border-border w-fit'
+              >
+                <SmilePlusIcon />
+              </Button>
+            </div>
+          </div>
+
+          <div className='hidden lg:block pb-6'>
+            <HorizontalHand>{PlayerHandContent}</HorizontalHand>
+          </div>
+
+          <div className='pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:hidden'>
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className='w-full'
+            >
               <TabsList className='w-full'>
                 <TabsTrigger value='board' className='flex-1'>
                   Board
@@ -272,38 +292,8 @@ export default function HighCardGameView({
                   Hand
                 </TabsTrigger>
               </TabsList>
-            </div>
-          </Tabs>
-        </div>
-
-        {/* Desktop view */}
-        <div
-          className={cn('flex-grow hidden h-full flex-col gap-3 lg:flex pb-6')}
-        >
-          {PlayArea}
-
-          <div className='grid gap-6 grid-cols-3 justify-center items-center w-full'>
-            <div className='col-start-2 justify-self-center'>
-              {notificationsContent}
-            </div>
-            <div className='flex gap-3 justify-end'>
-              {showEmojiReactions && user?.id && (
-                <EmojiReactions
-                  className='col-start-3 justify-self-center'
-                  onEmojiClick={handleEmojiClick}
-                  targetPlayerId={user.id}
-                />
-              )}
-              <Button
-                size='sm'
-                onClick={() => setShowEmojiReactions(!showEmojiReactions)}
-                className='bg-switch text-dark-text border-border col-start-8 w-fit justify-self-end'
-              >
-                <SmilePlusIcon />
-              </Button>
-            </div>
+            </Tabs>
           </div>
-          <HorizontalHand>{PlayerHandContent}</HorizontalHand>
         </div>
       </Dialog>
     </GameLayout>
