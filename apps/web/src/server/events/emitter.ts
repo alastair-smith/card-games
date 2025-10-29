@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import type { z } from 'zod';
 import type { gameStateSchema } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
