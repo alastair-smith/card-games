@@ -2,11 +2,16 @@ import { EventEmitter } from 'node:events';
 import type { z } from 'zod';
 import type { gameStateSchema } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
+import type { UserId } from '~/types/entities';
+import type { ReactionEmoji } from '~/types/game';
 import { logger } from '~/utils/logger';
 
 type Events = {
   [key: `lobby:${string}`]: [z.infer<typeof lobbySchema>];
   [key: `high-card:${string}`]: [z.infer<typeof gameStateSchema>];
+  [key: `emoji:${string}`]: [
+    { emoji: ReactionEmoji; targetPlayerId: UserId; id: number },
+  ];
 };
 
 class MonitoredEventEmitter<
