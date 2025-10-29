@@ -3,20 +3,10 @@ import { dataLayer } from '~/server/data/redis';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
 import { type GameCode, gameCodeSchema, gameTypeSchema } from '~/types/game';
 
-export const {
-  get: getLobbySummary,
-  set: setLobbySummary,
-  exists: lobbyExists,
-} = dataLayer(
-  ({ code }: { code: GameCode }) => `lobby:${code}:summary`,
-  z.object({
-    code: gameCodeSchema,
-    type: gameTypeSchema,
-  }),
-);
-
+// TODO limit player count
 export const lobbySchema = z.object({
   code: gameCodeSchema,
+  type: gameTypeSchema,
   host: userIdSchema,
   players: z.array(
     z.object({
@@ -29,7 +19,8 @@ export const lobbySchema = z.object({
 
 export type Lobby = z.infer<typeof lobbySchema>;
 
-export const { get: getLobbyPlayers, set: setLobbyPlayers } = dataLayer(
-  ({ code }: { code: GameCode }) => `lobby:${code}`,
-  lobbySchema,
-);
+export const {
+  get: getLobby,
+  set: setLobby,
+  exists: lobbyExists,
+} = dataLayer(({ code }: { code: GameCode }) => `lobby:${code}`, lobbySchema);

@@ -76,7 +76,12 @@ export const dataLayer = <
       });
     }
 
-    await redis.set(key, JSON.stringify(parsed.data), 'EX', REDIS_EXPIRE_TIME_SECONDS);
+    await redis.set(
+      key,
+      JSON.stringify(parsed.data),
+      'EX',
+      REDIS_EXPIRE_TIME_SECONDS,
+    );
 
     return parsed.data;
   },

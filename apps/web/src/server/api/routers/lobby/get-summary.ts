@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
-import { getLobbySummary } from '~/server/data/lobby';
+import { getLobby } from '~/server/data/lobby';
 import { gameCodeSchema } from '~/types/game';
 
 export const getSummary = protectedProcedure
@@ -11,7 +11,7 @@ export const getSummary = protectedProcedure
     }),
   )
   .query(async ({ input }) => {
-    const data = await getLobbySummary({ code: input.code });
+    const data = await getLobby({ code: input.code });
 
     if (!data) {
       throw new TRPCError({
