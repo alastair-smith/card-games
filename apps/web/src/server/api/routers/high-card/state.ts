@@ -4,14 +4,17 @@ import { protectedProcedure } from '~/server/api/trpc';
 import { gameStateSchema as gameStateRawDataSchema } from '~/server/data/high-card';
 import { lobbySchema } from '~/server/data/lobby';
 import emitter from '~/server/events/emitter';
+import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getGameState } from '~/server/state/game/high-card/get-game-state';
 import { joinGame } from '~/server/state/game/high-card/join-game';
+import type { UserId } from '~/types/entities';
 import {
   type GameCode,
   GameUpdate,
   gameCodeSchema,
   type Player,
+  type ReactionEmoji,
 } from '~/types/game';
 import { GameStage, type GameState } from '~/types/games/high-card';
 import { logger } from '~/utils/logger';
@@ -49,6 +52,10 @@ type StateSubscription =
   | {
       update: GameUpdate.GAME_STATE_UPDATE | GameUpdate.FINISHED;
       state: GameState;
+    }
+  | {
+      update: GameUpdate.EMOJI_REACTION;
+      payload: { emoji: ReactionEmoji; targetPlayerId: UserId; id: number };
     };
 
 export const state = protectedProcedure
@@ -158,11 +165,24 @@ export const state = protectedProcedure
       }
     }
 
+    function emojiHandler(payload: {
+      emoji: ReactionEmoji;
+      targetPlayerId: UserId;
+      id: number;
+    }) {
+      messageQueue.push({
+        update: GameUpdate.EMOJI_REACTION,
+        payload,
+      });
+    }
+
     const lobbyChannel = getLobbyChannel(code);
     const gameChannel = getHighCardGameStateChannel(code);
+    const emojiChannel = getEmojiChannel(code);
 
     emitter.on(lobbyChannel, lobbyHandler);
     emitter.on(gameChannel, gameHandler);
+    emitter.on(emojiChannel, emojiHandler);
 
     try {
       while (!signal?.aborted) {
@@ -190,5 +210,6 @@ export const state = protectedProcedure
     } finally {
       emitter.off(lobbyChannel, lobbyHandler);
       emitter.off(gameChannel, gameHandler);
+      emitter.off(emojiChannel, emojiHandler);
     }
   });

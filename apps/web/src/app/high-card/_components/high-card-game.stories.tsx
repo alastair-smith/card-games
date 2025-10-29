@@ -8,6 +8,8 @@ import Game from './game-view';
 export const Turn1 = () => {
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -28,6 +30,8 @@ export const Turn2 = () => {
   const [card2, setCard2] = useState<StandardPlayingCard | null>(null);
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         setCard2({ suit: Suit.SPADES, rank: Rank.QUEEN });
         toast.success('Card picked up!');
@@ -53,6 +57,8 @@ export const Turn2 = () => {
 export const Turn3 = () => {
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -82,6 +88,8 @@ export const Turn3 = () => {
 export const Turn4 = () => {
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -116,6 +124,8 @@ export const Turn4 = () => {
 export const MaxPlayers = () => {
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
@@ -193,6 +203,8 @@ export const LongName = () => {
   const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join('');
   return (
     <Game
+      onEmojiClick={() => {}}
+      reactions={{}}
       pickupCard={() => {
         toast.success('Card picked up!');
       }}
