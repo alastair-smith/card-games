@@ -69,11 +69,9 @@
   @keyframes rain {
     0% {
       transform: translateY(-100%);
-      opacity: 1;
     }
     100% {
       transform: translateY(100vh);
-      opacity: 0;
     }
   }
 }

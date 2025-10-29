@@ -3,7 +3,10 @@
 import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { EmojiRain, type EmojiRainRef } from '~/components/emoji-rain/emoji-rain';
+import {
+  EmojiRain,
+  type EmojiRainRef,
+} from '~/components/emoji-rain/emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
@@ -93,7 +96,10 @@ export default function HighCardGameView({
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
       {state.players.map((player) => (
-        <EmojiRain ref={(el) => (emojiRainRefs.current[player.id] = el)} key={player.id}>
+        <EmojiRain
+          ref={(el) => (emojiRainRefs.current[player.id] = el)}
+          key={player.id}
+        >
           <PlayAreaPlayerZone>
             <PlayingCard card={player.card} size='sm' />
             <PlayAreaPlayerName>
@@ -251,6 +257,7 @@ export default function HighCardGameView({
                   onClick={() => setShowEmojiReactions(!showEmojiReactions)}
                   className='bg-switch text-dark-text border-border col-start-8 w-fit justify-self-end'
                 >
+                  <span className='sr-only'>Open emoji reactions menu</span>
                   <SmilePlusIcon />
                 </Button>
               </div>

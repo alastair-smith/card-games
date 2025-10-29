@@ -2,7 +2,6 @@
 
 import React, {
   type ReactNode,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -14,6 +13,7 @@ type Emoji = {
   id: string;
   emoji: ReactionEmoji;
   xPos: number;
+  yPos: number;
 };
 
 export type EmojiRainRef = {
@@ -25,8 +25,19 @@ type EmojiRainProps = {
   className?: string;
 };
 
-const EMOJI_DURATION = 3000; // milliseconds
+const NUMBER_OF_EMOJIS = 20;
+const EMOJI_MAX_WIDTH = 38; // approximate width of emoji in px
+const PERCENTAGE_START_RANGE = -300; // start position range above the content in percentage
 
+// TODO
+// Create multiple emojis at once, with random delay between them
+// fix refs on mobile
+// create backend integration to send emojis to other players
+// create multiple drops of rain instead of just 1 per click
+
+/**
+ * Creates an effect of several emojis trickling down the screen
+ */
 export const EmojiRain = React.forwardRef<EmojiRainRef, EmojiRainProps>(
   ({ children, className }, ref) => {
     const [emojis, setEmojis] = useState<Emoji[]>([]);
@@ -37,24 +48,17 @@ export const EmojiRain = React.forwardRef<EmojiRainRef, EmojiRainProps>(
         if (!containerRef.current) return;
 
         const containerWidth = containerRef.current.offsetWidth;
-        const xPos = Math.random() * (containerWidth - 30); // 30px for emoji width approximation
 
-        setEmojis((prevEmojis) => [
-          ...prevEmojis,
-          { id: crypto.randomUUID(), emoji, xPos },
-        ]);
+        const emojis = Array.from({ length: NUMBER_OF_EMOJIS }, () => ({
+          xPos: Math.random() * (containerWidth - EMOJI_MAX_WIDTH),
+          yPos: Math.random() * PERCENTAGE_START_RANGE,
+          id: crypto.randomUUID(),
+          emoji,
+        }));
+
+        setEmojis(emojis);
       },
     }));
-
-    useEffect(() => {
-      if (emojis.length === 0) return;
-
-      const timer = setTimeout(() => {
-        setEmojis((prevEmojis) => prevEmojis.slice(1));
-      }, EMOJI_DURATION);
-
-      return () => clearTimeout(timer);
-    }, [emojis]);
 
     return (
       <div
@@ -65,8 +69,8 @@ export const EmojiRain = React.forwardRef<EmojiRainRef, EmojiRainProps>(
         {emojis.map((e) => (
           <div
             key={e.id}
-            className='absolute top-0 text-3xl animate-rain z-50'
-            style={{ left: `${e.xPos}px` }}
+            className='absolute text-3xl animate-rain z-50'
+            style={{ left: `${e.xPos}px`, top: `${e.yPos}%` }}
           >
             {e.emoji}
           </div>

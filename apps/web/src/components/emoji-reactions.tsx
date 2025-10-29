@@ -2,8 +2,8 @@
 
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
-import { reactionEmojis, type ReactionEmoji } from '~/types/game';
 import type { UserId } from '~/types/entities';
+import { type ReactionEmoji, reactionEmojis } from '~/types/game';
 
 type EmojiReactionsProps = {
   className?: string;
@@ -11,7 +11,11 @@ type EmojiReactionsProps = {
   targetPlayerId: UserId;
 };
 
-export function EmojiReactions({ className, onEmojiClick, targetPlayerId }: EmojiReactionsProps) {
+export function EmojiReactions({
+  className,
+  onEmojiClick,
+  targetPlayerId,
+}: EmojiReactionsProps) {
   return (
     <ButtonGroup className={className}>
       {reactionEmojis.map((emoji) => (
