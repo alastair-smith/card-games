@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server';
 import { redirect } from 'next/navigation';
 import { api } from '~/trpc/server';
 import { type GameCode, type GameType, gameURL } from '~/types/game';
+import { logger } from '~/utils/logger';
 
 const getLobbyURL = (type: GameType, code: GameCode) => {
   const baseUrl = gameURL[type];
@@ -24,19 +25,22 @@ export default async function LobbyPage({
 }: {
   params: Promise<{ code: string }>;
 }) {
+  let url: string;
   try {
     const { code } = await params;
 
     const data = await api.lobby.getSummary({ code });
 
-    const url = getLobbyURL(data.type, data.code);
-
-    redirect(url);
+    url = getLobbyURL(data.type, data.code);
   } catch (error) {
     if (error instanceof TRPCError && error.code === 'NOT_FOUND') {
       return <NotFound />;
     }
 
+    logger.error(error);
+
     return <ErrorPage />;
   }
+
+  redirect(url);
 }
