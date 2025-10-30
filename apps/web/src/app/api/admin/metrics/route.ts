@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { env } from '~/env';
 import monitoredEmitter from '~/server/events/emitter';
 
