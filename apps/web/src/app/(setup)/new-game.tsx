@@ -27,6 +27,7 @@ type GameProps = {
   };
   length: GameLength;
   summary: string;
+  disabled?: boolean;
 };
 
 // TODO update min + max players
@@ -50,6 +51,7 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Win hands hands worth under 7 points and call Yaniv!',
+    disabled: true,
   },
   {
     gameType: GameType.BLOB,
@@ -60,6 +62,7 @@ const games: GameProps[] = [
     },
     length: GameLength.long,
     summary: 'Predict how many hands you will win in this trumps-like game.',
+    disabled: true,
   },
   {
     gameType: GameType.SHITHEAD,
@@ -71,6 +74,7 @@ const games: GameProps[] = [
     length: GameLength.short,
     summary:
       'Play your cards and hope you have enough magic to avoid picking up too many.',
+    disabled: true,
   },
   {
     gameType: GameType.FOOL,
@@ -81,6 +85,7 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Gang up on other players to rid yourself of all your cards.',
+    disabled: true,
   },
 ];
 
@@ -91,6 +96,7 @@ function Game({
   players,
   length,
   summary,
+  disabled = false,
 }: GameProps & { className?: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -133,8 +139,9 @@ function Game({
                 gameType,
               });
             }}
+            disabled={disabled}
           >
-            Create Game
+            {disabled ? 'Coming Soon!' : 'Create Game'}
           </Button>
         </div>
 
