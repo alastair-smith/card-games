@@ -16,6 +16,8 @@ export const env = createEnv({
       .default('3000')
       .transform((val) => z.number().int().positive().parse(Number(val))),
     REDIS_CONNECTION_STRING: z.string(),
+    ADMIN_USERNAME: z.string().optional(),
+    ADMIN_PASSWORD: z.string().optional(),
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -25,6 +27,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
     REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
+    ADMIN_USERNAME: process.env.ADMIN_USERNAME,
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
