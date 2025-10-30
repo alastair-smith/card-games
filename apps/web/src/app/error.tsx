@@ -21,9 +21,9 @@ import { Suit } from '~/types/cards';
 
 export default function ErrorPage() {
   return (
-    <div className='flex min-h-dvh justify-center text-dark-text pt-[10vh]'>
+    <div className='flex min-h-dvh justify-center text-dark-text pt-[5vh]'>
       <div className='flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 p-4'>
-        <div className='flex justify-between gap-3 transform scale-65 sm:scale-100 w-full'>
+        <div className='flex justify-between gap-6 w-fit scale-70 sm:scale-100'>
           <PlayingCard card={{ suit: Suit.SPADES, rank: 5 }} />
           <ZeroPlayingCard suit={Suit.HEARTS} />
           <ZeroPlayingCard suit={Suit.CLUBS} />
