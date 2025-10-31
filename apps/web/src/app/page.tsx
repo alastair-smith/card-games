@@ -1,7 +1,7 @@
 import { Header, Page } from '~/components/layout/page';
-import { About } from './about';
-import { JoinGame } from './join-game';
-import { NewGame } from './new-game';
+import { About } from './_components/about';
+import { JoinGame } from './_components/join-game';
+import { NewGame } from './_components/new-game';
 
 export default async function Home() {
   return (
