@@ -81,9 +81,12 @@ function PlayerDropdown({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleLeave(player.id)}>
-                  Continue
+                <AlertDialogCancel>Remain</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => handleLeave(player.id)}
+                  variant='danger'
+                >
+                  Leave
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -110,7 +113,7 @@ function PlayerDropdown({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => handleKick(player.id)}>
-                  Continue
+                  Kick
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -137,7 +140,7 @@ function PlayerDropdown({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => handleMakeHost(player.id)}>
-                  Continue
+                  Make Host
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
