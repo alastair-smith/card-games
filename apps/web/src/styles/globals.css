@@ -17,14 +17,14 @@
   --color-lighter-slate: hsl(from var(--color-slate) h s 80%);
   --color-grey-lily-white: hsl(from var(--color-lily-white) h 20% 30%);
   --color-dark-yellow: hsl(from var(--color-yellow) h s 50%);
-  --color-dark-white: hsl(from var(--color-white) h s 80%);
+  --color-dark-white: hsl(199 8% 75%);
 
   /* background colors*/
   --color-main-background: var(--color-dark-green);
   --color-card-background: var(--color-white);
+  --color-highlighted-card-background: var(--color-dark-white);
   --color-alt-background: var(--color-grey-lily-white);
   --color-input-background: var(--color-lily-white);
-  --color-switch: var(--color-grey-lily-white);
 
   /* text colors*/
   --color-light-text: var(--color-slate);
