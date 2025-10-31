@@ -81,7 +81,7 @@ function PlayerDropdown({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Remain</AlertDialogCancel>
+                <AlertDialogCancel>Stay</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => handleLeave(player.id)}
                   variant='danger'
@@ -302,7 +302,7 @@ export default function Players({
           </TableHeader>
           <TableBody>
             {players.map((player) => (
-              <TableRow key={player.id}>
+              <TableRow key={player.id} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell className='w-[1ch]'>
                   {player.isHost ? (
                     <>
