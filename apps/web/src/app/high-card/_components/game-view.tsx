@@ -243,7 +243,7 @@ export default function HighCardGameView({
             <Button
               size='sm'
               onClick={() => setShowEmojiReactions(!showEmojiReactions)}
-              className='bg-switch text-dark-text border-border w-fit row-start-2 col-start-5 justify-self-end my-2'
+              className='bg-alt-background text-dark-text border-border w-fit row-start-2 col-start-5 justify-self-end my-2'
             >
               <span className='sr-only'>Open emoji reactions menu</span>
               <SmilePlusIcon />

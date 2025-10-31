@@ -20,7 +20,7 @@ export function EmojiReactions({
           key={emoji}
           variant='secondary'
           size='sm'
-          className='text-lg bg-switch'
+          className='text-lg bg-alt-background'
           onClick={() => onEmojiClick(emoji)}
         >
           {emoji}

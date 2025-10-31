@@ -125,6 +125,14 @@ export const state = protectedProcedure
       const messageData = lobbySchema.safeParse(message);
 
       if (messageData.success) {
+        // If the current user is no longer in the lobby, they have been kicked.
+        if (!messageData.data.players.some((player) => player.id === userId)) {
+          messageQueue.push({
+            update: GameUpdate.KICKED,
+          });
+          return;
+        }
+
         const players = messageData.data.players.map((player) => ({
           ...player,
           isHost: player.id === messageData.data.host,
