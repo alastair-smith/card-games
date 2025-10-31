@@ -1,12 +1,12 @@
-import { Header, Page } from '~/components/layout/page';
+import { PageHeader, PageRoot } from '~/components/layout/page';
 import { About } from './_components/about';
 import { JoinGame } from './_components/join-game';
 import { NewGame } from './_components/new-game';
 
 export default async function Home() {
   return (
-    <Page className='pb-8'>
-      <Header breadcrumbs={[{ text: 'PlayCards.Games' }]} />
+    <PageRoot className='pb-8'>
+      <PageHeader breadcrumbs={[{ text: 'PlayCards.Games' }]} />
 
       <main className='flex-1 w-full flex flex-col gap-6'>
         <div className='flex w-full flex-wrap gap-6'>
@@ -16,6 +16,6 @@ export default async function Home() {
 
         <NewGame />
       </main>
-    </Page>
+    </PageRoot>
   );
 }

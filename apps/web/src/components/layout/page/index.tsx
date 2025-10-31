@@ -11,13 +11,13 @@ import {
 } from '~/components/ui/breadcrumbs';
 import { cn } from '~/utils/cn';
 
-type PageProps = {
+type PageRootProps = {
   children: React.ReactNode;
   className?: string;
   fullscreen?: boolean;
 };
 
-export function Page({ children, className, fullscreen }: PageProps) {
+export function PageRoot({ children, className, fullscreen }: PageRootProps) {
   return (
     <div
       className={cn(
@@ -37,7 +37,7 @@ export function Page({ children, className, fullscreen }: PageProps) {
   );
 }
 
-type HeaderProps = {
+type PageHeaderProps = {
   breadcrumbs: {
     text: string;
     href?: string;
@@ -45,7 +45,7 @@ type HeaderProps = {
   children?: React.ReactNode;
 };
 
-export function Header({ breadcrumbs, children }: HeaderProps) {
+export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
   return (
     <header className='w-7xl max-w-full min-h-14 pt-1 flex flex-wrap gap-2 justify-between items-center self-center'>
       <Breadcrumb>
