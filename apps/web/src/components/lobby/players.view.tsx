@@ -313,7 +313,7 @@ export default function Players({
                     ''
                   )}
                 </TableCell>
-                <TableCell className='flex gap-2'>
+                <TableCell>
                   {player.isUser ? (
                     <Input
                       value={user.name}
@@ -346,7 +346,7 @@ export default function Players({
 
             {Array.from({ length: requiredPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index}>
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
@@ -358,7 +358,7 @@ export default function Players({
 
             {Array.from({ length: optionalPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index}>
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4 opacity-50'>
                     <UserIcon size={22} />
