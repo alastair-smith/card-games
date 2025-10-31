@@ -81,9 +81,12 @@ function PlayerDropdown({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleLeave(player.id)}>
-                  Continue
+                <AlertDialogCancel>Stay</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => handleLeave(player.id)}
+                  variant='danger'
+                >
+                  Leave
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -110,7 +113,7 @@ function PlayerDropdown({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => handleKick(player.id)}>
-                  Continue
+                  Kick
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -137,7 +140,7 @@ function PlayerDropdown({
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={() => handleMakeHost(player.id)}>
-                  Continue
+                  Make Host
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -299,7 +302,7 @@ export default function Players({
           </TableHeader>
           <TableBody>
             {players.map((player) => (
-              <TableRow key={player.id}>
+              <TableRow key={player.id} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell className='w-[1ch]'>
                   {player.isHost ? (
                     <>
@@ -310,7 +313,7 @@ export default function Players({
                     ''
                   )}
                 </TableCell>
-                <TableCell className='flex gap-2'>
+                <TableCell>
                   {player.isUser ? (
                     <Input
                       value={user.name}
@@ -343,7 +346,7 @@ export default function Players({
 
             {Array.from({ length: requiredPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index}>
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
@@ -355,7 +358,7 @@ export default function Players({
 
             {Array.from({ length: optionalPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index}>
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={4}>
                   <div className='flex justify-center gap-4 opacity-50'>
                     <UserIcon size={22} />

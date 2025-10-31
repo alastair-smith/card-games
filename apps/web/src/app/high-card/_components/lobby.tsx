@@ -1,6 +1,7 @@
 'use client';
 
 import debounce from 'lodash/debounce';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
@@ -27,10 +28,19 @@ export default function Lobby({
       nameError: '',
     };
   });
+  const router = useRouter();
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
-  const leaveGameMutation = api.lobby.leaveGame.useMutation();
-  const kickPlayerMutation = api.lobby.kickPlayer.useMutation();
+  const leaveGameMutation = api.lobby.leaveGame.useMutation({
+    onSuccess: () => {
+      toast.success('You left the game!');
+    },
+  });
+  const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
+    onError: () => {
+      toast.error('Error kicking player');
+    },
+  });
   const makeHostMutation = api.lobby.makeHost.useMutation();
   const startGameMutation = api.highCard.startGame.useMutation();
 
@@ -85,6 +95,7 @@ export default function Lobby({
       }}
       handleLeave={() => {
         leaveGameMutation.mutate({ code });
+        router.push('/');
       }}
       handleKick={(playerId: UserId) => {
         kickPlayerMutation.mutate({ playerId, code });
