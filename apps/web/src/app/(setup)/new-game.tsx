@@ -34,7 +34,7 @@ type GameProps = {
 const games: GameProps[] = [
   {
     gameType: GameType.HIGH_CARD,
-    image: 'https://placehold.co/250x250.png',
+    image: '/high-card.png',
     players: {
       min: MIN_PLAYERS,
       max: MAX_PLAYERS,
@@ -44,7 +44,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.YANIV,
-    image: 'https://placehold.co/250x250.png',
+    image: '/yaniv.png',
     players: {
       min: 2,
       max: 5,
@@ -55,7 +55,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.BLOB,
-    image: 'https://placehold.co/250x250.png',
+    image: '/blob.png',
     players: {
       min: 3,
       max: 6,
@@ -66,7 +66,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.SHITHEAD,
-    image: 'https://placehold.co/250x250.png',
+    image: '/shithead.png',
     players: {
       min: 2,
       max: 4,
@@ -78,7 +78,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.FOOL,
-    image: 'https://placehold.co/250x250.png',
+    image: '/fool.png',
     players: {
       min: 2,
       max: 4,
@@ -122,7 +122,7 @@ function Game({
           <GameStats players={players} length={length} />
 
           <Image
-            className='block sm:hidden self-center'
+            className='block sm:hidden self-center rounded-lg'
             src={image}
             alt={name}
             width={250}
@@ -146,9 +146,9 @@ function Game({
         </div>
 
         <Image
-          className='hidden sm:block'
+          className='hidden sm:block rounded-lg'
           src={image}
-          alt={name}
+          alt={`Image of ${name} game`}
           width={250}
           height={250}
         />
