@@ -37,6 +37,7 @@ export default function Contact() {
               >
                 {CONTACT_EMAIL}
               </a>
+              .
             </p>
             <p>
               If you are reporting an issue it would be really helpful if you
