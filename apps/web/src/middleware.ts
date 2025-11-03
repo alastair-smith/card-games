@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
       expires: expiry,
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
 
     return response;
