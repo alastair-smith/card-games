@@ -6,6 +6,31 @@ import './src/env.js';
 
 /** @type {import("next").NextConfig} */
 const config = {
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
