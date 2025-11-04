@@ -1,6 +1,7 @@
 import { GeistSans } from 'geist/font/sans';
 import type { Metadata, Viewport } from 'next';
 import '~/styles/globals.css';
+import 'sonner/dist/styles.css'; // required as lib-injected styles are blocked by CSP
 import { Toaster } from '~/components/ui/toast';
 import { TRPCReactProvider } from '~/trpc/react';
 

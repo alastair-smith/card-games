@@ -1,34 +1,26 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
-import {
-  AUTH_COOKIE_NAME,
-  createAuthToken,
-  getSession,
-  nearExpiry,
-} from '~/server/auth';
+import { type NextRequest, NextResponse } from 'next/server';
+import { authMiddleware } from './middleware/auth';
+import { cspHeaderMiddleware } from './middleware/csp-header';
 
 export async function middleware(request: NextRequest) {
-  const authCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value;
-  const session = await getSession(authCookie);
+  const cspHeaderBeforeContext = await cspHeaderMiddleware.before({}, request);
+  const authBeforeContext = await authMiddleware.before(
+    cspHeaderBeforeContext,
+    request,
+  );
 
-  if (!session || nearExpiry(session.expiry)) {
-    const { signedJWT, expiry } = await createAuthToken(session?.userId);
+  const response = NextResponse.next({
+    request: {
+      headers: authBeforeContext.requestHeaders,
+    },
+  });
 
-    // needed on request to handle auth for the remainder of this call
-    request.cookies.set(AUTH_COOKIE_NAME, signedJWT);
+  const authAfterContext = await authMiddleware.after(
+    authBeforeContext,
+    request,
+    response,
+  );
+  await cspHeaderMiddleware.after(authAfterContext, request, response);
 
-    const response = NextResponse.next();
-
-    // set in response for future requests
-    response.cookies.set(AUTH_COOKIE_NAME, signedJWT, {
-      expires: expiry,
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
-
-    return response;
-  } else {
-    return NextResponse.next();
-  }
+  return response;
 }

@@ -1,9 +1,12 @@
+import { connection } from 'next/server';
 import { PageHeader, PageRoot } from '~/components/layout/page';
 import { About } from './_components/about';
 import { JoinGame } from './_components/join-game';
 import { NewGame } from './_components/new-game';
 
 export default async function Home() {
+  await connection();
+
   return (
     <PageRoot className='pb-8'>
       <PageHeader breadcrumbs={[{ text: 'PlayCards.Games' }]} />
