@@ -28,14 +28,9 @@ export default function Lobby({
       nameError: '',
     };
   });
-  const router = useRouter();
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
-  const leaveGameMutation = api.lobby.leaveGame.useMutation({
-    onSuccess: () => {
-      toast.success('You left the game!');
-    },
-  });
+  const leaveGameMutation = api.lobby.leaveGame.useMutation();
   const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
     onError: () => {
       toast.error('Error kicking player');
@@ -95,7 +90,6 @@ export default function Lobby({
       }}
       handleLeave={() => {
         leaveGameMutation.mutate({ code });
-        router.push('/');
       }}
       handleKick={(playerId: UserId) => {
         kickPlayerMutation.mutate({ playerId, code });

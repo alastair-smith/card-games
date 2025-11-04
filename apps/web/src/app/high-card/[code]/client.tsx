@@ -38,7 +38,7 @@ export default function HighCard({ code }: { code: GameCode }) {
         switch (newGameState.update) {
           case GameUpdate.KICKED:
             setStatus(GameStatus.FINISHED);
-            toast.warning('You have been kicked from the game!');
+            toast.warning('You have been removed from the game!');
             router.push('/');
             return;
 
