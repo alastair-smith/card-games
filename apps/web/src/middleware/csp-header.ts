@@ -1,6 +1,6 @@
 import type { Middleware } from './types';
 
-const CSP_HEADER_NAME = 'Content-Security-Policy-Report-Only';
+const CSP_HEADER_NAME = 'Content-Security-Policy';
 
 export const cspHeaderMiddleware: Middleware = {
   before: async (context, request) => {
