@@ -1,3 +1,4 @@
+import { connection } from 'next/server';
 import { PageHeader, PageRoot } from '~/components/layout/page';
 import { Button } from '~/components/ui/button';
 import {
@@ -11,7 +12,9 @@ import { CopyToClipboard } from './_components/copy-to-clipboard';
 
 const CONTACT_EMAIL = 'contact@playcards.games';
 
-export default function Contact() {
+export default async function Contact() {
+  await connection();
+
   return (
     <PageRoot>
       <PageHeader
