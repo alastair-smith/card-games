@@ -4,7 +4,7 @@ import { jwtVerify, SignJWT } from 'jose';
 import { env } from '~/env';
 import { type UserId, userIdSchema } from '~/types/entities';
 
-export const AUTH_COOKIE_NAME = '__host_auth';
+export const AUTH_COOKIE_NAME = '__host-auth';
 const AUTH_TOKEN_EXPIRY_DAYS = 7;
 const RENEW_TOKEN_EXPIRY_DAYS = 6;
 const JWT_ISSUER = 'todo-replace';
