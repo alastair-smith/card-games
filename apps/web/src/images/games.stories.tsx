@@ -1,4 +1,6 @@
 import { ClubIcon, HeartIcon, SpadeIcon } from 'lucide-react';
+import { Children, cloneElement, isValidElement, type ReactNode } from 'react';
+import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { PlayingCard } from '~/components/ui/playing-card/playing-card';
 import {
   Table,
@@ -9,43 +11,78 @@ import {
   TableRow,
 } from '~/components/ui/table';
 import { Rank, Suit } from '~/types/cards';
+import { cn } from '~/utils/cn';
 
-export function HighCardImage() {
+function ImageSizing({
+  title,
+  children,
+  scaleSquare = '',
+  scaleOg = '',
+}: {
+  title: string;
+  children: ReactNode;
+  scaleSquare?: string;
+  scaleOg?: string;
+}) {
   return (
-    <div className='flex flex-wrap gap-12 bg-main-background m-8 p-8 text-light-text'>
-      <div>
-        <h2 className=''>High Card</h2>
+    <Card>
+      <CardHeader>{title}</CardHeader>
+      <CardContent>
+        <div className='flex flex-col bg-main-background p-2'>
+          <div className='bg-main-background w-[250px] h-[250px] flex items-center justify-center border border-white'>
+            {Children.map(children, (child) => {
+              if (!isValidElement<{ className?: string }>(child)) return child;
 
-        <div className='flex items-center gap-3 bg-main-background w-fit p-12 aspect-square text-dark-text'>
+              return cloneElement(child, {
+                className: cn(scaleSquare, child.props.className),
+              });
+            })}
+          </div>
+          <div className='bg-main-background aspect-[1.91/1] w-[1200px] h-[630px] flex items-center justify-center border border-white'>
+            {Children.map(children, (child) => {
+              if (!isValidElement<{ className?: string }>(child)) return child;
+
+              return cloneElement(child, {
+                className: cn(scaleOg, child.props.className),
+              });
+            })}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function GameImages() {
+  return (
+    <div className='flex flex-col gap-12 p-6 w-fit'>
+      <ImageSizing title='High Card' scaleSquare='scale-60' scaleOg='scale-250'>
+        <div className='flex items-center gap-3 w-fit text-dark-text'>
           <PlayingCard card={{ rank: Rank.FOUR, suit: Suit.DIAMONDS }} />
           <span className='text-9xl'>&lt;</span>
           <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} />
         </div>
-      </div>
+      </ImageSizing>
 
-      <div>
-        <h2 className=''>Yaniv</h2>
-
-        <div className='flex items-center gap-3 bg-main-background w-fit p-12 aspect-square text-dark-text'>
+      <ImageSizing title='Yaniv' scaleSquare='scale-40' scaleOg='scale-200'>
+        <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text'>
           <PlayingCard card={{ rank: Rank.TWO, suit: Suit.DIAMONDS }} />
           <span className='text-9xl'>+</span>
           <PlayingCard card={{ rank: Rank.THREE, suit: Suit.SPADES }} />
           <span className='text-9xl'>&lt;</span>
           <span className='text-9xl'>7</span>
         </div>
-      </div>
+      </ImageSizing>
 
-      <div>
-        <h2 className=''>Blob</h2>
-
-        <div className='flex items-center gap-3 bg-main-background w-fit p-6 aspect-square text-dark-text'>
+      <ImageSizing title='Blob' scaleSquare='scale-70' scaleOg='scale-200'>
+        <div className='flex items-center gap-3 bg-main-background w-fit p-6 text-dark-text'>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className='font-bold'>Cards</TableHead>
                 <TableHead className='font-bold'>Suit</TableHead>
-                <TableHead className='font-bold'>Player 1</TableHead>
-                <TableHead className='font-bold'>Player 2</TableHead>
+                <TableHead className='font-bold'>Jeff</TableHead>
+                <TableHead className='font-bold'>Ingrid</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -88,12 +125,10 @@ export function HighCardImage() {
             </TableBody>
           </Table>
         </div>
-      </div>
+      </ImageSizing>
 
-      <div>
-        <h2 className=''>Shithead</h2>
-
-        <div className='flex items-start gap-6 bg-main-background w-fit p-12 aspect-square text-dark-text'>
+      <ImageSizing title='Shithead' scaleSquare='scale-48' scaleOg='scale-210'>
+        <div className='flex items-start gap-6 w-fit text-dark-text'>
           <div className='translate-y-30'>
             <PlayingCard card={null} />
             <PlayingCard
@@ -113,12 +148,10 @@ export function HighCardImage() {
             />
           </div>
         </div>
-      </div>
+      </ImageSizing>
 
-      <div>
-        <h2 className=''>Fool</h2>
-
-        <div className='flex flex-col items-center gap-y-6 bg-main-background w-[600px] h-[600px] py-6 aspect-square text-dark-text'>
+      <ImageSizing title='Fool' scaleSquare='scale-40' scaleOg='scale-120'>
+        <div className='flex flex-col items-center gap-y-6 translate-y-13 text-dark-text'>
           <div className='flex gap-6'>
             <div>
               <PlayingCard card={{ rank: Rank.SEVEN, suit: Suit.DIAMONDS }} />
@@ -170,7 +203,7 @@ export function HighCardImage() {
             </div>
           </div>
         </div>
-      </div>
+      </ImageSizing>
     </div>
   );
 }
