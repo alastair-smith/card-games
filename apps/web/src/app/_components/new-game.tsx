@@ -28,6 +28,7 @@ type GameProps = {
   length: GameLength;
   summary: string;
   disabled?: boolean;
+  preloadImage?: boolean;
 };
 
 // TODO update min + max players
@@ -41,6 +42,7 @@ const games: GameProps[] = [
     },
     length: GameLength.short,
     summary: 'Draw the highest card to win the game.',
+    preloadImage: true,
   },
   {
     gameType: GameType.YANIV,
@@ -52,6 +54,7 @@ const games: GameProps[] = [
     length: GameLength.medium,
     summary: 'Win hands hands worth under 7 points and call Yaniv!',
     disabled: true,
+    preloadImage: true,
   },
   {
     gameType: GameType.BLOB,
@@ -97,6 +100,7 @@ function Game({
   length,
   summary,
   disabled = false,
+  preloadImage = false,
 }: GameProps & { className?: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -127,6 +131,7 @@ function Game({
             alt={name}
             width={250}
             height={250}
+            priority={preloadImage}
           />
 
           <p className='flex-1'>{summary}</p>
@@ -151,6 +156,7 @@ function Game({
           alt={`Image of ${name} game`}
           width={250}
           height={250}
+          priority={preloadImage}
         />
       </CardContent>
     </Card>
