@@ -38,7 +38,7 @@ function ImageSizing({
               });
             })}
           </div>
-          <div className='bg-main-background aspect-[1.91/1] w-[1200px] h-[630px] flex items-center justify-center border border-white'>
+          <div className='bg-main-background w-[1200px] h-[630px] flex items-center justify-center border border-white'>
             {Children.map(children, (child) => {
               if (!isValidElement<{ className?: string }>(child)) return child;
 
