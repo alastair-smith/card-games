@@ -1,4 +1,4 @@
-import { ClubIcon, HeartIcon, SpadeIcon } from 'lucide-react';
+import { ClubIcon, DiamondIcon, HeartIcon, SpadeIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { PlayingCard } from '~/components/ui/playing-card';
@@ -41,6 +41,58 @@ function ImageSizing({
 export function GameImages() {
   return (
     <div className='flex flex-col gap-12 p-6 w-fit'>
+      <ImageSizing
+        title='Home'
+        square={
+          <div className='grid grid-cols-2 gap-1'>
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
+              className='text-xl'
+            />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
+              className='text-xl'
+            />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
+              className='text-xl'
+            />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.SPADES }}
+              className='text-xl'
+            />
+          </div>
+        }
+        og={
+          <div className='grid grid-cols-6 gap-3'>
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
+              className='text-5xl'
+            />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
+              className='text-5xl'
+            />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
+              className='text-5xl'
+            />
+            <PlayingCard
+              card={{ rank: Rank.ACE, suit: Suit.SPADES }}
+              className='text-5xl'
+            />
+            <PlayingCard card={null} className='text-5xl' />
+            <PlayingCard card={null} className='text-5xl' />
+          </div>
+        }
+      />
+
       <ImageSizing
         title='High Card'
         square={
