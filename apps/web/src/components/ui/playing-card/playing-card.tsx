@@ -22,19 +22,8 @@ import {
 import { isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
-const RANK_FACE_SYMBOL_SIZE = '1.375rem';
-const LG_RANK_FACE_SYMBOL_SIZE = '3.4375rem';
-const CARD_WIDTH = 'w-34';
-const CARD_HEIGHT = 'h-48';
-export const MIN_CARD_HEIGHT = 'min-h-51'; // used to reserve space
-const FONT_SIZE = 'text-4xl';
-const SMALL_CARD_WIDTH = 'w-16';
-const SMALL_CARD_HEIGHT = 'h-22.5';
-const SMALL_FONT_SIZE = 'text-2xl';
-const LG_CARD_WIDTH = 'w-[21.25rem]';
-const LG_CARD_HEIGHT = 'h-[30rem]';
-const LG_FONT_SIZE = 'text-[5.625rem]';
-const LG_SUIT_SYMBOL_HEIGHT = 'h-20';
+const RANK_FACE_SYMBOL_SIZE = '0.61em';
+export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -55,7 +44,6 @@ export function PlayingCard({
   onClick,
   selected,
   highlighted,
-  size,
   design,
 }: {
   card: PlayingCardValue | null;
@@ -63,16 +51,8 @@ export function PlayingCard({
   onClick?: () => void;
   selected?: boolean;
   highlighted?: boolean;
-  size?: 'default' | 'sm' | 'lg';
   design?: 'default' | 'simple';
 }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : size === 'lg'
-        ? [LG_CARD_HEIGHT, LG_CARD_WIDTH]
-        : [CARD_HEIGHT, CARD_WIDTH];
-
   return (
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
@@ -80,8 +60,8 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        cardWidth,
-        cardHeight,
+        'w-[3.75em] h-[5.25em]',
+        'text-4xl',
         '[perspective:1000px]',
         'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
@@ -99,12 +79,12 @@ export function PlayingCard({
       >
         {/* Front */}
         <div className='absolute w-full h-full [backface-visibility:hidden]'>
-          <PlayingCardFace card={card} size={size} design={design} />
+          <PlayingCardFace card={card} design={design} />
         </div>
 
         {/* Back */}
         <div className='absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
-          <PlayingCardBack size={size} />
+          <PlayingCardBack />
         </div>
       </div>
     </div>
@@ -113,11 +93,9 @@ export function PlayingCard({
 
 function PlayingCardFace({
   card,
-  size,
   design,
 }: {
   card: PlayingCardValue | null;
-  size?: 'default' | 'sm' | 'lg';
   design?: 'default' | 'simple';
 }) {
   if (!card) return <div className='w-full h-full bg-white rounded-lg' />;
@@ -139,22 +117,8 @@ function PlayingCardFace({
           isSimple ? 'h-full w-full justify-center' : '',
         )}
       >
-        <div
-          className={cn(
-            'font-bold',
-            size === 'sm'
-              ? SMALL_FONT_SIZE
-              : size === 'lg'
-                ? LG_FONT_SIZE
-                : FONT_SIZE,
-          )}
-        >
-          {RANK_DISPLAY[card.rank]}
-        </div>
-        <SuitSymbol
-          className={size === 'lg' ? LG_SUIT_SYMBOL_HEIGHT : 'h-8'}
-          fill={color}
-        />
+        <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
+        <SuitSymbol className='h-[0.9em]' fill={color} />
       </div>
       {!isSimple && (
         <div className='grid place-items-center p-4 border rounded flex-1'>
@@ -169,7 +133,6 @@ function PlayingCardFace({
               rank={Number(card.rank)}
               SuitSymbol={SuitSymbol}
               color={color}
-              size={size}
             />
           )}
         </div>
@@ -200,15 +163,12 @@ function RankContent({
   rank,
   SuitSymbol,
   color,
-  size,
 }: {
   rank: number;
   SuitSymbol: (typeof suitSymbol)[Suit];
   color: string;
-  size?: 'default' | 'sm' | 'lg';
 }) {
-  const symbolSize =
-    size === 'lg' ? LG_RANK_FACE_SYMBOL_SIZE : RANK_FACE_SYMBOL_SIZE;
+  const symbolSize = RANK_FACE_SYMBOL_SIZE;
 
   if (rank <= 3) {
     return (
@@ -273,9 +233,7 @@ function JokerCard({ color }: { color: JokerSuit }) {
     >
       {/* Top left */}
       <div className='flex items-center gap-0.5 pb-1'>
-        <div className='font-bold text-4xl w-full flex justify-center'>
-          JOKER!
-        </div>
+        <div className='font-bold w-full flex justify-center'>JOKER!</div>
       </div>
 
       {/* Middle */}
@@ -286,19 +244,11 @@ function JokerCard({ color }: { color: JokerSuit }) {
   );
 }
 
-export function PlayingCardBack({ size }: { size?: 'default' | 'sm' | 'lg' }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : size === 'lg'
-        ? [LG_CARD_HEIGHT, LG_CARD_WIDTH]
-        : [CARD_HEIGHT, CARD_WIDTH];
-
+export function PlayingCardBack() {
   return (
     <div
       className={cn(
-        cardWidth,
-        cardHeight,
+        'w-full h-full',
         'flex flex-col rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]',
       )}
     />
@@ -309,20 +259,11 @@ export function ZeroPlayingCard({
   suit,
   className,
   onClick,
-  size,
 }: {
   suit: Suit;
   className?: string;
   onClick?: () => void;
-  size?: 'default' | 'sm' | 'lg';
 }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : size === 'lg'
-        ? [LG_CARD_HEIGHT, LG_CARD_WIDTH]
-        : [CARD_HEIGHT, CARD_WIDTH];
-
   const SuitSymbol = suitSymbol[suit];
   const color = suitColor[suit];
 
@@ -332,8 +273,8 @@ export function ZeroPlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        cardWidth,
-        cardHeight,
+        'w-[3.75em] h-[5.25em]',
+        'text-4xl',
         onClick ? 'cursor-pointer' : '',
         className,
       )}
@@ -343,29 +284,11 @@ export function ZeroPlayingCard({
         style={{ color }}
       >
         <div className='flex items-center gap-1 pb-1'>
-          <div
-            className={cn(
-              'font-bold',
-              size === 'sm'
-                ? SMALL_FONT_SIZE
-                : size === 'lg'
-                  ? LG_FONT_SIZE
-                  : FONT_SIZE,
-            )}
-          >
-            0
-          </div>
-          <SuitSymbol
-            className={size === 'lg' ? LG_SUIT_SYMBOL_HEIGHT : 'h-8'}
-            fill={color}
-          />
+          <div className={cn('font-bold')}>0</div>
+          <SuitSymbol className='h-[0.9em]' fill={color} />
         </div>
         <div className='grid place-items-center p-4 border rounded flex-1'>
-          <div
-            className={cn('font-bold', size === 'lg' ? 'text-9xl' : 'text-8xl')}
-          >
-            0
-          </div>
+          <div className={cn('font-bold text-[2.7em]')}>0</div>
         </div>
       </div>
     </div>

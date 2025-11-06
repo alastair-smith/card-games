@@ -69,7 +69,7 @@ export const Docs = () => (
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Small</TableCell>
+            <TableCell>text-2xl</TableCell>
             <TableCell className='pt-14'>
               <DefaultCardSm />
             </TableCell>
@@ -84,7 +84,7 @@ export const Docs = () => (
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Small (Highlighted)</TableCell>
+            <TableCell>text-2xl (Highlighted)</TableCell>
             <TableCell className='pt-14'>
               <HighlightedCardSm />
             </TableCell>
@@ -99,7 +99,7 @@ export const Docs = () => (
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Large</TableCell>
+            <TableCell>text-[5.625rem]</TableCell>
             <TableCell className='pt-14'>
               <DefaultCardLg />
             </TableCell>
@@ -114,7 +114,7 @@ export const Docs = () => (
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Large (Highlighted)</TableCell>
+            <TableCell>text-[5.625rem] (Highlighted)</TableCell>
             <TableCell className='pt-14'>
               <HighlightedCardLg />
             </TableCell>
@@ -139,11 +139,11 @@ export const DefaultCard = () => {
 };
 
 export const DefaultCardSm = () => {
-  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} size='sm' />;
+  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} className='text-2xl' />;
 };
 
 export const DefaultCardLg = () => {
-  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} size='lg' />;
+  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} className='text-[5.625rem]' />;
 };
 
 export const SelectedCard = () => {
@@ -155,7 +155,7 @@ export const SelectedCardSm = () => {
     <PlayingCard
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       selected
-      size='sm'
+      className='text-2xl'
     />
   );
 };
@@ -165,7 +165,7 @@ export const SelectedCardLg = () => {
     <PlayingCard
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       selected
-      size='lg'
+      className='text-[5.625rem]'
     />
   );
 };
@@ -175,11 +175,11 @@ export const DefaultBackCard = () => {
 };
 
 export const DefaultBackCardSm = () => {
-  return <PlayingCard card={null} size='sm' />;
+  return <PlayingCard card={null} className='text-2xl' />;
 };
 
 export const DefaultBackCardLg = () => {
-  return <PlayingCard card={null} size='lg' />;
+  return <PlayingCard card={null} className='text-[5.625rem]' />;
 };
 
 export const SelectedBackCard = () => {
@@ -187,11 +187,11 @@ export const SelectedBackCard = () => {
 };
 
 export const SelectedBackCardSm = () => {
-  return <PlayingCard card={null} selected size='sm' />;
+  return <PlayingCard card={null} selected className='text-2xl' />;
 };
 
 export const SelectedBackCardLg = () => {
-  return <PlayingCard card={null} selected size='lg' />;
+  return <PlayingCard card={null} selected className='text-[5.625rem]' />;
 };
 
 export const HighlightedCard = () => {
@@ -205,7 +205,7 @@ export const HighlightedCardSm = () => {
     <PlayingCard
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       highlighted
-      size='sm'
+      className='text-2xl'
     />
   );
 };
@@ -215,7 +215,7 @@ export const HighlightedCardLg = () => {
     <PlayingCard
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       highlighted
-      size='lg'
+      className='text-[5.625rem]'
     />
   );
 };
@@ -236,7 +236,7 @@ export const HighLightedAndSelectedCardSm = () => {
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       highlighted
       selected
-      size='sm'
+      className='text-2xl'
     />
   );
 };
@@ -247,7 +247,7 @@ export const HighLightedAndSelectedCardLg = () => {
       card={{ rank: Rank.ACE, suit: Suit.SPADES }}
       highlighted
       selected
-      size='lg'
+      className='text-[5.625rem]'
     />
   );
 };
@@ -257,11 +257,11 @@ export const HighlightedBackCard = () => {
 };
 
 export const HighlightedBackCardSm = () => {
-  return <PlayingCard card={null} highlighted size='sm' />;
+  return <PlayingCard card={null} highlighted className='text-2xl' />;
 };
 
 export const HighlightedBackCardLg = () => {
-  return <PlayingCard card={null} highlighted size='lg' />;
+  return <PlayingCard card={null} highlighted className='text-[5.625rem]' />;
 };
 
 export const HighLightedAndSelectedBackCard = () => {
@@ -269,11 +269,11 @@ export const HighLightedAndSelectedBackCard = () => {
 };
 
 export const HighLightedAndSelectedBackCardSm = () => {
-  return <PlayingCard card={null} highlighted selected size='sm' />;
+  return <PlayingCard card={null} highlighted selected className='text-2xl' />;
 };
 
 export const HighLightedAndSelectedBackCardLg = () => {
-  return <PlayingCard card={null} highlighted selected size='lg' />;
+  return <PlayingCard card={null} highlighted selected className='text-[5.625rem]' />;
 };
 
 export const WholeDeck = () => {
@@ -292,14 +292,14 @@ export const WholeDeck = () => {
 export const WholeDeckSm = () => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
-      <PlayingCard card={null} size='sm' />
-      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} size='sm' />
+      <PlayingCard card={null} className='text-2xl' />
+      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} className='text-2xl' />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
-        size='sm'
+        className='text-2xl'
       />
       {deck.map((card) => (
-        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} size='sm' />
+        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} className='text-2xl' />
       ))}
     </div>
   );
@@ -308,14 +308,14 @@ export const WholeDeckSm = () => {
 export const WholeDeckLg = () => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
-      <PlayingCard card={null} size='lg' />
-      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} size='lg' />
+      <PlayingCard card={null} className='text-[5.625rem]' />
+      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} className='text-[5.625rem]' />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
-        size='lg'
+        className='text-[5.625rem]'
       />
       {deck.map((card) => (
-        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} size='lg' />
+        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} className='text-[5.625rem]' />
       ))}
     </div>
   );
@@ -324,22 +324,22 @@ export const WholeDeckLg = () => {
 export const WholeDeckSmSimple = () => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
-      <PlayingCard card={null} size='sm' design='simple' />
+      <PlayingCard card={null} className='text-2xl' design='simple' />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.RED }}
-        size='sm'
+        className='text-2xl'
         design='simple'
       />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
-        size='sm'
+        className='text-2xl'
         design='simple'
       />
       {deck.map((card) => (
         <PlayingCard
           key={`${card.suit}_${card.rank}`}
           card={card}
-          size='sm'
+          className='text-2xl'
           design='simple'
         />
       ))}
@@ -390,7 +390,7 @@ export const FlipCardSm = () => {
         {showCard && (
           <PlayingCard
             card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
-            size='sm'
+            className='text-2xl'
           />
         )}
       </div>
@@ -416,7 +416,7 @@ export const FlipCardLg = () => {
         {showCard && (
           <PlayingCard
             card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
-            size='lg'
+            className='text-[5.625rem]'
           />
         )}
       </div>

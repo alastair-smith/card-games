@@ -47,13 +47,13 @@ export function GameImages() {
           <div className='flex items-center gap-3 w-fit text-dark-text scale-60'>
             <PlayingCard
               card={{ rank: Rank.FOUR, suit: Suit.DIAMONDS }}
-              size='sm'
+              className='text-2xl'
               design='default'
             />
             <span className='text-9xl'>&lt;</span>
             <PlayingCard
               card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-              size='sm'
+              className='text-2xl'
               design='default'
             />
           </div>
@@ -62,13 +62,13 @@ export function GameImages() {
           <div className='flex items-center gap-3 w-fit text-dark-text'>
             <PlayingCard
               card={{ rank: Rank.FOUR, suit: Suit.DIAMONDS }}
-              size='lg'
+              className='text-[5.625rem]'
               design='default'
             />
             <span className='text-9xl'>&lt;</span>
             <PlayingCard
               card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-              size='lg'
+              className='text-[5.625rem]'
               design='default'
             />
           </div>
@@ -81,13 +81,13 @@ export function GameImages() {
           <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text scale-60'>
             <PlayingCard
               card={{ rank: Rank.TWO, suit: Suit.DIAMONDS }}
-              size='sm'
+              className='text-2xl'
               design='default'
             />
             <span className='text-9xl'>+</span>
             <PlayingCard
               card={{ rank: Rank.THREE, suit: Suit.SPADES }}
-              size='sm'
+              className='text-2xl'
               design='default'
             />
             <span className='text-9xl'>&lt;</span>
@@ -98,13 +98,13 @@ export function GameImages() {
           <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text'>
             <PlayingCard
               card={{ rank: Rank.TWO, suit: Suit.DIAMONDS }}
-              size='lg'
+              className='text-[5.625rem]'
               design='default'
             />
             <span className='text-9xl'>+</span>
             <PlayingCard
               card={{ rank: Rank.THREE, suit: Suit.SPADES }}
-              size='lg'
+              className='text-[5.625rem]'
               design='default'
             />
             <span className='text-9xl'>&lt;</span>
@@ -226,24 +226,22 @@ export function GameImages() {
         square={
           <div className='flex items-start gap-6 w-fit text-dark-text scale-60'>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='sm' design='default' />
+              <PlayingCard card={null} className='text-2xl' design='default' />
               <PlayingCard
                 card={{ suit: Suit.SPADES, rank: Rank.ACE }}
-                className='-translate-y-55 translate-x-2'
-                size='sm'
+                className='-translate-y-55 translate-x-2 text-2xl'
                 design='default'
               />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='sm' design='default' />
+              <PlayingCard card={null} className='text-2xl' design='default' />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='sm' design='default' />
+              <PlayingCard card={null} className='text-2xl' design='default' />
 
               <PlayingCard
                 card={{ suit: Suit.HEARTS, rank: Rank.TEN }}
-                className='-translate-y-55 translate-x-2'
-                size='sm'
+                className='-translate-y-55 translate-x-2 text-2xl'
                 design='default'
               />
             </div>
@@ -252,24 +250,22 @@ export function GameImages() {
         og={
           <div className='flex items-start gap-6 w-fit text-dark-text'>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='lg' design='default' />
+              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
               <PlayingCard
                 card={{ suit: Suit.SPADES, rank: Rank.ACE }}
-                className='-translate-y-55 translate-x-2'
-                size='lg'
+                className='-translate-y-55 translate-x-2 text-[5.625rem]'
                 design='default'
               />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='lg' design='default' />
+              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} size='lg' design='default' />
+              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
 
               <PlayingCard
                 card={{ suit: Suit.HEARTS, rank: Rank.TEN }}
-                className='-translate-y-55 translate-x-2'
-                size='lg'
+                className='-translate-y-55 translate-x-2 text-[5.625rem]'
                 design='default'
               />
             </div>
@@ -285,13 +281,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.SEVEN, suit: Suit.DIAMONDS }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -299,13 +294,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.CLUBS }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.NINE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -313,13 +307,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.SPADES }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.SPADES }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -328,13 +321,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.DIAMONDS }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -342,13 +334,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.CLUBS }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -356,13 +347,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.HEARTS }}
-                  size='sm'
+                  className='text-2xl'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='sm'
+                  className='-translate-y-34 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -375,13 +365,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.SEVEN, suit: Suit.DIAMONDS }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
@@ -389,13 +378,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.CLUBS }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.NINE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
@@ -403,13 +391,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.SPADES }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.SPADES }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
@@ -418,13 +405,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.DIAMONDS }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
@@ -432,13 +418,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.CLUBS }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
@@ -446,13 +431,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.HEARTS }}
-                  size='lg'
+                  className='text-[5.625rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
-                  className='-translate-y-34 translate-x-2'
-                  size='lg'
+                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
                   design='default'
                 />
               </div>
