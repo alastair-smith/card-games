@@ -28,6 +28,13 @@ export const metadata: Metadata = {
     siteName: 'Play Cards',
     locale: 'en_GB',
     type: 'website',
+    images: [
+      {
+        url: 'https://playcards.games/images/high-card.rectangle.png',
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
