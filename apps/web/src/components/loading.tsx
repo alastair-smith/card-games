@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import { PlayingCard } from '~/components/ui/playing-card';
 import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
 
 const LOADING_TICK_RATE_MS = 300;

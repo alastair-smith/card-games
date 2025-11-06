@@ -35,7 +35,7 @@ type GameProps = {
 const games: GameProps[] = [
   {
     gameType: GameType.HIGH_CARD,
-    image: '/high-card.png',
+    image: '/images/high-card.square.png',
     players: {
       min: MIN_PLAYERS,
       max: MAX_PLAYERS,
@@ -46,7 +46,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.YANIV,
-    image: '/yaniv.png',
+    image: '/images/yaniv.square.png',
     players: {
       min: 2,
       max: 5,
@@ -58,7 +58,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.BLOB,
-    image: '/blob.png',
+    image: '/images/blob.square.png',
     players: {
       min: 3,
       max: 6,
@@ -69,7 +69,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.SHITHEAD,
-    image: '/shithead.png',
+    image: '/images/shithead.square.png',
     players: {
       min: 2,
       max: 4,
@@ -81,7 +81,7 @@ const games: GameProps[] = [
   },
   {
     gameType: GameType.FOOL,
-    image: '/fool.png',
+    image: '/images/fool.square.png',
     players: {
       min: 2,
       max: 4,

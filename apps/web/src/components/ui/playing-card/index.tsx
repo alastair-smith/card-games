@@ -1,3 +1,5 @@
+'use client';
+
 import {
   BotIcon,
   BotMessageSquareIcon,
@@ -22,14 +24,8 @@ import {
 import { isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
-const RANK_FACE_SYMBOL_SIZE = '1.375rem';
-const CARD_WIDTH = 'w-34';
-const CARD_HEIGHT = 'h-48';
-export const MIN_CARD_HEIGHT = 'min-h-51'; // used to reserve space
-const FONT_SIZE = 'text-4xl';
-const SMALL_CARD_WIDTH = 'w-16';
-const SMALL_CARD_HEIGHT = 'h-22.5';
-const SMALL_FONT_SIZE = 'text-2xl';
+const RANK_FACE_SYMBOL_SIZE = '0.61em';
+export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -50,20 +46,15 @@ export function PlayingCard({
   onClick,
   selected,
   highlighted,
-  size,
+  design,
 }: {
   card: PlayingCardValue | null;
   className?: string;
   onClick?: () => void;
   selected?: boolean;
   highlighted?: boolean;
-  size?: 'default' | 'sm';
+  design?: 'default' | 'simple';
 }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : [CARD_HEIGHT, CARD_WIDTH];
-
   return (
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
@@ -71,8 +62,8 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        cardWidth,
-        cardHeight,
+        'w-[3.75em] h-[5.25em]',
+        'text-4xl',
         '[perspective:1000px]',
         'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
@@ -84,18 +75,18 @@ export function PlayingCard({
         className={cn(
           'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
           card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
-          'rounded-lg',
+          'rounded-[0.22em]',
           highlighted && 'ring-4 ring-ring',
         )}
       >
         {/* Front */}
         <div className='absolute w-full h-full [backface-visibility:hidden]'>
-          <PlayingCardFace card={card} size={size} />
+          <PlayingCardFace card={card} design={design} />
         </div>
 
         {/* Back */}
         <div className='absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
-          <PlayingCardBack size={size} />
+          <PlayingCardBack />
         </div>
       </div>
     </div>
@@ -104,41 +95,35 @@ export function PlayingCard({
 
 function PlayingCardFace({
   card,
-  size,
+  design,
 }: {
   card: PlayingCardValue | null;
-  size?: 'default' | 'sm';
+  design?: 'default' | 'simple';
 }) {
-  if (!card) return <div className='w-full h-full bg-white rounded-lg' />;
+  if (!card) return <div className='w-full h-full bg-white rounded-[0.22em]' />;
 
   if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
 
   const SuitSymbol = suitSymbol[card.suit];
   const color = suitColor[card.suit];
+  const isSimple = design === 'simple';
 
   return (
     <div
-      className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
+      className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
       style={{ color }}
     >
       <div
         className={cn(
-          'flex items-center gap-1 pb-1',
-          size === 'sm' ? 'h-full w-full justify-center' : '',
+          'flex items-center gap-[0.11em] pb-[0.11em] leading-none',
+          isSimple ? 'h-full w-full justify-center' : '',
         )}
       >
-        <div
-          className={cn(
-            'font-bold',
-            size === 'sm' ? SMALL_FONT_SIZE : FONT_SIZE,
-          )}
-        >
-          {RANK_DISPLAY[card.rank]}
-        </div>
-        <SuitSymbol className='h-8' fill={color} />
+        <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
+        <SuitSymbol fill={color} size='0.8em' />
       </div>
-      {size !== 'sm' && (
-        <div className='grid place-items-center p-4 border rounded flex-1'>
+      {!isSimple && (
+        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
             <PictureCardContent
               rank={card.rank}
@@ -185,12 +170,14 @@ function RankContent({
   SuitSymbol: (typeof suitSymbol)[Suit];
   color: string;
 }) {
+  const symbolSize = RANK_FACE_SYMBOL_SIZE;
+
   if (rank <= 3) {
     return (
       <div className='grid grid-cols-1 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill={color} />
         ))}
       </div>
     );
@@ -201,7 +188,7 @@ function RankContent({
       <div className='grid grid-cols-2 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill={color} />
         ))}
       </div>
     );
@@ -215,29 +202,25 @@ function RankContent({
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill={color} />
         ))}
       </div>
       <div className='h-full flex flex-col justify-around'>
         {Array.from({ length: shortColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill={color} />
         ))}
         {
           // sneaky hack as the middle col of 7 is not centered
           rank === 7 && (
-            <SuitSymbol
-              size={RANK_FACE_SYMBOL_SIZE}
-              fill={color}
-              className='invisible'
-            />
+            <SuitSymbol size={symbolSize} fill={color} className='invisible' />
           )
         }
       </div>
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={RANK_FACE_SYMBOL_SIZE} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill={color} />
         ))}
       </div>
     </div>
@@ -247,36 +230,28 @@ function RankContent({
 function JokerCard({ color }: { color: JokerSuit }) {
   return (
     <div
-      className='flex flex-col w-full h-full bg-white p-2 rounded-lg'
+      className='flex flex-col w-full h-full bg-white p-[0.22em] rounded-[0.22em] leading-none'
       style={{ color }}
     >
       {/* Top left */}
-      <div className='flex items-center gap-0.5 pb-1'>
-        <div className='font-bold text-4xl w-full flex justify-center'>
-          JOKER!
-        </div>
+      <div className='flex items-center gap-[0.056em] pb-[0.11em]'>
+        <div className='font-bold w-full flex justify-center'>JOKER!</div>
       </div>
 
       {/* Middle */}
-      <div className='grid place-items-center px-4 py-2 border rounded flex-1'>
+      <div className='grid place-items-center px-[0.44em] py-[0.22em] border-[0.03em] rounded-[0.11em] flex-1'>
         <ScanFaceIcon className='size-full' />
       </div>
     </div>
   );
 }
 
-export function PlayingCardBack({ size }: { size?: 'default' | 'sm' }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : [CARD_HEIGHT, CARD_WIDTH];
-
+export function PlayingCardBack() {
   return (
     <div
       className={cn(
-        cardWidth,
-        cardHeight,
-        'flex flex-col rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]',
+        'w-full h-full',
+        'flex flex-col rounded-[0.22em] border-[0.22em] border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
       )}
     />
   );
@@ -286,18 +261,11 @@ export function ZeroPlayingCard({
   suit,
   className,
   onClick,
-  size,
 }: {
   suit: Suit;
   className?: string;
   onClick?: () => void;
-  size?: 'default' | 'sm';
 }) {
-  const [cardHeight, cardWidth] =
-    size === 'sm'
-      ? [SMALL_CARD_HEIGHT, SMALL_CARD_WIDTH]
-      : [CARD_HEIGHT, CARD_WIDTH];
-
   const SuitSymbol = suitSymbol[suit];
   const color = suitColor[suit];
 
@@ -307,22 +275,22 @@ export function ZeroPlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        cardWidth,
-        cardHeight,
+        'w-[3.75em] h-[5.25em]',
+        'text-4xl',
         onClick ? 'cursor-pointer' : '',
         className,
       )}
     >
       <div
-        className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
+        className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
         style={{ color }}
       >
-        <div className='flex items-center gap-1 pb-1'>
-          <div className='font-bold text-4xl'>0</div>
-          <SuitSymbol className='h-8' fill={color} />
+        <div className='flex items-center gap-[0.11em] pb-[0.11em]'>
+          <div className={cn('font-bold')}>0</div>
+          <SuitSymbol className='h-[0.9em]' fill={color} />
         </div>
-        <div className='grid place-items-center p-4 border rounded flex-1'>
-          <div className='font-bold text-8xl'>0</div>
+        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
+          <div className={cn('font-bold text-[2.7em]')}>0</div>
         </div>
       </div>
     </div>

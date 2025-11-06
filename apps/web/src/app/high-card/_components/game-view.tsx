@@ -23,7 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import { PlayingCard } from '~/components/ui/playing-card';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
@@ -93,7 +93,7 @@ export default function HighCardGameView({
       {state.players.map((player) => (
         <EmojiRain key={player.id} reaction={reactions[player.id]}>
           <PlayAreaPlayerZone>
-            <PlayingCard card={player.card} size='sm' />
+            <PlayingCard card={player.card} className='text-2xl' />
             <PlayAreaPlayerName>
               {player.name}
               {player.isUser && ' (You)'}

@@ -1,4 +1,4 @@
-import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import { PlayingCard } from '~/components/ui/playing-card';
 import { RANKS, Suit } from '~/types/cards';
 import { PlayAreaPlayerName, PlayAreaPlayerZone, PlayAreaRoot } from '.';
 
@@ -18,7 +18,7 @@ const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
             <PlayingCard
               card={player.name === 'Player 3' ? null : player.card}
               highlighted={player.name === 'Player 3'}
-              size='sm'
+              className='text-2xl'
             />
             <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>
           </PlayAreaPlayerZone>
