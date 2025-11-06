@@ -41,7 +41,8 @@ const games: GameProps[] = [
       max: MAX_PLAYERS,
     },
     length: GameLength.short,
-    summary: 'Draw the highest card to win the game.',
+    summary:
+      'High Card is a simple luck-based game where the player with the highest card wins.',
     preloadImage: true,
   },
   {

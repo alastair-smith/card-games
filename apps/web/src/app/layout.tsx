@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://playcards.games/images/high-card.rectangle.png',
+        url: 'https://playcards.games/images/home.rectangle.png',
         width: 1200,
         height: 630,
       },
