@@ -116,7 +116,7 @@ export function GameImages() {
       <ImageSizing
         title='Blob'
         square={
-          <div className='flex items-center gap-3 bg-main-background w-fit p-6 text-dark-text scale-70'>
+          <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text scale-90'>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -168,7 +168,7 @@ export function GameImages() {
           </div>
         }
         og={
-          <div className='flex items-center gap-3 bg-main-background w-fit p-6 text-dark-text scale-200'>
+          <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text scale-240'>
             <Table>
               <TableHeader>
                 <TableRow>
