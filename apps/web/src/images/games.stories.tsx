@@ -26,10 +26,10 @@ function ImageSizing({
       <CardHeader>{title}</CardHeader>
       <CardContent>
         <div className='flex flex-col bg-main-background p-2'>
-          <div className='bg-main-background w-[250px] h-[250px] flex items-center justify-center border border-white'>
+          <div className='bg-main-background w-[250px] h-[250px] flex items-center justify-center'>
             {square}
           </div>
-          <div className='bg-main-background w-[1200px] h-[630px] flex items-center justify-center border border-white'>
+          <div className='bg-main-background w-[1200px] h-[630px] flex items-center justify-center'>
             {og}
           </div>
         </div>
