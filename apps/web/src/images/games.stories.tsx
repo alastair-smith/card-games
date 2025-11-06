@@ -250,7 +250,11 @@ export function GameImages() {
         og={
           <div className='flex items-start gap-6 w-fit text-dark-text'>
             <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
+              <PlayingCard
+                card={null}
+                className='text-[5.625rem]'
+                design='default'
+              />
               <PlayingCard
                 card={{ suit: Suit.SPADES, rank: Rank.ACE }}
                 className='-translate-y-55 translate-x-2 text-[5.625rem]'
@@ -258,10 +262,18 @@ export function GameImages() {
               />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
+              <PlayingCard
+                card={null}
+                className='text-[5.625rem]'
+                design='default'
+              />
             </div>
             <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-[5.625rem]' design='default' />
+              <PlayingCard
+                card={null}
+                className='text-[5.625rem]'
+                design='default'
+              />
 
               <PlayingCard
                 card={{ suit: Suit.HEARTS, rank: Rank.TEN }}

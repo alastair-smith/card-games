@@ -139,11 +139,21 @@ export const DefaultCard = () => {
 };
 
 export const DefaultCardSm = () => {
-  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} className='text-2xl' />;
+  return (
+    <PlayingCard
+      card={{ rank: Rank.ACE, suit: Suit.SPADES }}
+      className='text-2xl'
+    />
+  );
 };
 
 export const DefaultCardLg = () => {
-  return <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} className='text-[5.625rem]' />;
+  return (
+    <PlayingCard
+      card={{ rank: Rank.ACE, suit: Suit.SPADES }}
+      className='text-[5.625rem]'
+    />
+  );
 };
 
 export const SelectedCard = () => {
@@ -273,7 +283,9 @@ export const HighLightedAndSelectedBackCardSm = () => {
 };
 
 export const HighLightedAndSelectedBackCardLg = () => {
-  return <PlayingCard card={null} highlighted selected className='text-[5.625rem]' />;
+  return (
+    <PlayingCard card={null} highlighted selected className='text-[5.625rem]' />
+  );
 };
 
 export const WholeDeck = () => {
@@ -293,13 +305,20 @@ export const WholeDeckSm = () => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
       <PlayingCard card={null} className='text-2xl' />
-      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} className='text-2xl' />
+      <PlayingCard
+        card={{ rank: JOKER_RANK, suit: JokerSuit.RED }}
+        className='text-2xl'
+      />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
         className='text-2xl'
       />
       {deck.map((card) => (
-        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} className='text-2xl' />
+        <PlayingCard
+          key={`${card.suit}_${card.rank}`}
+          card={card}
+          className='text-2xl'
+        />
       ))}
     </div>
   );
@@ -309,13 +328,20 @@ export const WholeDeckLg = () => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
       <PlayingCard card={null} className='text-[5.625rem]' />
-      <PlayingCard card={{ rank: JOKER_RANK, suit: JokerSuit.RED }} className='text-[5.625rem]' />
+      <PlayingCard
+        card={{ rank: JOKER_RANK, suit: JokerSuit.RED }}
+        className='text-[5.625rem]'
+      />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
         className='text-[5.625rem]'
       />
       {deck.map((card) => (
-        <PlayingCard key={`${card.suit}_${card.rank}`} card={card} className='text-[5.625rem]' />
+        <PlayingCard
+          key={`${card.suit}_${card.rank}`}
+          card={card}
+          className='text-[5.625rem]'
+        />
       ))}
     </div>
   );
