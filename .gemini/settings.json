@@ -3,7 +3,7 @@
     "allowed": [
       "run_shell_command(pnpm format:check)",
       "run_shell_command(pnpm format:fix)",
-      "run_shell_command(pnpm typecheck)",
+      "run_shell_command(pnpm typecheck)"
     ]
   }
 }

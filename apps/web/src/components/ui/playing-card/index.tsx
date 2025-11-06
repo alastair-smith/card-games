@@ -1,3 +1,5 @@
+'use client';
+
 import {
   BotIcon,
   BotMessageSquareIcon,
@@ -73,7 +75,7 @@ export function PlayingCard({
         className={cn(
           'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
           card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
-          'rounded-lg',
+          'rounded-[0.22em]',
           highlighted && 'ring-4 ring-ring',
         )}
       >
@@ -98,7 +100,7 @@ function PlayingCardFace({
   card: PlayingCardValue | null;
   design?: 'default' | 'simple';
 }) {
-  if (!card) return <div className='w-full h-full bg-white rounded-lg' />;
+  if (!card) return <div className='w-full h-full bg-white rounded-[0.22em]' />;
 
   if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
 
@@ -108,20 +110,20 @@ function PlayingCardFace({
 
   return (
     <div
-      className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
+      className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
       style={{ color }}
     >
       <div
         className={cn(
-          'flex items-center gap-1 pb-1',
+          'flex items-center gap-[0.11em] pb-[0.11em] leading-none',
           isSimple ? 'h-full w-full justify-center' : '',
         )}
       >
         <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
-        <SuitSymbol className='h-[0.9em]' fill={color} />
+        <SuitSymbol fill={color} size='0.8em' />
       </div>
       {!isSimple && (
-        <div className='grid place-items-center p-4 border rounded flex-1'>
+        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
             <PictureCardContent
               rank={card.rank}
@@ -228,16 +230,16 @@ function RankContent({
 function JokerCard({ color }: { color: JokerSuit }) {
   return (
     <div
-      className='flex flex-col w-full h-full bg-white p-2 rounded-lg'
+      className='flex flex-col w-full h-full bg-white p-[0.22em] rounded-[0.22em] leading-none'
       style={{ color }}
     >
       {/* Top left */}
-      <div className='flex items-center gap-0.5 pb-1'>
+      <div className='flex items-center gap-[0.056em] pb-[0.11em]'>
         <div className='font-bold w-full flex justify-center'>JOKER!</div>
       </div>
 
       {/* Middle */}
-      <div className='grid place-items-center px-4 py-2 border rounded flex-1'>
+      <div className='grid place-items-center px-[0.44em] py-[0.22em] border-[0.03em] rounded-[0.11em] flex-1'>
         <ScanFaceIcon className='size-full' />
       </div>
     </div>
@@ -249,7 +251,7 @@ export function PlayingCardBack() {
     <div
       className={cn(
         'w-full h-full',
-        'flex flex-col rounded-lg border-8 border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_10px,#ef9a9a_10px,#ef9a9a_20px)]',
+        'flex flex-col rounded-[0.22em] border-[0.22em] border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
       )}
     />
   );
@@ -280,14 +282,14 @@ export function ZeroPlayingCard({
       )}
     >
       <div
-        className='flex flex-col bg-white p-2 rounded-lg w-full h-full'
+        className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
         style={{ color }}
       >
-        <div className='flex items-center gap-1 pb-1'>
+        <div className='flex items-center gap-[0.11em] pb-[0.11em]'>
           <div className={cn('font-bold')}>0</div>
           <SuitSymbol className='h-[0.9em]' fill={color} />
         </div>
-        <div className='grid place-items-center p-4 border rounded flex-1'>
+        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           <div className={cn('font-bold text-[2.7em]')}>0</div>
         </div>
       </div>
