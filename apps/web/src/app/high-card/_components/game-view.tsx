@@ -93,11 +93,7 @@ export default function HighCardGameView({
       {state.players.map((player) => (
         <EmojiRain key={player.id} reaction={reactions[player.id]}>
           <PlayAreaPlayerZone>
-            <PlayingCard
-              card={player.card}
-              className='text-2xl'
-              design='simple'
-            />
+            <PlayingCard card={player.card} className='text-2xl' />
             <PlayAreaPlayerName>
               {player.name}
               {player.isUser && ' (You)'}
