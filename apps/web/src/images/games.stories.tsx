@@ -47,25 +47,25 @@ export function GameImages() {
           <div className='flex items-center gap-3 w-fit text-dark-text scale-60'>
             <PlayingCard
               card={{ rank: Rank.FOUR, suit: Suit.DIAMONDS }}
-              className='text-2xl'
+              className='text-4xl'
               design='default'
             />
             <span className='text-9xl'>&lt;</span>
             <PlayingCard
               card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-              className='text-2xl'
+              className='text-4xl'
               design='default'
             />
           </div>
         }
         og={
-          <div className='flex items-center gap-3 w-fit text-dark-text'>
+          <div className='flex items-center gap-12 w-fit text-dark-text'>
             <PlayingCard
               card={{ rank: Rank.FOUR, suit: Suit.DIAMONDS }}
               className='text-[5.625rem]'
               design='default'
             />
-            <span className='text-9xl'>&lt;</span>
+            <span className='text-[30rem]'>&lt;</span>
             <PlayingCard
               card={{ rank: Rank.ACE, suit: Suit.SPADES }}
               className='text-[5.625rem]'
@@ -78,20 +78,20 @@ export function GameImages() {
       <ImageSizing
         title='Yaniv'
         square={
-          <div className='flex items-center gap-3 bg-main-background w-fit text-dark-text scale-60'>
+          <div className='flex items-center gap-2 bg-main-background w-fit text-dark-text scale-60'>
             <PlayingCard
               card={{ rank: Rank.TWO, suit: Suit.DIAMONDS }}
-              className='text-2xl'
+              className='text-3xl'
               design='default'
             />
-            <span className='text-9xl'>+</span>
+            <span className='text-7xl'>+</span>
             <PlayingCard
               card={{ rank: Rank.THREE, suit: Suit.SPADES }}
-              className='text-2xl'
+              className='text-3xl'
               design='default'
             />
-            <span className='text-9xl'>&lt;</span>
-            <span className='text-9xl'>7</span>
+            <span className='text-7xl'>&lt;</span>
+            <span className='text-7xl'>7</span>
           </div>
         }
         og={
@@ -224,32 +224,32 @@ export function GameImages() {
       <ImageSizing
         title='Shithead'
         square={
-          <div className='flex items-start gap-6 w-fit text-dark-text scale-60'>
-            <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-2xl' design='default' />
+          <div className='flex items-start gap-4 w-fit text-dark-text scale-60'>
+            <div className='translate-y-20'>
+              <PlayingCard card={null} className='text-3xl' design='default' />
               <PlayingCard
                 card={{ suit: Suit.SPADES, rank: Rank.ACE }}
-                className='-translate-y-55 translate-x-2 text-2xl'
+                className='-translate-y-45 translate-x-2 text-3xl'
                 design='default'
               />
             </div>
-            <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-2xl' design='default' />
+            <div className='translate-y-20'>
+              <PlayingCard card={null} className='text-3xl' design='default' />
             </div>
-            <div className='translate-y-30'>
-              <PlayingCard card={null} className='text-2xl' design='default' />
+            <div className='translate-y-20'>
+              <PlayingCard card={null} className='text-3xl' design='default' />
 
               <PlayingCard
                 card={{ suit: Suit.HEARTS, rank: Rank.TEN }}
-                className='-translate-y-55 translate-x-2 text-2xl'
+                className='-translate-y-45 translate-x-2 text-3xl'
                 design='default'
               />
             </div>
           </div>
         }
         og={
-          <div className='flex items-start gap-6 w-fit text-dark-text'>
-            <div className='translate-y-30'>
+          <div className='flex items-start gap-11 w-fit text-dark-text'>
+            <div className='translate-y-65'>
               <PlayingCard
                 card={null}
                 className='text-[5.625rem]'
@@ -257,18 +257,18 @@ export function GameImages() {
               />
               <PlayingCard
                 card={{ suit: Suit.SPADES, rank: Rank.ACE }}
-                className='-translate-y-55 translate-x-2 text-[5.625rem]'
+                className='-translate-y-135 translate-x-7 text-[5.625rem]'
                 design='default'
               />
             </div>
-            <div className='translate-y-30'>
+            <div className='translate-y-65'>
               <PlayingCard
                 card={null}
                 className='text-[5.625rem]'
                 design='default'
               />
             </div>
-            <div className='translate-y-30'>
+            <div className='translate-y-65'>
               <PlayingCard
                 card={null}
                 className='text-[5.625rem]'
@@ -277,7 +277,7 @@ export function GameImages() {
 
               <PlayingCard
                 card={{ suit: Suit.HEARTS, rank: Rank.TEN }}
-                className='-translate-y-55 translate-x-2 text-[5.625rem]'
+                className='-translate-y-135 translate-x-7 text-[5.625rem]'
                 design='default'
               />
             </div>
@@ -288,7 +288,7 @@ export function GameImages() {
       <ImageSizing
         title='Fool'
         square={
-          <div className='flex flex-col items-center gap-y-6 translate-y-13 text-dark-text scale-60'>
+          <div className='flex flex-col items-center gap-y-12 translate-y-17 text-dark-text scale-60'>
             <div className='flex gap-6'>
               <div>
                 <PlayingCard
@@ -298,7 +298,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -311,7 +311,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.NINE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -324,7 +324,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.SPADES }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -338,7 +338,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -351,7 +351,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -364,7 +364,7 @@ export function GameImages() {
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
-                  className='-translate-y-34 translate-x-2 text-2xl'
+                  className='-translate-y-23 translate-x-2 text-2xl'
                   design='default'
                 />
               </div>
@@ -372,17 +372,17 @@ export function GameImages() {
           </div>
         }
         og={
-          <div className='flex flex-col items-center gap-y-6 text-dark-text'>
-            <div className='flex gap-6'>
+          <div className='flex flex-col items-center gap-y-0 text-dark-text translate-y-35'>
+            <div className='flex gap-12'>
               <div>
                 <PlayingCard
                   card={{ rank: Rank.SEVEN, suit: Suit.DIAMONDS }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
@@ -390,12 +390,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.CLUBS }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.NINE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
@@ -403,26 +403,26 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.EIGHT, suit: Suit.SPADES }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.SPADES }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
             </div>
-            <div className='flex gap-6 -translate-y-30'>
+            <div className='flex gap-12 -translate-y-30'>
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.DIAMONDS }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.DIAMONDS }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
@@ -430,12 +430,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.CLUBS }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.CLUBS }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
@@ -443,12 +443,12 @@ export function GameImages() {
               <div>
                 <PlayingCard
                   card={{ rank: Rank.TEN, suit: Suit.HEARTS }}
-                  className='text-[5.625rem]'
+                  className='text-[2.5rem]'
                   design='default'
                 />
                 <PlayingCard
                   card={{ rank: Rank.ACE, suit: Suit.HEARTS }}
-                  className='-translate-y-34 translate-x-2 text-[5.625rem]'
+                  className='-translate-y-38 translate-x-3 text-[2.5rem]'
                   design='default'
                 />
               </div>
