@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { MIN_CARD_HEIGHT } from '~/components/ui/playing-card/playing-card';
+import { MIN_CARD_HEIGHT } from '~/components/ui/playing-card';
 import { cn } from '~/utils/cn';
 
 export type HandProps = {

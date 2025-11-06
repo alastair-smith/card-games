@@ -13,10 +13,7 @@ import {
   CardFooter,
   CardHeader,
 } from '~/components/ui/card';
-import {
-  PlayingCard,
-  ZeroPlayingCard,
-} from '~/components/ui/playing-card/playing-card';
+import { PlayingCard, ZeroPlayingCard } from '~/components/ui/playing-card';
 import { Suit } from '~/types/cards';
 
 export default function ErrorPage() {

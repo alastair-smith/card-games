@@ -1,7 +1,7 @@
 import { ClubIcon, HeartIcon, SpadeIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
-import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import { PlayingCard } from '~/components/ui/playing-card';
 import {
   Table,
   TableBody,

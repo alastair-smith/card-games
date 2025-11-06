@@ -1,4 +1,4 @@
-import { PlayingCard } from '~/components/ui/playing-card/playing-card';
+import { PlayingCard } from '~/components/ui/playing-card';
 import { RANKS, Suit } from '~/types/cards';
 import { PlayAreaPlayerName, PlayAreaPlayerZone, PlayAreaRoot } from '.';
 
