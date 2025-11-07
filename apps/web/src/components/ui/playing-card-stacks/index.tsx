@@ -40,6 +40,15 @@ export function PlayingCardDeck({
   );
 }
 
+type PlayingCardStack = {
+  className?: string;
+  children?: ReactNode;
+};
+
+export function PlayingCardStack({ className, children }: PlayingCardStack) {
+  return <div className={className}>{children}</div>;
+}
+
 type PlayingCardDiscardPile = {
   className?: string;
   children?: ReactNode;
