@@ -10,7 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { JOKER_RANK, JokerSuit, RANKS, Rank, SUITS, Suit } from '~/types/cards';
+import {
+  JOKER_RANK,
+  JokerSuit,
+  RANKS,
+  Rank,
+  SUITS,
+  Suit,
+  ZERO_RANK,
+} from '~/types/cards';
 import { PlayingCard } from '.';
 
 export const Docs = () => (
@@ -186,6 +194,10 @@ export const FullDeck = ({ className }: { className?: string }) => {
       />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
+        className={className}
+      />
+      <PlayingCard
+        card={{ rank: ZERO_RANK, suit: Suit.DIAMONDS }}
         className={className}
       />
       {deck.map((card) => (

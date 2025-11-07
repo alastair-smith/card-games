@@ -11,6 +11,7 @@ import {
   SpadeIcon,
   SwordsIcon,
 } from 'lucide-react';
+import { createElement } from 'react';
 import {
   FlippableBack,
   FlippableFront,
@@ -18,13 +19,13 @@ import {
 } from '~/components/ui/flippable';
 import {
   JOKER_RANK,
-  type JokerSuit,
   type PictureCardRank,
   type PlayingCardValue,
   RANK_DISPLAY,
   Rank,
   Suit,
   suitColor,
+  ZERO_RANK,
 } from '~/types/cards';
 import { isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
@@ -43,6 +44,7 @@ const pictureCardSymbol = {
   [Rank.KING]: BotIcon,
   [Rank.QUEEN]: BotMessageSquareIcon,
   [Rank.JACK]: SwordsIcon,
+  [JOKER_RANK]: ScanFaceIcon,
 };
 
 export function PlayingCard({
@@ -110,9 +112,6 @@ function PlayingCardFace({
       />
     );
 
-  if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
-
-  const SuitSymbol = suitSymbol[card.suit];
   const color = suitColor[card.suit];
   const isSimple = design === 'simple';
 
@@ -131,20 +130,18 @@ function PlayingCardFace({
         )}
       >
         <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
-        <SuitSymbol fill={color} size='0.8em' />
+        {card.rank !== JOKER_RANK &&
+          createElement(suitSymbol[card.suit], { fill: color, size: '0.8em' })}
       </div>
+
       {!isSimple && (
         <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
-            <PictureCardContent
-              rank={card.rank}
-              SuitSymbol={SuitSymbol}
-              color={color}
-            />
+            <PictureCardContent card={card} color={color} />
           ) : (
             <RankContent
               rank={Number(card.rank)}
-              SuitSymbol={SuitSymbol}
+              suit={card.suit}
               color={color}
             />
           )}
@@ -155,17 +152,21 @@ function PlayingCardFace({
 }
 
 function PictureCardContent({
-  rank,
-  SuitSymbol,
+  card,
   color,
 }: {
-  rank: PictureCardRank;
-  SuitSymbol: (typeof suitSymbol)[Suit];
+  card: PlayingCardValue & { rank: PictureCardRank };
   color: string;
 }) {
+  if (card.rank === ZERO_RANK) {
+    return <div className={cn('font-bold text-[2.5em] leading-none')}>0</div>;
+  }
+
   const PictureSymbol =
-    rank === Rank.ACE ? SuitSymbol : pictureCardSymbol[rank];
-  const useFill = rank === Rank.ACE || rank === Rank.JACK;
+    card.rank === Rank.ACE
+      ? suitSymbol[card.suit]
+      : pictureCardSymbol[card.rank];
+  const useFill = card.rank === Rank.ACE || card.rank === Rank.JACK;
 
   return (
     <PictureSymbol className='size-full' fill={useFill ? color : 'none'} />
@@ -174,14 +175,15 @@ function PictureCardContent({
 
 function RankContent({
   rank,
-  SuitSymbol,
+  suit,
   color,
 }: {
   rank: number;
-  SuitSymbol: (typeof suitSymbol)[Suit];
+  suit: Suit;
   color: string;
 }) {
   const symbolSize = RANK_FACE_SYMBOL_SIZE;
+  const SuitSymbol = suitSymbol[suit];
 
   if (rank <= 3) {
     return (
@@ -238,25 +240,6 @@ function RankContent({
   );
 }
 
-function JokerCard({ color }: { color: JokerSuit }) {
-  return (
-    <div
-      className='flex flex-col w-full h-full bg-white p-[0.22em] rounded-[0.22em] leading-none'
-      style={{ color }}
-    >
-      {/* Top left */}
-      <div className='flex items-center gap-[0.056em] pb-[0.11em]'>
-        <div className='font-bold w-full flex justify-center'>JOKER!</div>
-      </div>
-
-      {/* Middle */}
-      <div className='grid place-items-center px-[0.44em] py-[0.22em] border-[0.03em] rounded-[0.11em] flex-1'>
-        <ScanFaceIcon className='size-full' />
-      </div>
-    </div>
-  );
-}
-
 export function PlayingCardBack({ className }: { className?: string }) {
   return (
     <div
@@ -271,46 +254,6 @@ export function PlayingCardBack({ className }: { className?: string }) {
           'bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
         )}
       />
-    </div>
-  );
-}
-
-export function ZeroPlayingCard({
-  suit,
-  className,
-  onClick,
-}: {
-  suit: Suit;
-  className?: string;
-  onClick?: () => void;
-}) {
-  const SuitSymbol = suitSymbol[suit];
-  const color = suitColor[suit];
-
-  return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: todo
-    // biome-ignore lint/a11y/useKeyWithClickEvents: todo
-    <div
-      onClick={onClick}
-      className={cn(
-        'w-[3.75em] h-[5.25em]',
-        'text-4xl',
-        onClick ? 'cursor-pointer' : '',
-        className,
-      )}
-    >
-      <div
-        className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
-        style={{ color }}
-      >
-        <div className='flex items-center gap-[0.11em] pb-[0.11em]'>
-          <div className={cn('font-bold')}>0</div>
-          <SuitSymbol className='h-[0.9em]' fill={color} />
-        </div>
-        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
-          <div className={cn('font-bold text-[2.7em]')}>0</div>
-        </div>
-      </div>
     </div>
   );
 }

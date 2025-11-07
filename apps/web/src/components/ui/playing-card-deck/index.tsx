@@ -6,7 +6,10 @@ type PlayingCardDeckProps = {
   fontSize?: `text-${string}`;
 };
 
-export function PlayingCardDeck({ className, fontSize }: PlayingCardDeckProps) {
+export function PlayingCardDeck({
+  className,
+  fontSize = 'text-4xl',
+}: PlayingCardDeckProps) {
   return (
     <div
       className={cn(
