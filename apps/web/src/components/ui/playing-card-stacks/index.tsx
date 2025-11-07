@@ -52,13 +52,12 @@ export function PlayingCardDiscardPile({
   return (
     <div
       className={cn(
+        'border-[0.056em] rounded-[0.22em] bg-white/20 border-white p-2 w-fit',
         PLAYING_CARD_DEFAULT_SIZE,
-        PLAYING_CARD_PROPORTIONS,
-        'border-[0.056em] rounded-[0.22em] bg-white/20 border-white',
         className,
       )}
     >
-      {children}
+      <div className={cn(PLAYING_CARD_PROPORTIONS)}>{children}</div>
     </div>
   );
 }
