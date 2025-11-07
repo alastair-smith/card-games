@@ -1,4 +1,11 @@
-import type { ReactNode } from 'react';
+import {
+  Children,
+  type ComponentProps,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import {
   PLAYING_CARD_DEFAULT_SIZE,
   PLAYING_CARD_PROPORTIONS,
@@ -42,11 +49,32 @@ export function PlayingCardDeck({
 
 type PlayingCardStack = {
   className?: string;
-  children?: ReactNode;
+  children?:
+    | ReactElement<typeof PlayingCard>
+    | ReactElement<typeof PlayingCard>[];
 };
 
 export function PlayingCardStack({ className, children }: PlayingCardStack) {
-  return <div className={className}>{children}</div>;
+  return (
+    <div className={cn('flex', className)}>
+      {Children.map(children, (child) => {
+        if (!isValidElement<ComponentProps<typeof PlayingCard>>(child))
+          return child;
+
+        const {
+          className: childClassName,
+          cardClassName,
+          ...childProps
+        } = child.props;
+
+        return cloneElement(child, {
+          className: cn('-ml-[1.44em] first:ml-0', childClassName),
+          cardClassName: cn('border-[0.056em] border-border/50', cardClassName),
+          ...childProps,
+        });
+      })}
+    </div>
+  );
 }
 
 type PlayingCardDiscardPile = {
