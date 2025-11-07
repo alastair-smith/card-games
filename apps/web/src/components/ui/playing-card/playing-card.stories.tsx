@@ -19,7 +19,7 @@ import {
   Suit,
   ZERO_RANK,
 } from '~/types/cards';
-import { PlayingCard } from '.';
+import { PLAYING_CARD_DEFAULT_SIZE, PlayingCard } from '.';
 
 export const Docs = () => (
   <div className='p-6 flex flex-col gap-6'>
@@ -55,7 +55,7 @@ export const Docs = () => (
               <TableRow key={className}>
                 <TableCell>
                   {className}
-                  {className === 'text-4xl' ? ' (Default)' : ''}
+                  {className === PLAYING_CARD_DEFAULT_SIZE ? ' (Default)' : ''}
                 </TableCell>
                 <TableCell className='flex gap-3'>
                   <PlayingCard

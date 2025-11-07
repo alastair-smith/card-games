@@ -1,4 +1,9 @@
-import { PlayingCard } from '~/components/ui/playing-card';
+import type { ReactNode } from 'react';
+import {
+  PLAYING_CARD_DEFAULT_SIZE,
+  PLAYING_CARD_PROPORTIONS,
+  PlayingCard,
+} from '~/components/ui/playing-card';
 import { cn } from '~/utils/cn';
 
 type PlayingCardDeckProps = {
@@ -8,7 +13,7 @@ type PlayingCardDeckProps = {
 
 export function PlayingCardDeck({
   className,
-  fontSize = 'text-4xl',
+  fontSize = PLAYING_CARD_DEFAULT_SIZE,
 }: PlayingCardDeckProps) {
   return (
     <div
@@ -31,6 +36,29 @@ export function PlayingCardDeck({
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+type PlayingCardDiscardPile = {
+  className?: string;
+  children?: ReactNode;
+};
+
+export function PlayingCardDiscardPile({
+  className,
+  children,
+}: PlayingCardDiscardPile) {
+  return (
+    <div
+      className={cn(
+        PLAYING_CARD_DEFAULT_SIZE,
+        PLAYING_CARD_PROPORTIONS,
+        'border-[0.056em] rounded-[0.22em] bg-white/20 border-white',
+        className,
+      )}
+    >
+      {children}
     </div>
   );
 }

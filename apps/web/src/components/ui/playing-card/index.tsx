@@ -32,6 +32,8 @@ import { cn } from '~/utils/cn';
 
 const RANK_FACE_SYMBOL_SIZE = '0.61em';
 export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
+export const PLAYING_CARD_PROPORTIONS = 'w-[3.75em] h-[5.25em]';
+export const PLAYING_CARD_DEFAULT_SIZE = 'text-4xl';
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -72,8 +74,8 @@ export function PlayingCard({
     <div
       onClick={onClick}
       className={cn(
-        'w-[3.75em] h-[5.25em]',
-        'text-4xl',
+        PLAYING_CARD_PROPORTIONS,
+        PLAYING_CARD_DEFAULT_SIZE,
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
         className,
