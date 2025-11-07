@@ -20,10 +20,19 @@ export default function ErrorPage() {
   return (
     <div className='flex min-h-dvh justify-center text-dark-text pt-[5vh]'>
       <div className='flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 p-4'>
-        <div className='flex justify-between gap-6 w-fit scale-70 sm:scale-100'>
-          <PlayingCard card={{ suit: Suit.SPADES, rank: 5 }} />
-          <PlayingCard card={{ suit: Suit.HEARTS, rank: ZERO_RANK }} />
-          <PlayingCard card={{ suit: Suit.CLUBS, rank: ZERO_RANK }} />
+        <div className='flex justify-between gap-3 w-full'>
+          <PlayingCard
+            card={{ suit: Suit.SPADES, rank: 5 }}
+            className='text-[clamp(1rem,7vw,2.7rem)]'
+          />
+          <PlayingCard
+            card={{ suit: Suit.HEARTS, rank: ZERO_RANK }}
+            className='text-[clamp(1rem,7vw,2.7rem)]'
+          />
+          <PlayingCard
+            card={{ suit: Suit.CLUBS, rank: ZERO_RANK }}
+            className='text-[clamp(1rem,7vw,2.7rem)]'
+          />
         </div>
 
         <Card className='w-full'>
@@ -45,7 +54,7 @@ export default function ErrorPage() {
             </p>
           </CardContent>
 
-          <CardFooter className='flex gap-3 justify-end'>
+          <CardFooter className='flex flex-wrap gap-3 justify-end'>
             <Button variant='secondary' asChild>
               <a href='/contact'>
                 <MessageCircleQuestionMarkIcon /> Contact Us
