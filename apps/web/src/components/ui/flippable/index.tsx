@@ -15,7 +15,7 @@ export function FlippableRoot({
   return (
     <div
       className={cn(
-        'relative duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
+        'w-full h-full relative duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
         showFront ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
         className,
       )}

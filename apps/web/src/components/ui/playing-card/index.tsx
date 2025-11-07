@@ -12,6 +12,11 @@ import {
   SwordsIcon,
 } from 'lucide-react';
 import {
+  FlippableBack,
+  FlippableFront,
+  FlippableRoot,
+} from '~/components/ui/flippable';
+import {
   JOKER_RANK,
   type JokerSuit,
   type PictureCardRank,
@@ -43,6 +48,7 @@ const pictureCardSymbol = {
 export function PlayingCard({
   card,
   className,
+  cardClassName,
   onClick,
   selected,
   highlighted,
@@ -50,11 +56,13 @@ export function PlayingCard({
 }: {
   card: PlayingCardValue | null;
   className?: string;
+  cardClassName?: string;
   onClick?: () => void;
   selected?: boolean;
   highlighted?: boolean;
   design?: 'default' | 'simple';
 }) {
+  const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
@@ -64,43 +72,43 @@ export function PlayingCard({
       className={cn(
         'w-[3.75em] h-[5.25em]',
         'text-4xl',
-        '[perspective:1000px]',
-        'transition-transform duration-200 ease-in-out',
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
         className,
       )}
     >
-      <div
-        className={cn(
-          'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
-          card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
-          'rounded-[0.22em]',
-          highlighted && 'ring-4 ring-ring',
-        )}
-      >
-        {/* Front */}
-        <div className='absolute w-full h-full [backface-visibility:hidden]'>
-          <PlayingCardFace card={card} design={design} />
-        </div>
+      <FlippableRoot showFront={!!card}>
+        <FlippableFront>
+          <PlayingCardFace
+            card={card}
+            design={design}
+            className={cn(highlightedClass, cardClassName)}
+          />
+        </FlippableFront>
 
-        {/* Back */}
-        <div className='absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
-          <PlayingCardBack />
-        </div>
-      </div>
+        <FlippableBack>
+          <PlayingCardBack className={cn(highlightedClass, cardClassName)} />
+        </FlippableBack>
+      </FlippableRoot>
     </div>
   );
 }
 
 function PlayingCardFace({
+  className,
   card,
   design,
 }: {
+  className?: string;
   card: PlayingCardValue | null;
   design?: 'default' | 'simple';
 }) {
-  if (!card) return <div className='w-full h-full bg-white rounded-[0.22em]' />;
+  if (!card)
+    return (
+      <div
+        className={cn('w-full h-full bg-white rounded-[0.22em]', className)}
+      />
+    );
 
   if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
 
@@ -110,7 +118,10 @@ function PlayingCardFace({
 
   return (
     <div
-      className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
+      className={cn(
+        'flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full',
+        className,
+      )}
       style={{ color }}
     >
       <div
@@ -246,14 +257,21 @@ function JokerCard({ color }: { color: JokerSuit }) {
   );
 }
 
-export function PlayingCardBack() {
+export function PlayingCardBack({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'w-full h-full',
-        'flex flex-col rounded-[0.22em] border-[0.22em] border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
+        'w-full h-full rounded-[0.22em] bg-white flex justify-center items-center',
+        className,
       )}
-    />
+    >
+      <div
+        className={cn(
+          'w-[calc(100%-0.44em)] h-[calc(100%-0.44em)]',
+          'bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
+        )}
+      />
+    </div>
   );
 }
 

@@ -159,6 +159,12 @@ export const FlipCard = () => {
             card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
           />
         )}
+        {showCard && (
+          <PlayingCard
+            highlighted
+            card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
+          />
+        )}
       </div>
     </div>
   );
