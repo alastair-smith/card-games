@@ -11,7 +11,7 @@ import {
   SpadeIcon,
   SwordsIcon,
 } from 'lucide-react';
-import { createElement } from 'react';
+import { type CSSProperties, createElement } from 'react';
 import {
   FlippableBack,
   FlippableFront,
@@ -57,6 +57,7 @@ export function PlayingCard({
   selected,
   highlighted,
   design,
+  style,
 }: {
   card: PlayingCardValue | null;
   className?: string;
@@ -65,6 +66,7 @@ export function PlayingCard({
   selected?: boolean;
   highlighted?: boolean;
   design?: 'default' | 'simple';
+  style?: CSSProperties;
 }) {
   const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
@@ -73,6 +75,7 @@ export function PlayingCard({
     // biome-ignore lint/a11y/useKeyWithClickEvents: todo
     <div
       onClick={onClick}
+      style={style}
       className={cn(
         PLAYING_CARD_PROPORTIONS,
         PLAYING_CARD_DEFAULT_SIZE,

@@ -1,5 +1,5 @@
+import { PlayingCard } from '~/components/ui/playing-card';
 import { Rank, Suit } from '~/types/cards';
-import { PlayingCard } from '../playing-card';
 import { PlayingCardStack } from '.';
 
 export const EmptyStack = () => <PlayingCardStack />;
