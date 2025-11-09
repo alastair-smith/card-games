@@ -2,8 +2,11 @@ import {
   Children,
   type ComponentProps,
   cloneElement,
+  Fragment,
+  type FragmentProps,
   isValidElement,
   type ReactElement,
+  type ReactNode,
 } from 'react';
 import {
   PLAYING_CARD_DEFAULT_SIZE,
@@ -52,25 +55,36 @@ type PlayingCardStack = {
     | ReactElement<typeof PlayingCard>[];
 };
 
+function StackChildren({ children }: { children: ReactNode }) {
+  return Children.map(children, (child) => {
+    if (
+      !isValidElement<ComponentProps<typeof PlayingCard>>(child) ||
+      !isValidElement<FragmentProps>(child)
+    )
+      return child;
+
+    if (child.type === Fragment) {
+      return <StackChildren>{child.props.children}</StackChildren>;
+    }
+
+    const {
+      className: childClassName,
+      cardClassName,
+      ...childProps
+    } = child.props;
+
+    return cloneElement(child, {
+      className: cn('-ml-[1.44em] first:ml-0', childClassName),
+      cardClassName: cn('border-[0.056em] border-border/50', cardClassName),
+      ...childProps,
+    });
+  });
+}
+
 export function PlayingCardStack({ className, children }: PlayingCardStack) {
   return (
     <div className={cn('flex', className)}>
-      {Children.map(children, (child) => {
-        if (!isValidElement<ComponentProps<typeof PlayingCard>>(child))
-          return child;
-
-        const {
-          className: childClassName,
-          cardClassName,
-          ...childProps
-        } = child.props;
-
-        return cloneElement(child, {
-          className: cn('-ml-[1.44em] first:ml-0', childClassName),
-          cardClassName: cn('border-[0.056em] border-border/50', cardClassName),
-          ...childProps,
-        });
-      })}
+      <StackChildren>{children}</StackChildren>
     </div>
   );
 }
@@ -79,7 +93,8 @@ type PlayingCardDiscardPile = {
   className?: string;
   children?:
     | ReactElement<typeof PlayingCard>
-    | ReactElement<typeof PlayingCard>[];
+    | ReactElement<typeof PlayingCard>[]
+    | null;
 };
 
 /**
