@@ -43,6 +43,7 @@ export function PlayingCardDeck({
             card={null}
             className={fontSize}
             cardClassName='border-[0.056em] border-border/50'
+            border
           />
         </div>
       </div>
@@ -70,15 +71,10 @@ function StackChildren({ children }: { children: ReactNode }) {
       return <StackChildren>{child.props.children}</StackChildren>;
     }
 
-    const {
-      className: childClassName,
-      cardClassName,
-      ...childProps
-    } = child.props;
+    const { className: childClassName, ...childProps } = child.props;
 
     return cloneElement(child, {
       className: cn('-ml-[1.44em] first:ml-0', childClassName),
-      cardClassName: cn('border-[0.056em] border-border/50', cardClassName),
       ...childProps,
     });
   });

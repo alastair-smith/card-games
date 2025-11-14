@@ -9,19 +9,19 @@ import {
 import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
 
 const playAreaCards = [
-  <PlayingCard key='1' card={{ suit: Suit.HEARTS, rank: Rank.TEN }} />,
+  <PlayingCard key='1' card={{ suit: Suit.HEARTS, rank: Rank.TEN }} border />,
   <>
-    <PlayingCard card={{ suit: Suit.DIAMONDS, rank: Rank.SEVEN }} />
-    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.FOUR }} />
+    <PlayingCard card={{ suit: Suit.DIAMONDS, rank: Rank.SEVEN }} border />
+    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.FOUR }} border />
   </>,
   <>
-    <PlayingCard card={{ suit: Suit.CLUBS, rank: Rank.THREE }} />
-    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.ACE }} />
-    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.JACK }} />
+    <PlayingCard card={{ suit: Suit.CLUBS, rank: Rank.THREE }} border />
+    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.ACE }} border />
+    <PlayingCard card={{ suit: Suit.SPADES, rank: Rank.JACK }} border />
   </>,
   <>
-    <PlayingCard card={{ suit: Suit.CLUBS, rank: Rank.EIGHT }} />
-    <PlayingCard card={{ suit: Suit.HEARTS, rank: Rank.TEN }} />
+    <PlayingCard card={{ suit: Suit.CLUBS, rank: Rank.EIGHT }} border />
+    <PlayingCard card={{ suit: Suit.HEARTS, rank: Rank.TEN }} border />
   </>,
 ];
 
@@ -35,7 +35,7 @@ export function PlayArea() {
       <div className='grid grid-cols-2 w-fit'>
         <PlayingCardDeck />
         <PlayingCardDiscardPile>
-          {discardCard && <PlayingCard card={discardCard} />}
+          {discardCard && <PlayingCard card={discardCard} border />}
         </PlayingCardDiscardPile>
         <PlayingCardStack className='col-span-2'>
           {playAreaCardsVisible && playAreaCards[playAreaCardsIndex]}

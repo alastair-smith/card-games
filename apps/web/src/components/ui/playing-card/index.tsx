@@ -35,6 +35,7 @@ export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
 export const PLAYING_CARD_PROPORTIONS = 'w-[3.75em] h-[5.25em]';
 export const PLAYING_CARD_MIN_PROPORTIONS = 'min-w-[3.75em] min-h-[5.25em]';
 export const PLAYING_CARD_DEFAULT_SIZE = 'text-4xl';
+const BORDER = 'border-[0.056em] border-border/50';
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -59,6 +60,7 @@ export function PlayingCard({
   highlighted,
   design,
   style,
+  border,
 }: {
   card: PlayingCardValue | null;
   className?: string;
@@ -68,6 +70,7 @@ export function PlayingCard({
   highlighted?: boolean;
   design?: 'default' | 'simple';
   style?: CSSProperties;
+  border?: boolean;
 }) {
   const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
@@ -90,12 +93,22 @@ export function PlayingCard({
           <PlayingCardFace
             card={card}
             design={design}
-            className={cn(highlightedClass, cardClassName)}
+            className={cn(
+              highlightedClass,
+              border ? BORDER : '',
+              cardClassName,
+            )}
           />
         </FlippableFront>
 
         <FlippableBack>
-          <PlayingCardBack className={cn(highlightedClass, cardClassName)} />
+          <PlayingCardBack
+            className={cn(
+              highlightedClass,
+              border ? BORDER : '',
+              cardClassName,
+            )}
+          />
         </FlippableBack>
       </FlippableRoot>
     </div>
