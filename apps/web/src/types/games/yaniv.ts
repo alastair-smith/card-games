@@ -32,16 +32,16 @@ export const gameStateSchema = z.object({
       isCurrentTurn: z.boolean(),
     }),
   ),
-  discard: validCardSchema,
-  userPlayerHand: z.array(validCardSchema),
+  discard: validCardSchema.nullable(),
+  userHand: z.array(validCardSchema),
   currentPlayer: z.object({
-    playedCards: z.array(validCardSchema).nullable,
+    playedCards: z.array(validCardSchema),
     id: userIdSchema,
     name: playerNameSchema,
     isUser: z.boolean(),
-  }).nullable,
+  }),
   stage: gameStageSchema,
-  loser: userIdSchema,
+  loser: userIdSchema.nullable(),
 });
 
 export type GameState = z.infer<typeof gameStateSchema>;

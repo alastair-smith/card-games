@@ -11,6 +11,7 @@ import {
   PlayAreaPlayerName,
   PlayAreaPlayerZone,
   PlayAreaRoot,
+  SharedZone,
 } from '~/components/layout/play-area';
 import { Button } from '~/components/ui/button';
 import {
@@ -24,8 +25,14 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import { PlayingCard } from '~/components/ui/playing-card';
+import {
+  PlayingCardDeck,
+  PlayingCardDiscardPile,
+  PlayingCardStack,
+} from '~/components/ui/playing-card-stacks';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
+import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/yaniv';
@@ -64,10 +71,6 @@ export default function YanivGameView({
   // biome-ignore lint/style/noNonNullAssertion: element exists as index is fetched just before
   const user = state.players[userIndex]!;
 
-  const currentPlayer = state.players.find(
-    ({ isCurrentTurn }) => isCurrentTurn,
-  );
-
   const handleSwipeLeft = () => {
     if (activeTab === 'players') {
       setActiveTab('hand');
@@ -85,42 +88,75 @@ export default function YanivGameView({
     onSwipedRight: handleSwipeRight,
   });
 
+  /**
+   * Show deck for other players with a number on it for a tighter stack?
+   * Reveal other players remaining cards at end of game? Maybe the deck wouldn't work for that, so just smaller cards would be better
+   * Cap a null stack size?
+   * worth displaying the number of cards regardless
+
+
+
+
+
+   */
+
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
+      <SharedZone>
+        <div className='grid grid-cols-2 w-fit text-2xl gap-2'>
+          <PlayingCardDeck />
+          <PlayingCardDiscardPile>
+            {state.discard && <PlayingCard card={state.discard} border />}
+          </PlayingCardDiscardPile>
+          <PlayingCardStack className='col-span-2'>
+            {state.currentPlayer.playedCards.map((card) => (
+              <PlayingCard
+                key={`${card.suit}-${card.rank}`}
+                card={card}
+                border
+              />
+            ))}
+          </PlayingCardStack>
+        </div>
+      </SharedZone>
+
       {state.players.map((player) => (
-        <EmojiRain key={player.id} reaction={reactions[player.id]}>
-          <PlayAreaPlayerZone>
-            {player.isUser
-              ? state.userPlayerHand.map((card) => (
-                  <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
-                ))
-              : Array.from({ length: player.handSize }, (_, index) => (
-                  <PlayingCard key={index} card={null} />
+        <PlayAreaPlayerZone key={player.id}>
+          <EmojiRain
+            reaction={reactions[player.id]}
+            className='flex flex-col items-center gap-1 w-full text-2xl'
+          >
+            {player.isUser ? (
+              <PlayingCardStack>
+                {state.userHand.map((card) => (
+                  <PlayingCard
+                    key={`${card.suit}-${card.rank}`}
+                    card={card}
+                    border
+                  />
                 ))}
+              </PlayingCardStack>
+            ) : (
+              <PlayingCardStack>
+                {Array.from({ length: player.handSize }, (_, index) => (
+                  <PlayingCard key={index} card={null} border />
+                ))}
+              </PlayingCardStack>
+            )}
+
             <PlayAreaPlayerName>
               {player.name}
               {player.isUser && ' (You)'}
             </PlayAreaPlayerName>
-          </PlayAreaPlayerZone>
-        </EmojiRain>
+          </EmojiRain>
+        </PlayAreaPlayerZone>
       ))}
     </PlayAreaRoot>
   );
 
-  const PlayerHandContent = user?.card === null && (
-    <PlayingCard
-      card={user?.card}
-      onClick={
-        userCanPickup
-          ? () => {
-              pickupCard();
-              setActiveTab('players');
-            }
-          : undefined
-      }
-      highlighted={userCanPickup}
-    />
-  );
+  const PlayerHandContent = state.userHand.map((card) => (
+    <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
+  ));
 
   const gameActions = (
     <div className='flex gap-2'>
@@ -132,7 +168,7 @@ export default function YanivGameView({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>How to play High Card</DialogTitle>
+            <DialogTitle>How to play Yaniv</DialogTitle>
             <DialogDescription asChild>
               {/*<HowToContent />*/}
               TODO
@@ -150,11 +186,11 @@ export default function YanivGameView({
 
   const notificationsContent = (
     <>
-      {winners[0] ? (
+      {loser ? (
         <DialogTrigger asChild>
           <Button size='sm'>View End Screen</Button>
         </DialogTrigger>
-      ) : userCanPickup ? (
+      ) : state.currentPlayer.isUser ? (
         <div className='animate-bounce flex gap-2 justify-center'>
           <span>It's your turn!</span>
           <div className='flex'>
@@ -164,7 +200,7 @@ export default function YanivGameView({
       ) : (
         <div className='flex gap-1.5 justify-center items-center'>
           <span className='text-balance'>
-            {currentPlayer?.name} is thinking
+            {state.currentPlayer.name} is thinking
           </span>
           <div className='flex'>
             <CogIcon className='animate-spin' />
@@ -178,7 +214,7 @@ export default function YanivGameView({
 
   return (
     <GameLayout
-      gameType={GameType.HIGH_CARD}
+      gameType={GameType.YANIV}
       actions={gameActions}
       className={className}
     >

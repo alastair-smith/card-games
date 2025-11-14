@@ -6,8 +6,16 @@ import {
   PlayingCardDiscardPile,
   PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
-import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
+import {
+  JOKER_RANK,
+  JokerSuit,
+  type PlayingCardValue,
+  Rank,
+  Suit,
+} from '~/types/cards';
+import type { PlayerName, UserId } from '~/types/entities';
 import type { ReactionEmoji } from '~/types/game';
+import { GameStage } from '~/types/games/yaniv';
 import YanivGameView from './game-view';
 
 const playAreaCards = [
@@ -72,7 +80,6 @@ export function PlayArea() {
 export const Turn = () => {
   return (
     <YanivGameView
-      state={}
       pickupCard={(): void => {
         throw new Error('Function not implemented.');
       }}
@@ -80,6 +87,59 @@ export const Turn = () => {
         throw new Error('Function not implemented.');
       }}
       reactions={{}}
+      state={{
+        players: [
+          {
+            id: '1' as UserId,
+            name: 'Alvin' as PlayerName,
+            scoreHistory: [0],
+            handSize: 7,
+            isUser: false,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Barney' as PlayerName,
+            scoreHistory: [0],
+            handSize: 2,
+            isUser: true,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+        ],
+        discard: {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        },
+        userHand: [
+          {
+            suit: Suit.CLUBS,
+            rank: Rank.ACE,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.ACE,
+          },
+        ],
+        currentPlayer: {
+          id: '2' as UserId,
+          playedCards: [
+            {
+              suit: Suit.HEARTS,
+              rank: Rank.FOUR,
+            },
+            {
+              suit: Suit.DIAMONDS,
+              rank: Rank.TEN,
+            },
+          ],
+          name: 'Jerry' as PlayerName,
+          isUser: true,
+        },
+        stage: GameStage.IN_PROGRESS,
+        loser: null,
+      }}
     />
   );
 };

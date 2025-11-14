@@ -82,7 +82,6 @@ export function PlayingCard({
       style={style}
       className={cn(
         PLAYING_CARD_PROPORTIONS,
-        PLAYING_CARD_DEFAULT_SIZE,
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
         className,
