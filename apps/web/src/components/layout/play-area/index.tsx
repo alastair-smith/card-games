@@ -54,7 +54,21 @@ export type PlayAreaRootProps = {
   className?: string;
 };
 export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
-  const totalPlayers = Children.count(children);
+  const allChildren = Children.toArray(children);
+  const playerZones = allChildren.filter(
+    (child) => isValidElement(child) && child.type === PlayAreaPlayerZone,
+  );
+  const sharedZones = allChildren.filter(
+    (child) => isValidElement(child) && child.type === SharedZone,
+  );
+  const otherZones = allChildren.filter(
+    (child) =>
+      !isValidElement(child) ||
+      (child.type !== PlayAreaPlayerZone && child.type !== SharedZone),
+  );
+
+  const totalPlayers = playerZones.length;
+
   return (
     <div
       className={cn(
@@ -63,8 +77,16 @@ export function PlayAreaRoot({ children, className }: PlayAreaRootProps) {
         className,
       )}
     >
-      {Children.map(children, (child, index) => {
-        if (!isValidElement<{ className?: string }>(child)) return child;
+      {otherZones}
+
+      {sharedZones.map((child) => {
+        if (!isValidElement<SharedZoneProps>(child)) return child;
+
+        return cloneElement(child, { playerZoneCount: playerZones.length });
+      })}
+
+      {playerZones.map((child, index) => {
+        if (!isValidElement<PlayAreaPlayerZoneProps>(child)) return child;
 
         return cloneElement(child, {
           className: cn(
@@ -89,6 +111,30 @@ export function PlayAreaPlayerZone({
 }: PlayAreaPlayerZoneProps) {
   return (
     <div className={cn('flex flex-col items-center gap-1', className)}>
+      {children}
+    </div>
+  );
+}
+
+export type SharedZoneProps = {
+  className?: string;
+  children?: ReactNode;
+  playerZoneCount?: number; // injected by PlayAreaRoot
+};
+
+export function SharedZone({
+  className,
+  children,
+  playerZoneCount = 0,
+}: SharedZoneProps) {
+  return (
+    <div
+      className={cn(
+        'lg:col-start-7 lg:row-start-5 lg:row-span-5',
+        playerZoneCount % 2 === 0 ? 'lg:col-span-12' : 'lg:col-span-9',
+        className,
+      )}
+    >
       {children}
     </div>
   );
