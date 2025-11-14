@@ -11,21 +11,31 @@ import {
   SpadeIcon,
   SwordsIcon,
 } from 'lucide-react';
+import { type CSSProperties, createElement } from 'react';
+import {
+  FlippableBack,
+  FlippableFront,
+  FlippableRoot,
+} from '~/components/ui/flippable';
 import {
   JOKER_RANK,
-  type JokerSuit,
   type PictureCardRank,
   type PlayingCardValue,
   RANK_DISPLAY,
   Rank,
   Suit,
   suitColor,
+  ZERO_RANK,
 } from '~/types/cards';
 import { isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
 const RANK_FACE_SYMBOL_SIZE = '0.61em';
 export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
+export const PLAYING_CARD_PROPORTIONS = 'w-[3.75em] h-[5.25em]';
+export const PLAYING_CARD_MIN_PROPORTIONS = 'min-w-[3.75em] min-h-[5.25em]';
+export const PLAYING_CARD_DEFAULT_SIZE = 'text-4xl';
+const BORDER = 'border-[0.056em] border-border/50';
 
 const suitSymbol = {
   [Suit.SPADES]: SpadeIcon,
@@ -38,79 +48,98 @@ const pictureCardSymbol = {
   [Rank.KING]: BotIcon,
   [Rank.QUEEN]: BotMessageSquareIcon,
   [Rank.JACK]: SwordsIcon,
+  [JOKER_RANK]: ScanFaceIcon,
 };
 
 export function PlayingCard({
   card,
   className,
+  cardClassName,
   onClick,
   selected,
   highlighted,
   design,
+  style,
+  border,
 }: {
   card: PlayingCardValue | null;
   className?: string;
+  cardClassName?: string;
   onClick?: () => void;
   selected?: boolean;
   highlighted?: boolean;
   design?: 'default' | 'simple';
+  style?: CSSProperties;
+  border?: boolean;
 }) {
+  const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
     // biome-ignore lint/a11y/useKeyWithClickEvents: todo
     <div
       onClick={onClick}
+      style={style}
       className={cn(
-        'w-[3.75em] h-[5.25em]',
-        'text-4xl',
-        '[perspective:1000px]',
-        'transition-transform duration-200 ease-in-out',
+        PLAYING_CARD_PROPORTIONS,
+        PLAYING_CARD_DEFAULT_SIZE,
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
         className,
       )}
     >
-      <div
-        className={cn(
-          'relative w-full h-full duration-700 [transform-style:preserve-3d] [transform-origin:center] transition-transform [timing-function:cubic-bezier(0.4,0,0.2,1)]',
-          card ? '[transform:rotateY(0deg)]' : '[transform:rotateY(180deg)]',
-          'rounded-[0.22em]',
-          highlighted && 'ring-4 ring-ring',
-        )}
-      >
-        {/* Front */}
-        <div className='absolute w-full h-full [backface-visibility:hidden]'>
-          <PlayingCardFace card={card} design={design} />
-        </div>
+      <FlippableRoot showFront={!!card}>
+        <FlippableFront>
+          <PlayingCardFace
+            card={card}
+            design={design}
+            className={cn(
+              highlightedClass,
+              border ? BORDER : '',
+              cardClassName,
+            )}
+          />
+        </FlippableFront>
 
-        {/* Back */}
-        <div className='absolute w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]'>
-          <PlayingCardBack />
-        </div>
-      </div>
+        <FlippableBack>
+          <PlayingCardBack
+            className={cn(
+              highlightedClass,
+              border ? BORDER : '',
+              cardClassName,
+            )}
+          />
+        </FlippableBack>
+      </FlippableRoot>
     </div>
   );
 }
 
 function PlayingCardFace({
+  className,
   card,
   design,
 }: {
+  className?: string;
   card: PlayingCardValue | null;
   design?: 'default' | 'simple';
 }) {
-  if (!card) return <div className='w-full h-full bg-white rounded-[0.22em]' />;
+  if (!card)
+    return (
+      <div
+        className={cn('w-full h-full bg-white rounded-[0.22em]', className)}
+      />
+    );
 
-  if (card.rank === JOKER_RANK) return <JokerCard color={card.suit} />;
-
-  const SuitSymbol = suitSymbol[card.suit];
   const color = suitColor[card.suit];
   const isSimple = design === 'simple';
 
   return (
     <div
-      className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
+      className={cn(
+        'flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full',
+        className,
+      )}
       style={{ color }}
     >
       <div
@@ -120,20 +149,18 @@ function PlayingCardFace({
         )}
       >
         <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
-        <SuitSymbol fill={color} size='0.8em' />
+        {card.rank !== JOKER_RANK &&
+          createElement(suitSymbol[card.suit], { fill: color, size: '0.8em' })}
       </div>
+
       {!isSimple && (
         <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
-            <PictureCardContent
-              rank={card.rank}
-              SuitSymbol={SuitSymbol}
-              color={color}
-            />
+            <PictureCardContent card={card} color={color} />
           ) : (
             <RankContent
               rank={Number(card.rank)}
-              SuitSymbol={SuitSymbol}
+              suit={card.suit}
               color={color}
             />
           )}
@@ -144,17 +171,21 @@ function PlayingCardFace({
 }
 
 function PictureCardContent({
-  rank,
-  SuitSymbol,
+  card,
   color,
 }: {
-  rank: PictureCardRank;
-  SuitSymbol: (typeof suitSymbol)[Suit];
+  card: PlayingCardValue & { rank: PictureCardRank };
   color: string;
 }) {
+  if (card.rank === ZERO_RANK) {
+    return <div className={cn('font-bold text-[2.5em] leading-none')}>0</div>;
+  }
+
   const PictureSymbol =
-    rank === Rank.ACE ? SuitSymbol : pictureCardSymbol[rank];
-  const useFill = rank === Rank.ACE || rank === Rank.JACK;
+    card.rank === Rank.ACE
+      ? suitSymbol[card.suit]
+      : pictureCardSymbol[card.rank];
+  const useFill = card.rank === Rank.ACE || card.rank === Rank.JACK;
 
   return (
     <PictureSymbol className='size-full' fill={useFill ? color : 'none'} />
@@ -163,14 +194,15 @@ function PictureCardContent({
 
 function RankContent({
   rank,
-  SuitSymbol,
+  suit,
   color,
 }: {
   rank: number;
-  SuitSymbol: (typeof suitSymbol)[Suit];
+  suit: Suit;
   color: string;
 }) {
   const symbolSize = RANK_FACE_SYMBOL_SIZE;
+  const SuitSymbol = suitSymbol[suit];
 
   if (rank <= 3) {
     return (
@@ -227,72 +259,20 @@ function RankContent({
   );
 }
 
-function JokerCard({ color }: { color: JokerSuit }) {
-  return (
-    <div
-      className='flex flex-col w-full h-full bg-white p-[0.22em] rounded-[0.22em] leading-none'
-      style={{ color }}
-    >
-      {/* Top left */}
-      <div className='flex items-center gap-[0.056em] pb-[0.11em]'>
-        <div className='font-bold w-full flex justify-center'>JOKER!</div>
-      </div>
-
-      {/* Middle */}
-      <div className='grid place-items-center px-[0.44em] py-[0.22em] border-[0.03em] rounded-[0.11em] flex-1'>
-        <ScanFaceIcon className='size-full' />
-      </div>
-    </div>
-  );
-}
-
-export function PlayingCardBack() {
+export function PlayingCardBack({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'w-full h-full',
-        'flex flex-col rounded-[0.22em] border-[0.22em] border-white bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
-      )}
-    />
-  );
-}
-
-export function ZeroPlayingCard({
-  suit,
-  className,
-  onClick,
-}: {
-  suit: Suit;
-  className?: string;
-  onClick?: () => void;
-}) {
-  const SuitSymbol = suitSymbol[suit];
-  const color = suitColor[suit];
-
-  return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: todo
-    // biome-ignore lint/a11y/useKeyWithClickEvents: todo
-    <div
-      onClick={onClick}
-      className={cn(
-        'w-[3.75em] h-[5.25em]',
-        'text-4xl',
-        onClick ? 'cursor-pointer' : '',
+        'w-full h-full rounded-[0.22em] bg-white flex justify-center items-center',
         className,
       )}
     >
       <div
-        className='flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full'
-        style={{ color }}
-      >
-        <div className='flex items-center gap-[0.11em] pb-[0.11em]'>
-          <div className={cn('font-bold')}>0</div>
-          <SuitSymbol className='h-[0.9em]' fill={color} />
-        </div>
-        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
-          <div className={cn('font-bold text-[2.7em]')}>0</div>
-        </div>
-      </div>
+        className={cn(
+          'w-[calc(100%-0.44em)] h-[calc(100%-0.44em)]',
+          'bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
+        )}
+      />
     </div>
   );
 }

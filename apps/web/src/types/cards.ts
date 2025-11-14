@@ -35,7 +35,9 @@ export const suitColor = {
   [Suit.HEARTS]: '#ff0000',
   [Suit.DIAMONDS]: '#ff0000',
   [Suit.CLUBS]: '#12212E',
-} as const satisfies Record<Suit, string>;
+  [JokerSuit.BLACK]: '#ff0000',
+  [JokerSuit.RED]: '#12212E',
+} as const satisfies Record<Suit | JokerSuit, string>;
 
 /* [---------------- Ranks ----------------] */
 
@@ -54,22 +56,6 @@ export enum Rank {
   KING = 13,
   ACE = 14,
 }
-
-export const RANK_DISPLAY = {
-  [Rank.TWO]: '2',
-  [Rank.THREE]: '3',
-  [Rank.FOUR]: '4',
-  [Rank.FIVE]: '5',
-  [Rank.SIX]: '6',
-  [Rank.SEVEN]: '7',
-  [Rank.EIGHT]: '8',
-  [Rank.NINE]: '9',
-  [Rank.TEN]: '10',
-  [Rank.JACK]: 'J',
-  [Rank.QUEEN]: 'Q',
-  [Rank.KING]: 'K',
-  [Rank.ACE]: 'A',
-} as const satisfies Record<Rank, string>;
 
 export const RANK_FULL_NAME = {
   [Rank.TWO]: 'Two',
@@ -105,15 +91,6 @@ export const RANKS = [
   Rank.ACE,
 ] as const satisfies Rank[];
 
-export const pictureCardRank = [
-  Rank.JACK,
-  Rank.QUEEN,
-  Rank.KING,
-  Rank.ACE,
-] as const satisfies Rank[];
-
-export type PictureCardRank = (typeof pictureCardRank)[number];
-
 export const numberCardRank = [
   Rank.TWO,
   Rank.THREE,
@@ -134,6 +111,41 @@ export const jokerRankSchema = z.literal(JOKER_RANK);
 
 export type JokerRank = z.infer<typeof jokerRankSchema>;
 
+export const ZERO_RANK = 'ZERO';
+
+export const zeroRankSchema = z.literal(ZERO_RANK);
+
+export type ZeroRank = z.infer<typeof zeroRankSchema>;
+
+export const pictureCardRank = [
+  Rank.JACK,
+  Rank.QUEEN,
+  Rank.KING,
+  Rank.ACE,
+  JOKER_RANK,
+  ZERO_RANK,
+] as const satisfies (Rank | JokerRank | ZeroRank)[];
+
+export type PictureCardRank = (typeof pictureCardRank)[number];
+
+export const RANK_DISPLAY = {
+  [Rank.TWO]: '2',
+  [Rank.THREE]: '3',
+  [Rank.FOUR]: '4',
+  [Rank.FIVE]: '5',
+  [Rank.SIX]: '6',
+  [Rank.SEVEN]: '7',
+  [Rank.EIGHT]: '8',
+  [Rank.NINE]: '9',
+  [Rank.TEN]: '10',
+  [Rank.JACK]: 'J',
+  [Rank.QUEEN]: 'Q',
+  [Rank.KING]: 'K',
+  [Rank.ACE]: 'A',
+  [JOKER_RANK]: 'JOKER',
+  [ZERO_RANK]: '0',
+} as const satisfies Record<Rank | JokerRank | ZeroRank, string>;
+
 /* [---------------- Cards ----------------] */
 
 export const standardPlayingCardSchema = z.object({
@@ -150,9 +162,17 @@ export const JokerSchema = z.object({
 
 export type Joker = z.infer<typeof JokerSchema>;
 
+export const zeroPlayingCardSchema = z.object({
+  suit: suitSchema,
+  rank: zeroRankSchema,
+});
+
+export type ZeroPlayingCard = z.infer<typeof zeroPlayingCardSchema>;
+
 export const playingCardValueSchema = z.union([
   standardPlayingCardSchema,
   JokerSchema,
+  zeroPlayingCardSchema,
 ]);
 
 export type PlayingCardValue = z.infer<typeof playingCardValueSchema>;

@@ -10,8 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { JOKER_RANK, JokerSuit, RANKS, Rank, SUITS, Suit } from '~/types/cards';
-import { PlayingCard } from '.';
+import {
+  JOKER_RANK,
+  JokerSuit,
+  RANKS,
+  Rank,
+  SUITS,
+  Suit,
+  ZERO_RANK,
+} from '~/types/cards';
+import { PLAYING_CARD_DEFAULT_SIZE, PlayingCard } from '.';
 
 export const Docs = () => (
   <div className='p-6 flex flex-col gap-6'>
@@ -47,7 +55,7 @@ export const Docs = () => (
               <TableRow key={className}>
                 <TableCell>
                   {className}
-                  {className === 'text-4xl' ? ' (Default)' : ''}
+                  {className === PLAYING_CARD_DEFAULT_SIZE ? ' (Default)' : ''}
                 </TableCell>
                 <TableCell className='flex gap-3'>
                   <PlayingCard
@@ -159,6 +167,12 @@ export const FlipCard = () => {
             card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
           />
         )}
+        {showCard && (
+          <PlayingCard
+            highlighted
+            card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
+          />
+        )}
       </div>
     </div>
   );
@@ -180,6 +194,10 @@ export const FullDeck = ({ className }: { className?: string }) => {
       />
       <PlayingCard
         card={{ rank: JOKER_RANK, suit: JokerSuit.BLACK }}
+        className={className}
+      />
+      <PlayingCard
+        card={{ rank: ZERO_RANK, suit: Suit.DIAMONDS }}
         className={className}
       />
       {deck.map((card) => (

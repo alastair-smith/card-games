@@ -15,7 +15,7 @@ layout {
     }
     tab name="ai" {
       pane command="npx" {
-          args "@google/gemini-cli"
+          args "@google/gemini-cli@latest"
       }
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
