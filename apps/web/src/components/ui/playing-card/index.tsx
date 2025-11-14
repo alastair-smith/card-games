@@ -33,6 +33,7 @@ import { cn } from '~/utils/cn';
 const RANK_FACE_SYMBOL_SIZE = '0.61em';
 export const MIN_CARD_HEIGHT = 'min-h-[5.7em]'; // used to reserve space
 export const PLAYING_CARD_PROPORTIONS = 'w-[3.75em] h-[5.25em]';
+export const PLAYING_CARD_MIN_PROPORTIONS = 'min-w-[3.75em] min-h-[5.25em]';
 export const PLAYING_CARD_DEFAULT_SIZE = 'text-4xl';
 
 const suitSymbol = {

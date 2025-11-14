@@ -28,6 +28,7 @@ const playAreaCards = [
 export function PlayArea() {
   const [discardCard, setDiscardCard] = useState<PlayingCardValue | null>(null);
   const [playAreaCardsIndex, setPlayAreaCardsIndex] = useState(0);
+  const [playAreaCardsVisible, setPlayAreaCardsVisible] = useState(false);
 
   return (
     <div className='flex flex-col gap-6'>
@@ -37,7 +38,7 @@ export function PlayArea() {
           {discardCard && <PlayingCard card={discardCard} />}
         </PlayingCardDiscardPile>
         <PlayingCardStack className='col-span-2'>
-          {playAreaCards[playAreaCardsIndex]}
+          {playAreaCardsVisible && playAreaCards[playAreaCardsIndex]}
         </PlayingCardStack>
       </div>
 
@@ -48,12 +49,16 @@ export function PlayArea() {
             setPlayAreaCardsIndex(
               (playAreaCardsIndex + 1) % playAreaCards.length,
             );
+            setPlayAreaCardsVisible(true);
           }}
         >
           Play cards
         </Button>
         <Button
-          onClick={() => setDiscardCard({ suit: Suit.CLUBS, rank: Rank.EIGHT })}
+          onClick={() => {
+            setDiscardCard({ suit: Suit.CLUBS, rank: Rank.EIGHT });
+            setPlayAreaCardsVisible(false);
+          }}
         >
           Discard
         </Button>

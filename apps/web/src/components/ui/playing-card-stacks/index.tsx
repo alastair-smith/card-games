@@ -10,6 +10,8 @@ import {
 } from 'react';
 import {
   PLAYING_CARD_DEFAULT_SIZE,
+  PLAYING_CARD_MIN_PROPORTIONS,
+  PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
 import { cn } from '~/utils/cn';
@@ -52,7 +54,8 @@ type PlayingCardStack = {
   className?: string;
   children?:
     | ReactElement<typeof PlayingCard>
-    | ReactElement<typeof PlayingCard>[];
+    | ReactElement<typeof PlayingCard>[]
+    | false;
 };
 
 function StackChildren({ children }: { children: ReactNode }) {
@@ -83,18 +86,17 @@ function StackChildren({ children }: { children: ReactNode }) {
 
 export function PlayingCardStack({ className, children }: PlayingCardStack) {
   return (
-    <div className={cn('flex', className)}>
-      <StackChildren>{children}</StackChildren>
+    <div className={cn(PLAYING_CARD_DEFAULT_SIZE, className)}>
+      <div className={cn(PLAYING_CARD_MIN_PROPORTIONS, 'flex')}>
+        <StackChildren>{children}</StackChildren>
+      </div>
     </div>
   );
 }
 
 type PlayingCardDiscardPile = {
   className?: string;
-  children?:
-    | ReactElement<typeof PlayingCard>
-    | ReactElement<typeof PlayingCard>[]
-    | null;
+  children?: ReactNode;
 };
 
 /**
@@ -104,12 +106,6 @@ export function PlayingCardDiscardPile({
   className,
   children,
 }: PlayingCardDiscardPile) {
-  const childCount = Children.count(children);
-  const displayCount = Math.min(childCount, 3);
-
-  const widthInEm =
-    displayCount > 0 ? 3.75 + (displayCount - 1) * (3.75 - 1.44) : 0;
-
   return (
     <div
       className={cn(
@@ -118,44 +114,7 @@ export function PlayingCardDiscardPile({
         className,
       )}
     >
-      <div
-        className={cn('relative h-[5.25em]')}
-        style={{ width: `${widthInEm}em` }}
-      >
-        {Children.map(children, (child, index) => {
-          if (!isValidElement<ComponentProps<typeof PlayingCard>>(child))
-            return child;
-
-          const {
-            className: childClassName,
-            cardClassName,
-            ...childProps
-          } = child.props;
-
-          const isHidden = childCount > 3 && index >= 3;
-          const displayIndex = isHidden ? displayCount - 1 : index;
-          const xOffset = (displayCount - 1 - displayIndex) * (3.75 - 1.44);
-          const zIndex = displayCount + 10 - index;
-
-          return cloneElement(child, {
-            className: cn(
-              'absolute duration-1000 ease-in-out',
-              'transition-transform',
-              childClassName,
-            ),
-            style: {
-              transform: `translateX(${xOffset}em)`,
-              zIndex: zIndex,
-              ...child.props.style,
-            },
-            cardClassName: cn(
-              'border-[0.056em] border-border/50',
-              cardClassName,
-            ),
-            ...childProps,
-          });
-        })}
-      </div>
+      <div className={PLAYING_CARD_PROPORTIONS}>{children}</div>
     </div>
   );
 }
