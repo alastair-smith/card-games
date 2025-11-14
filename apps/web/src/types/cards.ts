@@ -155,12 +155,12 @@ export const standardPlayingCardSchema = z.object({
 
 export type StandardPlayingCard = z.infer<typeof standardPlayingCardSchema>;
 
-export const JokerSchema = z.object({
+export const jokerSchema = z.object({
   suit: jokerSuitSchema,
   rank: jokerRankSchema,
 });
 
-export type Joker = z.infer<typeof JokerSchema>;
+export type Joker = z.infer<typeof jokerSchema>;
 
 export const zeroPlayingCardSchema = z.object({
   suit: suitSchema,
@@ -171,7 +171,7 @@ export type ZeroPlayingCard = z.infer<typeof zeroPlayingCardSchema>;
 
 export const playingCardValueSchema = z.union([
   standardPlayingCardSchema,
-  JokerSchema,
+  jokerSchema,
   zeroPlayingCardSchema,
 ]);
 

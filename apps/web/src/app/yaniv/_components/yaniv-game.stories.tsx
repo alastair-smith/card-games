@@ -7,6 +7,8 @@ import {
   PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
 import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
+import type { ReactionEmoji } from '~/types/game';
+import YanivGameView from './game-view';
 
 const playAreaCards = [
   <PlayingCard key='1' card={{ suit: Suit.HEARTS, rank: Rank.TEN }} border />,
@@ -66,3 +68,18 @@ export function PlayArea() {
     </div>
   );
 }
+
+export const Turn = () => {
+  return (
+    <YanivGameView
+      state={}
+      pickupCard={(): void => {
+        throw new Error('Function not implemented.');
+      }}
+      onEmojiClick={(): void => {
+        throw new Error('Function not implemented.');
+      }}
+      reactions={{}}
+    />
+  );
+};
