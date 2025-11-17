@@ -1,6 +1,12 @@
 'use client';
 
-import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
+import {
+  BrainIcon,
+  CogIcon,
+  DrumIcon,
+  MegaphoneIcon,
+  SmilePlusIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
@@ -32,17 +38,22 @@ import {
 } from '~/components/ui/playing-card-stacks';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
-import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
-import type { GameState } from '~/types/games/yaniv';
+import { type GameState, PlayerStep } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 // import { HowToContent } from './how-to';
 
 export type YanivGameProps = {
   className?: string;
   state: GameState;
-  pickupCard: () => void;
+  gameActions: {
+    declareYaniv: () => void;
+    endTurn: () => void;
+    pickupFromDeck: () => void;
+    pickupFromDiscard: () => void;
+    deal: () => void;
+  };
   onEmojiClick: (emoji: ReactionEmoji) => void;
   playerUserId?: UserId;
   reactions: Record<UserId, { emoji: ReactionEmoji; id: number }>;
@@ -51,9 +62,9 @@ export type YanivGameProps = {
 export default function YanivGameView({
   className,
   state,
-  pickupCard,
   onEmojiClick,
   reactions,
+  gameActions,
 }: YanivGameProps) {
   const [activeTab, setActiveTab] = useState('board');
   const loser = useMemo(() => {
@@ -66,10 +77,6 @@ export default function YanivGameView({
   useEffect(() => {
     setShowEndGameDialog(!!loser);
   }, [loser]);
-
-  const userIndex = state.players.findIndex((player) => player.isUser);
-  // biome-ignore lint/style/noNonNullAssertion: element exists as index is fetched just before
-  const user = state.players[userIndex]!;
 
   const handleSwipeLeft = () => {
     if (activeTab === 'players') {
@@ -102,13 +109,16 @@ export default function YanivGameView({
 
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
-      <SharedZone>
-        <div className='grid grid-cols-2 w-fit text-2xl gap-2'>
-          <PlayingCardDeck />
-          <PlayingCardDiscardPile>
-            {state.discard && <PlayingCard card={state.discard} border />}
-          </PlayingCardDiscardPile>
-          <PlayingCardStack className='col-span-2'>
+      <SharedZone className='flex justify-center'>
+        <div className='flex flex-col w-fit text-2xl gap-2'>
+          <div className='flex gap-2'>
+            <PlayingCardDeck />
+            <PlayingCardDiscardPile>
+              {state.discard && <PlayingCard card={state.discard} border />}
+            </PlayingCardDiscardPile>
+          </div>
+
+          <PlayingCardStack>
             {state.currentPlayer.playedCards.map((card) => (
               <PlayingCard
                 key={`${card.suit}-${card.rank}`}
@@ -139,6 +149,7 @@ export default function YanivGameView({
             ) : (
               <PlayingCardStack>
                 {Array.from({ length: player.handSize }, (_, index) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: intentional duplicate elements
                   <PlayingCard key={index} card={null} border />
                 ))}
               </PlayingCardStack>
@@ -158,7 +169,7 @@ export default function YanivGameView({
     <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
   ));
 
-  const gameActions = (
+  const helpContent = (
     <div className='flex gap-2'>
       <Dialog>
         <DialogTrigger asChild>
@@ -184,38 +195,10 @@ export default function YanivGameView({
     </div>
   );
 
-  const notificationsContent = (
-    <>
-      {loser ? (
-        <DialogTrigger asChild>
-          <Button size='sm'>View End Screen</Button>
-        </DialogTrigger>
-      ) : state.currentPlayer.isUser ? (
-        <div className='animate-bounce flex gap-2 justify-center'>
-          <span>It's your turn!</span>
-          <div className='flex'>
-            <DrumIcon />
-          </div>
-        </div>
-      ) : (
-        <div className='flex gap-1.5 justify-center items-center'>
-          <span className='text-balance'>
-            {state.currentPlayer.name} is thinking
-          </span>
-          <div className='flex'>
-            <CogIcon className='animate-spin' />
-            <BrainIcon className='animate-pulse' />
-            <CogIcon className='animate-spin' />
-          </div>
-        </div>
-      )}
-    </>
-  );
-
   return (
     <GameLayout
       gameType={GameType.YANIV}
-      actions={gameActions}
+      actions={helpContent}
       className={className}
     >
       {/* end game dialog */}
@@ -264,9 +247,13 @@ export default function YanivGameView({
 
           {/* notifications and reactions */}
           <div className='grid grid-cols-[2.75rem_1fr_auto_1fr_2.75rem] items-center justify-center w-full'>
-            <div className='col-start-3 row-start-2'>
-              {notificationsContent}
-            </div>
+            <Notification
+              className='col-start-3 row-start-2'
+              currentPlayer={state.currentPlayer}
+              gameFinished={!!state.loser}
+              declareYaniv={gameActions.declareYaniv}
+              endTurn={gameActions.endTurn}
+            />
 
             <div className='row-start-1 col-span-full justify-self-end lg:row-start-2 lg:col-start-4 lg:col-span-1 lg:mr-3'>
               {showEmojiReactions && (
@@ -309,5 +296,59 @@ export default function YanivGameView({
         </div>
       </Dialog>
     </GameLayout>
+  );
+}
+
+function Notification({
+  className,
+  gameFinished,
+  currentPlayer,
+  declareYaniv,
+  endTurn,
+}: {
+  className: string;
+  gameFinished: boolean;
+  currentPlayer: GameState['currentPlayer'];
+  declareYaniv: () => void;
+  endTurn: () => void;
+}) {
+  const notificationMessages = {
+    [PlayerStep.DEAL]: 'Click the deck to deal',
+    [PlayerStep.PLAY_CARDS]: 'Select card(s) from your hand',
+    [PlayerStep.PICKUP_CARD]: 'Pickup from either the deck or discard',
+  } as const satisfies Partial<Record<PlayerStep, string>>;
+
+  return (
+    <div className={className}>
+      {gameFinished ? (
+        <DialogTrigger asChild>
+          <Button size='sm'>View End Screen</Button>
+        </DialogTrigger>
+      ) : currentPlayer.isUser ? (
+        currentPlayer.step === PlayerStep.PROCEED ? (
+          <div className='flex gap-2'>
+            <Button onClick={declareYaniv}>
+              <MegaphoneIcon />
+              Declare Yaniv!
+            </Button>
+            <Button onClick={endTurn}>End Turn</Button>
+          </div>
+        ) : (
+          <div className='flex gap-2 justify-center animate-bounce'>
+            <span>{notificationMessages[currentPlayer.step]}</span>
+            <DrumIcon />
+          </div>
+        )
+      ) : (
+        <div className='flex gap-1.5 justify-center items-center'>
+          <span className='text-balance'>{currentPlayer.name} is thinking</span>
+          <div className='flex'>
+            <CogIcon className='animate-spin' />
+            <BrainIcon className='animate-pulse' />
+            <CogIcon className='animate-spin' />
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

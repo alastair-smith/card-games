@@ -54,7 +54,7 @@ export const Docs = () => {
                     {className === 'text-4xl' ? ' (Default)' : ''}
                   </TableCell>
                   <TableCell className='flex gap-3'>
-                    <PlayingCardDeck fontSize={className} />
+                    <PlayingCardDeck className={className} />
                   </TableCell>
                 </TableRow>
               ))}

@@ -1,6 +1,5 @@
 import type { ReactElement, ReactNode } from 'react';
 import {
-  PLAYING_CARD_DEFAULT_SIZE,
   PLAYING_CARD_MIN_PROPORTIONS,
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,

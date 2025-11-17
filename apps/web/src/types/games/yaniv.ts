@@ -14,11 +14,22 @@ export enum GameStage {
 
 export const gameStageSchema = z.enum(GameStage);
 
+export enum PlayerStep {
+  DEAL = 'DEAL',
+  PLAY_CARDS = 'PLAY_CARDS',
+  PICKUP_CARD = 'PICKUP_CARD',
+  PROCEED = 'PROCEED',
+}
+
+export const playerStepSchema = z.enum(PlayerStep);
+
 export type GamePlayer = Player & {
   isUser: boolean;
 };
 
 const validCardSchema = z.union([jokerSchema, standardPlayingCardSchema]);
+
+export type ValidCard = z.infer<typeof validCardSchema>;
 
 export const gameStateSchema = z.object({
   players: z.array(
@@ -39,6 +50,7 @@ export const gameStateSchema = z.object({
     id: userIdSchema,
     name: playerNameSchema,
     isUser: z.boolean(),
+    step: playerStepSchema,
   }),
   stage: gameStageSchema,
   loser: userIdSchema.nullable(),

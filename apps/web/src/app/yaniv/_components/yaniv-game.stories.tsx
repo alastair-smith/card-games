@@ -1,3 +1,4 @@
+import { action } from '@ladle/react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { PlayingCard } from '~/components/ui/playing-card';
@@ -14,8 +15,7 @@ import {
   Suit,
 } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
-import type { ReactionEmoji } from '~/types/game';
-import { GameStage } from '~/types/games/yaniv';
+import { GameStage, PlayerStep } from '~/types/games/yaniv';
 import YanivGameView from './game-view';
 
 const playAreaCards = [
@@ -77,14 +77,68 @@ export function PlayArea() {
   );
 }
 
-export const Turn = () => {
+export const Step1Deal = () => {
   return (
     <YanivGameView
-      pickupCard={(): void => {
-        throw new Error('Function not implemented.');
+      onEmojiClick={action('onEmojiClick')}
+      gameActions={{
+        declareYaniv: action('declareYaniv'),
+        endTurn: action('endTurn'),
+        pickupFromDeck: action('pickupFromDeck'),
+        pickupFromDiscard: action('pickupFromDiscard'),
+        deal: action('deal'),
       }}
-      onEmojiClick={(): void => {
-        throw new Error('Function not implemented.');
+      reactions={{}}
+      state={{
+        players: [
+          {
+            id: '1' as UserId,
+            name: 'Alvin' as PlayerName,
+            scoreHistory: [0],
+            handSize: 0,
+            isUser: false,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Barney' as PlayerName,
+            scoreHistory: [0],
+            handSize: 0,
+            isUser: true,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+        ],
+        discard: {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        },
+        userHand: [],
+        currentPlayer: {
+          id: '2' as UserId,
+          step: PlayerStep.DEAL,
+          playedCards: [],
+          name: 'Jerry' as PlayerName,
+          isUser: true,
+        },
+        stage: GameStage.IN_PROGRESS,
+        loser: null,
+      }}
+    />
+  );
+};
+
+export const Step2PlayCards = () => {
+  return (
+    <YanivGameView
+      onEmojiClick={action('onEmojiClick')}
+      gameActions={{
+        declareYaniv: action('declareYaniv'),
+        endTurn: action('endTurn'),
+        pickupFromDeck: action('pickupFromDeck'),
+        pickupFromDiscard: action('pickupFromDiscard'),
+        deal: action('deal'),
       }}
       reactions={{}}
       state={{
@@ -124,6 +178,217 @@ export const Turn = () => {
         ],
         currentPlayer: {
           id: '2' as UserId,
+          step: PlayerStep.PLAY_CARDS,
+          playedCards: [
+            {
+              suit: Suit.HEARTS,
+              rank: Rank.FOUR,
+            },
+            {
+              suit: Suit.DIAMONDS,
+              rank: Rank.TEN,
+            },
+          ],
+          name: 'Jerry' as PlayerName,
+          isUser: true,
+        },
+        stage: GameStage.IN_PROGRESS,
+        loser: null,
+      }}
+    />
+  );
+};
+
+export const Step3PickupCard = () => {
+  return (
+    <YanivGameView
+      onEmojiClick={action('onEmojiClick')}
+      gameActions={{
+        declareYaniv: action('declareYaniv'),
+        endTurn: action('endTurn'),
+        pickupFromDeck: action('pickupFromDeck'),
+        pickupFromDiscard: action('pickupFromDiscard'),
+        deal: action('deal'),
+      }}
+      reactions={{}}
+      state={{
+        players: [
+          {
+            id: '1' as UserId,
+            name: 'Alvin' as PlayerName,
+            scoreHistory: [0],
+            handSize: 7,
+            isUser: false,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Barney' as PlayerName,
+            scoreHistory: [0],
+            handSize: 2,
+            isUser: true,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+        ],
+        discard: {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        },
+        userHand: [
+          {
+            suit: Suit.CLUBS,
+            rank: Rank.ACE,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.ACE,
+          },
+        ],
+        currentPlayer: {
+          id: '2' as UserId,
+          step: PlayerStep.PICKUP_CARD,
+          playedCards: [
+            {
+              suit: Suit.HEARTS,
+              rank: Rank.FOUR,
+            },
+            {
+              suit: Suit.DIAMONDS,
+              rank: Rank.TEN,
+            },
+          ],
+          name: 'Jerry' as PlayerName,
+          isUser: true,
+        },
+        stage: GameStage.IN_PROGRESS,
+        loser: null,
+      }}
+    />
+  );
+};
+
+export const Step4ProceedNoYaniv = () => {
+  return (
+    <YanivGameView
+      onEmojiClick={action('onEmojiClick')}
+      gameActions={{
+        declareYaniv: action('declareYaniv'),
+        endTurn: action('endTurn'),
+        pickupFromDeck: action('pickupFromDeck'),
+        pickupFromDiscard: action('pickupFromDiscard'),
+        deal: action('deal'),
+      }}
+      reactions={{}}
+      state={{
+        players: [
+          {
+            id: '1' as UserId,
+            name: 'Alvin' as PlayerName,
+            scoreHistory: [0],
+            handSize: 7,
+            isUser: false,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Barney' as PlayerName,
+            scoreHistory: [0],
+            handSize: 2,
+            isUser: true,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+        ],
+        discard: {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        },
+        userHand: [
+          {
+            suit: Suit.CLUBS,
+            rank: Rank.ACE,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.ACE,
+          },
+        ],
+        currentPlayer: {
+          id: '2' as UserId,
+          step: PlayerStep.PROCEED,
+          playedCards: [
+            {
+              suit: Suit.HEARTS,
+              rank: Rank.FOUR,
+            },
+            {
+              suit: Suit.DIAMONDS,
+              rank: Rank.TEN,
+            },
+          ],
+          name: 'Jerry' as PlayerName,
+          isUser: true,
+        },
+        stage: GameStage.IN_PROGRESS,
+        loser: null,
+      }}
+    />
+  );
+};
+
+export const Step4ProceedCanYaniv = () => {
+  return (
+    <YanivGameView
+      onEmojiClick={action('onEmojiClick')}
+      gameActions={{
+        declareYaniv: action('declareYaniv'),
+        endTurn: action('endTurn'),
+        pickupFromDeck: action('pickupFromDeck'),
+        pickupFromDiscard: action('pickupFromDiscard'),
+        deal: action('deal'),
+      }}
+      reactions={{}}
+      state={{
+        players: [
+          {
+            id: '1' as UserId,
+            name: 'Alvin' as PlayerName,
+            scoreHistory: [0],
+            handSize: 7,
+            isUser: false,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Barney' as PlayerName,
+            scoreHistory: [0],
+            handSize: 2,
+            isUser: true,
+            hasCalledYaniv: false,
+            isCurrentTurn: false,
+          },
+        ],
+        discard: {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        },
+        userHand: [
+          {
+            suit: Suit.CLUBS,
+            rank: Rank.ACE,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.ACE,
+          },
+        ],
+        currentPlayer: {
+          id: '2' as UserId,
+          step: PlayerStep.PROCEED,
           playedCards: [
             {
               suit: Suit.HEARTS,
