@@ -35,8 +35,8 @@ export const suitColor = {
   [Suit.HEARTS]: '#ff0000',
   [Suit.DIAMONDS]: '#ff0000',
   [Suit.CLUBS]: '#12212E',
-  [JokerSuit.BLACK]: '#ff0000',
-  [JokerSuit.RED]: '#12212E',
+  [JokerSuit.BLACK]: '#12212E',
+  [JokerSuit.RED]: '#ff0000',
 } as const satisfies Record<Suit | JokerSuit, string>;
 
 /* [---------------- Ranks ----------------] */

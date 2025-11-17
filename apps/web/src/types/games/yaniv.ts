@@ -31,16 +31,25 @@ const validCardSchema = z.union([jokerSchema, standardPlayingCardSchema]);
 
 export type ValidCard = z.infer<typeof validCardSchema>;
 
+const scoreHistorySchema = z.array(
+  z.object({
+    number: z.number(),
+    scoreHalved: z.boolean(),
+    round: z.number(),
+  }),
+);
+
+export type ScoreHistory = z.infer<typeof scoreHistorySchema>;
+
 export const gameStateSchema = z.object({
   players: z.array(
     z.object({
       id: userIdSchema,
       name: playerNameSchema,
-      scoreHistory: z.array(z.number()),
+      scoreHistory: scoreHistorySchema,
       handSize: z.number(),
       isUser: z.boolean(),
       hasCalledYaniv: z.boolean(),
-      isCurrentTurn: z.boolean(),
     }),
   ),
   discard: validCardSchema.nullable(),

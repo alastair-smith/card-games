@@ -96,9 +96,8 @@ export const Step1Deal = () => {
             name: 'Alvin' as PlayerName,
             scoreHistory: [0],
             handSize: 0,
-            isUser: false,
+            isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
           {
             id: '2' as UserId,
@@ -107,19 +106,15 @@ export const Step1Deal = () => {
             handSize: 0,
             isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
         ],
-        discard: {
-          suit: JokerSuit.BLACK,
-          rank: JOKER_RANK,
-        },
+        discard: null,
         userHand: [],
         currentPlayer: {
-          id: '2' as UserId,
+          id: '1' as UserId,
           step: PlayerStep.DEAL,
           playedCards: [],
-          name: 'Jerry' as PlayerName,
+          name: 'Alvin' as PlayerName,
           isUser: true,
         },
         stage: GameStage.IN_PROGRESS,
@@ -146,20 +141,39 @@ export const Step2PlayCards = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory: [
+              {
+                number: 0,
+                scoreHalved: false,
+                round: 1,
+              },
+              {
+                number: 5,
+                scoreHalved: false,
+                round: 2,
+              },
+              {
+                number: 25,
+                scoreHalved: false,
+                round: 3,
+              },
+              {
+                number: 25,
+                scoreHalved: true,
+                round: 4,
+              },
+            ],
             handSize: 7,
-            isUser: false,
+            isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
             scoreHistory: [0],
-            handSize: 2,
-            isUser: true,
+            handSize: 7,
+            isUser: false,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
         ],
         discard: {
@@ -175,21 +189,32 @@ export const Step2PlayCards = () => {
             suit: Suit.HEARTS,
             rank: Rank.ACE,
           },
+          {
+            suit: Suit.DIAMONDS,
+            rank: Rank.ACE,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.SEVEN,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.EIGHT,
+          },
+          {
+            suit: Suit.HEARTS,
+            rank: Rank.NINE,
+          },
+          {
+            suit: Suit.CLUBS,
+            rank: Rank.FOUR,
+          },
         ],
         currentPlayer: {
-          id: '2' as UserId,
+          id: '1' as UserId,
           step: PlayerStep.PLAY_CARDS,
-          playedCards: [
-            {
-              suit: Suit.HEARTS,
-              rank: Rank.FOUR,
-            },
-            {
-              suit: Suit.DIAMONDS,
-              rank: Rank.TEN,
-            },
-          ],
-          name: 'Jerry' as PlayerName,
+          playedCards: [],
+          name: 'Alvin' as PlayerName,
           isUser: true,
         },
         stage: GameStage.IN_PROGRESS,
@@ -220,7 +245,6 @@ export const Step3PickupCard = () => {
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
           {
             id: '2' as UserId,
@@ -229,7 +253,6 @@ export const Step3PickupCard = () => {
             handSize: 2,
             isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
         ],
         discard: {
@@ -290,7 +313,6 @@ export const Step4ProceedNoYaniv = () => {
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
           {
             id: '2' as UserId,
@@ -299,7 +321,6 @@ export const Step4ProceedNoYaniv = () => {
             handSize: 2,
             isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
         ],
         discard: {
@@ -360,7 +381,6 @@ export const Step4ProceedCanYaniv = () => {
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
           {
             id: '2' as UserId,
@@ -369,7 +389,6 @@ export const Step4ProceedCanYaniv = () => {
             handSize: 2,
             isUser: true,
             hasCalledYaniv: false,
-            isCurrentTurn: false,
           },
         ],
         discard: {

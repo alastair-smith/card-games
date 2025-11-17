@@ -42,6 +42,7 @@ import type { UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import { type GameState, PlayerStep } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
+import { PlayerScore } from './player-score';
 // import { HowToContent } from './how-to';
 
 export type YanivGameProps = {
@@ -178,6 +179,11 @@ export default function YanivGameView({
                 ))}
               </PlayingCardStack>
             )}
+
+            <PlayerScore
+              scoreHistory={player.scoreHistory}
+              handSize={player.handSize}
+            />
 
             <PlayAreaPlayerName>
               {player.name}
