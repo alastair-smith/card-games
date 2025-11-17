@@ -107,14 +107,38 @@ export default function YanivGameView({
 
    */
 
+  const deckAction = state.currentPlayer.isUser
+    ? state.currentPlayer.step === PlayerStep.DEAL
+      ? gameActions.deal
+      : state.currentPlayer.step === PlayerStep.PICKUP_CARD
+        ? gameActions.pickupFromDeck
+        : undefined
+    : undefined;
+
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
       <SharedZone className='flex justify-center'>
         <div className='flex flex-col w-fit text-2xl gap-2'>
           <div className='flex gap-2'>
-            <PlayingCardDeck />
+            <Button variant='raw' size='fit' onClick={deckAction}>
+              <span className='sr-only'>deck</span>
+              <PlayingCardDeck />
+            </Button>
             <PlayingCardDiscardPile>
-              {state.discard && <PlayingCard card={state.discard} border />}
+              {state.discard && (
+                <Button
+                  variant='raw'
+                  size='fit'
+                  onClick={
+                    state.currentPlayer.isUser &&
+                    state.currentPlayer.step === PlayerStep.PICKUP_CARD
+                      ? gameActions.pickupFromDiscard
+                      : undefined
+                  }
+                >
+                  <PlayingCard card={state.discard} border />
+                </Button>
+              )}
             </PlayingCardDiscardPile>
           </div>
 

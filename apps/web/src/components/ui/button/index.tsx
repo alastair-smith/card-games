@@ -5,7 +5,7 @@ import * as React from 'react';
 import { cn } from '~/utils/cn';
 
 const buttonVariants = cva(
-  'flex gap-2 items-center justify-center cursor-pointer overflow-hidden border-2 font-semibold active:scale-95 whitespace-nowrap text-sm font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'flex gap-2 items-center justify-center cursor-pointer overflow-hidden active:scale-95 whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none ',
   {
     variants: {
       variant: {
@@ -15,12 +15,15 @@ const buttonVariants = cva(
           'bg-secondary text-light-text disabled:bg-secondary-disabled disabled:text-light-text-disabled disabled:border-light-text-disabled',
         danger:
           'bg-danger text-dark-text disabled:bg-danger-disabled disabled:text-light-text-disabled border-border disabled:border-light-text-disabled',
+        raw: '',
       },
       size: {
-        default: 'h-10 rounded-lg px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10 rounded-md',
+        default:
+          'text-sm font-semibold h-10 border-2 rounded-lg px-4 py-2 [&_svg]:size-4 [&_svg]:shrink-0',
+        sm: 'text-sm font-semibold h-9 border-2 rounded-md px-3 [&_svg]:size-4 [&_svg]:shrink-0',
+        lg: 'text-sm font-semibold h-11 border-2 rounded-md px-8 [&_svg]:size-4 [&_svg]:shrink-0',
+        icon: 'text-sm font-semibold h-10 w-10 border-2 rounded-md [&_svg]:size-4 [&_svg]:shrink-0',
+        fit: 'h-fit w-fit rounded-md',
       },
     },
     defaultVariants: {

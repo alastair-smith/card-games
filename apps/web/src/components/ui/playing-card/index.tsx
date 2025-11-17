@@ -74,6 +74,7 @@ export function PlayingCard({
 }) {
   const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
+    // TODO remove onClick in favour of composition using <Button variant='raw />
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
     // biome-ignore lint/a11y/useKeyWithClickEvents: todo
