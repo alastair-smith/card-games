@@ -156,13 +156,13 @@ export default function YanivGameView({
       </SharedZone>
 
       {state.players.map((player) => (
-        <PlayAreaPlayerZone key={player.id}>
+        <PlayAreaPlayerZone key={player.id} className='w-md'>
           <EmojiRain
             reaction={reactions[player.id]}
             className='flex flex-col items-center gap-1 w-full text-2xl'
           >
             {player.isUser ? (
-              <PlayingCardStack>
+              <PlayingCardStack className=''>
                 {state.userHand.map((card) => (
                   <PlayingCard
                     key={`${card.suit}-${card.rank}`}
@@ -172,7 +172,7 @@ export default function YanivGameView({
                 ))}
               </PlayingCardStack>
             ) : (
-              <PlayingCardStack>
+              <PlayingCardStack className=''>
                 {Array.from({ length: player.handSize }, (_, index) => (
                   // biome-ignore lint/suspicious/noArrayIndexKey: intentional duplicate elements
                   <PlayingCard key={index} card={null} border />
@@ -345,7 +345,7 @@ function Notification({
   const notificationMessages = {
     [PlayerStep.DEAL]: 'Click the deck to deal',
     [PlayerStep.PLAY_CARDS]: 'Select card(s) from your hand',
-    [PlayerStep.PICKUP_CARD]: 'Pickup from either the deck or discard',
+    [PlayerStep.PICKUP_CARD]: 'Draw from the deck or discard pile',
   } as const satisfies Partial<Record<PlayerStep, string>>;
 
   return (

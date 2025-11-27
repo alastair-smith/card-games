@@ -18,6 +18,129 @@ import type { PlayerName, UserId } from '~/types/entities';
 import { GameStage, PlayerStep } from '~/types/games/yaniv';
 import YanivGameView from './game-view';
 
+const scoreHistory = [
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 1,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 2,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 3,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 4,
+  },
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 5,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 6,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 7,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 8,
+  },
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 1,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 2,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 3,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 4,
+  },
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 5,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 6,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 7,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 8,
+  },
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 1,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 2,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 3,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 4,
+  },
+  {
+    number: 0,
+    scoreHalved: false,
+    round: 5,
+  },
+  {
+    number: 5,
+    scoreHalved: false,
+    round: 6,
+  },
+  {
+    number: 25,
+    scoreHalved: false,
+    round: 7,
+  },
+  {
+    number: 25,
+    scoreHalved: true,
+    round: 8,
+  },
+];
+
 const playAreaCards = [
   <PlayingCard key='1' card={{ suit: Suit.HEARTS, rank: Rank.TEN }} border />,
   <>
@@ -94,7 +217,13 @@ export const Step1Deal = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory: [
+              {
+                number: 0,
+                scoreHalved: false,
+                round: 1,
+              },
+            ],
             handSize: 0,
             isUser: true,
             hasCalledYaniv: false,
@@ -102,9 +231,15 @@ export const Step1Deal = () => {
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory: [
+              {
+                number: 0,
+                scoreHalved: false,
+                round: 1,
+              },
+            ],
             handSize: 0,
-            isUser: true,
+            isUser: false,
             hasCalledYaniv: false,
           },
         ],
@@ -141,28 +276,7 @@ export const Step2PlayCards = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [
-              {
-                number: 0,
-                scoreHalved: false,
-                round: 1,
-              },
-              {
-                number: 5,
-                scoreHalved: false,
-                round: 2,
-              },
-              {
-                number: 25,
-                scoreHalved: false,
-                round: 3,
-              },
-              {
-                number: 25,
-                scoreHalved: true,
-                round: 4,
-              },
-            ],
+            scoreHistory,
             handSize: 7,
             isUser: true,
             hasCalledYaniv: false,
@@ -170,7 +284,7 @@ export const Step2PlayCards = () => {
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
@@ -241,17 +355,17 @@ export const Step3PickupCard = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 7,
-            isUser: false,
+            isUser: true,
             hasCalledYaniv: false,
           },
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 2,
-            isUser: true,
+            isUser: false,
             hasCalledYaniv: false,
           },
         ],
@@ -309,7 +423,7 @@ export const Step4ProceedNoYaniv = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
@@ -317,7 +431,7 @@ export const Step4ProceedNoYaniv = () => {
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 2,
             isUser: true,
             hasCalledYaniv: false,
@@ -377,7 +491,7 @@ export const Step4ProceedCanYaniv = () => {
           {
             id: '1' as UserId,
             name: 'Alvin' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 7,
             isUser: false,
             hasCalledYaniv: false,
@@ -385,7 +499,7 @@ export const Step4ProceedCanYaniv = () => {
           {
             id: '2' as UserId,
             name: 'Barney' as PlayerName,
-            scoreHistory: [0],
+            scoreHistory,
             handSize: 2,
             isUser: true,
             hasCalledYaniv: false,
