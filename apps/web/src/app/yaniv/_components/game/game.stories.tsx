@@ -1,4 +1,5 @@
 import { action } from '@ladle/react';
+import { Rank, Suit } from '~/types/cards';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
@@ -21,7 +22,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
-      score: 200,
+      score: 3,
     },
     {
       id: '2' as UserId,
@@ -66,6 +67,37 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       score: 0,
     },
   ],
+  cards: [
+    {
+      suit: Suit.CLUBS,
+      rank: Rank.ACE,
+    },
+    {
+      suit: Suit.HEARTS,
+      rank: Rank.KING,
+    },
+    {
+      suit: Suit.SPADES,
+      rank: Rank.QUEEN,
+    },
+    {
+      suit: Suit.DIAMONDS,
+      rank: Rank.JACK,
+    },
+    {
+      suit: Suit.CLUBS,
+      rank: Rank.TEN,
+    },
+    {
+      suit: Suit.HEARTS,
+      rank: Rank.NINE,
+    },
+    {
+      suit: Suit.SPADES,
+      rank: Rank.EIGHT,
+    },
+  ],
+  userId: '1' as UserId,
 };
 
 const limitPlayers = (numberOfPlayers: number) => {

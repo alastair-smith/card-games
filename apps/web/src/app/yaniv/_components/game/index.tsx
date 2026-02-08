@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import GameLayout from '~/components/layout/game-layout';
 import { Button } from '~/components/ui/button';
 import {
@@ -10,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import type { PlayingCardValue } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import Controls from '../controls';
@@ -44,6 +46,7 @@ const helpContent = (
 );
 
 type GameProps = {
+  cards: PlayingCardValue[];
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
@@ -55,6 +58,7 @@ type GameProps = {
     name: PlayerName;
     score: number;
   }[];
+  userId: UserId;
 };
 
 export default function Game({
@@ -62,7 +66,13 @@ export default function Game({
   onEndTurnClick,
   onYanivClick,
   players,
+  cards,
+  userId,
 }: GameProps) {
+  const userPlayer = useMemo(() => {
+    return players.find((player) => player.id === userId);
+  }, [players, userId]);
+
   return (
     <GameLayout
       actions={helpContent}
@@ -76,7 +86,12 @@ export default function Game({
         onEndTurnClick={onEndTurnClick}
         onYanivClick={onYanivClick}
       />
-      <Hand className='h-48' />
+      <Hand
+        cards={cards}
+        isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
+        isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
+        totalScore={userPlayer?.score ?? 0}
+      />
     </GameLayout>
   );
 }

@@ -2,6 +2,7 @@ import {
   type PictureCardRank,
   type PlayingCardValue,
   pictureCardRank,
+  YANIV_RANK_VALUE,
 } from '~/types/cards';
 
 export const isPictureCard = (
@@ -33,4 +34,10 @@ export const shuffle = <T>(deck: T[]): T[] => {
   }
 
   return newDeck;
+};
+
+export const sumYanivHand = (cards: PlayingCardValue[]) => {
+  return cards.reduce((sum, card) => {
+    return sum + YANIV_RANK_VALUE[card.rank];
+  }, 0);
 };
