@@ -10,11 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import type { PlayerName, UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import Controls from '../controls';
 import Hand from '../hand';
 import PlayArea from '../play-area';
-import ScoreCards from '../scorecards';
+import ScoreCards, { type ScoreCardsProps } from '../scorecards';
 
 const helpContent = (
   <div className='flex gap-2'>
@@ -46,12 +47,21 @@ type GameProps = {
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
+  players: {
+    id: UserId;
+    cardCount: number;
+    isFiftyScoreHalved: boolean;
+    isHundredScoreHalved: boolean;
+    name: PlayerName;
+    score: number;
+  }[];
 };
 
 export default function Game({
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
+  players,
 }: GameProps) {
   return (
     <GameLayout
@@ -59,8 +69,8 @@ export default function Game({
       gameType={GameType.YANIV}
       className='flex flex-col h-dvh w-full overflow-hidden p-4 gap-4'
     >
-      <ScoreCards className='flex-1 min-h-0' />
-      <PlayArea className='h-48' />
+      <ScoreCards className='' players={players} />
+      <PlayArea className='flex-1 min-h-48' />
       <Controls
         onEmojiClick={onEmojiClick}
         onEndTurnClick={onEndTurnClick}
