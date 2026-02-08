@@ -42,7 +42,17 @@ const helpContent = (
   </div>
 );
 
-export default function Game() {
+type GameProps = {
+  onEmojiClick: (emoji: string) => void;
+  onEndTurnClick: () => void;
+  onYanivClick: () => void;
+};
+
+export default function Game({
+  onEmojiClick,
+  onEndTurnClick,
+  onYanivClick,
+}: GameProps) {
   return (
     <GameLayout
       actions={helpContent}
@@ -51,7 +61,11 @@ export default function Game() {
     >
       <ScoreCards className='flex-1 min-h-0' />
       <PlayArea className='h-48' />
-      <Controls className='h-12' />
+      <Controls
+        onEmojiClick={onEmojiClick}
+        onEndTurnClick={onEndTurnClick}
+        onYanivClick={onYanivClick}
+      />
       <Hand className='h-48' />
     </GameLayout>
   );
