@@ -15,6 +15,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   onEmojiClick: action('Emoji clicked'),
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
+  playCards: action('Play cards clicked'),
+  stage: 'picking-cards',
   players: [
     {
       id: '1' as UserId,
@@ -113,3 +115,13 @@ export const FivePlayers = limitPlayers(5);
 export const FourPlayers = limitPlayers(4);
 export const ThreePlayers = limitPlayers(3);
 export const TwoPlayers = limitPlayers(2);
+
+export const OtherPlayerTurn = () => (
+  <Game
+    {...defaultProps}
+    playerTakingTurn={'Paul' as PlayerName}
+    stage='waiting-for-player'
+  />
+);
+
+export const EndTurn = () => <Game {...defaultProps} stage='end-turn' />;

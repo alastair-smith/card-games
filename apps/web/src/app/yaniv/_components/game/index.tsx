@@ -50,6 +50,7 @@ type GameProps = {
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
+  playCards: () => void;
   players: {
     id: UserId;
     cardCount: number;
@@ -58,6 +59,8 @@ type GameProps = {
     name: PlayerName;
     score: number;
   }[];
+  playerTakingTurn?: PlayerName;
+  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
   userId: UserId;
 };
 
@@ -65,7 +68,10 @@ export default function Game({
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
+  playCards,
   players,
+  playerTakingTurn,
+  stage,
   cards,
   userId,
 }: GameProps) {
@@ -85,6 +91,9 @@ export default function Game({
         onEmojiClick={onEmojiClick}
         onEndTurnClick={onEndTurnClick}
         onYanivClick={onYanivClick}
+        playCards={playCards}
+        playerTakingTurn={playerTakingTurn}
+        stage={stage}
       />
       <Hand
         cards={cards}
