@@ -15,7 +15,7 @@ import { GameType } from '~/types/game';
 import Controls from '../controls';
 import Hand from '../hand';
 import PlayArea from '../play-area';
-import ScoreCards, { type ScoreCardsProps } from '../scorecards';
+import ScoreCards from '../scorecards';
 
 const helpContent = (
   <div className='flex gap-2'>
