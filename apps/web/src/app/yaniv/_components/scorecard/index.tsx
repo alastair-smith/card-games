@@ -22,29 +22,31 @@ export default function ScoreCard({
   return (
     <div
       className={cn(
-        'bg-alt-background rounded border-white border p-1 flex flex-col gap-1',
+        'bg-alt-background rounded border-white border flex flex-col',
         className,
       )}
     >
       <div className='flex gap-1 justify-center'>
-        <div className='flex flex-col justify-center items-center border-r px-2'>
-          <span className='text-lg/none font-semibold'>{cardCount}</span>
-          <span className='text-sm'>cards</span>
+        <div className='flex flex-1 flex-col justify-center items-center bg-white/20 px-2 py-1'>
+          <span className='text-lg/none sm:text-2xl/tight font-semibold'>
+            {cardCount}
+          </span>
+          <span className='text-sm sm:text-base'>cards</span>
         </div>
 
-        <div className='flex flex-col gap-1'>
-          <div className='col-span-2 justify-self-center flex gap-1 justify-center text-sm'>
+        <div className='flex flex-col gap-1 px-2 py-1'>
+          <div className='col-span-2 justify-self-center flex gap-1 justify-center text-sm md:text-base'>
             <div>Score: </div>
             <div className='min-w-[3ch] text-center'>{score}</div>
           </div>
 
-          <div className='flex justify-around gap-1'>
-            <div className='flex gap-1 items-center justify-center'>
+          <div className='flex justify-between gap-1.5 sm:gap-2'>
+            <div className='flex gap-0.5 items-center justify-center'>
               <CircleIcon
                 fill={isFiftyScoreHalved ? 'white' : 'transparent'}
                 size={12}
               />
-              <div className='text-xs'>
+              <div className='text-xs sm:text-sm'>
                 50
                 <span className='sr-only'>
                   {' '}
@@ -55,12 +57,12 @@ export default function ScoreCard({
               </div>
             </div>
 
-            <div className='flex gap-1 items-center justify-center'>
+            <div className='flex gap-0.5 items-center justify-center'>
               <CircleIcon
                 fill={isHundredScoreHalved ? 'white' : 'transparent'}
                 size={12}
               />
-              <div className='text-xs'>
+              <div className='text-xs sm:text-sm'>
                 100
                 <span className='sr-only'>
                   {' '}
@@ -74,7 +76,7 @@ export default function ScoreCard({
         </div>
       </div>
 
-      <div className='col-span-2 justify-self-center border border-white rounded w-full text-center text-sm font-semibold'>
+      <div className='col-span-2 justify-self-center border-t w-full text-center text-sm font-semibold'>
         {name}
       </div>
     </div>
