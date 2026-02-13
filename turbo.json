@@ -9,12 +9,20 @@
       "dependsOn": ["^typecheck"],
       "outputs": []
     },
+    "typecheck:watch": {
+      "dependsOn": ["^typecheck:watch"],
+      "outputs": []
+    },
     "dev": {
       "persistent": true,
       "cache": false
     },
     "test": {
       "dependsOn": ["^test"],
+      "outputs": []
+    },
+    "test:watch": {
+      "dependsOn": ["^test:watch"],
       "outputs": []
     }
   }

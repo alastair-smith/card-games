@@ -12,7 +12,9 @@
     "preview": "next build && next start",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "typecheck:watch": "tsc --noEmit --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

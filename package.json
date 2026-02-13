@@ -12,8 +12,10 @@
     "format:fix": "biome check --write",
     "lint": "pnpm format:check && pnpm typecheck",
     "typecheck": "turbo run typecheck",
+    "typecheck:watch": "turbo run typecheck:watch",
     "predev": "pnpm run background-services",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
