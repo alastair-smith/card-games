@@ -143,3 +143,18 @@ export const OtherPlayerTurn = () => (
 );
 
 export const EndTurn = () => <Game {...defaultProps} stage='end-turn' />;
+
+export const BigHandPlayed = () => (
+  <Game
+    {...defaultProps}
+    playedCards={[
+      { suit: Suit.SPADES, rank: Rank.TWO },
+      { suit: Suit.SPADES, rank: Rank.THREE },
+      { suit: Suit.SPADES, rank: Rank.FOUR },
+      { suit: Suit.SPADES, rank: Rank.FIVE },
+      { suit: Suit.SPADES, rank: Rank.SIX },
+      { suit: Suit.SPADES, rank: Rank.SEVEN },
+      { suit: Suit.SPADES, rank: Rank.EIGHT },
+    ]}
+  />
+);

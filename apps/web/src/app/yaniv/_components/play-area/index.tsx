@@ -2,6 +2,7 @@ import { PlayingCard } from '~/components/ui/playing-card';
 import {
   PlayingCardDeck,
   PlayingCardDiscardPile,
+  PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
 import { DiscardPileSingleCard } from '~/components/ui/playing-card-stacks/playing-card-discard-pile.stories';
 import type { PlayingCardValue } from '~/types/cards';
@@ -21,7 +22,7 @@ export default function PlayArea({
   return (
     <div
       className={cn(
-        'flex flex-col gap-6 justify-center items-center',
+        'flex flex-col gap-3 justify-center items-center',
         className,
       )}
     >
@@ -32,11 +33,11 @@ export default function PlayArea({
         </PlayingCardDiscardPile>
       </div>
 
-      <div className='flex gap-2'>
+      <PlayingCardStack>
         {playedCards?.map((card) => (
-          <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
+          <PlayingCard key={`${card.suit}-${card.rank}`} card={card} border />
         ))}
-      </div>
+      </PlayingCardStack>
     </div>
   );
 }

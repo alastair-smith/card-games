@@ -91,9 +91,9 @@ export default function Game({
     >
       <ScoreCards className='' players={players} />
       <PlayArea
-        className='flex-1 min-h-48'
         playedCards={playedCards}
         discardCard={discardCard}
+        className='flex-1'
       />
       <Controls
         onEmojiClick={onEmojiClick}
