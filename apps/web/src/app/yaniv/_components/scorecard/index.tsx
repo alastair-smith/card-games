@@ -30,17 +30,18 @@ export default function ScoreCard({
         <span className='text-2xl font-semibold'>{cardCount}</span>
         <span>cards</span>
       </div>
+
       <div className='grid grid-cols-2 gap-2'>
         <div className='col-span-2 justify-self-center flex flex-wrap gap-1 justify-center'>
           <div>Score: </div>
           <div className='min-w-[3ch] text-center'>{score}</div>
         </div>
+
         <div className='flex flex-col items-center justify-center'>
           <CircleIcon
             fill={isFiftyScoreHalved ? 'white' : 'transparent'}
             size={14}
           />
-
           <div className='text-sm'>
             50
             <span className='sr-only'>
@@ -51,6 +52,7 @@ export default function ScoreCard({
             </span>
           </div>
         </div>
+
         <div className='flex flex-col items-center justify-center'>
           <CircleIcon
             fill={isHundredScoreHalved ? 'white' : 'transparent'}
@@ -67,7 +69,8 @@ export default function ScoreCard({
           </div>
         </div>
       </div>
-      <div className='col-span-2 justify-self-center border border-white rounded w-full text-center text-sm'>
+
+      <div className='col-span-2 justify-self-center border border-white rounded w-full text-center text-sm font-semibold'>
         {name}
       </div>
     </div>
