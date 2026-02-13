@@ -93,7 +93,7 @@ export default function Game({
       <PlayArea
         playedCards={playedCards}
         discardCard={discardCard}
-        className='md:text-2xl sm:text-lg flex-1'
+        className='md:text-2xl sm:text-lg flex-1 max-h-120'
       />
       <Controls
         onEmojiClick={onEmojiClick}
