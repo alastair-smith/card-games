@@ -1,8 +1,9 @@
 import {
   ArrowRightCircleIcon,
-  DrumIcon,
+  BrainIcon,
+  CircleCheckIcon,
+  CogIcon,
   MegaphoneIcon,
-  PlayIcon,
 } from 'lucide-react';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import { Button } from '~/components/ui/button';
@@ -42,14 +43,19 @@ export default function Controls({
       />
 
       {stage === 'waiting-for-player' && (
-        <div className='flex gap-2 justify-center animate-bounce'>
-          <span>Waiting for {playerTakingTurn}...</span>
-          <DrumIcon />
+        <div className='flex gap-2 justify-center col-span-2'>
+          <span className='text-balance'>{playerTakingTurn} is thinking</span>
+          <div className='flex'>
+            <CogIcon className='animate-spin' />
+            <BrainIcon className='animate-pulse' />
+            <CogIcon className='animate-spin' />
+          </div>
         </div>
       )}
 
       {stage === 'picking-cards' && (
-        <Button onClick={playCards} className='col-span-2'>
+        <Button onClick={playCards} className='col-end-[-1]'>
+          <CircleCheckIcon />
           Play Cards
         </Button>
       )}
