@@ -4,7 +4,6 @@ import {
   PlayingCardDiscardPile,
   PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
-import { DiscardPileSingleCard } from '~/components/ui/playing-card-stacks/playing-card-discard-pile.stories';
 import type { PlayingCardValue } from '~/types/cards';
 import { cn } from '~/utils/cn';
 
@@ -12,12 +11,16 @@ type PlayAreaProps = {
   className?: string;
   discardCard: PlayingCardValue | null;
   playedCards: PlayingCardValue[];
+  onDiscardClick?: () => void;
+  onDeckClick?: () => void;
 };
 
 export default function PlayArea({
   className,
   discardCard,
   playedCards,
+  onDiscardClick,
+  onDeckClick,
 }: PlayAreaProps) {
   return (
     <div
@@ -27,9 +30,11 @@ export default function PlayArea({
       )}
     >
       <div className='flex gap-3 items-center'>
-        <PlayingCardDeck />
+        <PlayingCardDeck onClick={onDeckClick} />
         <PlayingCardDiscardPile>
-          {discardCard && <PlayingCard card={discardCard} />}
+          {discardCard && (
+            <PlayingCard card={discardCard} onClick={onDiscardClick} />
+          )}
         </PlayingCardDiscardPile>
       </div>
 

@@ -8,9 +8,10 @@ import { cn } from '~/utils/cn';
 
 type PlayingCardDeckProps = {
   className?: string;
+  onClick?: () => void;
 };
 
-export function PlayingCardDeck({ className }: PlayingCardDeckProps) {
+export function PlayingCardDeck({ className, onClick }: PlayingCardDeckProps) {
   return (
     <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
       <div className='w-fit relative'>
@@ -23,6 +24,7 @@ export function PlayingCardDeck({ className }: PlayingCardDeckProps) {
             card={null}
             cardClassName='border-[0.056em] border-border/50'
             border
+            onClick={onClick}
           />
         </div>
       </div>

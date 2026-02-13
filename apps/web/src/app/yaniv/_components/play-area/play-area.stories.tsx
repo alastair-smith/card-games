@@ -1,3 +1,4 @@
+import { action } from '@ladle/react';
 import { Rank, Suit } from '~/types/cards';
 import PlayArea from '.';
 
@@ -24,6 +25,8 @@ const defaultProps: React.ComponentProps<typeof PlayArea> = {
     suit: Suit.CLUBS,
     rank: Rank.FOUR,
   },
+  onDiscardClick: action('discard clicked'),
+  onDeckClick: action('deck clicked'),
 };
 
 export function AllAreasFull() {
