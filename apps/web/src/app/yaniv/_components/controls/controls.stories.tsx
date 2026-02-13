@@ -10,18 +10,20 @@ const defaultProps: React.ComponentProps<typeof Controls> = {
   onEmojiClick: action('Emoji clicked'),
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
-  playCards: action('Play cards clicked'),
+  onPlayCards: action('Play cards clicked'),
   stage: 'waiting-for-player',
 };
 
 export function WaitForPlayers() {
-  return <Controls {...defaultProps} playerTakingTurn={'Kevin' as PlayerName} />;
+  return (
+    <Controls {...defaultProps} playerTakingTurn={'Kevin' as PlayerName} />
+  );
 }
 
 export function PickCards() {
-  return <Controls {...defaultProps} stage="picking-cards" />;
+  return <Controls {...defaultProps} stage='picking-cards' />;
 }
 
 export function EndTurn() {
-  return <Controls {...defaultProps} stage="end-turn" />;
+  return <Controls {...defaultProps} stage='end-turn' />;
 }

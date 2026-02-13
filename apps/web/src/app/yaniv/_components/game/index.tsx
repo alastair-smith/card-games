@@ -50,7 +50,7 @@ type GameProps = {
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
-  playCards: () => void;
+  onPlayCards: () => void;
   players: {
     id: UserId;
     cardCount: number;
@@ -62,18 +62,22 @@ type GameProps = {
   playerTakingTurn?: PlayerName;
   stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
   userId: UserId;
+  playedCards: PlayingCardValue[];
+  discardCard: PlayingCardValue | null;
 };
 
 export default function Game({
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
-  playCards,
+  onPlayCards,
   players,
   playerTakingTurn,
   stage,
   cards,
   userId,
+  playedCards,
+  discardCard,
 }: GameProps) {
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
@@ -83,15 +87,19 @@ export default function Game({
     <GameLayout
       actions={helpContent}
       gameType={GameType.YANIV}
-      className='flex flex-col h-dvh w-full overflow-hidden p-4 gap-4'
+      className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4'
     >
       <ScoreCards className='' players={players} />
-      <PlayArea className='flex-1 min-h-48' />
+      <PlayArea
+        className='flex-1 min-h-48'
+        playedCards={playedCards}
+        discardCard={discardCard}
+      />
       <Controls
         onEmojiClick={onEmojiClick}
         onEndTurnClick={onEndTurnClick}
         onYanivClick={onYanivClick}
-        playCards={playCards}
+        onPlayCards={onPlayCards}
         playerTakingTurn={playerTakingTurn}
         stage={stage}
       />

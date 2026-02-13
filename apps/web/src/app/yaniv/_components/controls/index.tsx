@@ -16,7 +16,7 @@ type ControlsProps = {
   onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
-  playCards: () => void;
+  onPlayCards: () => void;
   playerTakingTurn?: PlayerName;
   stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
 };
@@ -26,7 +26,7 @@ export default function Controls({
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
-  playCards,
+  onPlayCards,
   playerTakingTurn,
   stage,
 }: ControlsProps) {
@@ -54,7 +54,7 @@ export default function Controls({
       )}
 
       {stage === 'picking-cards' && (
-        <Button onClick={playCards} className='col-end-[-1]'>
+        <Button onClick={onPlayCards} className='col-end-[-1]'>
           <CircleCheckIcon />
           Play Cards
         </Button>

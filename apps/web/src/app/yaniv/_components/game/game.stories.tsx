@@ -15,7 +15,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   onEmojiClick: action('Emoji clicked'),
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
-  playCards: action('Play cards clicked'),
+  onPlayCards: action('Play cards clicked'),
   stage: 'picking-cards',
   players: [
     {
@@ -100,6 +100,24 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
   ],
   userId: '1' as UserId,
+  playedCards: [
+    {
+      suit: Suit.HEARTS,
+      rank: Rank.SEVEN,
+    },
+    {
+      suit: Suit.DIAMONDS,
+      rank: Rank.SEVEN,
+    },
+    {
+      suit: Suit.SPADES,
+      rank: Rank.SEVEN,
+    },
+  ],
+  discardCard: {
+    suit: Suit.CLUBS,
+    rank: Rank.FOUR,
+  },
 };
 
 const limitPlayers = (numberOfPlayers: number) => {
