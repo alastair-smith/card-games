@@ -93,7 +93,7 @@ export default function Game({
       <PlayArea
         playedCards={playedCards}
         discardCard={discardCard}
-        className='flex-1'
+        className='md:text-2xl sm:text-lg flex-1'
       />
       <Controls
         onEmojiClick={onEmojiClick}
@@ -108,6 +108,7 @@ export default function Game({
         isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
         isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
         totalScore={userPlayer?.score ?? 0}
+        className='md:text-2xl sm:text-lg'
       />
     </GameLayout>
   );
