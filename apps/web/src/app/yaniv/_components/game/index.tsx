@@ -58,6 +58,7 @@ type GameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
+    isYanivCalled: boolean;
   }[];
   playerTakingTurn?: PlayerName;
   stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';

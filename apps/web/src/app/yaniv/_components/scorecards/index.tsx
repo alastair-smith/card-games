@@ -11,6 +11,7 @@ type ScoreCardsProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
+    isYanivCalled: boolean;
   }[];
 };
 

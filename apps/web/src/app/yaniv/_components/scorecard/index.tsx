@@ -1,4 +1,4 @@
-import { CircleIcon, CircleStarIcon, SquareIcon } from 'lucide-react';
+import { CircleIcon, MegaphoneIcon } from 'lucide-react';
 import type { PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
@@ -9,6 +9,7 @@ type ScoreCardProps = {
   isHundredScoreHalved: boolean;
   name: PlayerName;
   score: number;
+  isYanivCalled: boolean;
 };
 
 export default function ScoreCard({
@@ -18,11 +19,13 @@ export default function ScoreCard({
   isHundredScoreHalved,
   name,
   score,
+  isYanivCalled,
 }: ScoreCardProps) {
   return (
     <div
       className={cn(
         'bg-alt-background rounded border-white border flex flex-col',
+        isYanivCalled ? 'bg-black' : '',
         className,
       )}
     >
@@ -76,8 +79,19 @@ export default function ScoreCard({
         </div>
       </div>
 
-      <div className='col-span-2 justify-self-center border-t w-full text-center text-sm font-semibold'>
-        {name}
+      <div
+        className={cn(
+          'col-span-2 justify-self-center border-t w-full text-sm font-semibold text-center',
+        )}
+      >
+        {isYanivCalled ? (
+          <div className='animate-marquee whitespace-nowrap'>
+            {name} has called Yaniv!
+            <MegaphoneIcon size={16} className='inline-block ml-1' />
+          </div>
+        ) : (
+          name
+        )}
       </div>
     </div>
   );

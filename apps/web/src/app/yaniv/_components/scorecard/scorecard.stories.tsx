@@ -11,6 +11,7 @@ const defaultProps: React.ComponentProps<typeof Scorecard> = {
   isHundredScoreHalved: false,
   name: 'Kevin' as PlayerName,
   score: 0,
+  isYanivCalled: false,
 };
 
 export const Start = () => <Scorecard {...defaultProps} />;
@@ -58,6 +59,15 @@ export const NoCards = () => (
     {...{
       ...defaultProps,
       cardCount: 0,
+    }}
+  />
+);
+
+export const YanivCalled = () => (
+  <Scorecard
+    {...{
+      ...defaultProps,
+      isYanivCalled: true,
     }}
   />
 );

@@ -14,6 +14,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
       score: 200,
+      isYanivCalled: false,
     },
     {
       id: '2' as UserId,
@@ -22,6 +23,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Janet' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '3' as UserId,
@@ -30,6 +32,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Paul' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '4' as UserId,
@@ -38,6 +41,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Viola' as PlayerName,
       score: 0,
+      isYanivCalled: true,
     },
     {
       id: '5' as UserId,
@@ -46,6 +50,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Duncan' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '6' as UserId,
@@ -54,6 +59,7 @@ const defaultProps: React.ComponentProps<typeof ScoreCards> = {
       isHundredScoreHalved: false,
       name: 'Kathy' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
   ],
 };

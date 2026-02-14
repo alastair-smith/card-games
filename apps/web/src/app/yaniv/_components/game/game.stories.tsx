@@ -25,6 +25,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
       score: 3,
+      isYanivCalled: false,
     },
     {
       id: '2' as UserId,
@@ -35,6 +36,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
         '',
       ) as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '3' as UserId,
@@ -43,6 +45,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Paul' as PlayerName,
       score: 0,
+      isYanivCalled: true,
     },
     {
       id: '4' as UserId,
@@ -51,6 +54,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Viola' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '5' as UserId,
@@ -59,6 +63,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Duncan' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
     {
       id: '6' as UserId,
@@ -67,6 +72,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Kathy' as PlayerName,
       score: 0,
+      isYanivCalled: false,
     },
   ],
   cards: [
