@@ -81,13 +81,29 @@ export default function ScoreCard({
 
       <div
         className={cn(
-          'col-span-2 justify-self-center border-t w-full text-sm font-semibold text-center',
+          'col-span-2 justify-self-center border-t w-full text-sm font-semibold text-center overflow-hidden',
         )}
       >
         {isYanivCalled ? (
-          <div className='animate-marquee whitespace-nowrap'>
-            {name} has called Yaniv!
-            <MegaphoneIcon size={16} className='inline-block ml-1' />
+          <div className='flex w-max'>
+            <div className='animate-marquee whitespace-nowrap px-4'>
+              {name} has called Yaniv!
+              <MegaphoneIcon size={16} className='inline-block ml-1' />
+            </div>
+            <div
+              className='animate-marquee whitespace-nowrap px-4'
+              aria-hidden='true'
+            >
+              {name} has called Yaniv!
+              <MegaphoneIcon size={16} className='inline-block ml-1' />
+            </div>
+            <div
+              className='animate-marquee whitespace-nowrap px-4'
+              aria-hidden='true'
+            >
+              {name} has called Yaniv!
+              <MegaphoneIcon size={16} className='inline-block ml-1' />
+            </div>
           </div>
         ) : (
           name
