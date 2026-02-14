@@ -4,7 +4,7 @@ import { cn } from '~/utils/cn';
 
 type ScoreCardProps = {
   className?: string;
-  cardCount: number;
+  cardCount: number | null;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
   name: PlayerName;
@@ -31,10 +31,14 @@ export default function ScoreCard({
     >
       <div className='flex gap-1 justify-center'>
         <div className='flex flex-1 flex-col justify-center items-center bg-white/20 px-2 py-1'>
-          <span className='text-lg/none sm:text-2xl/tight font-semibold'>
-            {cardCount}
-          </span>
-          <span className='text-sm sm:text-base'>cards</span>
+          {cardCount !== null && (
+            <>
+              <span className='text-lg/none sm:text-2xl/tight font-semibold'>
+                {cardCount}
+              </span>
+              <span className='text-sm sm:text-base'>cards</span>
+            </>
+          )}
         </div>
 
         <div className='flex flex-col gap-1 px-2 py-1'>

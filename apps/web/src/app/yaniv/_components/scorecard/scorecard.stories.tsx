@@ -71,3 +71,12 @@ export const YanivCalled = () => (
     }}
   />
 );
+
+export const NullCards = () => (
+  <Scorecard
+    {...{
+      ...defaultProps,
+      cardCount: null,
+    }}
+  />
+);
