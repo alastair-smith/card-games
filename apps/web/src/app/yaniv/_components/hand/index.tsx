@@ -5,11 +5,12 @@ import { cn } from '~/utils/cn';
 
 type HandProps = {
   className?: string;
-  cards: (PlayingCardValue & { selected: boolean })[];
+  cards: (PlayingCardValue & { selected?: boolean })[];
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
   totalScore: number;
-  onCardClick: (card: PlayingCardValue & { selected: boolean }) => void;
+  onCardClick?: (card: PlayingCardValue & { selected?: boolean }) => void;
+  isHighlighted?: boolean;
 };
 
 export default function Hand({
@@ -19,6 +20,7 @@ export default function Hand({
   isHundredScoreHalved,
   totalScore,
   onCardClick,
+  isHighlighted,
 }: HandProps) {
   const scoreNote =
     !isFiftyScoreHalved && totalScore < 50
@@ -31,7 +33,12 @@ export default function Hand({
 
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
-      <div className='flex flex-row flex-wrap gap-2'>
+      <div
+        className={cn(
+          'flex flex-row flex-wrap gap-2 rounded-lg p-2',
+          isHighlighted ? 'animate-pulse-bg' : '',
+        )}
+      >
         {cards.map((card) => (
           <PlayingCard
             key={`${card.suit}-${card.rank}`}

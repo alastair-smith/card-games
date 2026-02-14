@@ -13,6 +13,7 @@ type PlayAreaProps = {
   playedCards: PlayingCardValue[];
   onDiscardClick?: () => void;
   onDeckClick?: () => void;
+  isHighlighted?: boolean;
 };
 
 export default function PlayArea({
@@ -21,6 +22,7 @@ export default function PlayArea({
   playedCards,
   onDiscardClick,
   onDeckClick,
+  isHighlighted,
 }: PlayAreaProps) {
   return (
     <div
@@ -29,7 +31,12 @@ export default function PlayArea({
         className,
       )}
     >
-      <div className='flex gap-3 items-center'>
+      <div
+        className={cn(
+          'flex gap-3 items-center rounded-lg p-2',
+          isHighlighted ? 'animate-pulse-bg' : '',
+        )}
+      >
         <PlayingCardDeck onClick={onDeckClick} />
         <PlayingCardDiscardPile>
           {discardCard && (
