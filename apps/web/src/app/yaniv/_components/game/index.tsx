@@ -17,6 +17,7 @@ import { GameType } from '~/types/game';
 import Controls from '../controls';
 import Hand from '../hand';
 import PlayArea from '../play-area';
+import { RoundSummary } from '../round-summary';
 import ScoreCards from '../scorecards';
 
 const helpContent = (
@@ -45,7 +46,7 @@ const helpContent = (
   </div>
 );
 
-type GameProps = {
+type BaseGameProps = {
   cards: PlayingCardValue[];
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
@@ -61,11 +62,26 @@ type GameProps = {
     isYanivCalled: boolean;
   }[];
   playerTakingTurn?: PlayerName;
-  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
   userId: UserId;
   playedCards: PlayingCardValue[];
   discardCard: PlayingCardValue | null;
 };
+
+type InProgressGameProps = BaseGameProps & {
+  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
+  roundSummary: null;
+};
+
+type EndOfRoundGameProps = BaseGameProps & {
+  stage: 'end-of-round';
+  roundSummary: {
+    id: UserId;
+    name: PlayerName;
+    score: number;
+  }[];
+};
+
+type GameProps = InProgressGameProps | EndOfRoundGameProps;
 
 export default function Game({
   onEmojiClick,
@@ -79,6 +95,7 @@ export default function Game({
   userId,
   playedCards,
   discardCard,
+  roundSummary,
 }: GameProps) {
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
@@ -91,11 +108,19 @@ export default function Game({
       className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4'
     >
       <ScoreCards className='' players={players} />
-      <PlayArea
-        playedCards={playedCards}
-        discardCard={discardCard}
-        className='md:text-2xl sm:text-lg flex-1 max-h-120'
-      />
+
+      <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
+        {stage === 'end-of-round' ? (
+          <RoundSummary players={roundSummary} />
+        ) : (
+          <PlayArea
+            playedCards={playedCards}
+            discardCard={discardCard}
+            className='md:text-2xl sm:text-lg h-fit'
+          />
+        )}
+      </div>
+
       <Controls
         onEmojiClick={onEmojiClick}
         onEndTurnClick={onEndTurnClick}
@@ -104,6 +129,7 @@ export default function Game({
         playerTakingTurn={playerTakingTurn}
         stage={stage}
       />
+
       <Hand
         cards={cards}
         isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}

@@ -164,3 +164,87 @@ export const BigHandPlayed = () => (
     ]}
   />
 );
+
+export const EndOfRound = () => (
+  <Game
+    {...defaultProps}
+    stage='end-of-round'
+    roundSummary={[
+      { id: '1' as UserId, name: 'Kevin' as PlayerName, score: 3 },
+      { id: '2' as UserId, name: 'W' as PlayerName, score: 0 },
+      { id: '3' as UserId, name: 'Paul' as PlayerName, score: 0 },
+      { id: '4' as UserId, name: 'Viola' as PlayerName, score: 0 },
+      { id: '5' as UserId, name: 'Duncan' as PlayerName, score: 0 },
+      { id: '6' as UserId, name: 'Kathy' as PlayerName, score: 0 },
+    ]}
+  />
+);
+
+export const ExampleRound = () => {
+  const state1 = {
+    ...defaultProps,
+    stage: 'waiting-for-player',
+    playerTakingTurn: '1' as UserId,
+    players: [
+      {
+        id: '1' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: 'Kevin' as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+      {
+        id: '2' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
+          '',
+        ) as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+      {
+        id: '3' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: 'Paul' as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+      {
+        id: '4' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: 'Viola' as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+      {
+        id: '5' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: 'Duncan' as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+      {
+        id: '6' as UserId,
+        cardCount: 7,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        name: 'Kathy' as PlayerName,
+        score: 0,
+        isYanivCalled: false,
+      },
+    ],
+    playedCards: [],
+  };
+
+  return <Game {...state1} />;
+};

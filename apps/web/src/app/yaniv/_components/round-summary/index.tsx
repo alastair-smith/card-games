@@ -20,9 +20,11 @@ type RoundSummaryProps = {
 
 export function RoundSummary({ players }: RoundSummaryProps) {
   return (
-    <Card className='w-fit'>
+    <Card className='w-fit bg-alt-background text-dark-text min-w-80'>
       <Table>
-        <TableCaption>Round Summary</TableCaption>
+        <TableCaption className='text-dark-text-disabled'>
+          Round Summary
+        </TableCaption>
 
         <TableHeader className='font-semibold'>
           <TableRow>
@@ -37,10 +39,7 @@ export function RoundSummary({ players }: RoundSummaryProps) {
               <TableCell className='text-right py-2 md:py-4'>
                 {player.name}
               </TableCell>
-              <TableCell className='py-2 md:py-4'>
-                {player.score}
-                {player.score === 0}
-              </TableCell>
+              <TableCell className='py-2 md:py-4'>{player.score}</TableCell>
             </TableRow>
           ))}
         </TableBody>

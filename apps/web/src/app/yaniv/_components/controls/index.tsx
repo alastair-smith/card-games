@@ -18,7 +18,7 @@ type ControlsProps = {
   onYanivClick: () => void;
   onPlayCards: () => void;
   playerTakingTurn?: PlayerName;
-  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
+  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn' | 'end-of-round';
 };
 
 export default function Controls({
@@ -70,6 +70,13 @@ export default function Controls({
             <ArrowRightCircleIcon />
           </Button>
         </>
+      )}
+
+      {stage === 'end-of-round' && (
+        <Button onClick={onPlayCards} className='col-end-[-1]'>
+          Start new round
+          <ArrowRightCircleIcon />
+        </Button>
       )}
     </div>
   );

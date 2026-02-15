@@ -27,3 +27,7 @@ export function PickCards() {
 export function EndTurn() {
   return <Controls {...defaultProps} stage='end-turn' />;
 }
+
+export function EndOfRound() {
+  return <Controls {...defaultProps} stage='end-of-round' />;
+}

@@ -108,6 +108,13 @@ export default function ScoreCard({
               {name} has called Yaniv!
               <MegaphoneIcon size={16} className='inline-block ml-1' />
             </div>
+            <div
+              className='animate-marquee whitespace-nowrap px-4'
+              aria-hidden='true'
+            >
+              {name} has called Yaniv!
+              <MegaphoneIcon size={16} className='inline-block ml-1' />
+            </div>
           </div>
         ) : (
           name
