@@ -1,51 +1,15 @@
 import { useMemo } from 'react';
 import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
-import { Button } from '~/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
+import { HowTo, HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
-
-const helpContent = (
-  <div className='flex gap-2'>
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size='sm' variant='secondary'>
-          Help
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>How to play Yaniv</DialogTitle>
-          <DialogDescription asChild>
-            {/*<HowToContent />*/}
-            TODO
-          </DialogDescription>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button>Close</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  </div>
-);
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
@@ -105,7 +69,7 @@ export default function Game({
 
   return (
     <GameLayout
-      actions={helpContent}
+      actions={<HowToDialog />}
       gameType={GameType.YANIV}
       className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4'
     >
