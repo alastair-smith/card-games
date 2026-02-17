@@ -1,4 +1,5 @@
 import { action } from '@ladle/react';
+import { useState } from 'react';
 import { Rank, Suit } from '~/types/cards';
 import {
   MAX_NAME_LENGTH,
@@ -180,3 +181,29 @@ export const EndOfRound = () => (
     ]}
   />
 );
+
+export const emojiReaction = () => {
+  const [players, setPlayers] = useState(defaultProps.players);
+
+  return (
+    <Game
+      {...defaultProps}
+      players={players}
+      onEmojiClick={(emoji) => {
+        setPlayers((prevPlayers) =>
+          prevPlayers.map((player, i) =>
+            i === 0
+              ? {
+                  ...player,
+                  emojiReaction: {
+                    emoji: emoji,
+                    id: Date.now(),
+                  },
+                }
+              : player,
+          ),
+        );
+      }}
+    />
+  );
+};

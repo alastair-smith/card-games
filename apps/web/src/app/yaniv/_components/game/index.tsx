@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import { Button } from '~/components/ui/button';
 import {
@@ -12,13 +13,13 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameType } from '~/types/game';
+import { GameType, type ReactionEmoji } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
-import ScoreCards from '../scorecards';
+import ScoreCard from '../scorecard';
 
 const helpContent = (
   <div className='flex gap-2'>
@@ -48,7 +49,7 @@ const helpContent = (
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
-  onEmojiClick: (emoji: string) => void;
+  onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: () => void;
@@ -60,6 +61,7 @@ type BaseGameProps = {
     name: PlayerName;
     score: number;
     isYanivCalled: boolean;
+    emojiReaction?: { emoji: ReactionEmoji; id: number };
   }[];
   playerTakingTurn?: PlayerName;
   userId: UserId;
@@ -107,7 +109,13 @@ export default function Game({
       gameType={GameType.YANIV}
       className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4'
     >
-      <ScoreCards className='' players={players} />
+      <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+        {players.map(({ id, emojiReaction, ...player }) => (
+          <EmojiRain key={id} reaction={emojiReaction}>
+            <ScoreCard {...player} />
+          </EmojiRain>
+        ))}
+      </div>
 
       <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
         {stage === 'end-of-round' ? (
