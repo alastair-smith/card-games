@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
-import { MAX_NAME_LENGTH, type UserId } from '~/types/entities';
+import {
+  MAX_NAME_LENGTH,
+  type PlayerName,
+  type UserId,
+} from '~/types/entities';
 import { GameStage } from '~/types/games/high-card';
 import Game from './game-view';
 
@@ -15,9 +19,24 @@ export const Turn1 = () => {
       }}
       state={{
         players: [
-          { id: '1' as UserId, name: 'Alice', isUser: false, card: null },
-          { id: '2' as UserId, name: 'Bob', isUser: true, card: null },
-          { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+          {
+            id: '1' as UserId,
+            name: 'Alice' as PlayerName,
+            isUser: false,
+            card: null,
+          },
+          {
+            id: '2' as UserId,
+            name: 'Bob' as PlayerName,
+            isUser: true,
+            card: null,
+          },
+          {
+            id: '3' as UserId,
+            name: 'Zoe' as PlayerName,
+            isUser: false,
+            card: null,
+          },
         ],
         winners: [],
         stage: GameStage.IN_PROGRESS,
@@ -40,12 +59,22 @@ export const Turn2 = () => {
         players: [
           {
             id: '1' as UserId,
-            name: 'Alice',
+            name: 'Alice' as PlayerName,
             isUser: false,
             card: { suit: Suit.HEARTS, rank: Rank.THREE },
           },
-          { id: '2' as UserId, name: 'Bob', isUser: true, card: card2 },
-          { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+          {
+            id: '2' as UserId,
+            name: 'Bob' as PlayerName,
+            isUser: true,
+            card: card2,
+          },
+          {
+            id: '3' as UserId,
+            name: 'Zoe' as PlayerName,
+            isUser: false,
+            card: null,
+          },
         ],
         winners: [],
         stage: GameStage.IN_PROGRESS,
@@ -66,17 +95,22 @@ export const Turn3 = () => {
         players: [
           {
             id: '1' as UserId,
-            name: 'Alice',
+            name: 'Alice' as PlayerName,
             isUser: false,
             card: { suit: Suit.HEARTS, rank: Rank.THREE },
           },
           {
             id: '2' as UserId,
-            name: 'Bob',
+            name: 'Bob' as PlayerName,
             isUser: true,
             card: { suit: Suit.SPADES, rank: Rank.QUEEN },
           },
-          { id: '3' as UserId, name: 'Zoe', isUser: false, card: null },
+          {
+            id: '3' as UserId,
+            name: 'Zoe' as PlayerName,
+            isUser: false,
+            card: null,
+          },
         ],
         winners: [],
         stage: GameStage.IN_PROGRESS,
@@ -97,19 +131,19 @@ export const Turn4 = () => {
         players: [
           {
             id: '1' as UserId,
-            name: 'Alice',
+            name: 'Alice' as PlayerName,
             isUser: false,
             card: { suit: Suit.HEARTS, rank: Rank.THREE },
           },
           {
             id: '2' as UserId,
-            name: 'Bob',
+            name: 'Bob' as PlayerName,
             isUser: true,
             card: { suit: Suit.SPADES, rank: Rank.QUEEN },
           },
           {
             id: '3' as UserId,
-            name: 'Zoe',
+            name: 'Zoe' as PlayerName,
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.TEN },
           },
@@ -133,61 +167,61 @@ export const MaxPlayers = () => {
         players: [
           {
             id: '1' as UserId,
-            name: 'Alice',
+            name: 'Alice' as PlayerName,
             isUser: false,
             card: { suit: Suit.HEARTS, rank: Rank.THREE },
           },
           {
             id: '2' as UserId,
-            name: 'Bob',
+            name: 'Bob' as PlayerName,
             isUser: true,
             card: { suit: Suit.SPADES, rank: Rank.QUEEN },
           },
           {
             id: '3' as UserId,
-            name: 'Carl',
+            name: 'Carl' as PlayerName,
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.TEN },
           },
           {
             id: '4' as UserId,
-            name: 'Denise',
+            name: 'Denise' as PlayerName,
             isUser: false,
             card: { suit: Suit.HEARTS, rank: Rank.TEN },
           },
           {
             id: '5' as UserId,
-            name: 'Ella',
+            name: 'Ella' as PlayerName,
             isUser: false,
             card: { suit: Suit.SPADES, rank: Rank.FOUR },
           },
           {
             id: '6' as UserId,
-            name: 'Freddie',
+            name: 'Freddie' as PlayerName,
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.THREE },
           },
           {
             id: '7' as UserId,
-            name: 'Georgina',
+            name: 'Georgina' as PlayerName,
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.SEVEN },
           },
           {
             id: '8' as UserId,
-            name: 'Henry',
+            name: 'Henry' as PlayerName,
             isUser: false,
             card: { suit: Suit.SPADES, rank: Rank.JACK },
           },
           {
             id: '9' as UserId,
-            name: 'Ian',
+            name: 'Ian' as PlayerName,
             isUser: false,
             card: { suit: Suit.DIAMONDS, rank: Rank.ACE },
           },
           {
             id: '10' as UserId,
-            name: 'John',
+            name: 'John' as PlayerName,
             isUser: false,
             card: { suit: Suit.CLUBS, rank: Rank.NINE },
           },
@@ -200,7 +234,9 @@ export const MaxPlayers = () => {
 };
 
 export const LongName = () => {
-  const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join('');
+  const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
+    '',
+  ) as PlayerName;
   return (
     <Game
       onEmojiClick={() => {}}

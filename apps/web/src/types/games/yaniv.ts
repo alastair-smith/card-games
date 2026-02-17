@@ -1,10 +1,39 @@
 import { z } from 'zod';
 import type { Player } from '~/server/data/high-card';
+import {
+  JOKER_RANK,
+  jokerSchema,
+  Rank,
+  standardPlayingCardSchema,
+} from '~/types/cards';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
-import { jokerSchema, standardPlayingCardSchema } from '../cards';
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
+
+export const yanivPlayingCardSchema = z.union([
+  jokerSchema,
+  standardPlayingCardSchema,
+]);
+
+export type YanivPlayingCard = z.infer<typeof yanivPlayingCardSchema>;
+
+export const YANIV_RANK_VALUE = {
+  [Rank.TWO]: 2,
+  [Rank.THREE]: 3,
+  [Rank.FOUR]: 4,
+  [Rank.FIVE]: 5,
+  [Rank.SIX]: 6,
+  [Rank.SEVEN]: 7,
+  [Rank.EIGHT]: 8,
+  [Rank.NINE]: 9,
+  [Rank.TEN]: 10,
+  [Rank.JACK]: 10,
+  [Rank.QUEEN]: 10,
+  [Rank.KING]: 10,
+  [Rank.ACE]: 1,
+  [JOKER_RANK]: 0,
+} as const satisfies Record<YanivPlayingCard['rank'], number>;
 
 export enum GameStage {
   LOBBY = 'LOBBY',

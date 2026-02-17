@@ -11,9 +11,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-import type { PlayingCardValue } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
 import PlayArea from '../play-area';
@@ -47,7 +47,7 @@ const helpContent = (
 );
 
 type BaseGameProps = {
-  cards: PlayingCardValue[];
+  cards: YanivPlayingCard[];
   onEmojiClick: (emoji: string) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
@@ -63,8 +63,8 @@ type BaseGameProps = {
   }[];
   playerTakingTurn?: PlayerName;
   userId: UserId;
-  playedCards: PlayingCardValue[];
-  discardCard: PlayingCardValue | null;
+  playedCards: YanivPlayingCard[];
+  discardCard: YanivPlayingCard | null;
 };
 
 type InProgressGameProps = BaseGameProps & {

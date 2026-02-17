@@ -1,15 +1,15 @@
 import { PlayingCard } from '~/components/ui/playing-card';
-import type { PlayingCardValue } from '~/types/cards';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
 type HandProps = {
   className?: string;
-  cards: (PlayingCardValue & { selected?: boolean })[];
+  cards: (YanivPlayingCard & { selected?: boolean })[];
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
   totalScore: number;
-  onCardClick?: (card: PlayingCardValue & { selected?: boolean }) => void;
+  onCardClick?: (card: YanivPlayingCard & { selected?: boolean }) => void;
   isHighlighted?: boolean;
 };
 

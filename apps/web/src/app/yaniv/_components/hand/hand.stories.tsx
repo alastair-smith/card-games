@@ -1,6 +1,7 @@
 import { action } from '@ladle/react';
 import { useState } from 'react';
 import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Hand from '.';
 
 export default {
@@ -55,7 +56,7 @@ export const FullHand = () => {
   const [cards, setCards] = useState(defaultProps.cards);
 
   const updateCard = (
-    cardToUpdate: PlayingCardValue & { selected: boolean },
+    cardToUpdate: YanivPlayingCard & { selected?: boolean },
   ) => {
     setCards(
       cards.map((card) =>

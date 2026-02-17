@@ -124,6 +124,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     suit: Suit.CLUBS,
     rank: Rank.FOUR,
   },
+  roundSummary: null,
 };
 
 const limitPlayers = (numberOfPlayers: number) => {
@@ -179,72 +180,3 @@ export const EndOfRound = () => (
     ]}
   />
 );
-
-export const ExampleRound = () => {
-  const state1 = {
-    ...defaultProps,
-    stage: 'waiting-for-player',
-    playerTakingTurn: '1' as UserId,
-    players: [
-      {
-        id: '1' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: 'Kevin' as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-      {
-        id: '2' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
-          '',
-        ) as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-      {
-        id: '3' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: 'Paul' as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-      {
-        id: '4' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: 'Viola' as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-      {
-        id: '5' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: 'Duncan' as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-      {
-        id: '6' as UserId,
-        cardCount: 7,
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        name: 'Kathy' as PlayerName,
-        score: 0,
-        isYanivCalled: false,
-      },
-    ],
-    playedCards: [],
-  };
-
-  return <Game {...state1} />;
-};

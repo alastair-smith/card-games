@@ -20,7 +20,7 @@ export const MinPlayersNotMet = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: false,
         isUser: true,
         isHost: true,
@@ -42,14 +42,14 @@ export const MinPlayersMet = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: false,
         isUser: false,
         isHost: true,
       },
       {
         id: '2' as UserId,
-        name: 'Roz',
+        name: 'Roz' as PlayerName,
         isReady: false,
         isUser: true,
         isHost: false,
@@ -71,21 +71,21 @@ export const MaxPlayers = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: false,
         isUser: false,
         isHost: true,
       },
       {
         id: '2' as UserId,
-        name: 'Roz',
+        name: 'Roz' as PlayerName,
         isReady: false,
         isUser: true,
         isHost: false,
       },
       {
         id: '3' as UserId,
-        name: 'Niles',
+        name: 'Niles' as PlayerName,
         isReady: false,
         isUser: false,
         isHost: false,
@@ -107,21 +107,21 @@ export const SomePlayersReady = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: true,
         isUser: true,
         isHost: true,
       },
       {
         id: '2' as UserId,
-        name: 'Roz',
+        name: 'Roz' as PlayerName,
         isReady: true,
         isUser: false,
         isHost: false,
       },
       {
         id: '3' as UserId,
-        name: 'Niles',
+        name: 'Niles' as PlayerName,
         isReady: false,
         isUser: false,
         isHost: false,
@@ -143,21 +143,21 @@ export const AllPlayersReadyIsHost = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: true,
         isUser: true,
         isHost: true,
       },
       {
         id: '2' as UserId,
-        name: 'Roz',
+        name: 'Roz' as PlayerName,
         isReady: true,
         isUser: false,
         isHost: false,
       },
       {
         id: '3' as UserId,
-        name: 'Niles',
+        name: 'Niles' as PlayerName,
         isReady: true,
         isUser: false,
         isHost: false,
@@ -179,21 +179,21 @@ export const AllPlayersReadyIsNotHost = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: true,
         isUser: false,
         isHost: true,
       },
       {
         id: '2' as UserId,
-        name: 'Roz',
+        name: 'Roz' as PlayerName,
         isReady: true,
         isUser: true,
         isHost: false,
       },
       {
         id: '3' as UserId,
-        name: 'Niles',
+        name: 'Niles' as PlayerName,
         isReady: true,
         isUser: false,
         isHost: false,
@@ -215,7 +215,7 @@ export const AllPlayersReadyButNotEnough = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: true,
         isUser: true,
         isHost: true,
@@ -237,7 +237,7 @@ export const NameError = () => (
     players={[
       {
         id: '1' as UserId,
-        name: 'Frank',
+        name: 'Frank' as PlayerName,
         isReady: true,
         isUser: true,
         isHost: true,

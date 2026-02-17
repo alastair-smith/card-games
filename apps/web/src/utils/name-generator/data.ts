@@ -1,4 +1,6 @@
-export const FALLBACK_PLAYER_NAME = 'Unknown';
+import type { PlayerName } from '~/types/entities';
+
+export const FALLBACK_PLAYER_NAME = 'Unknown' as PlayerName;
 
 export const PLAYER_NAMES = [
   'Ace',
@@ -80,4 +82,4 @@ export const PLAYER_NAMES = [
   'Wager',
   'Whisty',
   'Wildly',
-] as const;
+] as PlayerName[];
