@@ -21,10 +21,13 @@ import {
   TableRow,
 } from '~/components/ui/table';
 import { JOKER_RANK, JokerSuit, Rank, Suit, suitColor } from '~/types/cards';
+import { cn } from '~/utils/cn';
 
-export function HowTo() {
+export function HowTo({ className }: { className?: string }) {
   return (
-    <div className='flex flex-col gap-1 items-start justify-start'>
+    <div
+      className={cn('flex flex-col gap-1 items-start justify-start', className)}
+    >
       <p>
         Yaniv is a 'Draw-and-Discard' 'Shedding' card game. The winner is the
         player with the lowest score at the end of the game.
@@ -139,7 +142,7 @@ export function HowTo() {
         player with the lowest score wins!
       </p>
 
-      <Table>
+      <Table rootClassName='overflow-x-clip'>
         <TableCaption>Card values in Yaniv</TableCaption>
         <TableHeader>
           <TableRow>
@@ -242,13 +245,13 @@ export function HowToDialog() {
           Help
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-4xl'>
+      <DialogContent className='sm:max-w-4xl max-h-[90dvh] grid-rows-[auto_1fr_auto] overflow-hidden'>
         <DialogHeader>
           <DialogTitle>How to play Yaniv</DialogTitle>
         </DialogHeader>
-        <DialogDescription asChild>
-          <HowTo />
-        </DialogDescription>
+
+        <HowTo className='overflow-y-auto min-h-0' />
+
         <DialogFooter>
           <DialogClose asChild>
             <Button>Close</Button>
