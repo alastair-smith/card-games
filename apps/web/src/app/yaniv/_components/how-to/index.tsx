@@ -49,21 +49,31 @@ export function HowTo({ className }: { className?: string }) {
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.hearts }}
             >
-              7<HeartIcon fill={suitColor.hearts} size={12} />
+              7
+              <HeartIcon
+                fill={suitColor.hearts}
+                size={12}
+                aria-label='hearts'
+              />
             </span>
             ,{' '}
             <span
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.clubs }}
             >
-              7<ClubIcon fill={suitColor.clubs} size={12} />
+              7<ClubIcon fill={suitColor.clubs} size={12} aria-label='clubs' />
             </span>
             ,{' '}
             <span
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.diamonds }}
             >
-              7<DiamondIcon fill={suitColor.diamonds} size={12} />
+              7
+              <DiamondIcon
+                fill={suitColor.diamonds}
+                size={12}
+                aria-label='diamonds'
+              />
             </span>
             .
           </li>
@@ -73,14 +83,24 @@ export function HowTo({ className }: { className?: string }) {
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.hearts }}
             >
-              8<HeartIcon fill={suitColor.hearts} size={12} />
+              8
+              <HeartIcon
+                fill={suitColor.hearts}
+                size={12}
+                aria-label='hearts'
+              />
             </span>
             ,{' '}
             <span
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.hearts }}
             >
-              9<HeartIcon fill={suitColor.hearts} size={12} />
+              9
+              <HeartIcon
+                fill={suitColor.hearts}
+                size={12}
+                aria-label='hearts'
+              />
             </span>
             ,{' '}
             <span
@@ -88,7 +108,11 @@ export function HowTo({ className }: { className?: string }) {
               style={{ color: suitColor.hearts }}
             >
               10
-              <HeartIcon fill={suitColor.hearts} size={12} />
+              <HeartIcon
+                fill={suitColor.hearts}
+                size={12}
+                aria-label='hearts'
+              />
             </span>
             .
           </li>
@@ -99,14 +123,19 @@ export function HowTo({ className }: { className?: string }) {
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.diamonds }}
             >
-              4<DiamondIcon fill={suitColor.diamonds} size={12} />
+              4
+              <DiamondIcon
+                fill={suitColor.diamonds}
+                size={12}
+                aria-label='diamonds'
+              />
             </span>{' '}
             and you have a{' '}
             <span
               className='inline-flex items-center gap-0.5 font-bold'
               style={{ color: suitColor.clubs }}
             >
-              4<ClubIcon fill={suitColor.clubs} size={12} />
+              4<ClubIcon fill={suitColor.clubs} size={12} aria-label='clubs' />
             </span>{' '}
             in your hand then you can play it without picking up a card.
           </li>
