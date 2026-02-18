@@ -6,7 +6,7 @@ import { GameType, type ReactionEmoji } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
-import { HowTo, HowToDialog } from '../how-to';
+import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
