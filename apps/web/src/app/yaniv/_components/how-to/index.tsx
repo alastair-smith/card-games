@@ -1,10 +1,9 @@
-import { ClubIcon, DiamondIcon, HeartIcon, SpadeIcon } from 'lucide-react';
+import { ClubIcon, DiamondIcon, HeartIcon } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -26,23 +25,19 @@ import { cn } from '~/utils/cn';
 export function HowTo({ className }: { className?: string }) {
   return (
     <div
-      className={cn('flex flex-col gap-1 items-start justify-start', className)}
+      className={cn('flex flex-col gap-2 items-start justify-start', className)}
     >
       <p>
-        Yaniv is a 'Draw-and-Discard' 'Shedding' card game. The winner is the
-        player with the lowest score at the end of the game.
-      </p>
-      <p>
-        The game is played in rounds where each player is dealt a hand of cards
-        and take turns playing cards.
+        Yaniv is a game of playing and drawing cards where the player with the
+        lowest score wins.
       </p>
 
-      <h3 className='text-base font-semibold'>Taking a turn</h3>
+      <h3 className='text-base/relaxed font-semibold'>Taking a turn</h3>
       <ul className='list-disc list-inside'>
         <li>Play any card from your hand.</li>
         <li>
-          Pick up from the top of the deck or discard pile{' '}
-          <span className='italic'>after</span> playing.
+          After playing a card, pick up from the top of either the deck or
+          discard pile.
         </li>
         <li>
           You can play multiple of the same rank card from your hand at once.
@@ -67,24 +62,7 @@ export function HowTo({ className }: { className?: string }) {
           >
             7<DiamondIcon fill={suitColor.diamonds} size={12} />
           </span>
-        </li>
-        <li>
-          If you play the same rank card as the top of the discard then you
-          don't need to pickup. For example if the top of the discard pile is{' '}
-          <span
-            className='inline-flex items-center gap-0.5 font-bold'
-            style={{ color: suitColor.hearts }}
-          >
-            4<DiamondIcon fill={suitColor.hearts} size={12} />
-          </span>{' '}
-          and you have a{' '}
-          <span
-            className='inline-flex items-center gap-0.5 font-bold'
-            style={{ color: suitColor.clubs }}
-          >
-            4<ClubIcon fill={suitColor.clubs} size={12} />
-          </span>{' '}
-          in your hand then you can play it and skip the pickup step.
+          .
         </li>
         <li>
           You can also play a straight flush of 3 cards or more at once. For
@@ -110,10 +88,29 @@ export function HowTo({ className }: { className?: string }) {
             10
             <HeartIcon fill={suitColor.hearts} size={12} />
           </span>
+          .
+        </li>
+        <li>
+          If you play the same rank card as the top of the discard then you
+          don't need to pickup. For example if the top of the discard pile is{' '}
+          <span
+            className='inline-flex items-center gap-0.5 font-bold'
+            style={{ color: suitColor.diamonds }}
+          >
+            4<DiamondIcon fill={suitColor.diamonds} size={12} />
+          </span>{' '}
+          and you have a{' '}
+          <span
+            className='inline-flex items-center gap-0.5 font-bold'
+            style={{ color: suitColor.clubs }}
+          >
+            4<ClubIcon fill={suitColor.clubs} size={12} />
+          </span>{' '}
+          in your hand then you can play it without picking up a card.
         </li>
       </ul>
 
-      <h3 className='text-base font-semibold'>Calling Yaniv</h3>
+      <h3 className='text-base/relaxed font-semibold'>Calling Yaniv</h3>
       <p>
         At the end of your turn if your hand total is 7 or less then you can
         call 'Yaniv' to signal the end of the round.
@@ -123,15 +120,15 @@ export function HowTo({ className }: { className?: string }) {
         'Yaniv' at the end of their turns if their hand totals are 7 or less.
       </p>
 
-      <h3 className='text-base font-semibold'>Scoring</h3>
+      <h3 className='text-base/relaxed font-semibold'>Scoring</h3>
       <p>
-        Players hand scores are the sum of their card values. This is added to
+        Players' hand scores are the sum of their card values. This is added to
         their total score.
       </p>
       <p>
-        If a player called 'Yaniv' then they get a score of 0. Unless another
-        player called 'Yaniv' and had a smaller hand total, then they get 25
-        points.
+        If a player called 'Yaniv' then they get a score of 0. If any other
+        players also call 'Yaniv' then only the player with the lowest hand
+        score gets 0, the rest get 25.
       </p>
       <p>
         The first time a player's total score reaches exactly 50 points it is
