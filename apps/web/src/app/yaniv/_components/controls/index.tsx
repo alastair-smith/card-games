@@ -18,7 +18,12 @@ type ControlsProps = {
   onYanivClick: () => void;
   onPlayCards: () => void;
   playerTakingTurn?: PlayerName;
-  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn' | 'end-of-round';
+  stage:
+    | 'waiting-for-player'
+    | 'picking-cards'
+    | 'drawing-cards'
+    | 'end-turn'
+    | 'end-of-round';
 };
 
 export default function Controls({

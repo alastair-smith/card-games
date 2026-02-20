@@ -26,15 +26,15 @@ type BaseGameProps = {
     score: number;
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji; id: number };
+    isPlayersTurn?: boolean;
   }[];
-  playerTakingTurn?: PlayerName;
   userId: UserId;
   playedCards: YanivPlayingCard[];
   discardCard: YanivPlayingCard | null;
 };
 
 type InProgressGameProps = BaseGameProps & {
-  stage: 'waiting-for-player' | 'picking-cards' | 'end-turn';
+  stage: 'waiting-for-player' | 'picking-cards' | 'drawing-cards' | 'end-turn';
   roundSummary: null;
 };
 
@@ -55,7 +55,6 @@ export default function Game({
   onYanivClick,
   onPlayCards,
   players,
-  playerTakingTurn,
   stage,
   cards,
   userId,
@@ -66,6 +65,15 @@ export default function Game({
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
   }, [players, userId]);
+
+  const playerTakingTurn = useMemo(() => {
+    return players.find((player) => player.isPlayersTurn) ?? players[0];
+  }, [players]);
+
+  const isUserTakingTurn =
+    !!userPlayer &&
+    !!playerTakingTurn &&
+    userPlayer?.id === playerTakingTurn?.id;
 
   return (
     <GameLayout
@@ -88,6 +96,7 @@ export default function Game({
           <PlayArea
             playedCards={playedCards}
             discardCard={discardCard}
+            isHighlighted={stage === 'drawing-cards' && isUserTakingTurn}
             className='md:text-2xl sm:text-lg h-fit'
           />
         )}
@@ -98,16 +107,17 @@ export default function Game({
         onEndTurnClick={onEndTurnClick}
         onYanivClick={onYanivClick}
         onPlayCards={onPlayCards}
-        playerTakingTurn={playerTakingTurn}
+        playerTakingTurn={playerTakingTurn?.name}
         stage={stage}
       />
 
       <Hand
+        className='md:text-2xl sm:text-lg'
         cards={cards}
         isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
         isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
         totalScore={userPlayer?.score ?? 0}
-        className='md:text-2xl sm:text-lg'
+        isHighlighted={stage === 'picking-cards' && isUserTakingTurn}
       />
     </GameLayout>
   );

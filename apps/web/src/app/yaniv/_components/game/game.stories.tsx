@@ -27,6 +27,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Kevin' as PlayerName,
       score: 3,
       isYanivCalled: false,
+      isPlayersTurn: true,
     },
     {
       id: '2' as UserId,
@@ -145,9 +146,21 @@ export const TwoPlayers = limitPlayers(2);
 export const OtherPlayerTurn = () => (
   <Game
     {...defaultProps}
-    playerTakingTurn={'Paul' as PlayerName}
+    players={defaultProps.players.map((player, i) => {
+      if (i === 0) {
+        return { ...player, isPlayersTurn: false };
+      }
+      if (i === 2) {
+        return { ...player, isPlayersTurn: true };
+      }
+      return player;
+    })}
     stage='waiting-for-player'
   />
+);
+
+export const PickupCard = () => (
+  <Game {...defaultProps} stage='drawing-cards' />
 );
 
 export const EndTurn = () => <Game {...defaultProps} stage='end-turn' />;
