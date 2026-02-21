@@ -30,7 +30,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
   const winningScore = winners[0]?.score;
   const userWins = winners.some((player) => player.id === userId);
 
-  const handleShare = (event: Event) => {
+  const handleShare = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     const share = async () => {

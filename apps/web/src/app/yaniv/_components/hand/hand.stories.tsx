@@ -1,6 +1,6 @@
 import { action } from '@ladle/react';
 import { useState } from 'react';
-import { type PlayingCardValue, Rank, Suit } from '~/types/cards';
+import { Rank, Suit } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import Hand from '.';
 

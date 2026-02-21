@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { Player } from '~/server/data/high-card';
 import {
   JOKER_RANK,
   jokerSchema,
