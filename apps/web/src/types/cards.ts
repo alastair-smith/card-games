@@ -105,7 +105,7 @@ export const numberCardRank = [
 
 export type NumberCardRank = (typeof numberCardRank)[number];
 
-export const JOKER_RANK = 'JOKER';
+export const JOKER_RANK = 'JOKER' as const;
 
 export const jokerRankSchema = z.literal(JOKER_RANK);
 
