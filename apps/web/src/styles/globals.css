@@ -2,7 +2,6 @@
 
 @import "tailwindcss";
 
-/* biome-ignore lint/suspicious/noUnknownAtRules: used by tailwind, currently biome doesn't have tailwind rules */
 @theme {
   /* base colors */
   --color-white: hsl(290 25% 95%);
