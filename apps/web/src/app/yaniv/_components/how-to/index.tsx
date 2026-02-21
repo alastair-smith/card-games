@@ -290,7 +290,7 @@ export function HowToDialog() {
           Help
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-4xl max-h-[90dvh] grid-rows-[auto_1fr_auto] overflow-hidden'>
+      <DialogContent className='sm:max-w-4xl max-h-[90dvh] grid-rows-[auto_1fr_auto] overflow-hidden' aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>How to play Yaniv</DialogTitle>
         </DialogHeader>
