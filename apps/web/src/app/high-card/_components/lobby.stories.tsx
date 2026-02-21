@@ -1,5 +1,5 @@
 import { action } from '@ladle/react';
-import type { UserId } from '~/types/entities';
+import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import Lobby, { type LobbyProps } from './lobby.view';
 
@@ -19,7 +19,7 @@ export const HighCardLobby = () => {
       players={[
         {
           id: '1' as UserId,
-          name: 'Frank',
+          name: 'Frank' as PlayerName,
           isReady: false,
           isUser: true,
           isHost: true,

@@ -1,6 +1,5 @@
 import type { ReactElement, ReactNode } from 'react';
 import {
-  PLAYING_CARD_DEFAULT_SIZE,
   PLAYING_CARD_MIN_PROPORTIONS,
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,
@@ -9,21 +8,12 @@ import { cn } from '~/utils/cn';
 
 type PlayingCardDeckProps = {
   className?: string;
-  fontSize?: `text-${string}`;
+  onClick?: () => void;
 };
 
-export function PlayingCardDeck({
-  className,
-  fontSize = PLAYING_CARD_DEFAULT_SIZE,
-}: PlayingCardDeckProps) {
+export function PlayingCardDeck({ className, onClick }: PlayingCardDeckProps) {
   return (
-    <div
-      className={cn(
-        'relative w-fit pt-[0.56em] pr-[0.44em]',
-        fontSize,
-        className,
-      )}
-    >
+    <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
       <div className='w-fit relative'>
         <div className='w-[3.75em] h-[5.25em] absolute inset-0 translate-x-[0.32em] -translate-y-[0.44em] rounded-[0.22em] border-[0.056em] border-border/50 bg-white' />
         <div className='w-[3.75em] h-[5.25em] absolute inset-0 translate-x-[0.24em] -translate-y-[0.33em] rounded-[0.22em] border-[0.056em] border-border/50 bg-white' />
@@ -32,9 +22,9 @@ export function PlayingCardDeck({
         <div className='w-[3.75em] h-[5.25em] relative'>
           <PlayingCard
             card={null}
-            className={fontSize}
             cardClassName='border-[0.056em] border-border/50'
             border
+            onClick={onClick}
           />
         </div>
       </div>
@@ -52,7 +42,7 @@ type PlayingCardStack = {
 
 export function PlayingCardStack({ className, children }: PlayingCardStack) {
   return (
-    <div className={cn(PLAYING_CARD_DEFAULT_SIZE, className)}>
+    <div className={className}>
       <div
         className={cn(
           PLAYING_CARD_MIN_PROPORTIONS,
@@ -81,7 +71,6 @@ export function PlayingCardDiscardPile({
     <div
       className={cn(
         'border-[0.056em] rounded-[0.22em] bg-white/20 border-white p-2 w-fit',
-        PLAYING_CARD_DEFAULT_SIZE,
         className,
       )}
     >

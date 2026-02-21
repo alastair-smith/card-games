@@ -91,15 +91,18 @@ export default function HighCardGameView({
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
       {state.players.map((player) => (
-        <EmojiRain key={player.id} reaction={reactions[player.id]}>
-          <PlayAreaPlayerZone>
+        <PlayAreaPlayerZone key={player.id}>
+          <EmojiRain
+            reaction={reactions[player.id]}
+            className='flex flex-col items-center gap-1 w-full'
+          >
             <PlayingCard card={player.card} className='text-2xl' />
             <PlayAreaPlayerName>
               {player.name}
               {player.isUser && ' (You)'}
             </PlayAreaPlayerName>
-          </PlayAreaPlayerZone>
-        </EmojiRain>
+          </EmojiRain>
+        </PlayAreaPlayerZone>
       ))}
     </PlayAreaRoot>
   );

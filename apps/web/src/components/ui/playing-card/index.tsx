@@ -74,6 +74,7 @@ export function PlayingCard({
 }) {
   const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
   return (
+    // TODO remove onClick in favour of composition using <Button variant='raw />
     // TODO fix accessibility issues
     // biome-ignore lint/a11y/noStaticElementInteractions: todo
     // biome-ignore lint/a11y/useKeyWithClickEvents: todo
@@ -82,7 +83,6 @@ export function PlayingCard({
       style={style}
       className={cn(
         PLAYING_CARD_PROPORTIONS,
-        PLAYING_CARD_DEFAULT_SIZE,
         onClick ? 'cursor-pointer' : '',
         selected && '-translate-y-12',
         className,

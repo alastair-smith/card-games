@@ -1,6 +1,11 @@
 import { PlayingCard } from '~/components/ui/playing-card';
 import { RANKS, Suit } from '~/types/cards';
-import { PlayAreaPlayerName, PlayAreaPlayerZone, PlayAreaRoot } from '.';
+import {
+  PlayAreaPlayerName,
+  PlayAreaPlayerZone,
+  PlayAreaRoot,
+  SharedZone,
+} from '.';
 
 const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
   const players = Array.from({ length: zoneCount }, (_, i) => {
@@ -13,6 +18,10 @@ const RenderZones = ({ zoneCount }: { zoneCount: number }) => {
   return (
     <div className='w-full h-[70vh] flex justify-center items-center'>
       <PlayAreaRoot className='h-full w-full'>
+        <SharedZone>
+          <div className='w-full h-full bg-red'>hello world</div>
+        </SharedZone>
+
         {players.map((player) => (
           <PlayAreaPlayerZone key={player.name}>
             <PlayingCard

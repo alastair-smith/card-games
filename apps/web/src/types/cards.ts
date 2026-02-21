@@ -35,8 +35,8 @@ export const suitColor = {
   [Suit.HEARTS]: '#ff0000',
   [Suit.DIAMONDS]: '#ff0000',
   [Suit.CLUBS]: '#12212E',
-  [JokerSuit.BLACK]: '#ff0000',
-  [JokerSuit.RED]: '#12212E',
+  [JokerSuit.BLACK]: '#12212E',
+  [JokerSuit.RED]: '#ff0000',
 } as const satisfies Record<Suit | JokerSuit, string>;
 
 /* [---------------- Ranks ----------------] */
@@ -105,7 +105,7 @@ export const numberCardRank = [
 
 export type NumberCardRank = (typeof numberCardRank)[number];
 
-export const JOKER_RANK = 'JOKER';
+export const JOKER_RANK = 'JOKER' as const;
 
 export const jokerRankSchema = z.literal(JOKER_RANK);
 
@@ -155,12 +155,12 @@ export const standardPlayingCardSchema = z.object({
 
 export type StandardPlayingCard = z.infer<typeof standardPlayingCardSchema>;
 
-export const JokerSchema = z.object({
+export const jokerSchema = z.object({
   suit: jokerSuitSchema,
   rank: jokerRankSchema,
 });
 
-export type Joker = z.infer<typeof JokerSchema>;
+export type Joker = z.infer<typeof jokerSchema>;
 
 export const zeroPlayingCardSchema = z.object({
   suit: suitSchema,
@@ -171,7 +171,7 @@ export type ZeroPlayingCard = z.infer<typeof zeroPlayingCardSchema>;
 
 export const playingCardValueSchema = z.union([
   standardPlayingCardSchema,
-  JokerSchema,
+  jokerSchema,
   zeroPlayingCardSchema,
 ]);
 

@@ -36,6 +36,7 @@ export const dataLayer = <
   getKey: (keyArgs: P) => string,
   schema: T,
 ) => ({
+  /** Verify record exists */
   exists: async (keyArgs: P) => {
     const key = getKey(keyArgs);
     const exists = await redis.exists(key);

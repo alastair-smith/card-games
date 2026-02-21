@@ -57,40 +57,40 @@ const games: GameProps[] = [
     disabled: true,
     preloadImage: true,
   },
-  {
-    gameType: GameType.BLOB,
-    image: '/images/blob.square.png',
-    players: {
-      min: 3,
-      max: 6,
-    },
-    length: GameLength.long,
-    summary: 'Predict how many hands you will win in this trumps-like game.',
-    disabled: true,
-  },
-  {
-    gameType: GameType.SHITHEAD,
-    image: '/images/shithead.square.png',
-    players: {
-      min: 2,
-      max: 4,
-    },
-    length: GameLength.short,
-    summary:
-      'Play your cards and hope you have enough magic to avoid picking up too many.',
-    disabled: true,
-  },
-  {
-    gameType: GameType.FOOL,
-    image: '/images/fool.square.png',
-    players: {
-      min: 2,
-      max: 4,
-    },
-    length: GameLength.medium,
-    summary: 'Gang up on other players to rid yourself of all your cards.',
-    disabled: true,
-  },
+  // {
+  //   gameType: GameType.BLOB,
+  //   image: '/images/blob.square.png',
+  //   players: {
+  //     min: 3,
+  //     max: 6,
+  //   },
+  //   length: GameLength.long,
+  //   summary: 'Predict how many hands you will win in this trumps-like game.',
+  //   disabled: true,
+  // },
+  // {
+  //   gameType: GameType.SHITHEAD,
+  //   image: '/images/shithead.square.png',
+  //   players: {
+  //     min: 2,
+  //     max: 4,
+  //   },
+  //   length: GameLength.short,
+  //   summary:
+  //     'Play your cards and hope you have enough magic to avoid picking up too many.',
+  //   disabled: true,
+  // },
+  // {
+  //   gameType: GameType.FOOL,
+  //   image: '/images/fool.square.png',
+  //   players: {
+  //     min: 2,
+  //     max: 4,
+  //   },
+  //   length: GameLength.medium,
+  //   summary: 'Gang up on other players to rid yourself of all your cards.',
+  //   disabled: true,
+  // },
 ];
 
 function Game({

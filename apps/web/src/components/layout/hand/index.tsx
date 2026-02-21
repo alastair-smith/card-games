@@ -13,7 +13,7 @@ export function HorizontalHand({ children, className }: HandProps) {
         <h2 className='text-base'>Your hand</h2>
         <div
           className={cn(
-            'flex w-full items-center justify-center pt-3',
+            'flex w-full items-center justify-center pt-3 gap-3',
             MIN_CARD_HEIGHT,
           )}
         >
@@ -29,7 +29,7 @@ export function VerticalHand({ children, className }: HandProps) {
   return (
     <div
       className={cn(
-        'flex flex-wrap w-full h-full items-center justify-center pt-3',
+        'flex flex-wrap w-full h-full items-center justify-center pt-3 gap-3',
         className,
       )}
     >

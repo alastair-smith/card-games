@@ -47,6 +47,8 @@
   --animate-accoridion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-rain: rain 10s linear forwards;
+  --animate-pulse-bg: pulse-bg 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-marquee: marquee 10s linear infinite;
 
   @keyframes accordion-down {
     from {
@@ -72,6 +74,25 @@
     }
     100% {
       transform: translateY(100vh);
+    }
+  }
+
+  @keyframes pulse-bg {
+    0%,
+    100% {
+      background-color: var(--color-dark-green);
+    }
+    50% {
+      background-color: hsl(from var(--color-yellow) h s 60% / 50%);
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
     }
   }
 }

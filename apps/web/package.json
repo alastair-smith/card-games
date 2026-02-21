@@ -12,7 +12,9 @@
     "preview": "next build && next start",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "typecheck:watch": "tsc --noEmit --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -55,12 +57,16 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.13",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.18.1",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.1.4",
     "concurrently": "^9.2.1",
+    "jsdom": "^28.1.0",
     "pino-pretty": "^13.1.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.13",
