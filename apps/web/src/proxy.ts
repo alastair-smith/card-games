@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { authMiddleware } from './middleware/auth';
 import { cspHeaderMiddleware } from './middleware/csp-header';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const cspHeaderBeforeContext = await cspHeaderMiddleware.before({}, request);
   const authBeforeContext = await authMiddleware.before(
     cspHeaderBeforeContext,
