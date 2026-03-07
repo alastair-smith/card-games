@@ -9,6 +9,7 @@ import { playerNameSchema, userIdSchema } from '~/types/entities';
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
+export const HAND_SIZE = 7;
 
 export const yanivPlayingCardSchema = z.union([
   jokerSchema,
