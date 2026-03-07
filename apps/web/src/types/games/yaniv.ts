@@ -69,4 +69,5 @@ export const gameStateSchema = z.object({
   currentPlayerId: userIdSchema,
   gameStep: gameStepSchema,
   winners: z.array(userIdSchema),
+  hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
 });
