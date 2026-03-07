@@ -38,6 +38,18 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+# Pull requests
+
+When raising a PR:
+- Use the GitHub MCP tool (`mcp__github__create_pull_request`) to create the PR
+- Use the template at `.github/pull_request_template.md` for the PR body
+- Title should be short and descriptive (under 70 characters), prefixed with one emoji:
+  - 🚀 feature
+  - 🔧 chore / maintenance
+  - 📚 documentation only
+  - 🐛 bug fix
+- Example: `🚀 Create Yaniv components`
+
 # Code conventions
 
 ## Imports
