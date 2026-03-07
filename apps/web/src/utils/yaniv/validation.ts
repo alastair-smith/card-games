@@ -35,11 +35,11 @@ function isConsecutiveRun(
 
 export function isValidYanivPlay(
   cards: YanivPlayingCard[],
-  topDiscard?: YanivPlayingCard,
+  topDiscard: YanivPlayingCard,
 ): PlayResult {
   if (cards.length === 0) return { isValid: false, isPickupRequired: false };
 
-  if (topDiscard && isStandardCard(topDiscard)) {
+  if (isStandardCard(topDiscard)) {
     // Matching-rank play (no pickup required): every played card is a standard
     // card sharing the same rank as the top discard.
     if (
