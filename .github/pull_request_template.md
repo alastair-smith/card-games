@@ -4,4 +4,4 @@
 
 ### Details
 
-<!-- Any additional details required -->
+<!-- Optional: any additional details required. Omit this section if not needed. -->
