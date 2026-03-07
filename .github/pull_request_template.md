@@ -1,7 +1,7 @@
 ### Summary
 
-<!-- Short sentence or bullet points detailing the changes --->
+<!-- Explain what this change does and why, in plain language. What problem does it solve or what feature does it enable? -->
 
 ### Details
 
-<!-- Optional: any additional details required. Omit this section if not needed. -->
+<!-- Optional: technical details for reviewers. Omit this section if not needed. -->
