@@ -52,6 +52,8 @@ When raising a PR:
   - 🐛 bug fix
 - Example: `🚀 Create Yaniv components`
 
+- If the PR was driven by a ticket file (e.g. `tickets/02-some-ticket.md`), delete that file as part of the same branch before raising the PR.
+
 # Code conventions
 
 ## Imports
