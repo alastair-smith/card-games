@@ -16,8 +16,9 @@ export function isValidYanivPlay(cards: YanivPlayingCard[]): boolean {
   if (!firstCard) return true;
   if (nonJokers.every((card) => card.rank === firstCard.rank)) return true;
 
-  // Run check: all non-jokers share the same suit, no duplicate ranks,
-  // and the gaps between sorted ranks can be filled by jokers
+  // Run check: runs need at least 3 cards, all non-jokers share the same suit,
+  // no duplicate ranks, and the gaps between sorted ranks can be filled by jokers
+  if (cards.length < 3) return false;
   if (!nonJokers.every((card) => card.suit === firstCard.suit)) return false;
 
   const sortedRanks = nonJokers

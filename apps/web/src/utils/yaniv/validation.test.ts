@@ -145,6 +145,15 @@ describe('isValidYanivPlay', () => {
       ).toBe(true);
     });
 
+    test('rejects a run of only 2 cards', () => {
+      expect(
+        isValidYanivPlay([
+          { suit: Suit.CLUBS, rank: Rank.FOUR },
+          { suit: Suit.CLUBS, rank: Rank.FIVE },
+        ]),
+      ).toBe(false);
+    });
+
     test('rejects mixed suits', () => {
       expect(
         isValidYanivPlay([
