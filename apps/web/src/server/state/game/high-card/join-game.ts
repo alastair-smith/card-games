@@ -15,7 +15,6 @@ const enrichPlayerData = (
       ...player,
       isHost: player.id === host,
       isUser: player.id === userId,
-      name: player.name,
     };
   });
 };
