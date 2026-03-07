@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import { GameStage, GameStep, HAND_SIZE } from '~/types/games/yaniv';
+import {
+  GameStage,
+  GameStep,
+  HAND_SIZE,
+  MAX_PLAYERS,
+} from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetYanivState = vi.fn();
@@ -81,6 +86,20 @@ describe('startGame', () => {
     mockGetLobby.mockResolvedValue(makeLobby([HOST]));
     await expect(startGame(CODE, HOST)).rejects.toThrow(
       'Not enough players to start the game',
+    );
+  });
+
+  test('throws when more than the maximum number of players', async () => {
+    const tooManyPlayers = [
+      HOST,
+      ...Array.from(
+        { length: MAX_PLAYERS },
+        (_, i) => `user-${i + 2}` as UserId,
+      ),
+    ];
+    mockGetLobby.mockResolvedValue(makeLobby(tooManyPlayers));
+    await expect(startGame(CODE, HOST)).rejects.toThrow(
+      'Too many players to start the game',
     );
   });
 

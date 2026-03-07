@@ -10,6 +10,7 @@ import {
   GameStage,
   GameStep,
   HAND_SIZE,
+  MAX_PLAYERS,
   MIN_PLAYERS,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
@@ -22,6 +23,8 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     throw new Error('Only the host can start the game');
   if (lobby.players.length < MIN_PLAYERS)
     throw new Error('Not enough players to start the game');
+  if (lobby.players.length > MAX_PLAYERS)
+    throw new Error('Too many players to start the game');
 
   const players = lobby.players.map((player) => ({
     id: player.id,
