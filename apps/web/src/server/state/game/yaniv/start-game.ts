@@ -9,6 +9,7 @@ import type { GameCode } from '~/types/game';
 import {
   GameStage,
   GameStep,
+  HAND_SIZE,
   MIN_PLAYERS,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
@@ -22,9 +23,9 @@ export const startGame = async (code: GameCode, userId: UserId) => {
   if (lobby.players.length < MIN_PLAYERS)
     throw new Error('Not enough players to start the game');
 
-  const players = lobby.players.map((p) => ({
-    id: p.id,
-    name: p.name,
+  const players = lobby.players.map((player) => ({
+    id: player.id,
+    name: player.name,
     cardCount: 0,
     score: 0,
     isFiftyScoreHalved: false,
@@ -39,14 +40,9 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     YanivPlayingCard[]
   >;
   for (const player of players) {
-    const cards: YanivPlayingCard[] = [];
-    for (let i = 0; i < 5; i++) {
-      const card = await yanivDeck.drawCard(code);
-      if (!card) throw new Error('Deck ran out of cards during deal');
-      cards.push(card);
-    }
+    const cards = await yanivDeck.drawCards(code, HAND_SIZE);
     hands[player.id] = cards;
-    player.cardCount = 5;
+    player.cardCount = cards.length;
   }
 
   await yanivDiscard.createDiscard(code);

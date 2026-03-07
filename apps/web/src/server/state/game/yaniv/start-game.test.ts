@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import { GameStage, GameStep } from '~/types/games/yaniv';
+import { GameStage, GameStep, HAND_SIZE } from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetYanivState = vi.fn();
 const mockPublishYanivState = vi.fn();
 const mockCreateDeck = vi.fn();
 const mockDrawCard = vi.fn();
+const mockDrawCards = vi.fn();
 const mockCreateDiscard = vi.fn();
 const mockPushDiscard = vi.fn();
 
@@ -17,7 +18,11 @@ vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: mockPublishYanivState,
 }));
 vi.mock('~/server/data/deck', () => ({
-  yanivDeck: { createDeck: mockCreateDeck, drawCard: mockDrawCard },
+  yanivDeck: {
+    createDeck: mockCreateDeck,
+    drawCard: mockDrawCard,
+    drawCards: mockDrawCards,
+  },
 }));
 vi.mock('~/server/data/discard', () => ({
   yanivDiscard: {
@@ -50,8 +55,12 @@ describe('startGame', () => {
     mockCreateDeck.mockResolvedValue(undefined);
     mockCreateDiscard.mockResolvedValue(undefined);
     mockPushDiscard.mockResolvedValue(undefined);
-    // Return a unique card per call
     let callCount = 0;
+    mockDrawCards.mockImplementation((_code: GameCode, count: number) =>
+      Promise.resolve(
+        Array.from({ length: count }, () => makeCard(callCount++)),
+      ),
+    );
     mockDrawCard.mockImplementation(() =>
       Promise.resolve(makeCard(callCount++)),
     );
@@ -86,23 +95,23 @@ describe('startGame', () => {
     expect(deck).toHaveLength(54);
   });
 
-  test('deals exactly 5 cards to each player', async () => {
+  test('deals a full hand to each player', async () => {
     await startGame(CODE, HOST);
     expect(mockSetYanivState).toHaveBeenCalledOnce();
     const state = mockSetYanivState.mock.calls[0]?.[1] as {
       hands: Record<string, unknown[]>;
     };
-    expect(state.hands[HOST]).toHaveLength(5);
-    expect(state.hands[PLAYER_2]).toHaveLength(5);
+    expect(state.hands[HOST]).toHaveLength(HAND_SIZE);
+    expect(state.hands[PLAYER_2]).toHaveLength(HAND_SIZE);
   });
 
-  test('sets card count to 5 for each player', async () => {
+  test('sets card count to the hand size for each player', async () => {
     await startGame(CODE, HOST);
     const state = mockSetYanivState.mock.calls[0]?.[1] as {
       players: Array<{ cardCount: number }>;
     };
     for (const player of state.players) {
-      expect(player.cardCount).toBe(5);
+      expect(player.cardCount).toBe(HAND_SIZE);
     }
   });
 
@@ -113,9 +122,11 @@ describe('startGame', () => {
     expect(mockPushDiscard).toHaveBeenCalledWith(CODE, expect.anything());
   });
 
-  test('draws 11 cards total (5 per player × 2 + 1 for discard)', async () => {
+  test('draws one hand per player via drawCards and one card for the discard', async () => {
     await startGame(CODE, HOST);
-    expect(mockDrawCard).toHaveBeenCalledTimes(11);
+    expect(mockDrawCards).toHaveBeenCalledTimes(2);
+    expect(mockDrawCards).toHaveBeenCalledWith(CODE, HAND_SIZE);
+    expect(mockDrawCard).toHaveBeenCalledOnce();
   });
 
   test('persists state as IN_PROGRESS with PLAY_CARDS step', async () => {
