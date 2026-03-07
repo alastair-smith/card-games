@@ -1,6 +1,8 @@
 import { JOKER_RANK, type StandardPlayingCard } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 
+const MINIMUM_RUN_SIZE = 3;
+
 const isStandardCard = (card: YanivPlayingCard): card is StandardPlayingCard =>
   card.rank !== JOKER_RANK;
 
@@ -18,7 +20,7 @@ export function isValidYanivPlay(cards: YanivPlayingCard[]): boolean {
 
   // Run check: runs need at least 3 cards, all non-jokers share the same suit,
   // no duplicate ranks, and the gaps between sorted ranks can be filled by jokers
-  if (cards.length < 3) return false;
+  if (cards.length < MINIMUM_RUN_SIZE) return false;
   if (!nonJokers.every((card) => card.suit === firstCard.suit)) return false;
 
   const sortedRanks = nonJokers
