@@ -39,17 +39,13 @@ export function isValidYanivPlay(
 ): PlayResult {
   if (cards.length === 0) return { isValid: false, isPickupRequired: false };
 
-  if (isStandardCard(topDiscard)) {
-    // Matching-rank play (no pickup required): every played card is a standard
-    // card sharing the same rank as the top discard.
-    if (
-      cards.every(
-        (card) => isStandardCard(card) && card.rank === topDiscard.rank,
-      )
-    ) {
-      return { isValid: true, isPickupRequired: false };
-    }
+  // Matching-rank play (no pickup required): every played card shares the same
+  // rank as the top discard. Works for standard cards and joker-on-joker.
+  if (cards.every((card) => card.rank === topDiscard.rank)) {
+    return { isValid: true, isPickupRequired: false };
+  }
 
+  if (isStandardCard(topDiscard)) {
     // Run extension (pickup required): 2+ played cards whose standard-card
     // members all share the top discard's suit, and the combined group forms a
     // consecutive run (jokers in the played cards may fill gaps).

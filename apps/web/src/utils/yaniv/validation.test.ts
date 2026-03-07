@@ -2,13 +2,15 @@ import { describe, expect, test } from 'vitest';
 import { JOKER_RANK, JokerSuit, Rank, Suit } from '~/types/cards';
 import { isValidYanivPlay } from './validation';
 
-// A joker top discard bypasses both discard-aware checks, so standalone tests
-// can use it without affecting the expected results.
-const jokerDiscard = { suit: JokerSuit.BLACK, rank: JOKER_RANK };
+// A standard card that won't trigger either discard-aware check for any of the
+// standalone test hands: rank ACE (1) is low enough that no run in the test
+// suite bridges the gap from ACE♣ to the played cards, and no test hand
+// consists entirely of aces.
+const neutralDiscard = { suit: Suit.CLUBS, rank: Rank.ACE };
 
 describe('isValidYanivPlay', () => {
   test('rejects empty array', () => {
-    expect(isValidYanivPlay([], jokerDiscard)).toEqual({
+    expect(isValidYanivPlay([], neutralDiscard)).toEqual({
       isValid: false,
       isPickupRequired: false,
     });
@@ -19,7 +21,7 @@ describe('isValidYanivPlay', () => {
       expect(
         isValidYanivPlay(
           [{ suit: Suit.SPADES, rank: Rank.FIVE }],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -28,7 +30,7 @@ describe('isValidYanivPlay', () => {
       expect(
         isValidYanivPlay(
           [{ suit: Suit.HEARTS, rank: Rank.KING }],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -37,7 +39,7 @@ describe('isValidYanivPlay', () => {
       expect(
         isValidYanivPlay(
           [{ suit: JokerSuit.RED, rank: JOKER_RANK }],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -51,7 +53,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.SPADES, rank: Rank.SEVEN },
             { suit: Suit.HEARTS, rank: Rank.SEVEN },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -64,7 +66,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.HEARTS, rank: Rank.TEN },
             { suit: Suit.CLUBS, rank: Rank.TEN },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -78,7 +80,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.CLUBS, rank: Rank.THREE },
             { suit: Suit.DIAMONDS, rank: Rank.THREE },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -90,7 +92,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.SPADES, rank: Rank.JACK },
             { suit: JokerSuit.RED, rank: JOKER_RANK },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -102,7 +104,7 @@ describe('isValidYanivPlay', () => {
             { suit: JokerSuit.RED, rank: JOKER_RANK },
             { suit: JokerSuit.BLACK, rank: JOKER_RANK },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -117,7 +119,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.HEARTS, rank: Rank.FIVE },
             { suit: Suit.HEARTS, rank: Rank.SIX },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -131,7 +133,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.CLUBS, rank: Rank.TEN },
             { suit: Suit.CLUBS, rank: Rank.JACK },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -146,7 +148,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.DIAMONDS, rank: Rank.FIVE },
             { suit: Suit.DIAMONDS, rank: Rank.SIX },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -163,7 +165,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.SPADES, rank: Rank.TEN },
             { suit: Suit.SPADES, rank: Rank.JACK },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -176,7 +178,7 @@ describe('isValidYanivPlay', () => {
             { suit: JokerSuit.RED, rank: JOKER_RANK },
             { suit: Suit.SPADES, rank: Rank.FIVE },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -189,7 +191,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.HEARTS, rank: Rank.SEVEN },
             { suit: JokerSuit.RED, rank: JOKER_RANK },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
@@ -201,7 +203,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.CLUBS, rank: Rank.FOUR },
             { suit: Suit.CLUBS, rank: Rank.FIVE },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: false, isPickupRequired: false });
     });
@@ -214,7 +216,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.HEARTS, rank: Rank.FIVE },
             { suit: Suit.SPADES, rank: Rank.SIX },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: false, isPickupRequired: false });
     });
@@ -228,7 +230,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.HEARTS, rank: Rank.ACE },
             { suit: Suit.HEARTS, rank: Rank.TWO },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: false, isPickupRequired: false });
     });
@@ -242,7 +244,7 @@ describe('isValidYanivPlay', () => {
             { suit: JokerSuit.BLACK, rank: JOKER_RANK },
             { suit: Suit.CLUBS, rank: Rank.SEVEN },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: false, isPickupRequired: false });
     });
@@ -256,7 +258,7 @@ describe('isValidYanivPlay', () => {
             { suit: Suit.SPADES, rank: Rank.TWO },
             { suit: Suit.SPADES, rank: Rank.NINE },
           ],
-          jokerDiscard,
+          neutralDiscard,
         ),
       ).toEqual({ isValid: false, isPickupRequired: false });
     });
@@ -311,13 +313,22 @@ describe('isValidYanivPlay', () => {
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
 
-    test('joker as top discard does not trigger matching-rank rule', () => {
+    test('standard card played on joker top discard does not trigger matching-rank rule', () => {
       expect(
         isValidYanivPlay([{ suit: Suit.SPADES, rank: Rank.SEVEN }], {
           suit: JokerSuit.RED,
           rank: JOKER_RANK,
         }),
       ).toEqual({ isValid: true, isPickupRequired: true });
+    });
+
+    test('joker played on joker top discard requires no pickup', () => {
+      expect(
+        isValidYanivPlay([{ suit: JokerSuit.RED, rank: JOKER_RANK }], {
+          suit: JokerSuit.BLACK,
+          rank: JOKER_RANK,
+        }),
+      ).toEqual({ isValid: true, isPickupRequired: false });
     });
   });
 
