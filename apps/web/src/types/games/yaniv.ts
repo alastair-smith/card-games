@@ -62,12 +62,22 @@ const playerSchema = z.object({
   isYanivCalled: z.boolean(),
 });
 
-export const gameStateSchema = z.object({
-  players: z.array(playerSchema),
-  playedCards: z.array(yanivPlayingCardSchema),
-  gameStage: gameStageSchema,
-  currentPlayerId: userIdSchema,
-  gameStep: gameStepSchema,
-  winners: z.array(userIdSchema),
-  hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
-});
+export const gameStateSchema = z.discriminatedUnion('gameStage', [
+  z.object({
+    gameStage: z.literal(GameStage.LOBBY),
+  }),
+  z.object({
+    gameStage: z.literal(GameStage.IN_PROGRESS),
+    gameStep: gameStepSchema,
+    players: z.array(playerSchema),
+    playedCards: z.array(yanivPlayingCardSchema),
+    currentPlayerId: userIdSchema,
+    hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
+  }),
+  z.object({
+    gameStage: z.literal(GameStage.FINISHED),
+    players: z.array(playerSchema),
+    winners: z.array(userIdSchema),
+    hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
+  }),
+]);
