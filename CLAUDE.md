@@ -43,6 +43,8 @@ pnpm test
 When raising a PR:
 - Use the GitHub MCP tool (`mcp__github__create_pull_request`) to create the PR
 - Use the template at `.github/pull_request_template.md` for the PR body
+- Strip all HTML comments (`<!-- ... -->`) from the PR body before submitting — the PR description is used as the squash-merge commit message
+- Omit the Details section entirely if there is nothing to add
 - Title should be short and descriptive (under 70 characters), prefixed with one emoji:
   - 🚀 feature
   - 🔧 chore / maintenance
