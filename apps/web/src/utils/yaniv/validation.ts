@@ -59,17 +59,18 @@ function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
 
   const result: YanivPlayingCard[] = [];
   let jokerIdx = 0;
+  let prevNonJoker: StandardPlayingCard | undefined;
 
   for (const curr of nonJokers) {
-    const last = result.findLast(isStandardCard);
-    if (last !== undefined) {
-      const gap = runRank(curr.rank) - runRank(last.rank) - 1;
+    if (prevNonJoker !== undefined) {
+      const gap = runRank(curr.rank) - runRank(prevNonJoker.rank) - 1;
       for (let g = 0; g < gap && jokerIdx < jokers.length; g++, jokerIdx++) {
         const joker = jokers[jokerIdx];
         if (joker !== undefined) result.push(joker);
       }
     }
     result.push(curr);
+    prevNonJoker = curr;
   }
 
   for (const joker of jokers.slice(jokerIdx)) {
