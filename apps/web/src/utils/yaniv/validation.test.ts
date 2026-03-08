@@ -2,10 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { JOKER_RANK, JokerSuit, Rank, Suit } from '~/types/cards';
 import { isValidYanivPlay } from './validation';
 
-// A standard card that won't trigger either discard-aware check for any of the
-// standalone test hands: rank ACE (1) is low enough that no run in the test
-// suite bridges the gap from ACE♣ to the played cards, and no test hand
-// consists entirely of aces.
+// A discard card that won't interact with any standalone test hand.
 const neutralDiscard = { suit: Suit.CLUBS, rank: Rank.ACE };
 
 describe('isValidYanivPlay', () => {
@@ -120,7 +117,7 @@ describe('isValidYanivPlay', () => {
       });
     });
 
-    test('accepts pair with one joker substituting', () => {
+    test('rejects pair with one joker substituting', () => {
       expect(
         isValidYanivPlay(
           [
@@ -129,14 +126,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: [
-          { suit: JokerSuit.RED, rank: JOKER_RANK },
-          { suit: Suit.SPADES, rank: Rank.JACK },
-        ],
-      });
+      ).toEqual({ isValid: false });
     });
 
     test('accepts two jokers alone', () => {
@@ -254,7 +244,7 @@ describe('isValidYanivPlay', () => {
       });
     });
 
-    test('accepts run with joker extending an end', () => {
+    test('rejects run with joker extending an end', () => {
       expect(
         isValidYanivPlay(
           [
@@ -264,20 +254,10 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: [
-          { suit: JokerSuit.RED, rank: JOKER_RANK },
-          { suit: Suit.HEARTS, rank: Rank.SIX },
-          { suit: Suit.HEARTS, rank: Rank.SEVEN },
-        ],
-      });
+      ).toEqual({ isValid: false });
     });
 
-    test('accepts a low run with joker extending the high end', () => {
-      // ACE-TWO-JOKER: ACE has run rank 1 (the lowest), so the joker goes to the
-      // high end (as THREE) since there is no valid rank below ACE.
+    test('rejects a low run with joker extending the high end', () => {
       expect(
         isValidYanivPlay(
           [
@@ -287,15 +267,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: [
-          { suit: Suit.HEARTS, rank: Rank.ACE },
-          { suit: Suit.HEARTS, rank: Rank.TWO },
-          { suit: JokerSuit.RED, rank: JOKER_RANK },
-        ],
-      });
+      ).toEqual({ isValid: false });
     });
 
     test('rejects a run of only 2 cards', () => {
@@ -547,22 +519,55 @@ describe('isValidYanivPlay', () => {
     });
 
     test('joker as top discard does not trigger run extension rule', () => {
-      // [6♥, 6♠] is a valid standalone pair — pickup is still required because the
-      // run extension path never fires when topDiscard is a joker.
+      // [6♥, 7♥] fails same-rank and fails standalone run (only 2 cards) — the
+      // run extension path short-circuits when topDiscard is a joker.
       expect(
         isValidYanivPlay(
           [
             { suit: Suit.HEARTS, rank: Rank.SIX },
-            { suit: Suit.SPADES, rank: Rank.SIX },
+            { suit: Suit.HEARTS, rank: Rank.SEVEN },
           ],
           { suit: JokerSuit.RED, rank: JOKER_RANK },
+        ),
+      ).toEqual({ isValid: false });
+    });
+
+    test('joker filling gap between played card and discard at the high end is ordered correctly', () => {
+      // JOKER fills position FOUR between THREE♥ and FIVE♥ (discard at high end)
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.THREE },
+            { suit: JokerSuit.RED, rank: JOKER_RANK },
+          ],
+          { suit: Suit.HEARTS, rank: Rank.FIVE },
         ),
       ).toEqual({
         isValid: true,
         isPickupRequired: true,
         orderedCards: [
-          { suit: Suit.HEARTS, rank: Rank.SIX },
-          { suit: Suit.SPADES, rank: Rank.SIX },
+          { suit: JokerSuit.RED, rank: JOKER_RANK },
+          { suit: Suit.HEARTS, rank: Rank.THREE },
+        ],
+      });
+    });
+
+    test('joker filling gap between played card and discard at the low end is ordered correctly', () => {
+      // JOKER fills position THREE between TWO♥ (discard at low end) and FOUR♥
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.FOUR },
+            { suit: JokerSuit.RED, rank: JOKER_RANK },
+          ],
+          { suit: Suit.HEARTS, rank: Rank.TWO },
+        ),
+      ).toEqual({
+        isValid: true,
+        isPickupRequired: true,
+        orderedCards: [
+          { suit: JokerSuit.RED, rank: JOKER_RANK },
+          { suit: Suit.HEARTS, rank: Rank.FOUR },
         ],
       });
     });

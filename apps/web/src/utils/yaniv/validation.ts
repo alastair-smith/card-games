@@ -33,6 +33,9 @@ function isSameRankPlay(
     };
   }
 
+  // jokers mixed with non-jokers are not valid in a set
+  if (jokers.length > 0) return { isValid: false };
+
   const sharedRank = nonJokers[0].rank;
 
   if (nonJokers.every((card) => card.rank === sharedRank)) {
@@ -69,25 +72,22 @@ function isConsecutiveRun(
     { prev: firstRank, hasDuplicates: false, gapsInside: 0 },
   );
 
-  return !hasDuplicates && gapsInside <= jokerCount;
+  return !hasDuplicates && gapsInside === jokerCount;
 }
 
 /**
  * Orders a run of cards ascending by run rank, weaving jokers into internal
- * gaps. Any remaining jokers are placed at the low end if min run rank > 1
- * (i.e. there is a valid rank below the lowest card), else at the high end.
+ * gaps. Any remaining spare jokers are prepended (low end) when
+ * spareJokersToHighEnd is false (default), or appended (high end) when true.
  */
-function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
+function orderRunAscending(
+  cards: YanivPlayingCard[],
+  spareJokersToHighEnd = false,
+): YanivPlayingCard[] {
   const jokers = cards.filter((c) => !isStandardCard(c));
   const nonJokers = [...cards.filter(isStandardCard)].sort(
     (a, b) => YANIV_RANK_POSITION[a.rank] - YANIV_RANK_POSITION[b.rank],
   );
-
-  // Place remaining jokers: prefer low end if there is a valid rank below the
-  // lowest card (run rank > 1), else place at the high end.
-  const firstNonJoker = nonJokers[0];
-  const preferLowEnd =
-    firstNonJoker !== undefined && YANIV_RANK_POSITION[firstNonJoker.rank] > 1;
 
   const result: YanivPlayingCard[] = [];
   let jokerIdx = 0;
@@ -109,10 +109,10 @@ function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
   }
 
   for (const joker of jokers.slice(jokerIdx)) {
-    if (preferLowEnd) {
-      result.unshift(joker);
-    } else {
+    if (spareJokersToHighEnd) {
       result.push(joker);
+    } else {
+      result.unshift(joker);
     }
   }
 
@@ -168,8 +168,8 @@ function isRunPlay(
 
   const orderedCards =
     topPosition === minPosition
-      ? orderRunAscending(cards)
-      : orderRunAscending(cards).reverse();
+      ? orderRunAscending(cards) // spare jokers → low end (toward discard above)
+      : orderRunAscending(cards, true).reverse(); // spare jokers → high end, then reversed
   return { isValid: true, isPickupRequired: true, orderedCards };
 }
 
