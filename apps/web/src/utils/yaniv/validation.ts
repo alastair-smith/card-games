@@ -37,11 +37,9 @@ function isConsecutiveRun(
   nonJokers: StandardPlayingCard[],
   jokerCount: number,
 ): boolean {
-  if (nonJokers.length === 0) return true;
-  const sortedRanks = nonJokers
+  const [firstRank, ...restRanks] = nonJokers
     .map((card) => YANIV_RANK_POSITION[card.rank])
     .sort((a, b) => a - b);
-  const [firstRank, ...restRanks] = sortedRanks;
   if (firstRank === undefined) return false;
 
   const { hasDuplicates, gapsInside } = restRanks.reduce(
@@ -131,8 +129,7 @@ function isRunPlay(
   if (!isStandardCard(topDiscard) || cards.length < 2)
     return { isValid: false };
 
-  const combined = [topDiscard, ...cards];
-  const combinedNonJokers = combined.filter(isStandardCard);
+  const combinedNonJokers = [topDiscard, ...nonJokers];
 
   if (!combinedNonJokers.every((c) => c.suit === topDiscard.suit))
     return { isValid: false };
