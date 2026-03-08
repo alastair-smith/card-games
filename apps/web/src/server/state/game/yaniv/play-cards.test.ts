@@ -160,19 +160,19 @@ describe('playCards', () => {
   test('removes played cards from the player hand', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
-    const newState = vi.mocked(setYanivState).mock.calls[0]?.[1];
-    if (newState?.gameStage !== GameStage.IN_PROGRESS) {
-      throw new Error('Game stage should be in progress');
-    }
-    expect(newState.hands?.[USER_1]).toEqual([CARD_2]);
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      hands: { [USER_1]: [CARD_2] },
+    });
   });
 
   test('decrements the player card count', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
-    const newState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-    const player = newState.players.find((p) => p.id === USER_1);
-    expect(player?.cardCount).toBe(1);
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      players: expect.arrayContaining([
+        expect.objectContaining({ id: USER_1, cardCount: 1 }),
+      ]),
+    });
   });
 
   test('sets played cards using the ordered cards from validation', async () => {
@@ -184,8 +184,9 @@ describe('playCards', () => {
 
     await playCards(CODE, USER_1, [CARD_1, CARD_2]);
 
-    const newState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-    expect(newState.playedCards).toEqual(orderedCards);
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      playedCards: orderedCards,
+    });
   });
 
   test('pushes ordered cards to the discard pile', async () => {
@@ -206,8 +207,9 @@ describe('playCards', () => {
 
     await playCards(CODE, USER_1, [CARD_1]);
 
-    const newState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-    expect(newState.gameStep).toBe(GameStep.PICKUP_CARD);
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      gameStep: GameStep.PICKUP_CARD,
+    });
   });
 
   test('advances to PROCEED when no pickup is required', async () => {
@@ -215,8 +217,9 @@ describe('playCards', () => {
 
     await playCards(CODE, USER_1, [CARD_1]);
 
-    const newState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-    expect(newState.gameStep).toBe(GameStep.PROCEED);
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      gameStep: GameStep.PROCEED,
+    });
   });
 
   test('persists and publishes the updated state', async () => {
