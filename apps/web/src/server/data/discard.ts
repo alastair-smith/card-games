@@ -26,9 +26,12 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await pipeline.exec();
   };
 
-  const pushDiscard = async (code: GameCode, card: T) => {
+  const pushDiscard = async (code: GameCode, card: T | T[]) => {
     const key = getDiscardKey(code);
-    await redis.rpush(key, JSON.stringify(card));
+    const cards = Array.isArray(card) ? card : [card];
+    for (const singleCard of cards) {
+      await redis.rpush(key, JSON.stringify(singleCard));
+    }
   };
 
   const popDiscard = async (code: GameCode): Promise<T | null> => {
