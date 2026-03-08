@@ -24,7 +24,8 @@ export const playCards = async (
     throw new Error('Not the play cards step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
-  const hand = state.hands[userId] ?? [];
+  const hand = state.hands[userId];
+  if (!hand) throw new Error('Hand not found');
   const remainingHand = [...hand];
   for (const card of cards) {
     const cardIndex = remainingHand.findIndex(
