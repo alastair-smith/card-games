@@ -8,11 +8,6 @@ On their turn, during the `PLAY_CARDS` game step, a player selects one or more c
 
 Create the `play-cards` server state function for Yaniv.
 
-## Dependencies
-
-- Ticket 01 (schema includes `hands`)
-- Ticket 05 (`isValidYanivPlay` utility)
-
 ## Reference
 
 - `apps/web/src/server/data/discard.ts` — `yanivDiscard.pushDiscard`
@@ -29,11 +24,11 @@ Steps:
 1. **Fetch state** — `getYanivState(code)`.
 2. **Validate turn** — confirm `currentPlayerId === userId` and `gameStep === GameStep.PLAY_CARDS`. Throw if not.
 3. **Validate cards are in hand** — every card in `cards` must appear in `state.hands[userId]`. Throw if any card is missing.
-4. **Validate combination** — call `isValidYanivPlay(cards)`. Throw if invalid.
+4. **Validate combination** — call `isValidYanivPlay(cards, topDiscard)` where `topDiscard` is the top card of the discard pile (from `yanivDiscard`). Throw if `isValid` is false.
 5. **Update hand** — remove the played cards from `hands[userId]`. Update the player's `cardCount`.
 6. **Record played cards** — set `state.playedCards = cards` (overwrite; this is the most recent play visible in the UI).
 7. **Push to discard** — call `yanivDiscard.pushDiscard(code, cards)` to persist the cards on the discard pile in Redis.
-8. **Advance step** — set `gameStep = GameStep.PICKUP_CARD`.
+8. **Advance step** — if `isPickupRequired` is true, set `gameStep = GameStep.PICKUP_CARD`. Otherwise set `gameStep = GameStep.PROCEED` to signal the player that they can call yaniv to end their turn or just end their turn.
 9. **Persist** — `setYanivState(code, state)`.
 10. **Publish** — `publishYanivState(code, state)`.
 
