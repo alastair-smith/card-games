@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { z } from 'zod';
+import type { z } from 'zod';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
@@ -9,7 +9,7 @@ import type { GameCode } from '~/types/game';
 import {
   GameStage,
   GameStep,
-  gameStateSchema,
+  type gameStateSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { isValidYanivPlay } from '~/utils/yaniv/validation';
@@ -46,40 +46,41 @@ const CARD_1: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.FIVE };
 const CARD_2: YanivPlayingCard = { suit: Suit.SPADES, rank: Rank.SEVEN };
 const TOP_DISCARD: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.THREE };
 
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PLAY_CARDS,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      cardCount: 2,
-      name: 'Player 1',
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-    },
-    {
-      id: USER_2,
-      cardCount: 2,
-      name: 'Player 2',
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-    },
-  ],
-  hands: {
-    [USER_1]: [CARD_1, CARD_2],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
+const makeState = (overrides: Partial<State> = {}): State =>
+  ({
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PLAY_CARDS,
+    currentPlayerId: USER_1,
+    players: [
+      {
+        id: USER_1,
+        cardCount: 2,
+        name: 'Player 1',
+        score: 0,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        isYanivCalled: false,
+      },
+      {
+        id: USER_2,
+        cardCount: 2,
+        name: 'Player 2',
+        score: 0,
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+        isYanivCalled: false,
+      },
     ],
-  },
-  playedCards: [],
-  ...overrides,
-}) as State;
+    hands: {
+      [USER_1]: [CARD_1, CARD_2],
+      [USER_2]: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
+    },
+    playedCards: [],
+    ...overrides,
+  }) as State;
 
 const makeValidPlay = (
   orderedCards: YanivPlayingCard[],
