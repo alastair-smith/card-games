@@ -356,7 +356,7 @@ describe('isValidYanivPlay', () => {
       ).toEqual({ isValid: true, isPickupRequired: true });
     });
 
-    test('two cards extending a run with top discard in the middle', () => {
+    test('rejects runs that go around the discard, it must be at one end of the run', () => {
       expect(
         isValidYanivPlay(
           [
@@ -365,7 +365,7 @@ describe('isValidYanivPlay', () => {
           ],
           { suit: Suit.HEARTS, rank: Rank.FIVE },
         ),
-      ).toEqual({ isValid: true, isPickupRequired: true });
+      ).toEqual({ isValid: false });
     });
 
     test('mixed suits are rejected as a run extension', () => {

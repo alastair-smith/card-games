@@ -55,7 +55,12 @@ export function isValidYanivPlay(
       const combined = [topDiscard, ...cards];
       const nonJokers = combined.filter(isStandardCard);
       const jokerCount = combined.length - nonJokers.length;
+      const nonJokerRanks = nonJokers.map((card) => card.rank);
+      const topDiscardAtEnd =
+        topDiscard.rank === Math.min(...nonJokerRanks) ||
+        topDiscard.rank === Math.max(...nonJokerRanks);
       if (
+        topDiscardAtEnd &&
         nonJokers.every((card) => card.suit === topDiscard.suit) &&
         isConsecutiveRun(nonJokers, jokerCount)
       ) {
