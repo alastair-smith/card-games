@@ -1,4 +1,4 @@
-import { JOKER_RANK, Rank, type StandardPlayingCard } from '~/types/cards';
+import { JOKER_RANK, type StandardPlayingCard } from '~/types/cards';
 import {
   MINIMUM_RUN_SIZE,
   YANIV_RANK_POSITION,
@@ -16,8 +16,7 @@ export type PlayResult =
       orderedCards: YanivPlayingCard[];
     };
 
-// Checks whether nonJokers (same-suit standard cards) form a valid run when
-// jokerCount wildcards are available to fill gaps.
+/** Checks whether nonJokers (same-suit standard cards) form a valid run when jokerCount wildcards are available to fill gaps. */
 function isConsecutiveRun(
   nonJokers: StandardPlayingCard[],
   jokerCount: number,
@@ -41,22 +40,22 @@ function isConsecutiveRun(
   return !hasDuplicates && gapsInside <= jokerCount;
 }
 
-// Orders a run of cards ascending by run rank, weaving jokers into internal
-// gaps. Any remaining jokers are placed at the low end if min run rank > 1
-// (i.e. there is a valid rank below the lowest card), else at the high end.
+/**
+ * Orders a run of cards ascending by run rank, weaving jokers into internal
+ * gaps. Any remaining jokers are placed at the low end if min run rank > 1
+ * (i.e. there is a valid rank below the lowest card), else at the high end.
+ */
 function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
   const jokers = cards.filter((c) => !isStandardCard(c));
   const nonJokers = [...cards.filter(isStandardCard)].sort(
-    (a, b) =>
-      (a.rank === Rank.ACE ? 1 : a.rank) - (b.rank === Rank.ACE ? 1 : b.rank),
+    (a, b) => YANIV_RANK_POSITION[a.rank] - YANIV_RANK_POSITION[b.rank],
   );
 
   // Place remaining jokers: prefer low end if there is a valid rank below the
   // lowest card (run rank > 1), else place at the high end.
   const firstNonJoker = nonJokers[0];
   const preferLowEnd =
-    firstNonJoker !== undefined &&
-    (firstNonJoker.rank === Rank.ACE ? 1 : firstNonJoker.rank) > 1;
+    firstNonJoker !== undefined && YANIV_RANK_POSITION[firstNonJoker.rank] > 1;
 
   const result: YanivPlayingCard[] = [];
   let jokerIdx = 0;
@@ -65,8 +64,8 @@ function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
   for (const curr of nonJokers) {
     if (prevNonJoker !== undefined) {
       const gap =
-        (curr.rank === Rank.ACE ? 1 : curr.rank) -
-        (prevNonJoker.rank === Rank.ACE ? 1 : prevNonJoker.rank) -
+        YANIV_RANK_POSITION[curr.rank] -
+        YANIV_RANK_POSITION[prevNonJoker.rank] -
         1;
       for (let g = 0; g < gap && jokerIdx < jokers.length; g++, jokerIdx++) {
         const joker = jokers[jokerIdx];
@@ -88,6 +87,7 @@ function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
   return result;
 }
 
+/** Returns a valid play result if all cards share the same rank (n-of-a-kind or all jokers). No pickup required when the shared rank matches the top discard. */
 function isSameRankPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
@@ -119,6 +119,11 @@ function isSameRankPlay(
   };
 }
 
+/**
+ * Returns a valid play result if the cards form a run. Checks standalone runs
+ * (3+ cards of the same suit) first, then run extensions (2+ cards that
+ * extend a run from the top discard, which must be at one end).
+ */
 function isRunPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
@@ -126,21 +131,50 @@ function isRunPlay(
   const nonJokers = cards.filter(isStandardCard);
   const jokers = cards.filter((card) => !isStandardCard(card));
 
-  // sort nonJokers
-  const sortedNonJokers = [...nonJokers].sort(
-    (a, b) => YANIV_RANK_POSITION[a.rank] - YANIV_RANK_POSITION[b.rank],
-  );
+  // Standalone run: all nonJokers same suit, consecutive (gaps filled by jokers), 3+ cards total
+  const firstNonJoker = nonJokers[0];
+  if (cards.length >= MINIMUM_RUN_SIZE && firstNonJoker !== undefined) {
+    if (
+      nonJokers.every((card) => card.suit === firstNonJoker.suit) &&
+      isConsecutiveRun(nonJokers, jokers.length)
+    ) {
+      return {
+        isValid: true,
+        isPickupRequired: true,
+        orderedCards: orderRunAscending(cards),
+      };
+    }
+  }
 
-  // check if non jokers are in order, fill gaps with jokers if needed
-  sortedNonJokers.reduce(); // ???
+  // Run extension: topDiscard must be a standard card and at one end of the combined run
+  if (!isStandardCard(topDiscard) || cards.length < 2)
+    return { isValid: false };
 
-  // return false if can't get a run
+  const combined = [topDiscard, ...cards];
+  const combinedNonJokers = combined.filter(isStandardCard);
+  const jokerCount = combined.length - combinedNonJokers.length;
 
-  // check if either end connects to the discard
+  if (!combinedNonJokers.every((card) => card.suit === topDiscard.suit))
+    return { isValid: false };
 
-  // put remaining jokers on end
+  const positions = combinedNonJokers.map((c) => YANIV_RANK_POSITION[c.rank]);
+  const minPos = Math.min(...positions);
+  const maxPos = Math.max(...positions);
+  const topDiscardPos = YANIV_RANK_POSITION[topDiscard.rank];
+  const topDiscardAtEnd = topDiscardPos === minPos || topDiscardPos === maxPos;
+
+  if (!topDiscardAtEnd || !isConsecutiveRun(combinedNonJokers, jokerCount))
+    return { isValid: false };
+
+  // Order played cards: adjacent to topDiscard first, farthest last
+  const extendingAbove = topDiscardPos === minPos;
+  const orderedCards = extendingAbove
+    ? orderRunAscending(cards)
+    : orderRunAscending(cards).reverse();
+  return { isValid: true, isPickupRequired: true, orderedCards };
 }
 
+/** Validates a Yaniv play against the top discard card, returning the play result with ordered cards and whether a pickup is required. */
 export function isValidYanivPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
@@ -148,15 +182,12 @@ export function isValidYanivPlay(
   // no cards
   if (cards.length === 0) return { isValid: false };
 
-  if (!cards[0]) {
-    throw new Error('Card not found despite length check');
-  }
-
   // single card
-  if (cards.length === 1) {
+  const [singleCard] = cards;
+  if (cards.length === 1 && singleCard !== undefined) {
     return {
       isValid: true,
-      isPickupRequired: cards[0].rank !== topDiscard.rank,
+      isPickupRequired: singleCard.rank !== topDiscard.rank,
       orderedCards: cards,
     };
   }
@@ -168,80 +199,5 @@ export function isValidYanivPlay(
   }
 
   // run
-  const runPlay = isRunPlay(cards, topDiscard);
-  if (runPlay.isValid) {
-    return runPlay;
-  }
-
-  /** remove all this below as it has been replaced with the above  */
-
-  if (isStandardCard(topDiscard)) {
-    // Run extension (pickup required): 2+ played cards whose standard-card
-    // members all share the top discard's suit, and the combined group forms a
-    // consecutive run (jokers in the played cards may fill gaps). The top
-    // discard must be at one end of the resulting run.
-    if (cards.length >= 2) {
-      const combined = [topDiscard, ...cards];
-      const nonJokers = combined.filter(isStandardCard);
-      const jokerCount = combined.length - nonJokers.length;
-      const nonJokerRunRanks = nonJokers.map((card) =>
-        card.rank === Rank.ACE ? 1 : card.rank,
-      );
-      const minRank = Math.min(...nonJokerRunRanks);
-      const maxRank = Math.max(...nonJokerRunRanks);
-      const topDiscardRunRank =
-        topDiscard.rank === Rank.ACE ? 1 : topDiscard.rank;
-      const topDiscardAtEnd =
-        topDiscardRunRank === minRank || topDiscardRunRank === maxRank;
-      if (
-        topDiscardAtEnd &&
-        nonJokers.every((card) => card.suit === topDiscard.suit) &&
-        isConsecutiveRun(nonJokers, jokerCount)
-      ) {
-        // Order played cards: adjacent to topDiscard first, farthest last.
-        const extendingAbove = topDiscardRunRank === minRank;
-        const orderedCards = extendingAbove
-          ? orderRunAscending(cards)
-          : orderRunAscending(cards).reverse();
-        return { isValid: true, isPickupRequired: true, orderedCards };
-      }
-    }
-  }
-
-  // Standalone validation
-  if (cards.length === 1)
-    return { isValid: true, isPickupRequired: true, orderedCards: cards };
-
-  const jokers = cards.filter((card) => !isStandardCard(card));
-  const nonJokers = cards.filter(isStandardCard);
-
-  // Set check: all non-jokers share the same rank (vacuously true for all-joker
-  // hands). Jokers are ordered first.
-  const [firstCard] = nonJokers;
-  if (!firstCard)
-    return {
-      isValid: true,
-      isPickupRequired: true,
-      orderedCards: [...jokers, ...nonJokers],
-    };
-  if (nonJokers.every((card) => card.rank === firstCard.rank))
-    return {
-      isValid: true,
-      isPickupRequired: true,
-      orderedCards: [...jokers, ...nonJokers],
-    };
-
-  // Run check: runs need at least 3 cards, all non-jokers share the same suit,
-  // no duplicate ranks, and the gaps between sorted ranks can be filled by jokers
-  if (cards.length < MINIMUM_RUN_SIZE) return { isValid: false };
-  if (!nonJokers.every((card) => card.suit === firstCard.suit))
-    return { isValid: false };
-
-  return isConsecutiveRun(nonJokers, jokers.length)
-    ? {
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: orderRunAscending(cards),
-      }
-    : { isValid: false };
+  return isRunPlay(cards, topDiscard);
 }
