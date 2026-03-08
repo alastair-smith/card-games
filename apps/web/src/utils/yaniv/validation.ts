@@ -81,40 +81,42 @@ function isRunPlay(
   const nonJokers = cards.filter(isStandardCard);
   const firstNonJoker = nonJokers[0];
 
-  // Standalone run: 3+ cards, same suit, consecutive (jokers fill internal gaps only)
+  if (!firstNonJoker) return { isValid: false };
+  if (!nonJokers.every(({ suit }) => suit === firstNonJoker.suit))
+    return { isValid: false };
+
+  const orderedCards = buildOrderedRun(cards);
+  if (!orderedCards) return { isValid: false };
+
+  // Standalone run: 3+ cards, same suit, consecutive
+  if (orderedCards.length >= MINIMUM_RUN_SIZE) {
+    return { isValid: true, isPickupRequired: true, orderedCards };
+  }
+
+  // Run extension: topDiscard must be a standard card with same suit, adjacent to one end
+  if (!isStandardCard(topDiscard) || topDiscard.suit !== firstNonJoker.suit)
+    return { isValid: false };
+
+  // runs don't allow jokers at the ends
+  const firstCard = orderedCards[0] as StandardPlayingCard;
+  const lastCard = orderedCards[orderedCards.length - 1] as StandardPlayingCard;
+
   if (
-    cards.length >= MINIMUM_RUN_SIZE &&
-    firstNonJoker !== undefined &&
-    nonJokers.every(({ suit }) => suit === firstNonJoker.suit)
+    YANIV_RANK_POSITION[topDiscard.rank] ===
+    YANIV_RANK_POSITION[firstCard.rank] - 1
   ) {
-    const orderedCards = buildOrderedRun(cards);
-    if (orderedCards)
-      return { isValid: true, isPickupRequired: true, orderedCards };
+    // topDiscard sits below the run — played cards stay in ascending order
+    return { isValid: true, isPickupRequired: true, orderedCards };
   }
-
-  // Run extension: topDiscard must be a standard card at one end of the combined run
-  if (!isStandardCard(topDiscard) || cards.length < 2)
-    return { isValid: false };
-  if (!nonJokers.every((c) => c.suit === topDiscard.suit))
-    return { isValid: false };
-
-  const combined = buildOrderedRun([topDiscard, ...cards]);
-  if (!combined) return { isValid: false };
-
-  if (combined[0] === topDiscard) {
-    // topDiscard at low end — played cards follow in ascending order
+  if (
+    YANIV_RANK_POSITION[topDiscard.rank] ===
+    YANIV_RANK_POSITION[lastCard.rank] + 1
+  ) {
+    // topDiscard sits above the run — played cards returned in descending order
     return {
       isValid: true,
       isPickupRequired: true,
-      orderedCards: combined.slice(1),
-    };
-  }
-  if (combined[combined.length - 1] === topDiscard) {
-    // topDiscard at high end — played cards precede in descending order
-    return {
-      isValid: true,
-      isPickupRequired: true,
-      orderedCards: combined.slice(0, -1).reverse(),
+      orderedCards: [...orderedCards].reverse(),
     };
   }
   return { isValid: false };

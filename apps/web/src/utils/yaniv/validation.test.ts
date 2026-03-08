@@ -532,8 +532,8 @@ describe('isValidYanivPlay', () => {
       ).toEqual({ isValid: false });
     });
 
-    test('joker filling gap between played card and discard at the high end is ordered correctly', () => {
-      // JOKER fills position FOUR between THREE♥ and FIVE♥ (discard at high end)
+    test('joker with a single non-joker cannot extend a run — spare joker makes it invalid', () => {
+      // buildOrderedRun([3♥, Joker]) leaves a spare joker (no gap to fill) → invalid
       expect(
         isValidYanivPlay(
           [
@@ -542,18 +542,11 @@ describe('isValidYanivPlay', () => {
           ],
           { suit: Suit.HEARTS, rank: Rank.FIVE },
         ),
-      ).toEqual({
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: [
-          { suit: JokerSuit.RED, rank: JOKER_RANK },
-          { suit: Suit.HEARTS, rank: Rank.THREE },
-        ],
-      });
+      ).toEqual({ isValid: false });
     });
 
-    test('joker filling gap between played card and discard at the low end is ordered correctly', () => {
-      // JOKER fills position THREE between TWO♥ (discard at low end) and FOUR♥
+    test('joker with a single non-joker cannot extend a run at the low end either', () => {
+      // buildOrderedRun([4♥, Joker]) leaves a spare joker (no gap to fill) → invalid
       expect(
         isValidYanivPlay(
           [
@@ -562,14 +555,7 @@ describe('isValidYanivPlay', () => {
           ],
           { suit: Suit.HEARTS, rank: Rank.TWO },
         ),
-      ).toEqual({
-        isValid: true,
-        isPickupRequired: true,
-        orderedCards: [
-          { suit: JokerSuit.RED, rank: JOKER_RANK },
-          { suit: Suit.HEARTS, rank: Rank.FOUR },
-        ],
-      });
+      ).toEqual({ isValid: false });
     });
   });
 });
