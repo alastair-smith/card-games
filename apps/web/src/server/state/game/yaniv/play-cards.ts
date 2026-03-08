@@ -26,7 +26,9 @@ export const playCards = async (
 
   const hand = state.hands[userId];
   if (!hand) throw new Error('Hand not found');
+
   const remainingHand = [...hand];
+  // remove played cards from hand, verifying if if they were in there as we go
   for (const card of cards) {
     const cardIndex = remainingHand.findIndex(
       (handCard) => handCard.rank === card.rank && handCard.suit === card.suit,
