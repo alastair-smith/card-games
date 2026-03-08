@@ -21,33 +21,14 @@ function isSameRankPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
 ): PlayResult {
-  const nonJokers = cards.filter(isStandardCard);
-  const jokers = cards.filter((card) => !isStandardCard(card));
-
-  if (!nonJokers[0]) {
-    // all cards are jokers
-    return {
-      isValid: true,
-      isPickupRequired: topDiscard.rank !== JOKER_RANK,
-      orderedCards: cards,
-    };
-  }
-
-  // jokers mixed with non-jokers are not valid in a set
-  if (jokers.length > 0) return { isValid: false };
-
-  const sharedRank = nonJokers[0].rank;
-
-  if (nonJokers.every((card) => card.rank === sharedRank)) {
-    return {
-      isValid: true,
-      isPickupRequired: sharedRank !== topDiscard.rank,
-      orderedCards: [...jokers, ...nonJokers],
-    };
-  }
-
+  const [first] = cards;
+  if (!first) return { isValid: false };
+  if (!cards.every(({ rank }) => rank === first.rank))
+    return { isValid: false };
   return {
-    isValid: false,
+    isValid: true,
+    isPickupRequired: first.rank !== topDiscard.rank,
+    orderedCards: cards,
   };
 }
 
