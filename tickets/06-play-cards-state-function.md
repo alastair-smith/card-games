@@ -28,7 +28,7 @@ Steps:
 5. **Update hand** — remove the played cards from `hands[userId]`. Update the player's `cardCount`.
 6. **Record played cards** — set `state.playedCards = cards` (overwrite; this is the most recent play visible in the UI).
 7. **Push to discard** — call `yanivDiscard.pushDiscard(code, cards)` to persist the cards on the discard pile in Redis.
-8. **Advance step** — if `isPickupRequired` is true, set `gameStep = GameStep.PICKUP_CARD`. Otherwise set `gameStep = GameStep.PLAY_CARDS` and advance `currentPlayerId` to the next player (skip the pickup step entirely).
+8. **Advance step** — if `isPickupRequired` is true, set `gameStep = GameStep.PICKUP_CARD`. Otherwise set `gameStep = GameStep.PROCEED` to signal the player that they can call yaniv to end their turn or just end their turn.
 9. **Persist** — `setYanivState(code, state)`.
 10. **Publish** — `publishYanivState(code, state)`.
 
