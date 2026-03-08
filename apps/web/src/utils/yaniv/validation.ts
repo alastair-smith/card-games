@@ -6,7 +6,9 @@ const MINIMUM_RUN_SIZE = 3;
 const isStandardCard = (card: YanivPlayingCard): card is StandardPlayingCard =>
   card.rank !== JOKER_RANK;
 
-export type PlayResult = { isValid: boolean; isPickupRequired: boolean };
+export type PlayResult =
+  | { isValid: false }
+  | { isValid: true; isPickupRequired: boolean };
 
 // Checks whether nonJokers (same-suit standard cards) form a valid run when
 // jokerCount wildcards are available to fill gaps.
@@ -37,7 +39,7 @@ export function isValidYanivPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
 ): PlayResult {
-  if (cards.length === 0) return { isValid: false, isPickupRequired: false };
+  if (cards.length === 0) return { isValid: false };
 
   // Matching-rank play (no pickup required): every played card shares the same
   // rank as the top discard. Works for standard cards and joker-on-joker.
@@ -76,12 +78,11 @@ export function isValidYanivPlay(
 
   // Run check: runs need at least 3 cards, all non-jokers share the same suit,
   // no duplicate ranks, and the gaps between sorted ranks can be filled by jokers
-  if (cards.length < MINIMUM_RUN_SIZE)
-    return { isValid: false, isPickupRequired: false };
+  if (cards.length < MINIMUM_RUN_SIZE) return { isValid: false };
   if (!nonJokers.every((card) => card.suit === firstCard.suit))
-    return { isValid: false, isPickupRequired: false };
+    return { isValid: false };
 
   return isConsecutiveRun(nonJokers, jokers.length)
     ? { isValid: true, isPickupRequired: true }
-    : { isValid: false, isPickupRequired: false };
+    : { isValid: false };
 }

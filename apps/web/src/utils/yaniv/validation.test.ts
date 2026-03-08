@@ -12,7 +12,6 @@ describe('isValidYanivPlay', () => {
   test('rejects empty array', () => {
     expect(isValidYanivPlay([], neutralDiscard)).toEqual({
       isValid: false,
-      isPickupRequired: false,
     });
   });
 
@@ -205,7 +204,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
 
     test('rejects mixed suits', () => {
@@ -218,7 +217,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
 
     test('rejects wrap-around runs through Ace', () => {
@@ -232,7 +231,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
 
     test('rejects when jokers cannot fill the gap', () => {
@@ -246,7 +245,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
   });
 
@@ -260,7 +259,7 @@ describe('isValidYanivPlay', () => {
           ],
           neutralDiscard,
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
   });
 
@@ -378,7 +377,7 @@ describe('isValidYanivPlay', () => {
           ],
           { suit: Suit.HEARTS, rank: Rank.FIVE },
         ),
-      ).toEqual({ isValid: false, isPickupRequired: false });
+      ).toEqual({ isValid: false });
     });
 
     test('single card does not qualify as a run extension', () => {
