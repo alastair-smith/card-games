@@ -10,6 +10,7 @@ import { playerNameSchema, userIdSchema } from '~/types/entities';
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
 export const HAND_SIZE = 7;
+export const MINIMUM_RUN_SIZE = 3;
 
 export const yanivPlayingCardSchema = z.union([
   jokerSchema,
@@ -18,7 +19,7 @@ export const yanivPlayingCardSchema = z.union([
 
 export type YanivPlayingCard = z.infer<typeof yanivPlayingCardSchema>;
 
-export const YANIV_RANK_VALUE = {
+export const YANIV_RANK_SCORE = {
   [Rank.TWO]: 2,
   [Rank.THREE]: 3,
   [Rank.FOUR]: 4,
@@ -34,6 +35,22 @@ export const YANIV_RANK_VALUE = {
   [Rank.ACE]: 1,
   [JOKER_RANK]: 0,
 } as const satisfies Record<YanivPlayingCard['rank'], number>;
+
+export const YANIV_RANK_POSITION = {
+  [Rank.ACE]: 1,
+  [Rank.TWO]: 2,
+  [Rank.THREE]: 3,
+  [Rank.FOUR]: 4,
+  [Rank.FIVE]: 5,
+  [Rank.SIX]: 6,
+  [Rank.SEVEN]: 7,
+  [Rank.EIGHT]: 8,
+  [Rank.NINE]: 9,
+  [Rank.TEN]: 10,
+  [Rank.JACK]: 11,
+  [Rank.QUEEN]: 12,
+  [Rank.KING]: 13,
+} as const satisfies Record<Rank, number>;
 
 export enum GameStage {
   LOBBY = 'LOBBY',
