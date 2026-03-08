@@ -51,31 +51,33 @@ function orderRunAscending(cards: YanivPlayingCard[]): YanivPlayingCard[] {
     (a, b) => runRank(a.rank) - runRank(b.rank),
   );
 
+  // Place remaining jokers: prefer low end if there is a valid rank below the
+  // lowest card (run rank > 1), else place at the high end.
+  const firstNonJoker = nonJokers[0];
+  const preferLowEnd =
+    firstNonJoker !== undefined && runRank(firstNonJoker.rank) > 1;
+
   const result: YanivPlayingCard[] = [];
   let jokerIdx = 0;
 
-  for (let i = 0; i < nonJokers.length; i++) {
-    if (i > 0) {
-      const prev = nonJokers[i - 1]!;
-      const curr = nonJokers[i]!;
-      const gap = runRank(curr.rank) - runRank(prev.rank) - 1;
+  for (const curr of nonJokers) {
+    const last = result.findLast(isStandardCard);
+    if (last !== undefined) {
+      const gap = runRank(curr.rank) - runRank(last.rank) - 1;
       for (let g = 0; g < gap && jokerIdx < jokers.length; g++, jokerIdx++) {
-        result.push(jokers[jokerIdx]!);
+        const joker = jokers[jokerIdx];
+        if (joker !== undefined) result.push(joker);
       }
     }
-    result.push(nonJokers[i]!);
+    result.push(curr);
   }
 
-  // Place remaining jokers: prefer low end if there is a valid rank below the
-  // lowest card (run rank > 1), else place at the high end.
-  const minRunRank = nonJokers[0] ? runRank(nonJokers[0].rank) : undefined;
-  while (jokerIdx < jokers.length) {
-    if (minRunRank !== undefined && minRunRank > 1) {
-      result.unshift(jokers[jokerIdx]!);
+  for (const joker of jokers.slice(jokerIdx)) {
+    if (preferLowEnd) {
+      result.unshift(joker);
     } else {
-      result.push(jokers[jokerIdx]!);
+      result.push(joker);
     }
-    jokerIdx++;
   }
 
   return result;
