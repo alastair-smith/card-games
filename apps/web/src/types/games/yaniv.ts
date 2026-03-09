@@ -64,8 +64,8 @@ export enum GameStep {
   INITIAL_DEAL = 'INITIAL_DEAL',
   PLAY_CARDS = 'PLAY_CARDS',
   PICKUP_CARD = 'PICKUP_CARD',
-  PROCEED = 'PROCEED',
-  REDEAL = 'REDEAL',
+  PROCEED = 'PROCEED', // end turn, optionally calling yaniv
+  REDEAL = 'REDEAL', // only features after yaniv has been called and round is over
 }
 
 export const gameStepSchema = z.enum(GameStep);

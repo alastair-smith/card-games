@@ -33,7 +33,7 @@ Steps:
 5. **Calculate hand values** — for each player, compute `sumYanivHand(hands[player.id])`.
 6. **Check for Asaf (screw):**
    - If any *other* player has a hand value **≤** the caller's hand value, the caller is screwed.
-   - Screwed caller: add **30** to their score. All other players add their own hand value to their score. The lowest-hand player(s) score 0 for this round.
+   - Screwed caller: add **25** to their score. All other players add their own hand value to their score. The lowest-hand player(s) score 0 for this round.
    - Normal Yaniv: caller adds 0 to their score. All other players add their own hand value to their score.
 7. **Apply score halving:**
    - For each player, after adding round score:

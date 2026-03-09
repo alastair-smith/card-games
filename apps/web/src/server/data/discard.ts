@@ -79,6 +79,26 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
+  // Pops the top card then fetches and clears the rest in one query.
+  // Returns all cards top-first.
+  const drainDiscard = async (code: GameCode): Promise<T[]> => {
+    const key = getDiscardKey(code);
+    const topJson = await redis.rpop(key);
+    if (!topJson) return [];
+
+    const restJsons = await redis.lrange(key, 0, -1);
+    await redis.del(key);
+
+    const parseCard = (json: string) => {
+      const card = cardSchema.safeParse(JSON.parse(json));
+      if (!card.success) throw new Error('Invalid card found in discard pile');
+      return card.data;
+    };
+
+    // lrange returns bottom-to-top; reverse so remaining cards are also top-first
+    return [parseCard(topJson), ...[...restJsons].reverse().map(parseCard)];
+  };
+
   return {
     createDiscard,
     pushDiscard,
@@ -86,6 +106,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     peekDiscard,
     discardExists,
     getDiscardSize,
+    drainDiscard,
   };
 };
 
