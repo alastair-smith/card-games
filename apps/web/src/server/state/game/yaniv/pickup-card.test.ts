@@ -180,6 +180,22 @@ describe('pickupCard', () => {
       });
     });
 
+    test('persists drawn card in state', async () => {
+      await pickupCard(CODE, USER_1, 'deck');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        drawnCard: DRAWN_CARD,
+      });
+    });
+
+    test('does not clear played cards', async () => {
+      await pickupCard(CODE, USER_1, 'deck');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        playedCards: makeState().playedCards,
+      });
+    });
+
     test('persists and publishes the updated state', async () => {
       await pickupCard(CODE, USER_1, 'deck');
 
@@ -266,6 +282,22 @@ describe('pickupCard', () => {
 
       expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
         gameStep: GameStep.PROCEED,
+      });
+    });
+
+    test('persists drawn card in state', async () => {
+      await pickupCard(CODE, USER_1, 'discard');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        drawnCard: DRAWN_CARD,
+      });
+    });
+
+    test('clears played cards', async () => {
+      await pickupCard(CODE, USER_1, 'discard');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        playedCards: [],
       });
     });
 

@@ -60,6 +60,8 @@ export const pickupCard = async (
     players: updatedPlayers,
     hands: { ...state.hands, [userId]: updatedHand },
     gameStep: GameStep.PROCEED,
+    drawnCard,
+    ...(source === 'discard' && { playedCards: [] }),
   };
 
   await setYanivState({ code }, newState);

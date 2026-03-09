@@ -236,4 +236,79 @@ describe('playCards', () => {
       expect.objectContaining({ gameStage: GameStage.IN_PROGRESS }),
     );
   });
+
+  describe('playing back drawn card during PROCEED step', () => {
+    beforeEach(() => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({ gameStep: GameStep.PROCEED, drawnCard: CARD_1 }),
+      );
+      vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay([CARD_1]));
+    });
+
+    test('throws when no drawn card in state', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({ gameStep: GameStep.PROCEED, drawnCard: undefined }),
+      );
+
+      await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
+        'No drawn card to play back',
+      );
+    });
+
+    test('throws when played card does not match drawn card', async () => {
+      await expect(playCards(CODE, USER_1, [CARD_2])).rejects.toThrow(
+        'Can only play back the drawn card',
+      );
+    });
+
+    test('removes the played card from hand', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        hands: { [USER_1]: [CARD_2] },
+      });
+    });
+
+    test('decrements the player card count', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        players: expect.arrayContaining([
+          expect.objectContaining({ id: USER_1, cardCount: 1 }),
+        ]),
+      });
+    });
+
+    test('sets played cards', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        playedCards: [CARD_1],
+      });
+    });
+
+    test('keeps PROCEED step', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        gameStep: GameStep.PROCEED,
+      });
+    });
+
+    test('clears drawn card', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
+        'drawnCard',
+        undefined,
+      );
+    });
+
+    test('persists and publishes the updated state', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState)).toHaveBeenCalledOnce();
+      expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
+    });
+  });
 });
