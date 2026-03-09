@@ -17,7 +17,9 @@ export const endTurn = async (code: GameCode, userId: UserId) => {
 
   const currentIndex = state.players.findIndex((p) => p.id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
-  const nextPlayerId = state.players[nextIndex]!.id;
+  const nextPlayerId = state.players[nextIndex]?.id;
+
+  if (!nextPlayerId) throw new Error('Next player not found');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);
 
