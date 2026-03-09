@@ -285,12 +285,12 @@ describe('pickupCard', () => {
       });
     });
 
-    test('persists drawn card in state', async () => {
+    test('does not set drawn card in state', async () => {
       await pickupCard(CODE, USER_1, 'discard');
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        drawnCard: DRAWN_CARD,
-      });
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).not.toHaveProperty(
+        'drawnCard',
+      );
     });
 
     test('persists and publishes the updated state', async () => {
