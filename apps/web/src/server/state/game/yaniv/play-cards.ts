@@ -60,8 +60,6 @@ export const playCards = async (
       : player,
   );
 
-  await yanivDiscard.pushDiscard(code, playResult.orderedCards);
-
   const nextGameStep =
     isProceedStep || !playResult.isPickupRequired
       ? GameStep.PROCEED

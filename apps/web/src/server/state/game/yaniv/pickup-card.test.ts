@@ -293,14 +293,6 @@ describe('pickupCard', () => {
       });
     });
 
-    test('clears played cards', async () => {
-      await pickupCard(CODE, USER_1, 'discard');
-
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        playedCards: [],
-      });
-    });
-
     test('persists and publishes the updated state', async () => {
       await pickupCard(CODE, USER_1, 'discard');
 

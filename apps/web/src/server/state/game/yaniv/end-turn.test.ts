@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { z } from 'zod';
+import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import { Rank, Suit } from '~/types/cards';
@@ -23,6 +24,11 @@ vi.mock('~/server/data/yaniv', () => ({
 }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: vi.fn(),
+}));
+vi.mock('~/server/data/discard', () => ({
+  yanivDiscard: {
+    pushDiscard: vi.fn(),
+  },
 }));
 
 const { endTurn } = await import('./end-turn');
@@ -79,6 +85,7 @@ describe('endTurn', () => {
     vi.mocked(getYanivState).mockResolvedValue(makeState());
     vi.mocked(setYanivState).mockResolvedValue(makeState());
     vi.mocked(publishYanivState).mockResolvedValue(undefined);
+    vi.mocked(yanivDiscard.pushDiscard).mockResolvedValue(undefined);
   });
 
   test('throws when game not found', async () => {
@@ -105,6 +112,17 @@ describe('endTurn', () => {
 
   test('throws when not the current player', async () => {
     await expect(endTurn(CODE, USER_2)).rejects.toThrow('Not your turn');
+  });
+
+  test('pushes played cards to the discard pile', async () => {
+    const state = makeState();
+    await endTurn(CODE, USER_1);
+
+    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledOnce();
+    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(
+      CODE,
+      state.playedCards,
+    );
   });
 
   test('clears played cards', async () => {

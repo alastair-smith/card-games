@@ -189,17 +189,10 @@ describe('playCards', () => {
     });
   });
 
-  test('pushes ordered cards to the discard pile', async () => {
-    const orderedCards = [CARD_1];
-    vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay(orderedCards));
-
+  test('does not push to the discard pile', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
-    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledOnce();
-    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(
-      CODE,
-      orderedCards,
-    );
+    expect(vi.mocked(yanivDiscard.pushDiscard)).not.toHaveBeenCalled();
   });
 
   test('advances to PICKUP_CARD when pickup is required', async () => {

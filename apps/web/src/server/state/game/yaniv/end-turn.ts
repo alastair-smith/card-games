@@ -1,3 +1,4 @@
+import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import type { UserId } from '~/types/entities';
@@ -17,6 +18,8 @@ export const endTurn = async (code: GameCode, userId: UserId) => {
   const currentIndex = state.players.findIndex((p) => p.id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
   const nextPlayerId = state.players[nextIndex]!.id;
+
+  await yanivDiscard.pushDiscard(code, state.playedCards);
 
   const newState = {
     ...state,
