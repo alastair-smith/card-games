@@ -63,13 +63,12 @@ const playCardsOnTurn = async (
   };
 };
 
-const playDrawnCard = async (
-  code: GameCode,
+const playDrawnCard = (
   state: InProgressState,
   userId: UserId,
   hand: YanivPlayingCard[],
   cards: YanivPlayingCard[],
-): Promise<InProgressState> => {
+): InProgressState => {
   if (!state.drawnCard) throw new Error('No drawn card to play back');
   const matchesDrawn =
     cards.length === 1 &&
@@ -79,9 +78,9 @@ const playDrawnCard = async (
 
   const remainingHand = removeFromHand(hand, cards);
 
-  const topDiscard = await yanivDiscard.peekDiscard(code);
-  if (!topDiscard) throw new Error('Discard pile is empty');
-  const playResult = isValidYanivPlay(cards, topDiscard);
+  const topPlayedCard = state.playedCards[state.playedCards.length - 1];
+  if (!topPlayedCard) throw new Error('No played cards to validate against');
+  const playResult = isValidYanivPlay(cards, topPlayedCard);
   if (!playResult.isValid) throw new Error('Invalid card combination');
 
   const updatedPlayers = state.players.map((player) =>
@@ -94,7 +93,7 @@ const playDrawnCard = async (
     ...state,
     players: updatedPlayers,
     hands: { ...state.hands, [userId]: remainingHand },
-    playedCards: playResult.orderedCards,
+    playedCards: [...state.playedCards, ...playResult.orderedCards],
     gameStep: GameStep.PROCEED,
     drawnCard: undefined,
   };
@@ -122,7 +121,7 @@ export const playCards = async (
 
   const newState =
     state.gameStep === GameStep.PROCEED
-      ? await playDrawnCard(code, state, userId, hand, cards)
+      ? playDrawnCard(state, userId, hand, cards)
       : await playCardsOnTurn(code, state, userId, hand, cards);
 
   await setYanivState({ code }, newState);
