@@ -15,7 +15,7 @@ export const endTurn = async (code: GameCode, userId: UserId) => {
     throw new Error('Not the proceed step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
-  const currentIndex = state.players.findIndex((p) => p.id === userId);
+  const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
   const nextPlayerId = state.players[nextIndex]?.id;
 

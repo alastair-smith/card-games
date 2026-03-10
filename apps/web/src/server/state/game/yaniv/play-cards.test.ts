@@ -341,5 +341,74 @@ describe('playCards', () => {
       expect(vi.mocked(setYanivState)).toHaveBeenCalledOnce();
       expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
     });
+
+    describe('with a straight flush of three cards on the pile', () => {
+      const FIRST_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.THREE,
+      };
+      const MIDDLE_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.FOUR,
+      };
+      const LAST_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.FIVE,
+      };
+      // extends from the end (matches rank of LAST_CARD's neighbour)
+      const CARD_EXTENDING_END: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.SIX,
+      };
+      // extends from the start (matches rank of FIRST_CARD's neighbour)
+      const CARD_EXTENDING_START: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.TWO,
+      };
+
+      test('allows playing a card that matches the rank of the last card in the run', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeState({
+            gameStep: GameStep.PROCEED,
+            drawnCard: CARD_EXTENDING_END,
+            playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
+            hands: { [USER_1]: [CARD_EXTENDING_END, CARD_2] },
+          }),
+        );
+        vi.mocked(isValidYanivPlay).mockReturnValue(
+          makeValidPlay([CARD_EXTENDING_END], false),
+        );
+
+        await playCards(CODE, USER_1, [CARD_EXTENDING_END]);
+
+        expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+          [CARD_EXTENDING_END],
+          LAST_CARD,
+        );
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD, CARD_EXTENDING_END],
+        });
+      });
+
+      test('rejects playing a card that only matches the rank of the first card in the run', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeState({
+            gameStep: GameStep.PROCEED,
+            drawnCard: CARD_EXTENDING_START,
+            playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
+            hands: { [USER_1]: [CARD_EXTENDING_START, CARD_2] },
+          }),
+        );
+        vi.mocked(isValidYanivPlay).mockReturnValue({ isValid: false });
+
+        await expect(
+          playCards(CODE, USER_1, [CARD_EXTENDING_START]),
+        ).rejects.toThrow('Invalid card combination');
+        expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+          [CARD_EXTENDING_START],
+          LAST_CARD,
+        );
+      });
+    });
   });
 });
