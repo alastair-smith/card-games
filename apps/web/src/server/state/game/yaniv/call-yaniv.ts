@@ -31,7 +31,14 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
   if (!nextPlayerId) throw new Error('Next player not found');
 
   if (nextPlayer.isYanivCalled) {
-    await scoreYanivRound(code, state);
+    const updatedState = {
+      ...state,
+      players: state.players.map((player) => ({
+        ...player,
+        isYanivCalled: player.id === userId ? true : player.isYanivCalled,
+      })),
+    };
+    await scoreYanivRound(code, updatedState);
   } else {
     const newState = {
       ...state,

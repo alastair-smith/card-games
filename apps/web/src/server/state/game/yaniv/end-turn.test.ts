@@ -236,8 +236,8 @@ describe('endTurn', () => {
       expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(10);
     });
 
-    test('caller gets +25 penalty when beaten by an opponent with equal or lower hand value', async () => {
-      // USER_2 hand sums to 5 (≤ USER_1 caller hand of 5) → beaten
+    test('caller score stays at 0 when they are the only caller regardless of other hand values', async () => {
+      // USER_2 has a lower hand than USER_1 — only score comparison among callers applies
       vi.mocked(getYanivState).mockResolvedValue(
         makeYanivCalledState({
           hands: {
@@ -256,62 +256,7 @@ describe('endTurn', () => {
       await endTurn(CODE, USER_2);
 
       const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-      expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(25);
-    });
-
-    test('caller penalty is applied once even when multiple opponents beat the call', async () => {
-      const USER_3 = 'user-3' as UserId;
-      vi.mocked(getYanivState).mockResolvedValue(
-        makeYanivCalledState({
-          currentPlayerId: USER_3,
-          players: [
-            {
-              id: USER_1,
-              cardCount: 2,
-              name: 'Player 1' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: true,
-            },
-            {
-              id: USER_2,
-              cardCount: 1,
-              name: 'Player 2' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: false,
-            },
-            {
-              id: USER_3,
-              cardCount: 1,
-              name: 'Player 3' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: false,
-            },
-          ],
-          hands: {
-            [USER_1]: [
-              { suit: Suit.HEARTS, rank: Rank.ACE },
-              { suit: Suit.SPADES, rank: Rank.FOUR },
-            ] as YanivPlayingCard[],
-            [USER_2]: [
-              { suit: Suit.DIAMONDS, rank: Rank.THREE },
-            ] as YanivPlayingCard[],
-            [USER_3]: [
-              { suit: Suit.CLUBS, rank: Rank.TWO },
-            ] as YanivPlayingCard[],
-          },
-        }),
-      );
-
-      await endTurn(CODE, USER_3);
-
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
-      expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(25);
+      expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     });
 
     describe('score halving', () => {
@@ -483,7 +428,7 @@ describe('endTurn', () => {
         });
       });
 
-      test('sets current player to the Yaniv caller', async () => {
+      test('sets current player to the Yaniv caller with the lowest score', async () => {
         await endTurn(CODE, USER_2);
 
         expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
@@ -581,9 +526,9 @@ describe('endTurn', () => {
 
       test('includes multiple winners when scores are tied for the lowest', async () => {
         const USER_3 = 'user-3' as UserId;
-        // USER_1 called Yaniv (hand=5), USER_2 hand=5 (≤ caller) → caller beaten (+25 → score 25).
-        // USER_3 starts at 20, hand=5 → score 25. Both tie. USER_2 starts at 195+5=200, not >200...
-        // use USER_2 score 196+5=201 to trigger game over
+        // USER_1 called Yaniv (score=10, only caller) → gets +0, final score 10
+        // USER_3 (score=5, hand=5) → +5, final score 10. Both tie.
+        // USER_2 (score=195, hand=10) → +10, final score 205 (>200 → game over)
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             currentPlayerId: USER_3,
@@ -592,7 +537,7 @@ describe('endTurn', () => {
                 id: USER_1,
                 cardCount: 2,
                 name: 'Player 1' as PlayerName,
-                score: 0,
+                score: 10,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
@@ -601,7 +546,7 @@ describe('endTurn', () => {
                 id: USER_2,
                 cardCount: 2,
                 name: 'Player 2' as PlayerName,
-                score: 196,
+                score: 195,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
@@ -610,7 +555,7 @@ describe('endTurn', () => {
                 id: USER_3,
                 cardCount: 2,
                 name: 'Player 3' as PlayerName,
-                score: 20,
+                score: 5,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
@@ -622,8 +567,8 @@ describe('endTurn', () => {
                 { suit: Suit.SPADES, rank: Rank.FOUR },
               ] as YanivPlayingCard[],
               [USER_2]: [
-                { suit: Suit.DIAMONDS, rank: Rank.TWO },
-                { suit: Suit.CLUBS, rank: Rank.THREE },
+                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                { suit: Suit.CLUBS, rank: Rank.SIX },
               ] as YanivPlayingCard[],
               [USER_3]: [
                 { suit: Suit.HEARTS, rank: Rank.TWO },

@@ -10,27 +10,20 @@ export const scoreYanivRound = async (
   code: GameCode,
   state: InProgressState,
 ) => {
-  const yanivCaller = state.players.find((player) => player.isYanivCalled);
-  if (!yanivCaller) throw new Error('Yaniv caller not found');
+  const yanivCallers = state.players.filter((player) => player.isYanivCalled);
+  if (yanivCallers.length === 0) throw new Error('Yaniv caller not found');
 
-  const callerHand = state.hands[yanivCaller.id];
-  if (!callerHand) throw new Error(`Hand not found for player ${yanivCaller.id}`);
-
-  const callerHandValue = sumYanivHand(callerHand);
-  const isYanivCallBeaten = state.players.some((player) => {
-    if (player.id === yanivCaller.id) return false;
-    const hand = state.hands[player.id];
-    if (!hand) throw new Error(`Hand not found for player ${player.id}`);
-    return sumYanivHand(hand) <= callerHandValue;
-  });
+  const minCallerScore = Math.min(
+    ...yanivCallers.map((player) => player.score),
+  );
 
   const scoredPlayers = state.players.map((player) => {
     const hand = state.hands[player.id];
     if (!hand) throw new Error(`Hand not found for player ${player.id}`);
     const increment = player.isYanivCalled
-      ? isYanivCallBeaten
-        ? 25
-        : 0
+      ? player.score === minCallerScore
+        ? 0
+        : 25
       : sumYanivHand(hand);
     const newScore = player.score + increment;
 
@@ -49,6 +42,15 @@ export const scoreYanivRound = async (
     return { ...player, score, isFiftyScoreHalved, isHundredScoreHalved };
   });
 
+  const scoredCallers = scoredPlayers.filter((player) => player.isYanivCalled);
+  const minScoredCallerScore = Math.min(
+    ...scoredCallers.map((player) => player.score),
+  );
+  const firstDealer = scoredCallers.find(
+    (player) => player.score === minScoredCallerScore,
+  );
+  if (!firstDealer) throw new Error('No Yaniv caller found after scoring');
+
   const isGameOver = scoredPlayers.some((player) => player.score > 200);
 
   const newState = isGameOver
@@ -58,7 +60,8 @@ export const scoreYanivRound = async (
         winners: scoredPlayers
           .filter(
             (player) =>
-              player.score === Math.min(...scoredPlayers.map((p) => p.score)),
+              player.score ===
+              Math.min(...scoredPlayers.map((scored) => scored.score)),
           )
           .map((player) => player.id),
         hands: state.hands,
@@ -67,7 +70,7 @@ export const scoreYanivRound = async (
         ...state,
         players: scoredPlayers,
         gameStep: GameStep.REDEAL,
-        currentPlayerId: yanivCaller.id,
+        currentPlayerId: firstDealer.id,
         playedCards: [] as typeof state.playedCards,
         drawnCard: undefined,
       };
