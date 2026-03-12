@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { z } from 'zod';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
@@ -8,16 +7,13 @@ import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   GameStage,
+  type GameState,
   GameStep,
-  type gameStateSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { isValidYanivPlay } from '~/utils/yaniv/validation';
 
-type State = Extract<
-  z.infer<typeof gameStateSchema>,
-  { gameStage: GameStage.IN_PROGRESS }
->;
+type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
 vi.mock('~/server/data/yaniv', () => ({
   getYanivState: vi.fn(),
@@ -123,7 +119,7 @@ describe('playCards', () => {
     );
 
     await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
-      'Not the play cards step',
+      'Cannot play cards in this game step',
     );
   });
 
@@ -189,17 +185,10 @@ describe('playCards', () => {
     });
   });
 
-  test('pushes ordered cards to the discard pile', async () => {
-    const orderedCards = [CARD_1];
-    vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay(orderedCards));
-
+  test('does not push to the discard pile', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
-    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledOnce();
-    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(
-      CODE,
-      orderedCards,
-    );
+    expect(vi.mocked(yanivDiscard.pushDiscard)).not.toHaveBeenCalled();
   });
 
   test('advances to PICKUP_CARD when pickup is required', async () => {
@@ -235,5 +224,187 @@ describe('playCards', () => {
       CODE,
       expect.objectContaining({ gameStage: GameStage.IN_PROGRESS }),
     );
+  });
+
+  describe('playing back drawn card during PROCEED step', () => {
+    const PREVIOUSLY_PLAYED: YanivPlayingCard = {
+      suit: Suit.DIAMONDS,
+      rank: Rank.NINE,
+    };
+
+    beforeEach(() => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({
+          gameStep: GameStep.PROCEED,
+          drawnCard: CARD_1,
+          playedCards: [PREVIOUSLY_PLAYED],
+        }),
+      );
+      vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay([CARD_1]));
+    });
+
+    test('throws when no drawn card in state', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({
+          gameStep: GameStep.PROCEED,
+          drawnCard: undefined,
+          playedCards: [PREVIOUSLY_PLAYED],
+        }),
+      );
+
+      await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
+        'No drawn card to play back',
+      );
+    });
+
+    test('throws when played card does not match drawn card', async () => {
+      await expect(playCards(CODE, USER_1, [CARD_2])).rejects.toThrow(
+        'Can only play back the drawn card',
+      );
+    });
+
+    test('throws when there are no previously played cards to validate against', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({ gameStep: GameStep.PROCEED, drawnCard: CARD_1 }),
+      );
+
+      await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
+        'No played cards to validate against',
+      );
+    });
+
+    test('validates against the last card in the played pile', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+        [CARD_1],
+        PREVIOUSLY_PLAYED,
+      );
+    });
+
+    test('does not peek the discard pile', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(yanivDiscard.peekDiscard)).not.toHaveBeenCalled();
+    });
+
+    test('removes the played card from hand', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        hands: { [USER_1]: [CARD_2] },
+      });
+    });
+
+    test('decrements the player card count', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        players: expect.arrayContaining([
+          expect.objectContaining({ id: USER_1, cardCount: 1 }),
+        ]),
+      });
+    });
+
+    test('appends the played card to the existing played pile', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        playedCards: [PREVIOUSLY_PLAYED, CARD_1],
+      });
+    });
+
+    test('keeps PROCEED step', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        gameStep: GameStep.PROCEED,
+      });
+    });
+
+    test('clears drawn card', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
+        'drawnCard',
+        undefined,
+      );
+    });
+
+    test('persists and publishes the updated state', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState)).toHaveBeenCalledOnce();
+      expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
+    });
+
+    describe('with a straight flush of three cards on the pile', () => {
+      const FIRST_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.THREE,
+      };
+      const MIDDLE_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.FOUR,
+      };
+      const LAST_CARD: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.FIVE,
+      };
+      // extends from the end (matches rank of LAST_CARD's neighbour)
+      const CARD_EXTENDING_END: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.SIX,
+      };
+      // extends from the start (matches rank of FIRST_CARD's neighbour)
+      const CARD_EXTENDING_START: YanivPlayingCard = {
+        suit: Suit.HEARTS,
+        rank: Rank.TWO,
+      };
+
+      test('allows playing a card that matches the rank of the last card in the run', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeState({
+            gameStep: GameStep.PROCEED,
+            drawnCard: CARD_EXTENDING_END,
+            playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
+            hands: { [USER_1]: [CARD_EXTENDING_END, CARD_2] },
+          }),
+        );
+        vi.mocked(isValidYanivPlay).mockReturnValue(
+          makeValidPlay([CARD_EXTENDING_END], false),
+        );
+
+        await playCards(CODE, USER_1, [CARD_EXTENDING_END]);
+
+        expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+          [CARD_EXTENDING_END],
+          LAST_CARD,
+        );
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD, CARD_EXTENDING_END],
+        });
+      });
+
+      test('rejects playing a card that only matches the rank of the first card in the run', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeState({
+            gameStep: GameStep.PROCEED,
+            drawnCard: CARD_EXTENDING_START,
+            playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
+            hands: { [USER_1]: [CARD_EXTENDING_START, CARD_2] },
+          }),
+        );
+        vi.mocked(isValidYanivPlay).mockReturnValue({ isValid: false });
+
+        await expect(
+          playCards(CODE, USER_1, [CARD_EXTENDING_START]),
+        ).rejects.toThrow('Invalid card combination');
+        expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+          [CARD_EXTENDING_START],
+          LAST_CARD,
+        );
+      });
+    });
   });
 });
