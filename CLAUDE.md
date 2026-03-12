@@ -41,7 +41,7 @@ pnpm test
 # Pull requests
 
 When raising a PR:
-- Use the GitHub MCP tool (`mcp__github__create_pull_request`) to create the PR
+- Use the `gh pr create` CLI tool to create the PR
 - Use the template at `.github/pull_request_template.md` for the PR body
 - Strip all HTML comments (`<!-- ... -->`) from the PR body before submitting — the PR description is used as the squash-merge commit message
 - Omit the Details section entirely if there is nothing to add
