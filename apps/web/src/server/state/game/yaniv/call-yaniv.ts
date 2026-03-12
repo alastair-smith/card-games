@@ -5,6 +5,7 @@ import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/cards';
+import { scoreYanivRound } from './score-yaniv-round';
 
 export const callYaniv = async (code: GameCode, userId: UserId) => {
   const state = await getYanivState({ code });
@@ -15,8 +16,6 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
   if (state.gameStep !== GameStep.PROCEED)
     throw new Error('Not the proceed step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
-  if (state.players.some((player) => player.isYanivCalled))
-    throw new Error('Yaniv has already been called this round');
 
   const callerHand = state.hands[userId] ?? [];
   if (sumYanivHand(callerHand) > 7)
@@ -26,22 +25,27 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
 
   const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
-  const nextPlayerId = state.players[nextIndex]?.id;
+  const nextPlayer = state.players[nextIndex];
+  const nextPlayerId = nextPlayer?.id;
 
   if (!nextPlayerId) throw new Error('Next player not found');
 
-  const newState = {
-    ...state,
-    players: state.players.map((player) => ({
-      ...player,
-      isYanivCalled: player.id === userId,
-    })),
-    playedCards: [] as typeof state.playedCards,
-    drawnCard: undefined,
-    currentPlayerId: nextPlayerId,
-    gameStep: GameStep.PLAY_CARDS,
-  };
+  if (nextPlayer.isYanivCalled) {
+    await scoreYanivRound(code, state);
+  } else {
+    const newState = {
+      ...state,
+      players: state.players.map((player) => ({
+        ...player,
+        isYanivCalled: player.id === userId,
+      })),
+      playedCards: [] as typeof state.playedCards,
+      drawnCard: undefined,
+      currentPlayerId: nextPlayerId,
+      gameStep: GameStep.PLAY_CARDS,
+    };
 
-  await setYanivState({ code }, newState);
-  await publishYanivState(code, newState);
+    await setYanivState({ code }, newState);
+    await publishYanivState(code, newState);
+  }
 };

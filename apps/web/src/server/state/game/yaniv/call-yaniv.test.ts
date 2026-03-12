@@ -110,37 +110,6 @@ describe('callYaniv', () => {
     await expect(callYaniv(CODE, USER_2)).rejects.toThrow('Not your turn');
   });
 
-  test('throws when Yaniv has already been called this round', async () => {
-    vi.mocked(getYanivState).mockResolvedValue(
-      makeState({
-        players: [
-          {
-            id: USER_1,
-            cardCount: 2,
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-          },
-          {
-            id: USER_2,
-            cardCount: 2,
-            name: 'Player 2' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: true,
-          },
-        ],
-      }),
-    );
-
-    await expect(callYaniv(CODE, USER_1)).rejects.toThrow(
-      'Yaniv has already been called this round',
-    );
-  });
-
   test('throws when hand value is too high to call Yaniv', async () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
@@ -191,6 +160,53 @@ describe('callYaniv', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(0);
+  });
+
+  test('scores and ends the round when all players have taken their final turn', async () => {
+    // USER_2 called Yaniv earlier (hand=4); USER_1 is taking their final turn and also calls Yaniv
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({
+        players: [
+          {
+            id: USER_1,
+            cardCount: 2,
+            name: 'Player 1' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+          },
+          {
+            id: USER_2,
+            cardCount: 2,
+            name: 'Player 2' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: true,
+          },
+        ],
+        hands: {
+          [USER_1]: [
+            { suit: Suit.HEARTS, rank: Rank.ACE },
+            { suit: Suit.SPADES, rank: Rank.FOUR },
+          ] as YanivPlayingCard[],
+          [USER_2]: [
+            { suit: Suit.DIAMONDS, rank: Rank.ACE },
+            { suit: Suit.CLUBS, rank: Rank.THREE },
+          ] as YanivPlayingCard[],
+        },
+      }),
+    );
+
+    await callYaniv(CODE, USER_1);
+
+    // USER_2 is the original Yaniv caller (hand=4, not beaten since USER_1 hand=5 > 4) → score 0
+    // USER_1 adds their hand value of 5
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    expect(savedState.gameStep).toBe(GameStep.REDEAL);
+    expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(0);
+    expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(5);
   });
 
   test('advances to the next player', async () => {
