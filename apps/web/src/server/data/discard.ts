@@ -79,7 +79,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  // Pops the top card then fetches and clears the rest in one query.
+  // Pops the top card then fetches and clears the rest in one batch.
   // Returns all cards top-first.
   const drainDiscard = async (code: GameCode): Promise<T[]> => {
     const key = getDiscardKey(code);

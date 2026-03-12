@@ -288,8 +288,9 @@ describe('pickupCard', () => {
     test('does not set drawn card in state', async () => {
       await pickupCard(CODE, USER_1, 'discard');
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).not.toHaveProperty(
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
         'drawnCard',
+        undefined,
       );
     });
 

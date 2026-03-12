@@ -123,7 +123,7 @@ describe('playCards', () => {
     );
 
     await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
-      'Not the play cards step',
+      'Cannot play cards in this game step',
     );
   });
 

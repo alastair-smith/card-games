@@ -19,7 +19,7 @@ const drawFromDeck = async (code: GameCode): Promise<YanivPlayingCard> => {
     if (topCard) await yanivDiscard.pushDiscard(code, topCard);
   }
   const card = await yanivDeck.drawCard(code);
-  if (!card) throw new Error('Deck is empty despite shuffle');
+  if (!card) throw new Error('Deck is empty');
   return card;
 };
 
@@ -60,7 +60,7 @@ export const pickupCard = async (
     players: updatedPlayers,
     hands: { ...state.hands, [userId]: updatedHand },
     gameStep: GameStep.PROCEED,
-    ...(source === 'deck' && { drawnCard }),
+    ...(source === 'deck' ? { drawnCard } : { drawnCard: undefined }),
   };
 
   await setYanivState({ code }, newState);

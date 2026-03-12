@@ -113,7 +113,7 @@ export const playCards = async (
     state.gameStep !== GameStep.PLAY_CARDS &&
     state.gameStep !== GameStep.PROCEED
   )
-    throw new Error('Not the play cards step');
+    throw new Error('Cannot play cards in this game step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
   const hand = state.hands[userId];
