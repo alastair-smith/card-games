@@ -15,6 +15,8 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
   if (state.gameStep !== GameStep.PROCEED)
     throw new Error('Not the proceed step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
+  if (state.players.some((player) => player.isYanivCalled))
+    throw new Error('Yaniv has already been called this round');
 
   const callerHand = state.hands[userId] ?? [];
   if (sumYanivHand(callerHand) > 7)
@@ -22,66 +24,23 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
 
   await yanivDiscard.pushDiscard(code, state.playedCards);
 
-  const callerHandValue = sumYanivHand(callerHand);
-  const isYanivCallBeaten = state.players.some(
-    (player) =>
-      player.id !== userId &&
-      sumYanivHand(state.hands[player.id] ?? []) <= callerHandValue,
-  );
+  const currentIndex = state.players.findIndex(({ id }) => id === userId);
+  const nextIndex = (currentIndex + 1) % state.players.length;
+  const nextPlayerId = state.players[nextIndex]?.id;
 
-  const scoredPlayers = state.players.map((player) => {
-    const isYanivCalled = player.id === userId;
-    const hand = state.hands[player.id] ?? [];
-    const increment = isYanivCalled
-      ? isYanivCallBeaten
-        ? 25
-        : 0
-      : sumYanivHand(hand);
-    const newScore = player.score + increment;
+  if (!nextPlayerId) throw new Error('Next player not found');
 
-    let score = newScore;
-    let isFiftyScoreHalved = player.isFiftyScoreHalved;
-    let isHundredScoreHalved = player.isHundredScoreHalved;
-
-    if (newScore === 50 && !player.isFiftyScoreHalved) {
-      score = 25;
-      isFiftyScoreHalved = true;
-    } else if (newScore === 100 && !player.isHundredScoreHalved) {
-      score = 50;
-      isHundredScoreHalved = true;
-    }
-
-    return {
+  const newState = {
+    ...state,
+    players: state.players.map((player) => ({
       ...player,
-      score,
-      isFiftyScoreHalved,
-      isHundredScoreHalved,
-      isYanivCalled,
-    };
-  });
-
-  const isGameOver = scoredPlayers.some((player) => player.score > 200);
-
-  const newState = isGameOver
-    ? {
-        gameStage: GameStage.FINISHED as const,
-        players: scoredPlayers,
-        winners: scoredPlayers
-          .filter(
-            (player) =>
-              player.score === Math.min(...scoredPlayers.map((p) => p.score)),
-          )
-          .map((player) => player.id),
-        hands: state.hands,
-      }
-    : {
-        ...state,
-        players: scoredPlayers,
-        gameStep: GameStep.REDEAL,
-        currentPlayerId: userId,
-        playedCards: [] as typeof state.playedCards,
-        drawnCard: undefined,
-      };
+      isYanivCalled: player.id === userId,
+    })),
+    playedCards: [] as typeof state.playedCards,
+    drawnCard: undefined,
+    currentPlayerId: nextPlayerId,
+    gameStep: GameStep.PLAY_CARDS,
+  };
 
   await setYanivState({ code }, newState);
   await publishYanivState(code, newState);
