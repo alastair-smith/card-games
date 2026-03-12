@@ -19,11 +19,11 @@ const removeFromHand = (
 ): YanivPlayingCard[] => {
   const remaining = [...hand];
   for (const card of cards) {
-    const idx = remaining.findIndex(
-      (c) => c.rank === card.rank && c.suit === card.suit,
+    const positionInHand = remaining.findIndex(
+      ({ rank, suit }) => rank === card.rank && suit === card.suit,
     );
-    if (idx === -1) throw new Error('Card not in hand');
-    remaining.splice(idx, 1);
+    if (positionInHand === -1) throw new Error('Card not in hand');
+    remaining.splice(positionInHand, 1);
   }
   return remaining;
 };
