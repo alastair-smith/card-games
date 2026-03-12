@@ -13,15 +13,20 @@ export const scoreYanivRound = async (
   const yanivCaller = state.players.find((player) => player.isYanivCalled);
   if (!yanivCaller) throw new Error('Yaniv caller not found');
 
-  const callerHandValue = sumYanivHand(state.hands[yanivCaller.id] ?? []);
-  const isYanivCallBeaten = state.players.some(
-    (player) =>
-      player.id !== yanivCaller.id &&
-      sumYanivHand(state.hands[player.id] ?? []) <= callerHandValue,
-  );
+  const callerHand = state.hands[yanivCaller.id];
+  if (!callerHand) throw new Error(`Hand not found for player ${yanivCaller.id}`);
+
+  const callerHandValue = sumYanivHand(callerHand);
+  const isYanivCallBeaten = state.players.some((player) => {
+    if (player.id === yanivCaller.id) return false;
+    const hand = state.hands[player.id];
+    if (!hand) throw new Error(`Hand not found for player ${player.id}`);
+    return sumYanivHand(hand) <= callerHandValue;
+  });
 
   const scoredPlayers = state.players.map((player) => {
-    const hand = state.hands[player.id] ?? [];
+    const hand = state.hands[player.id];
+    if (!hand) throw new Error(`Hand not found for player ${player.id}`);
     const increment = player.isYanivCalled
       ? isYanivCallBeaten
         ? 25
