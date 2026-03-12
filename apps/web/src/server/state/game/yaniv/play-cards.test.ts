@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { z } from 'zod';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
@@ -8,16 +7,13 @@ import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   GameStage,
+  type GameState,
   GameStep,
-  type gameStateSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { isValidYanivPlay } from '~/utils/yaniv/validation';
 
-type State = Extract<
-  z.infer<typeof gameStateSchema>,
-  { gameStage: GameStage.IN_PROGRESS }
->;
+type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
 vi.mock('~/server/data/yaniv', () => ({
   getYanivState: vi.fn(),

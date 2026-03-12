@@ -1,4 +1,3 @@
-import type { z } from 'zod';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
@@ -6,16 +5,13 @@ import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   GameStage,
+  type GameState,
   GameStep,
-  type gameStateSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { isValidYanivPlay } from '~/utils/yaniv/validation';
 
-type InProgressState = Extract<
-  z.infer<typeof gameStateSchema>,
-  { gameStage: GameStage.IN_PROGRESS }
->;
+type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
 const removeFromHand = (
   hand: YanivPlayingCard[],

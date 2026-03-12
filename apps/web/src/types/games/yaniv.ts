@@ -100,3 +100,5 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
   }),
 ]);
+
+export type GameState = z.infer<typeof gameStateSchema>;

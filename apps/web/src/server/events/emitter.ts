@@ -1,16 +1,16 @@
 import { EventEmitter } from 'node:events';
 import type { z } from 'zod';
-import type { gameStateSchema } from '~/server/data/high-card';
+import type { GameState as HighCardGameState } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
 import type { UserId } from '~/types/entities';
 import type { ReactionEmoji } from '~/types/game';
-import type { gameStateSchema as yanivGameStateSchema } from '~/types/games/yaniv';
+import type { GameState as YanivGameState } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
 
 type Events = {
   [key: `lobby:${string}`]: [z.infer<typeof lobbySchema>];
-  [key: `high-card:${string}`]: [z.infer<typeof gameStateSchema>];
-  [key: `yaniv:${string}`]: [z.infer<typeof yanivGameStateSchema>];
+  [key: `high-card:${string}`]: [HighCardGameState];
+  [key: `yaniv:${string}`]: [YanivGameState];
   [key: `emoji:${string}`]: [
     { emoji: ReactionEmoji; targetPlayerId: UserId; id: number },
   ];
