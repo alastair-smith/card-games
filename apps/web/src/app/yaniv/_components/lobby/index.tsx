@@ -18,12 +18,20 @@ export default function Lobby({
   code: GameCode;
   players: Player[];
 }) {
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState<{
+    isReady: boolean;
+    name: string;
+    nameError: string;
+  }>(() => {
     const currentPlayer = players.find((player) => player.isUser);
 
+    if (!currentPlayer) {
+      throw new Error('Current player not found in lobby');
+    }
+
     return {
-      isReady: currentPlayer?.isReady ?? false,
-      name: currentPlayer?.name ?? '',
+      isReady: currentPlayer.isReady,
+      name: currentPlayer.name,
       nameError: '',
     };
   });
