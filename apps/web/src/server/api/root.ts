@@ -1,6 +1,7 @@
 import { lobbyRouter } from '~/server/api/routers/lobby';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 import { highCardRouter } from './routers/high-card';
+import { yanivRouter } from './routers/yaniv';
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { highCardRouter } from './routers/high-card';
 export const appRouter = createTRPCRouter({
   lobby: lobbyRouter,
   highCard: highCardRouter,
+  yaniv: yanivRouter,
 });
 
 // export type definition of API

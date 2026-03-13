@@ -17,7 +17,7 @@ vi.mock('~/server/data/yaniv', () => ({
   getYanivState: vi.fn(),
 }));
 
-const { getGameState } = await import('./get-game-state');
+const { getGameState, toClientGameState } = await import('./get-game-state');
 
 const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;
@@ -89,96 +89,94 @@ describe('getGameState', () => {
   test('returns null when game not found', async () => {
     vi.mocked(getYanivState).mockResolvedValue(null);
 
-    const result = await getGameState(CODE, USER_1);
+    const result = await getGameState(CODE);
 
     expect(result).toBeNull();
   });
 
-  test('returns lobby state with empty hand and players', async () => {
+  test('returns raw lobby state', async () => {
     vi.mocked(getYanivState).mockResolvedValue({ gameStage: GameStage.LOBBY });
 
-    const result = await getGameState(CODE, USER_1);
+    const result = await getGameState(CODE);
 
-    expect(result).toEqual({
-      gameStage: GameStage.LOBBY,
-      hand: [],
-      players: [],
-    });
+    expect(result).toEqual({ gameStage: GameStage.LOBBY });
   });
 
-  describe('in progress game', () => {
-    test('returns correct hand for requesting user', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeInProgressState());
+  test('returns raw in-progress state including all hands', async () => {
+    const state = makeInProgressState();
+    vi.mocked(getYanivState).mockResolvedValue(state);
 
-      const result = await getGameState(CODE, USER_1);
+    const result = await getGameState(CODE);
 
-      expect(result?.hand).toEqual(USER_1_CARDS);
-    });
+    expect(result).toEqual(state);
+  });
 
-    test('throws when requesting user is not in the game', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeInProgressState());
+  test('returns raw finished state including all hands', async () => {
+    const state = makeFinishedState();
+    vi.mocked(getYanivState).mockResolvedValue(state);
 
-      await expect(getGameState(CODE, 'other-user' as UserId)).rejects.toThrow(
-        'Player not in game',
-      );
-    });
+    const result = await getGameState(CODE);
 
-    test('decorates requesting user with isUser true', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeInProgressState());
+    expect(result).toEqual(state);
+  });
+});
 
-      const result = await getGameState(CODE, USER_1);
+describe('toClientGameState', () => {
+  test('returns correct hand for requesting user', () => {
+    const result = toClientGameState(makeInProgressState(), USER_1);
 
-      expect(result?.players).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: USER_1, isUser: true }),
-        ]),
-      );
-    });
+    expect(result.hand).toEqual(USER_1_CARDS);
+  });
 
-    test('decorates other players with isUser false', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeInProgressState());
+  test('throws when requesting user is not in the game', () => {
+    expect(() =>
+      toClientGameState(makeInProgressState(), 'other-user' as UserId),
+    ).toThrow('Player not in game');
+  });
 
-      const result = await getGameState(CODE, USER_1);
+  test('decorates requesting user with isUser true', () => {
+    const result = toClientGameState(makeInProgressState(), USER_1);
 
-      expect(result?.players).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ id: USER_2, isUser: false }),
-        ]),
-      );
-    });
+    expect(result.players).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: USER_1, isUser: true }),
+      ]),
+    );
+  });
 
-    test('does not include hands in the returned state', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeInProgressState());
+  test('decorates other players with isUser false', () => {
+    const result = toClientGameState(makeInProgressState(), USER_1);
 
-      const result = await getGameState(CODE, USER_1);
+    expect(result.players).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: USER_2, isUser: false }),
+      ]),
+    );
+  });
 
-      expect(result).not.toHaveProperty('hands');
-    });
+  test('does not include hands in the returned state', () => {
+    const result = toClientGameState(makeInProgressState(), USER_1);
+
+    expect(result).not.toHaveProperty('hands');
   });
 
   describe('finished game', () => {
-    test('returns correct hand for requesting user', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeFinishedState());
+    test('returns correct hand for requesting user', () => {
+      const result = toClientGameState(makeFinishedState(), USER_2);
 
-      const result = await getGameState(CODE, USER_2);
-
-      expect(result?.hand).toEqual(USER_2_CARDS);
+      expect(result.hand).toEqual(USER_2_CARDS);
     });
 
-    test('throws when requesting user is not in the game', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeFinishedState());
-
-      await expect(getGameState(CODE, 'other-user' as UserId)).rejects.toThrow(
-        'Player not in game',
-      );
+    test('throws when requesting user is not in the game', () => {
+      expect(() =>
+        toClientGameState(makeFinishedState(), 'other-user' as UserId),
+      ).toThrow('Player not in game');
     });
 
-    test('decorates players with isUser correctly', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeFinishedState());
+    test('decorates players with isUser correctly', () => {
+      const result = toClientGameState(makeFinishedState(), USER_1);
 
-      const result = await getGameState(CODE, USER_1);
-
-      expect(result?.players).toEqual(
+      expect(result.players).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ id: USER_1, isUser: true }),
           expect.objectContaining({ id: USER_2, isUser: false }),
@@ -186,10 +184,8 @@ describe('getGameState', () => {
       );
     });
 
-    test('does not include hands in the returned state', async () => {
-      vi.mocked(getYanivState).mockResolvedValue(makeFinishedState());
-
-      const result = await getGameState(CODE, USER_1);
+    test('does not include hands in the returned state', () => {
+      const result = toClientGameState(makeFinishedState(), USER_1);
 
       expect(result).not.toHaveProperty('hands');
     });
