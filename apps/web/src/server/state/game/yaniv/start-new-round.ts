@@ -31,10 +31,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) => {
 
   await yanivDeck.createDeck(code, shuffle([...deckWithJokers]));
 
-  const hands: Record<UserId, YanivPlayingCard[]> = {} as Record<
-    UserId,
-    YanivPlayingCard[]
-  >;
+  const hands: Record<UserId, YanivPlayingCard[]> = {};
   for (const player of players) {
     const cards = await yanivDeck.drawCards(code, HAND_SIZE);
     hands[player.id] = cards;
@@ -50,7 +47,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) => {
     ...state,
     players,
     hands,
-    playedCards: [] as YanivPlayingCard[],
+    playedCards: [],
     drawnCard: undefined,
     currentPlayerId: state.currentPlayerId,
     gameStep: GameStep.PLAY_CARDS,
