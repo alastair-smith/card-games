@@ -46,7 +46,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
         ...player,
         isYanivCalled: player.id === userId,
       })),
-      playedCards: [] as typeof state.playedCards,
+      playedCards: [],
       drawnCard: undefined,
       currentPlayerId: nextPlayerId,
       gameStep: GameStep.PLAY_CARDS,

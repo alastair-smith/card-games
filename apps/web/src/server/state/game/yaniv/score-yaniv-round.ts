@@ -1,10 +1,43 @@
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import type { GameCode } from '~/types/game';
-import { GameStage, type GameState, GameStep } from '~/types/games/yaniv';
+import {
+  GAME_OVER_SCORE,
+  GameStage,
+  type GameState,
+  GameStep,
+  YANIV_CALLER_PENALTY,
+} from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/cards';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
+
+type Player = InProgressState['players'][number];
+
+const applyScoreHalving = (
+  newScore: number,
+  player: Player,
+): Pick<Player, 'score' | 'isFiftyScoreHalved' | 'isHundredScoreHalved'> => {
+  if (newScore === 50 && !player.isFiftyScoreHalved) {
+    return {
+      score: 25,
+      isFiftyScoreHalved: true,
+      isHundredScoreHalved: player.isHundredScoreHalved,
+    };
+  }
+  if (newScore === 100 && !player.isHundredScoreHalved) {
+    return {
+      score: 50,
+      isFiftyScoreHalved: player.isFiftyScoreHalved,
+      isHundredScoreHalved: true,
+    };
+  }
+  return {
+    score: newScore,
+    isFiftyScoreHalved: player.isFiftyScoreHalved,
+    isHundredScoreHalved: player.isHundredScoreHalved,
+  };
+};
 
 export const scoreYanivRound = async (
   code: GameCode,
@@ -23,23 +56,11 @@ export const scoreYanivRound = async (
     const increment = player.isYanivCalled
       ? player.score === minCallerScore
         ? 0
-        : 25
+        : YANIV_CALLER_PENALTY
       : sumYanivHand(hand);
     const newScore = player.score + increment;
 
-    let score = newScore;
-    let isFiftyScoreHalved = player.isFiftyScoreHalved;
-    let isHundredScoreHalved = player.isHundredScoreHalved;
-
-    if (newScore === 50 && !player.isFiftyScoreHalved) {
-      score = 25;
-      isFiftyScoreHalved = true;
-    } else if (newScore === 100 && !player.isHundredScoreHalved) {
-      score = 50;
-      isHundredScoreHalved = true;
-    }
-
-    return { ...player, score, isFiftyScoreHalved, isHundredScoreHalved };
+    return { ...player, ...applyScoreHalving(newScore, player) };
   });
 
   const scoredCallers = scoredPlayers.filter((player) => player.isYanivCalled);
@@ -51,7 +72,9 @@ export const scoreYanivRound = async (
   );
   if (!firstDealer) throw new Error('No Yaniv caller found after scoring');
 
-  const isGameOver = scoredPlayers.some((player) => player.score > 200);
+  const isGameOver = scoredPlayers.some(
+    (player) => player.score > GAME_OVER_SCORE,
+  );
 
   const newState = isGameOver
     ? {
@@ -71,7 +94,7 @@ export const scoreYanivRound = async (
         players: scoredPlayers,
         gameStep: GameStep.REDEAL,
         currentPlayerId: firstDealer.id,
-        playedCards: [] as typeof state.playedCards,
+        playedCards: [],
         drawnCard: undefined,
       };
 
