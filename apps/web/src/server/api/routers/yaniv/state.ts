@@ -14,7 +14,6 @@ import {
 import { joinGame } from '~/server/state/game/yaniv/join-game';
 import type { UserId } from '~/types/entities';
 import {
-  type GameCode,
   GameUpdate,
   gameCodeSchema,
   type Player,
@@ -56,24 +55,20 @@ export const yanivStateSubscription = protectedProcedure
     input: { code },
     ctx: { userId, signal },
   }): AsyncGenerator<StateSubscription> {
-    const initialState = await getGameState(code, userId);
+    const rawState = await getGameState(code);
 
-    if (!initialState) {
-      return {
-        update: GameUpdate.GAME_NOT_FOUND,
-      };
+    if (!rawState) {
+      return { update: GameUpdate.GAME_NOT_FOUND };
     }
 
-    switch (initialState.gameStage) {
+    switch (rawState.gameStage) {
       case GameStage.FINISHED: {
-        if (initialState.players.some((user) => user.id === userId)) {
-          return {
-            update: GameUpdate.FINISHED,
-            state: initialState,
-          };
+        if (!rawState.players.some((player) => player.id === userId)) {
+          return { update: GameUpdate.GAME_NOT_FOUND };
         }
         return {
-          update: GameUpdate.GAME_NOT_FOUND,
+          update: GameUpdate.FINISHED,
+          state: toClientGameState(rawState, userId),
         };
       }
 
@@ -81,9 +76,7 @@ export const yanivStateSubscription = protectedProcedure
         const lobbyData = await joinGame({ code, userId });
 
         if (lobbyData.update === GameUpdate.LOBBY_FULL) {
-          return {
-            update: GameUpdate.LOBBY_FULL,
-          };
+          return { update: GameUpdate.LOBBY_FULL };
         }
 
         yield {
@@ -97,14 +90,14 @@ export const yanivStateSubscription = protectedProcedure
       case GameStage.IN_PROGRESS: {
         yield {
           update: GameUpdate.GAME_STATE_UPDATE,
-          state: initialState,
+          state: toClientGameState(rawState, userId),
         };
         break;
       }
 
       default: {
         throw new Error(
-          `Unexpected initial game stage: ${String(initialState.gameStage)}`,
+          `Unexpected initial game stage: ${String((rawState as { gameStage: string }).gameStage)}`,
         );
       }
     }
@@ -116,9 +109,7 @@ export const yanivStateSubscription = protectedProcedure
 
       if (messageData.success) {
         if (!messageData.data.players.some((player) => player.id === userId)) {
-          messageQueue.push({
-            update: GameUpdate.KICKED,
-          });
+          messageQueue.push({ update: GameUpdate.KICKED });
           return;
         }
 
@@ -127,10 +118,7 @@ export const yanivStateSubscription = protectedProcedure
           isHost: player.id === messageData.data.host,
           isUser: player.id === userId,
         }));
-        messageQueue.push({
-          update: GameUpdate.LOBBY_UPDATE,
-          players,
-        });
+        messageQueue.push({ update: GameUpdate.LOBBY_UPDATE, players });
       } else {
         logger.error(
           new Error('Invalid message format for Yaniv lobby', {
@@ -144,10 +132,10 @@ export const yanivStateSubscription = protectedProcedure
       const messageData = gameStateSchema.safeParse(message);
 
       if (messageData.success) {
-        const rawState = messageData.data;
-        if (rawState.gameStage === GameStage.LOBBY) return;
+        const emittedState = messageData.data;
+        if (emittedState.gameStage === GameStage.LOBBY) return;
 
-        const state = toClientGameState(rawState, userId);
+        const state = toClientGameState(emittedState, userId);
         const update =
           state.gameStage === GameStage.FINISHED
             ? GameUpdate.FINISHED

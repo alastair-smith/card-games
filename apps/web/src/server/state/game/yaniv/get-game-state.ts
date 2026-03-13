@@ -1,10 +1,10 @@
 import { getYanivState } from '~/server/data/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import {
+import type {
   GameStage,
-  type GameState,
-  type YanivPlayingCard,
+  GameState,
+  YanivPlayingCard,
 } from '~/types/games/yaniv';
 
 type Player = Extract<
@@ -43,15 +43,6 @@ export const toClientGameState = (
 
 export const getGameState = async (
   code: GameCode,
-  userId: UserId,
-): Promise<ClientGameState | null> => {
-  const rawState = await getYanivState({ code });
-
-  if (!rawState) return null;
-
-  if (rawState.gameStage === GameStage.LOBBY) {
-    return { gameStage: rawState.gameStage, hand: [], players: [] };
-  }
-
-  return toClientGameState(rawState, userId);
+): Promise<GameState | null> => {
+  return getYanivState({ code });
 };
