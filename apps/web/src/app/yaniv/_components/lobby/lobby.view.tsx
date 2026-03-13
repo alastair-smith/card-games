@@ -1,9 +1,10 @@
 'use client';
 
-import { HowToDialog } from '~/app/yaniv/_components/how-to';
+import { HowTo } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
+import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
@@ -34,9 +35,14 @@ export default function LobbyView({ code, ...playerProps }: LobbyProps) {
         <h1 className='sr-only'>Yaniv Lobby</h1>
         <div className='flex min-w-[20rem] flex-1 basis-[30rem] flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
-          <div className='flex-1 w-full'>
-            <HowToDialog />
-          </div>
+          <Card className='flex-1 w-full'>
+            <CardHeader>
+              <h2 className='text-xl font-semibold'>How to play Yaniv</h2>
+            </CardHeader>
+            <CardContent>
+              <HowTo />
+            </CardContent>
+          </Card>
         </div>
         <Players
           className='min-w-[20rem] flex-1 basis-[30rem]'
