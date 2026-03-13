@@ -12,7 +12,7 @@ type Player = Extract<
   { gameStage: GameStage.IN_PROGRESS }
 >['players'][number];
 
-type ClientGameState = Omit<GameState, 'hands'> & {
+export type ClientGameState = Omit<GameState, 'hands'> & {
   hand: YanivPlayingCard[];
   players: (Player & { isUser: boolean })[];
 };
