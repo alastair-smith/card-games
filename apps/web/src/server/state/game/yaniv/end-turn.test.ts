@@ -35,6 +35,7 @@ const USER_2 = 'user-2' as UserId;
 
 const DRAWN_CARD: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.THREE };
 
+// Normal state: no Yaniv called, USER_1 is current player
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PROCEED,
@@ -72,6 +73,47 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   },
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
   drawnCard: DRAWN_CARD,
+  ...overrides,
+});
+
+// Post-Yaniv state: USER_1 called Yaniv (hand=5), USER_2 is taking their final turn
+// When USER_2 calls endTurn, next is USER_1 (isYanivCalled) → round ends
+const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
+  gameStage: GameStage.IN_PROGRESS,
+  gameStep: GameStep.PROCEED,
+  currentPlayerId: USER_2,
+  players: [
+    {
+      id: USER_1,
+      cardCount: 2,
+      name: 'Player 1' as PlayerName,
+      score: 0,
+      isFiftyScoreHalved: false,
+      isHundredScoreHalved: false,
+      isYanivCalled: true,
+    },
+    {
+      id: USER_2,
+      cardCount: 2,
+      name: 'Player 2' as PlayerName,
+      score: 0,
+      isFiftyScoreHalved: false,
+      isHundredScoreHalved: false,
+      isYanivCalled: false,
+    },
+  ],
+  hands: {
+    [USER_1]: [
+      { suit: Suit.HEARTS, rank: Rank.ACE },
+      { suit: Suit.SPADES, rank: Rank.FOUR },
+    ],
+    [USER_2]: [
+      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+      { suit: Suit.CLUBS, rank: Rank.SIX },
+    ],
+  },
+  playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+  drawnCard: undefined,
   ...overrides,
 });
 
@@ -179,5 +221,422 @@ describe('endTurn', () => {
       CODE,
       expect.objectContaining({ gameStage: GameStage.IN_PROGRESS }),
     );
+  });
+
+  describe('when Yaniv was called and all players have had their final turn', () => {
+    beforeEach(() => {
+      vi.mocked(getYanivState).mockResolvedValue(makeYanivCalledState());
+    });
+
+    test('caller score stays the same on a clean Yaniv, others add their hand value', async () => {
+      await endTurn(CODE, USER_2);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
+      expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(10);
+    });
+
+    test('caller score stays at 0 when they are the only caller regardless of other hand values', async () => {
+      // USER_2 has a lower hand than USER_1 — only score comparison among callers applies
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeYanivCalledState({
+          hands: {
+            [USER_1]: [
+              { suit: Suit.HEARTS, rank: Rank.ACE },
+              { suit: Suit.SPADES, rank: Rank.FOUR },
+            ] as YanivPlayingCard[],
+            [USER_2]: [
+              { suit: Suit.DIAMONDS, rank: Rank.TWO },
+              { suit: Suit.CLUBS, rank: Rank.THREE },
+            ] as YanivPlayingCard[],
+          },
+        }),
+      );
+
+      await endTurn(CODE, USER_2);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
+    });
+
+    describe('score halving', () => {
+      test('halves score from 50 to 25 and sets the halved flag', async () => {
+        // USER_2 score 44 + hand 6 (TWO+FOUR) = 50 → halved to 25
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 44,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+            hands: {
+              [USER_1]: [
+                { suit: Suit.HEARTS, rank: Rank.ACE },
+                { suit: Suit.SPADES, rank: Rank.FOUR },
+              ] as YanivPlayingCard[],
+              [USER_2]: [
+                { suit: Suit.DIAMONDS, rank: Rank.TWO },
+                { suit: Suit.CLUBS, rank: Rank.FOUR },
+              ] as YanivPlayingCard[],
+            },
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+        const user2 = savedState.players.find((p) => p.id === USER_2);
+        expect(user2?.score).toBe(25);
+        expect(user2?.isFiftyScoreHalved).toBe(true);
+      });
+
+      test('halves score from 100 to 50 and sets the halved flag', async () => {
+        // USER_2 score 90 + hand 10 = 100 → halved to 50
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 90,
+                isFiftyScoreHalved: true,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+        const user2 = savedState.players.find((p) => p.id === USER_2);
+        expect(user2?.score).toBe(50);
+        expect(user2?.isHundredScoreHalved).toBe(true);
+      });
+
+      test('does not re-halve score of exactly 50 when already halved', async () => {
+        // USER_2 score 44 + hand 10 = 54, isFiftyScoreHalved already true → no halving
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 44,
+                isFiftyScoreHalved: true,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+        expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(54);
+      });
+
+      test('does not halve score when total passes over 50 without landing on it', async () => {
+        // USER_2 score 45 + hand 8 (FOUR+FOUR) = 53 → no halving
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 45,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+            hands: {
+              [USER_1]: [
+                { suit: Suit.HEARTS, rank: Rank.ACE },
+                { suit: Suit.SPADES, rank: Rank.FOUR },
+              ] as YanivPlayingCard[],
+              [USER_2]: [
+                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                { suit: Suit.CLUBS, rank: Rank.FOUR },
+              ] as YanivPlayingCard[],
+            },
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+        const user2 = savedState.players.find((p) => p.id === USER_2);
+        expect(user2?.score).toBe(53);
+        expect(user2?.isFiftyScoreHalved).toBe(false);
+      });
+    });
+
+    describe('game continues', () => {
+      test('sets game step to REDEAL', async () => {
+        await endTurn(CODE, USER_2);
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStep: GameStep.REDEAL,
+        });
+      });
+
+      test('sets current player to the Yaniv caller with the lowest score', async () => {
+        await endTurn(CODE, USER_2);
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          currentPlayerId: USER_1,
+        });
+      });
+
+      test('clears played cards', async () => {
+        await endTurn(CODE, USER_2);
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          playedCards: [],
+        });
+      });
+
+      test('clears drawn card', async () => {
+        await endTurn(CODE, USER_2);
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
+          'drawnCard',
+          undefined,
+        );
+      });
+    });
+
+    describe('game over', () => {
+      test('transitions to FINISHED stage when any player exceeds 200 points', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 195,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStage: GameStage.FINISHED,
+        });
+      });
+
+      test('sets winners to the player with the lowest score', async () => {
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 195,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+          }),
+        );
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock
+          .calls[0]?.[1] as Extract<
+          GameState,
+          { gameStage: GameStage.FINISHED }
+        >;
+        expect(savedState.winners).toEqual([USER_1]);
+      });
+
+      test('includes multiple winners when scores are tied for the lowest', async () => {
+        const USER_3 = 'user-3' as UserId;
+        // USER_1 called Yaniv (score=10, only caller) → gets +0, final score 10
+        // USER_3 (score=5, hand=5) → +5, final score 10. Both tie.
+        // USER_2 (score=195, hand=10) → +10, final score 205 (>200 → game over)
+        vi.mocked(getYanivState).mockResolvedValue(
+          makeYanivCalledState({
+            currentPlayerId: USER_3,
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                name: 'Player 1' as PlayerName,
+                score: 10,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: true,
+              },
+              {
+                id: USER_2,
+                cardCount: 2,
+                name: 'Player 2' as PlayerName,
+                score: 195,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+              {
+                id: USER_3,
+                cardCount: 2,
+                name: 'Player 3' as PlayerName,
+                score: 5,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+              },
+            ],
+            hands: {
+              [USER_1]: [
+                { suit: Suit.HEARTS, rank: Rank.ACE },
+                { suit: Suit.SPADES, rank: Rank.FOUR },
+              ] as YanivPlayingCard[],
+              [USER_2]: [
+                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                { suit: Suit.CLUBS, rank: Rank.SIX },
+              ] as YanivPlayingCard[],
+              [USER_3]: [
+                { suit: Suit.HEARTS, rank: Rank.TWO },
+                { suit: Suit.SPADES, rank: Rank.THREE },
+              ] as YanivPlayingCard[],
+            },
+          }),
+        );
+
+        await endTurn(CODE, USER_3);
+
+        const savedState = vi.mocked(setYanivState).mock
+          .calls[0]?.[1] as Extract<
+          GameState,
+          { gameStage: GameStage.FINISHED }
+        >;
+        expect(savedState.winners).toContain(USER_1);
+        expect(savedState.winners).toContain(USER_3);
+        expect(savedState.winners).not.toContain(USER_2);
+      });
+
+      test('includes hands in finished state', async () => {
+        const state = makeYanivCalledState({
+          players: [
+            {
+              id: USER_1,
+              cardCount: 2,
+              name: 'Player 1' as PlayerName,
+              score: 0,
+              isFiftyScoreHalved: false,
+              isHundredScoreHalved: false,
+              isYanivCalled: true,
+            },
+            {
+              id: USER_2,
+              cardCount: 2,
+              name: 'Player 2' as PlayerName,
+              score: 195,
+              isFiftyScoreHalved: false,
+              isHundredScoreHalved: false,
+              isYanivCalled: false,
+            },
+          ],
+        });
+        vi.mocked(getYanivState).mockResolvedValue(state);
+
+        await endTurn(CODE, USER_2);
+
+        const savedState = vi.mocked(setYanivState).mock
+          .calls[0]?.[1] as Extract<
+          GameState,
+          { gameStage: GameStage.FINISHED }
+        >;
+        expect(savedState.hands).toEqual(state.hands);
+      });
+    });
+
+    test('persists and publishes the updated state', async () => {
+      await endTurn(CODE, USER_2);
+
+      expect(vi.mocked(setYanivState)).toHaveBeenCalledOnce();
+      expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[0]).toEqual({
+        code: CODE,
+      });
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
+      const publishedState = vi.mocked(publishYanivState).mock.calls[0]?.[1];
+      expect(savedState).toEqual(publishedState);
+    });
   });
 });

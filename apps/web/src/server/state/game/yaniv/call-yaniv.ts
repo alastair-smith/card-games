@@ -1,0 +1,58 @@
+import { yanivDiscard } from '~/server/data/discard';
+import { getYanivState, setYanivState } from '~/server/data/yaniv';
+import { publishYanivState } from '~/server/events/yaniv';
+import type { UserId } from '~/types/entities';
+import type { GameCode } from '~/types/game';
+import { GameStage, GameStep } from '~/types/games/yaniv';
+import { sumYanivHand } from '~/utils/cards';
+import { scoreYanivRound } from './score-yaniv-round';
+
+export const callYaniv = async (code: GameCode, userId: UserId) => {
+  const state = await getYanivState({ code });
+  if (!state) throw new Error('Game not found');
+
+  if (state.gameStage !== GameStage.IN_PROGRESS)
+    throw new Error('Game is not in progress');
+  if (state.gameStep !== GameStep.PROCEED)
+    throw new Error('Not the proceed step');
+  if (state.currentPlayerId !== userId) throw new Error('Not your turn');
+
+  const callerHand = state.hands[userId] ?? [];
+  if (sumYanivHand(callerHand) > 7)
+    throw new Error('Hand value is too high to call Yaniv');
+
+  await yanivDiscard.pushDiscard(code, state.playedCards);
+
+  const currentIndex = state.players.findIndex(({ id }) => id === userId);
+  const nextIndex = (currentIndex + 1) % state.players.length;
+  const nextPlayer = state.players[nextIndex];
+  const nextPlayerId = nextPlayer?.id;
+
+  if (!nextPlayerId) throw new Error('Next player not found');
+
+  if (nextPlayer.isYanivCalled) {
+    const updatedState = {
+      ...state,
+      players: state.players.map((player) => ({
+        ...player,
+        isYanivCalled: player.id === userId ? true : player.isYanivCalled,
+      })),
+    };
+    await scoreYanivRound(code, updatedState);
+  } else {
+    const newState = {
+      ...state,
+      players: state.players.map((player) => ({
+        ...player,
+        isYanivCalled: player.id === userId,
+      })),
+      playedCards: [],
+      drawnCard: undefined,
+      currentPlayerId: nextPlayerId,
+      gameStep: GameStep.PLAY_CARDS,
+    };
+
+    await setYanivState({ code }, newState);
+    await publishYanivState(code, newState);
+  }
+};

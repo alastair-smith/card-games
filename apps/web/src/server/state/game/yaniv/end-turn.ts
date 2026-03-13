@@ -4,6 +4,7 @@ import { publishYanivState } from '~/server/events/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep } from '~/types/games/yaniv';
+import { scoreYanivRound } from './score-yaniv-round';
 
 export const endTurn = async (code: GameCode, userId: UserId) => {
   const state = await getYanivState({ code });
@@ -17,20 +18,25 @@ export const endTurn = async (code: GameCode, userId: UserId) => {
 
   const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
-  const nextPlayerId = state.players[nextIndex]?.id;
+  const nextPlayer = state.players[nextIndex];
+  const nextPlayerId = nextPlayer?.id;
 
   if (!nextPlayerId) throw new Error('Next player not found');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);
 
-  const newState = {
-    ...state,
-    playedCards: [],
-    drawnCard: undefined,
-    currentPlayerId: nextPlayerId,
-    gameStep: GameStep.PLAY_CARDS,
-  };
+  if (nextPlayer.isYanivCalled) {
+    await scoreYanivRound(code, state);
+  } else {
+    const newState = {
+      ...state,
+      playedCards: [],
+      drawnCard: undefined,
+      currentPlayerId: nextPlayerId,
+      gameStep: GameStep.PLAY_CARDS,
+    };
 
-  await setYanivState({ code }, newState);
-  await publishYanivState(code, newState);
+    await setYanivState({ code }, newState);
+    await publishYanivState(code, newState);
+  }
 };
