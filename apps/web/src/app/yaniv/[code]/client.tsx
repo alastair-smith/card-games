@@ -3,6 +3,7 @@
 import { skipToken } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import YanivGameController from '~/app/yaniv/_components/game-controller';
 import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
@@ -113,5 +114,11 @@ export default function YanivClient({ code }: { code: GameCode }) {
     return <Loading />;
   }
 
-  return <div>{/* YanivGameController wired in Ticket 13 */}</div>;
+  return (
+    <YanivGameController
+      code={code}
+      gameState={gameState}
+      reactions={reactions}
+    />
+  );
 }

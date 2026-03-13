@@ -13,6 +13,10 @@ import ScoreCard from '../scorecard';
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
+  selectedCards?: YanivPlayingCard[];
+  onCardToggle?: (card: YanivPlayingCard) => void;
+  onPickupFromDeck?: () => void;
+  onPickupFromDiscard?: () => void;
   onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
@@ -54,9 +58,13 @@ export default function Game({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
+  onCardToggle,
+  onPickupFromDeck,
+  onPickupFromDiscard,
   players,
   stage,
   cards,
+  selectedCards,
   userId,
   playedCards,
   discardCard,
@@ -74,6 +82,16 @@ export default function Game({
     !!userPlayer &&
     !!playerTakingTurn &&
     userPlayer?.id === playerTakingTurn?.id;
+
+  const cardsWithSelection = useMemo(() => {
+    return cards.map((card) => ({
+      ...card,
+      selected: selectedCards?.some(
+        (selected) =>
+          selected.rank === card.rank && selected.suit === card.suit,
+      ),
+    }));
+  }, [cards, selectedCards]);
 
   return (
     <GameLayout
@@ -97,6 +115,8 @@ export default function Game({
             playedCards={playedCards}
             discardCard={discardCard}
             isHighlighted={stage === 'drawing-cards' && isUserTakingTurn}
+            onDeckClick={onPickupFromDeck}
+            onDiscardClick={onPickupFromDiscard}
             className='md:text-2xl sm:text-lg h-fit'
           />
         )}
@@ -113,10 +133,11 @@ export default function Game({
 
       <Hand
         className='md:text-2xl sm:text-lg'
-        cards={cards}
+        cards={cardsWithSelection}
         isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
         isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
         totalScore={userPlayer?.score ?? 0}
+        onCardClick={onCardToggle}
         isHighlighted={stage === 'picking-cards' && isUserTakingTurn}
       />
     </GameLayout>
