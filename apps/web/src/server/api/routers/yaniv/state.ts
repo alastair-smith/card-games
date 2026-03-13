@@ -7,7 +7,10 @@ import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getYanivChannel } from '~/server/events/yaniv';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
-import { getGameState } from '~/server/state/game/yaniv/get-game-state';
+import {
+  getGameState,
+  toClientGameState,
+} from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
 import type { UserId } from '~/types/entities';
 import {
@@ -17,7 +20,7 @@ import {
   type Player,
   type ReactionEmoji,
 } from '~/types/game';
-import { GameStage } from '~/types/games/yaniv';
+import { GameStage, gameStateSchema } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
 
 const TICK_RATE_MS = 100;
@@ -137,23 +140,23 @@ export const yanivStateSubscription = protectedProcedure
       }
     }
 
-    async function gameHandler(_message: unknown) {
-      try {
-        const clientState = await getGameState(code, userId);
-        if (!clientState) return;
+    function gameHandler(message: unknown) {
+      const messageData = gameStateSchema.safeParse(message);
 
+      if (messageData.success) {
+        const rawState = messageData.data;
+        if (rawState.gameStage === GameStage.LOBBY) return;
+
+        const state = toClientGameState(rawState, userId);
         const update =
-          clientState.gameStage === GameStage.FINISHED
+          state.gameStage === GameStage.FINISHED
             ? GameUpdate.FINISHED
             : GameUpdate.GAME_STATE_UPDATE;
-        messageQueue.push({
-          update,
-          state: clientState,
-        });
-      } catch (error) {
+        messageQueue.push({ update, state });
+      } else {
         logger.error(
-          new Error('Error fetching Yaniv game state in subscription', {
-            cause: error,
+          new Error('Invalid message format for Yaniv game', {
+            cause: messageData.error,
           }),
         );
       }

@@ -17,19 +17,15 @@ export type ClientGameState = Omit<GameState, 'hands'> & {
   players: (Player & { isUser: boolean })[];
 };
 
-export const getGameState = async (
-  code: GameCode,
+type ActiveGameState = Extract<
+  GameState,
+  { gameStage: GameStage.IN_PROGRESS | GameStage.FINISHED }
+>;
+
+export const toClientGameState = (
+  rawState: ActiveGameState,
   userId: UserId,
-): Promise<ClientGameState | null> => {
-  const rawState = await getYanivState({ code });
-
-  if (!rawState) return null;
-
-  if (rawState.gameStage === GameStage.LOBBY) {
-    return { gameStage: rawState.gameStage, hand: [], players: [] };
-  }
-
-  // IN_PROGRESS and FINISHED both have `hands` and `players`
+): ClientGameState => {
   const { hands, ...rest } = rawState;
   const hand = hands[userId];
 
@@ -43,4 +39,19 @@ export const getGameState = async (
   }));
 
   return { ...rest, hand, players };
+};
+
+export const getGameState = async (
+  code: GameCode,
+  userId: UserId,
+): Promise<ClientGameState | null> => {
+  const rawState = await getYanivState({ code });
+
+  if (!rawState) return null;
+
+  if (rawState.gameStage === GameStage.LOBBY) {
+    return { gameStage: rawState.gameStage, hand: [], players: [] };
+  }
+
+  return toClientGameState(rawState, userId);
 };
