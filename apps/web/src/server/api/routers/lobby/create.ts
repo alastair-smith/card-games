@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
-import { createGame } from '~/server/state/game/high-card/create-game';
+import { createGame as createHighCardGame } from '~/server/state/game/high-card/create-game';
+import { createGame as createYanivGame } from '~/server/state/game/yaniv/create-game';
 import { GameType } from '~/types/game';
 
 export const create = protectedProcedure
@@ -10,10 +11,16 @@ export const create = protectedProcedure
     }),
   )
   .mutation(async ({ ctx: { userId }, input: { gameType } }) => {
-    if (gameType !== GameType.HIGH_CARD) {
-      throw new Error('Invalid game type');
+    switch (gameType) {
+      case GameType.HIGH_CARD: {
+        const { code } = await createHighCardGame({ host: userId });
+        return { code };
+      }
+      case GameType.YANIV: {
+        const { code } = await createYanivGame({ host: userId });
+        return { code };
+      }
+      default:
+        throw new Error(`Unsupported game type: ${gameType}`);
     }
-    const { code } = await createGame({ host: userId });
-
-    return { code };
   });
