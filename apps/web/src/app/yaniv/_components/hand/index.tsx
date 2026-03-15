@@ -1,6 +1,6 @@
 import { PlayingCard } from '~/components/ui/playing-card';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sortYanivHand, sumYanivHand } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
 type HandProps = {
@@ -30,6 +30,7 @@ export default function Hand({
         : { target: 200, away: 200 - totalScore };
 
   const handTotal = sumYanivHand(cards);
+  const sortedCards = sortYanivHand(cards);
 
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
@@ -39,7 +40,7 @@ export default function Hand({
           isHighlighted ? 'animate-pulse-bg' : '',
         )}
       >
-        {cards.map((card) => (
+        {sortedCards.map((card) => (
           <PlayingCard
             key={`${card.suit}-${card.rank}`}
             card={card}
