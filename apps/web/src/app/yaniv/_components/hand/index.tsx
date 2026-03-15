@@ -1,7 +1,8 @@
 import { PlayingCard } from '~/components/ui/playing-card';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { sortYanivHand, sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/cards';
 import { cn } from '~/utils/cn';
+import { sortYanivHand } from '~/utils/yaniv/sort';
 
 type HandProps = {
   className?: string;
