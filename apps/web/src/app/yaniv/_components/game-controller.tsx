@@ -64,7 +64,7 @@ export default function YanivGameController({
     return <GameOver players={gamePlayers} userId={userId} />;
   }
 
-  const { gameStep, hand, playedCards, currentPlayerId } =
+  const { gameStep, hand, playedCards, topDiscardCard, currentPlayerId } =
     gameState as InProgressClientGameState;
 
   const isMyTurn = currentPlayerId === userId;
@@ -144,7 +144,7 @@ export default function YanivGameController({
     emojiReaction: reactions[player.id],
   }));
 
-  const discardCard = playedCards.at(-1) ?? null;
+  const discardCard = topDiscardCard ?? null;
 
   if (stage === 'end-of-round') {
     const roundSummary = players.map(({ id, name, score }) => ({
