@@ -39,6 +39,7 @@ export const YANIV_RANK_SCORE = {
 } as const satisfies Record<YanivPlayingCard['rank'], number>;
 
 export const YANIV_RANK_POSITION = {
+  [JOKER_RANK]: 0,
   [Rank.ACE]: 1,
   [Rank.TWO]: 2,
   [Rank.THREE]: 3,
@@ -52,7 +53,7 @@ export const YANIV_RANK_POSITION = {
   [Rank.JACK]: 11,
   [Rank.QUEEN]: 12,
   [Rank.KING]: 13,
-} as const satisfies Record<Rank, number>;
+} as const satisfies Record<YanivPlayingCard['rank'], number>;
 
 export enum GameStage {
   LOBBY = 'LOBBY',

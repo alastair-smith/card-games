@@ -99,6 +99,22 @@ describe('Hand', () => {
       expect(onCardClick).toHaveBeenCalledWith(cards[0]);
     });
 
+    test('renders cards in sorted order with highest rank first', () => {
+      render(<Hand {...defaultProps} />);
+      const cardElements = document.querySelectorAll('[data-testid^="card-"]');
+      // defaultProps cards: ACE of CLUBS, FIVE of HEARTS, KING of SPADES
+      // sorted order: KING, FIVE, ACE
+      expect(cardElements[0]?.getAttribute('data-testid')).toBe(
+        `card-${Suit.SPADES}-${Rank.KING}`,
+      );
+      expect(cardElements[1]?.getAttribute('data-testid')).toBe(
+        `card-${Suit.HEARTS}-${Rank.FIVE}`,
+      );
+      expect(cardElements[2]?.getAttribute('data-testid')).toBe(
+        `card-${Suit.CLUBS}-${Rank.ACE}`,
+      );
+    });
+
     test('passes highlighted state to selected cards', () => {
       const cardsWithSelection = [
         // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
