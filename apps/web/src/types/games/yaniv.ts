@@ -91,6 +91,7 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     gameStep: gameStepSchema,
     players: z.array(playerSchema),
     playedCards: z.array(yanivPlayingCardSchema),
+    topDiscardCard: yanivPlayingCardSchema.nullable().optional(),
     currentPlayerId: userIdSchema,
     hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
     drawnCard: yanivPlayingCardSchema.optional(),

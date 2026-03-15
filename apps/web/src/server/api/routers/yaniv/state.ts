@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
+import { yanivDiscard } from '~/server/data/discard';
 import { lobbySchema } from '~/server/data/lobby';
 import emitter from '~/server/events/emitter';
 import { getEmojiChannel } from '~/server/events/emoji';
@@ -88,9 +89,10 @@ export const yanivStateSubscription = protectedProcedure
       }
 
       case GameStage.IN_PROGRESS: {
+        const topDiscardCard = await yanivDiscard.peekDiscard(code);
         yield {
           update: GameUpdate.GAME_STATE_UPDATE,
-          state: toClientGameState(rawState, userId),
+          state: toClientGameState({ ...rawState, topDiscardCard }, userId),
         };
         break;
       }
