@@ -21,6 +21,9 @@ type BaseGameProps = {
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: () => void;
+  drawnCard?: YanivPlayingCard;
+  canAutoPlay?: boolean;
+  onAutoPlayDrawnCard?: () => void;
   players: {
     id: UserId;
     cardCount: number;
@@ -69,6 +72,9 @@ export default function Game({
   playedCards,
   discardCard,
   roundSummary,
+  drawnCard,
+  canAutoPlay,
+  onAutoPlayDrawnCard,
 }: GameProps) {
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
@@ -118,6 +124,9 @@ export default function Game({
             onDeckClick={onPickupFromDeck}
             onDiscardClick={onPickupFromDiscard}
             className='md:text-2xl sm:text-lg h-fit'
+            drawnCard={drawnCard}
+            canAutoPlay={canAutoPlay}
+            onAutoPlayDrawnCard={onAutoPlayDrawnCard}
           />
         )}
       </div>
