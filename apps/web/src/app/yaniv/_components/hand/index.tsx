@@ -1,12 +1,12 @@
 import { PlayingCard } from '~/components/ui/playing-card';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 import { sortYanivHand } from '~/utils/yaniv/sort';
 
 type HandProps = {
   className?: string;
   cards: (YanivPlayingCard & { selected?: boolean })[];
+  handTotal: number;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
   totalScore: number;
@@ -17,6 +17,7 @@ type HandProps = {
 export default function Hand({
   className,
   cards,
+  handTotal,
   isFiftyScoreHalved,
   isHundredScoreHalved,
   totalScore,
@@ -30,7 +31,6 @@ export default function Hand({
         ? { target: 100, away: 100 - totalScore }
         : { target: 200, away: 200 - totalScore };
 
-  const handTotal = sumYanivHand(cards);
   const sortedCards = sortYanivHand(cards);
 
   return (

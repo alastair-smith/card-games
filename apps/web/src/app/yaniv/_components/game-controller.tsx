@@ -166,11 +166,13 @@ export default function YanivGameController({
   const discardCard = topDiscardCard ?? null;
 
   if (stage === 'end-of-round') {
-    const roundSummary = players.map(({ id, name, score }) => ({
-      id,
-      name,
-      score,
-    }));
+    const roundSummary = [...players]
+      .sort((a, b) => a.roundScore - b.roundScore)
+      .map(({ id, name, roundScore }) => ({
+        id,
+        name,
+        score: roundScore,
+      }));
 
     return (
       <Game

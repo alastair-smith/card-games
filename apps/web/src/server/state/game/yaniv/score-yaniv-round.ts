@@ -60,7 +60,11 @@ export const scoreYanivRound = async (
       : sumYanivHand(hand);
     const newScore = player.score + increment;
 
-    return { ...player, ...applyScoreHalving(newScore, player) };
+    return {
+      ...player,
+      ...applyScoreHalving(newScore, player),
+      roundScore: increment,
+    };
   });
 
   const scoredCallers = scoredPlayers.filter((player) => player.isYanivCalled);

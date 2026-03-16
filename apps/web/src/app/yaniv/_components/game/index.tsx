@@ -4,6 +4,7 @@ import GameLayout from '~/components/layout/game-layout';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
+import { sumYanivHand } from '~/utils/cards';
 import Controls from '../controls';
 import Hand from '../hand';
 import { HowToDialog } from '../how-to';
@@ -31,6 +32,7 @@ type BaseGameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
+    roundScore: number;
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji; id: number };
     isPlayersTurn?: boolean;
@@ -99,6 +101,11 @@ export default function Game({
     }));
   }, [cards, selectedCards]);
 
+  const handTotal =
+    stage === 'end-of-round'
+      ? (userPlayer?.roundScore ?? 0)
+      : sumYanivHand(cards);
+
   return (
     <GameLayout
       actions={<HowToDialog />}
@@ -143,6 +150,7 @@ export default function Game({
       <Hand
         className='md:text-2xl sm:text-lg'
         cards={cardsWithSelection}
+        handTotal={handTotal}
         isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
         isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
         totalScore={userPlayer?.score ?? 0}
