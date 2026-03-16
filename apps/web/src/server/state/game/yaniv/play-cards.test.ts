@@ -55,6 +55,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: USER_2,
@@ -64,6 +65,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   hands: {

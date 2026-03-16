@@ -47,6 +47,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: USER_2,
@@ -56,6 +57,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   hands: {
@@ -176,6 +178,7 @@ describe('callYaniv', () => {
             isFiftyScoreHalved: false,
             isHundredScoreHalved: false,
             isYanivCalled: false,
+            roundScore: 0,
           },
           {
             id: USER_2,
@@ -185,6 +188,7 @@ describe('callYaniv', () => {
             isFiftyScoreHalved: false,
             isHundredScoreHalved: false,
             isYanivCalled: true,
+            roundScore: 0,
           },
         ],
         hands: {
@@ -224,6 +228,7 @@ describe('callYaniv', () => {
             isFiftyScoreHalved: false,
             isHundredScoreHalved: false,
             isYanivCalled: false,
+            roundScore: 0,
           },
           {
             id: USER_2,
@@ -233,6 +238,7 @@ describe('callYaniv', () => {
             isFiftyScoreHalved: false,
             isHundredScoreHalved: false,
             isYanivCalled: true,
+            roundScore: 0,
           },
         ],
         hands: {

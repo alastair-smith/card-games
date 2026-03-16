@@ -28,6 +28,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       score: 3,
       isYanivCalled: false,
       isPlayersTurn: true,
+      roundScore: 0,
     },
     {
       id: '2' as UserId,
@@ -39,6 +40,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       ) as PlayerName,
       score: 0,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: '3' as UserId,
@@ -48,6 +50,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Paul' as PlayerName,
       score: 0,
       isYanivCalled: true,
+      roundScore: 0,
     },
     {
       id: '4' as UserId,
@@ -57,6 +60,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Viola' as PlayerName,
       score: 0,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: '5' as UserId,
@@ -66,6 +70,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Duncan' as PlayerName,
       score: 0,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: '6' as UserId,
@@ -75,6 +80,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Kathy' as PlayerName,
       score: 0,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   cards: [

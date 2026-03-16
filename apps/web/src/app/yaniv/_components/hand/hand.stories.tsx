@@ -50,6 +50,7 @@ const defaultProps: React.ComponentProps<typeof Hand> = {
   isHundredScoreHalved: false,
   totalScore: 0,
   onCardClick: action('card clicked'),
+  handTotal: 0,
 };
 
 export const FullHand = () => {

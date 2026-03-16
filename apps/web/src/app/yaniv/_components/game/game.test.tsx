@@ -55,6 +55,7 @@ const baseProps = {
       score: 10,
       isYanivCalled: false,
       isPlayersTurn: true,
+      roundScore: 0,
     },
     {
       id: '2' as UserId,
@@ -64,6 +65,7 @@ const baseProps = {
       name: 'Bob' as PlayerName,
       score: 20,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   userId: '1' as UserId,

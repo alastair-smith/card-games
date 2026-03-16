@@ -49,6 +49,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
     {
       id: USER_2,
@@ -58,6 +59,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   hands: {
@@ -91,6 +93,7 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: true,
+      roundScore: 5,
     },
     {
       id: USER_2,
@@ -100,6 +103,7 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,
+      roundScore: 0,
     },
   ],
   hands: {
@@ -273,6 +277,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -282,6 +287,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
             hands: {
@@ -318,6 +324,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -327,6 +334,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: true,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
           }),
@@ -353,6 +361,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -362,6 +371,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: true,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
           }),
@@ -386,6 +396,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -395,6 +406,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
             hands: {
@@ -467,6 +479,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -476,6 +489,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
           }),
@@ -500,6 +514,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -509,6 +524,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
           }),
@@ -541,6 +557,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: true,
+                roundScore: 0,
               },
               {
                 id: USER_2,
@@ -550,6 +567,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
               {
                 id: USER_3,
@@ -559,6 +577,7 @@ describe('endTurn', () => {
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
+                roundScore: 0,
               },
             ],
             hands: {
@@ -601,6 +620,7 @@ describe('endTurn', () => {
               isFiftyScoreHalved: false,
               isHundredScoreHalved: false,
               isYanivCalled: true,
+              roundScore: 0,
             },
             {
               id: USER_2,
@@ -610,6 +630,7 @@ describe('endTurn', () => {
               isFiftyScoreHalved: false,
               isHundredScoreHalved: false,
               isYanivCalled: false,
+              roundScore: 0,
             },
           ],
         });

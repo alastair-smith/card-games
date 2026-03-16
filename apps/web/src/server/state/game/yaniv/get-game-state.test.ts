@@ -41,6 +41,7 @@ const makePlayers = () => [
     isFiftyScoreHalved: false,
     isHundredScoreHalved: false,
     isYanivCalled: false,
+    roundScore: 10,
   },
   {
     id: USER_2,
@@ -50,6 +51,7 @@ const makePlayers = () => [
     isFiftyScoreHalved: false,
     isHundredScoreHalved: false,
     isYanivCalled: false,
+    roundScore: 20,
   },
 ];
 
