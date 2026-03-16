@@ -14,7 +14,7 @@ type RoundSummaryProps = {
   players: {
     id: UserId;
     name: PlayerName;
-    score: number;
+    roundScore: { original: number; adjusted: number };
   }[];
 };
 
@@ -34,14 +34,21 @@ export function RoundSummary({ players }: RoundSummaryProps) {
         </TableHeader>
 
         <TableBody>
-          {players.map((player) => (
-            <TableRow key={player.id}>
-              <TableCell className='text-right py-2 md:py-4'>
-                {player.name}
-              </TableCell>
-              <TableCell className='py-2 md:py-4'>{player.score}</TableCell>
-            </TableRow>
-          ))}
+          {players.map((player) => {
+            const { original, adjusted } = player.roundScore;
+            const scoreDisplay =
+              original !== adjusted
+                ? `${adjusted} (${original})`
+                : String(adjusted);
+            return (
+              <TableRow key={player.id}>
+                <TableCell className='text-right py-2 md:py-4'>
+                  {player.name}
+                </TableCell>
+                <TableCell className='py-2 md:py-4'>{scoreDisplay}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Card>

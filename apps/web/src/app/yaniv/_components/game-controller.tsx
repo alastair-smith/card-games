@@ -167,12 +167,8 @@ export default function YanivGameController({
 
   if (stage === 'end-of-round') {
     const roundSummary = [...players]
-      .sort((a, b) => a.roundScore - b.roundScore)
-      .map(({ id, name, roundScore }) => ({
-        id,
-        name,
-        score: roundScore,
-      }));
+      .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted)
+      .map(({ id, name, roundScore }) => ({ id, name, roundScore }));
 
     return (
       <Game

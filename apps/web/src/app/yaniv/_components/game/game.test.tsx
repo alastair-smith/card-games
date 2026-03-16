@@ -53,6 +53,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Alice' as PlayerName,
       score: 10,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
       isPlayersTurn: true,
       roundScore: 0,
@@ -64,6 +65,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Bob' as PlayerName,
       score: 20,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
       roundScore: 0,
     },
@@ -99,8 +101,16 @@ describe('Game', () => {
         {...baseProps}
         stage='end-of-round'
         roundSummary={[
-          { id: '1' as UserId, name: 'Alice' as PlayerName, score: 5 },
-          { id: '2' as UserId, name: 'Bob' as PlayerName, score: 15 },
+          {
+            id: '1' as UserId,
+            name: 'Alice' as PlayerName,
+            roundScore: { original: 5, adjusted: 5 },
+          },
+          {
+            id: '2' as UserId,
+            name: 'Bob' as PlayerName,
+            roundScore: { original: 15, adjusted: 15 },
+          },
         ]}
       />,
     );

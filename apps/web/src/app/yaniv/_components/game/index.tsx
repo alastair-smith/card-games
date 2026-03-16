@@ -32,7 +32,7 @@ type BaseGameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
-    roundScore: number;
+    roundScore: { original: number; adjusted: number };
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji; id: number };
     isPlayersTurn?: boolean;
@@ -52,7 +52,7 @@ type EndOfRoundGameProps = BaseGameProps & {
   roundSummary: {
     id: UserId;
     name: PlayerName;
-    score: number;
+    roundScore: { original: number; adjusted: number };
   }[];
 };
 
@@ -103,7 +103,7 @@ export default function Game({
 
   const handTotal =
     stage === 'end-of-round'
-      ? (userPlayer?.roundScore ?? 0)
+      ? (userPlayer?.roundScore.original ?? 0)
       : sumYanivHand(cards);
 
   return (

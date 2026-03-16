@@ -80,7 +80,7 @@ const playerSchema = z.object({
   isHundredScoreHalved: z.boolean(),
   name: playerNameSchema,
   score: z.number(),
-  roundScore: z.number(),
+  roundScore: z.object({ original: z.number(), adjusted: z.number() }),
   isYanivCalled: z.boolean(),
 });
 
