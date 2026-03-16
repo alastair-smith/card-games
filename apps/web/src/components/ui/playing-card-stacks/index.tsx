@@ -4,14 +4,25 @@ import {
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
+import type { PlayingCardValue } from '~/types/cards';
 import { cn } from '~/utils/cn';
 
 type PlayingCardDeckProps = {
   className?: string;
   onClick?: () => void;
+  drawnCardDisplay?: PlayingCardValue | null;
+  onDrawnCardClick?: () => void;
+  drawnCardClassName?: string;
 };
 
-export function PlayingCardDeck({ className, onClick }: PlayingCardDeckProps) {
+export function PlayingCardDeck({
+  className,
+  onClick,
+  drawnCardDisplay,
+  onDrawnCardClick,
+  drawnCardClassName,
+}: PlayingCardDeckProps) {
+  const showDrawnCard = drawnCardDisplay !== undefined;
   return (
     <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
       <div className='w-fit relative'>
@@ -24,8 +35,18 @@ export function PlayingCardDeck({ className, onClick }: PlayingCardDeckProps) {
             card={null}
             cardClassName='border-[0.056em] border-border/50'
             border
-            onClick={onClick}
+            onClick={showDrawnCard ? undefined : onClick}
           />
+          {showDrawnCard && (
+            <div className={cn('absolute inset-0', drawnCardClassName)}>
+              <PlayingCard
+                card={drawnCardDisplay}
+                cardClassName='border-[0.056em] border-border/50'
+                border
+                onClick={onDrawnCardClick}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

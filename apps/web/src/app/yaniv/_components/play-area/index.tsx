@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import { PlayingCard } from '~/components/ui/playing-card';
 import {
   PlayingCardDeck,
@@ -5,6 +8,7 @@ import {
   PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
 import type { PlayingCardValue } from '~/types/cards';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
 type PlayAreaProps = {
@@ -14,6 +18,9 @@ type PlayAreaProps = {
   onDiscardClick?: () => void;
   onDeckClick?: () => void;
   isHighlighted?: boolean;
+  drawnCard?: YanivPlayingCard;
+  canAutoPlay?: boolean;
+  onAutoPlayDrawnCard?: () => void;
 };
 
 export default function PlayArea({
@@ -23,7 +30,56 @@ export default function PlayArea({
   onDiscardClick,
   onDeckClick,
   isHighlighted,
+  drawnCard,
+  canAutoPlay,
+  onAutoPlayDrawnCard,
 }: PlayAreaProps) {
+  const [displayedCard, setDisplayedCard] = useState<YanivPlayingCard | null>(
+    null,
+  );
+  const [exitClassName, setExitClassName] = useState('');
+  const [dismissed, setDismissed] = useState(false);
+  const exitingRef = useRef(false);
+
+  useEffect(() => {
+    if (drawnCard) {
+      if (exitingRef.current) return;
+      setDismissed(false);
+      setDisplayedCard(null);
+      setExitClassName('');
+      const t = setTimeout(() => setDisplayedCard(drawnCard), 50);
+      return () => clearTimeout(t);
+    } else if (!exitingRef.current) {
+      setDisplayedCard(null);
+      setExitClassName('');
+    }
+  }, [drawnCard]);
+
+  const handleDrawnCardClick = () => {
+    if (!displayedCard) return;
+    if (canAutoPlay && onAutoPlayDrawnCard) {
+      exitingRef.current = true;
+      setExitClassName('opacity-0 transition-opacity duration-300');
+      onAutoPlayDrawnCard();
+      setTimeout(() => {
+        exitingRef.current = false;
+        setDisplayedCard(null);
+        setExitClassName('');
+      }, 400);
+    } else {
+      exitingRef.current = true;
+      setExitClassName('translate-y-32 opacity-0 transition-all duration-500');
+      setTimeout(() => {
+        exitingRef.current = false;
+        setDismissed(true);
+        setDisplayedCard(null);
+        setExitClassName('');
+      }, 600);
+    }
+  };
+
+  const showOverlay = !!drawnCard && !dismissed;
+
   return (
     <div
       className={cn(
@@ -37,7 +93,12 @@ export default function PlayArea({
           isHighlighted ? 'animate-pulse-bg' : '',
         )}
       >
-        <PlayingCardDeck onClick={onDeckClick} />
+        <PlayingCardDeck
+          onClick={showOverlay ? undefined : onDeckClick}
+          drawnCardDisplay={showOverlay ? displayedCard : undefined}
+          onDrawnCardClick={handleDrawnCardClick}
+          drawnCardClassName={exitClassName}
+        />
         <PlayingCardDiscardPile>
           {discardCard && (
             <PlayingCard card={discardCard} onClick={onDiscardClick} />

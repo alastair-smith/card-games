@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import PlayArea from '.';
@@ -8,24 +8,49 @@ vi.mock('~/components/ui/playing-card', () => ({
     card,
     onClick,
   }: {
-    card: { suit: string; rank: string };
+    card: { suit: string; rank: string } | null;
     onClick?: () => void;
-  }) => (
-    <button
-      data-testid={`card-${card.suit}-${card.rank}`}
-      onClick={onClick}
-      type='button'
-    >
-      {card.rank}
-    </button>
-  ),
+  }) => {
+    if (!card) return <div data-testid='card-face-down' />;
+    return (
+      <button
+        data-testid={`card-${card.suit}-${card.rank}`}
+        onClick={onClick}
+        type='button'
+      >
+        {card.rank}
+      </button>
+    );
+  },
 }));
 
 vi.mock('~/components/ui/playing-card-stacks', () => ({
-  PlayingCardDeck: ({ onClick }: { onClick?: () => void }) => (
-    <button data-testid='deck' onClick={onClick} type='button'>
-      Deck
-    </button>
+  PlayingCardDeck: ({
+    onClick,
+    drawnCardDisplay,
+    onDrawnCardClick,
+  }: {
+    onClick?: () => void;
+    drawnCardDisplay?: { suit: string; rank: string } | null;
+    onDrawnCardClick?: () => void;
+  }) => (
+    <div data-testid='deck'>
+      <button data-testid='deck-click' onClick={onClick} type='button'>
+        Deck
+      </button>
+      {drawnCardDisplay !== undefined &&
+        (drawnCardDisplay ? (
+          <button
+            data-testid={`drawn-card-${drawnCardDisplay.suit}-${drawnCardDisplay.rank}`}
+            onClick={onDrawnCardClick}
+            type='button'
+          >
+            {drawnCardDisplay.rank}
+          </button>
+        ) : (
+          <div data-testid='drawn-card-face-down' />
+        ))}
+    </div>
   ),
   PlayingCardDiscardPile: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='discard-pile'>{children}</div>
@@ -87,7 +112,7 @@ describe('PlayArea', () => {
         onDeckClick={onDeckClick}
       />,
     );
-    fireEvent.click(screen.getByTestId('deck'));
+    fireEvent.click(screen.getByTestId('deck-click'));
     expect(onDeckClick).toHaveBeenCalledOnce();
   });
 
@@ -102,5 +127,109 @@ describe('PlayArea', () => {
     );
     fireEvent.click(screen.getByTestId(`card-${Suit.CLUBS}-${Rank.FOUR}`));
     expect(onDiscardClick).toHaveBeenCalledOnce();
+  });
+
+  describe('drawn card', () => {
+    const drawnCard = { suit: Suit.SPADES, rank: Rank.SEVEN };
+
+    test('shows drawn card face down initially then face up after reveal', async () => {
+      vi.useFakeTimers();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+        />,
+      );
+
+      expect(screen.getByTestId('drawn-card-face-down')).toBeInTheDocument();
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      expect(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      ).toBeInTheDocument();
+      vi.useRealTimers();
+    });
+
+    test('disables the deck click while drawn card is shown', async () => {
+      vi.useFakeTimers();
+      const onDeckClick = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+          onDeckClick={onDeckClick}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(screen.getByTestId('deck-click'));
+      expect(onDeckClick).not.toHaveBeenCalled();
+      vi.useRealTimers();
+    });
+
+    test('calls the auto-play handler when drawn card matches rank and is clicked', async () => {
+      vi.useFakeTimers();
+      const onAutoPlayDrawnCard = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+          canAutoPlay={true}
+          onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      );
+      expect(onAutoPlayDrawnCard).toHaveBeenCalledOnce();
+      vi.useRealTimers();
+    });
+
+    test('dismisses drawn card to hand when drawn card does not match rank and is clicked', async () => {
+      vi.useFakeTimers();
+      const onAutoPlayDrawnCard = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+          canAutoPlay={false}
+          onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      );
+
+      expect(onAutoPlayDrawnCard).not.toHaveBeenCalled();
+
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(
+        screen.queryByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      ).not.toBeInTheDocument();
+      vi.useRealTimers();
+    });
   });
 });

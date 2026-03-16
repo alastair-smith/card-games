@@ -64,13 +64,32 @@ export default function YanivGameController({
     return <GameOver players={gamePlayers} userId={userId} />;
   }
 
-  const { gameStep, hand, playedCards, topDiscardCard, currentPlayerId } =
-    gameState as InProgressClientGameState;
+  const {
+    gameStep,
+    hand,
+    playedCards,
+    topDiscardCard,
+    currentPlayerId,
+    drawnCard,
+  } = gameState as InProgressClientGameState;
 
   const isMyTurn = currentPlayerId === userId;
 
   const canCallYaniv =
     isMyTurn && gameStep === GameStep.PLAY_CARDS && sumYanivHand(hand) <= 7;
+
+  const lastPlayedCard = playedCards[playedCards.length - 1];
+  const canAutoPlay = !!(
+    drawnCard &&
+    lastPlayedCard &&
+    drawnCard.rank === lastPlayedCard.rank
+  );
+
+  const handleAutoPlayDrawnCard = () => {
+    if (drawnCard) {
+      playCardsMutation.mutate({ code, cards: [drawnCard] });
+    }
+  };
 
   const deriveStage = ():
     | 'waiting-for-player'
@@ -170,6 +189,9 @@ export default function YanivGameController({
         userId={userId}
         playedCards={playedCards}
         discardCard={discardCard}
+        drawnCard={drawnCard}
+        canAutoPlay={canAutoPlay}
+        onAutoPlayDrawnCard={handleAutoPlayDrawnCard}
       />
     );
   }
@@ -191,6 +213,9 @@ export default function YanivGameController({
       userId={userId}
       playedCards={playedCards}
       discardCard={discardCard}
+      drawnCard={drawnCard}
+      canAutoPlay={canAutoPlay}
+      onAutoPlayDrawnCard={handleAutoPlayDrawnCard}
     />
   );
 }
