@@ -30,18 +30,16 @@ export default function Lobby({ code, ...playerProps }: LobbyProps) {
       gameType={GameType.HIGH_CARD}
       className='flex flex-col justify-center pb-8'
     >
-      <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
+      <div className='grid w-full grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-3'>
         <h1 className='sr-only'>High Card Lobby</h1>
-        <div className='flex min-w-[20rem] flex-1 basis-[30rem] flex-col gap-3'>
-          <InvitePlayers code={code} className='w-full' />
-          <HowToSection className='flex-1 w-full' />
-        </div>
+        <InvitePlayers code={code} className='w-full' />
         <Players
-          className='min-w-[20rem] flex-1 basis-[30rem]'
+          className='row-span-2'
           minPlayers={MIN_PLAYERS}
           maxPlayers={MAX_PLAYERS}
           {...playerProps}
         />
+        <HowToSection className='w-full' />
       </div>
     </GameLayout>
   );
