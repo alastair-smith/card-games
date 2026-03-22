@@ -15,7 +15,7 @@ jobs:
         run: pnpm lint
 
   test:
-    name: Test
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
