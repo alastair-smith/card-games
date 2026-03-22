@@ -33,23 +33,22 @@ export default function LobbyView({ code, ...playerProps }: LobbyProps) {
     >
       <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
-        <div className='flex min-w-[20rem] flex-1 basis-[30rem] flex-col gap-3'>
+        <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
-          <Card className='flex-1 w-full'>
-            <CardHeader>
-              <h2 className='text-xl font-semibold'>How to play Yaniv</h2>
-            </CardHeader>
-            <CardContent>
-              <HowTo />
-            </CardContent>
-          </Card>
+          <Players
+            minPlayers={MIN_PLAYERS}
+            maxPlayers={MAX_PLAYERS}
+            {...playerProps}
+          />
         </div>
-        <Players
-          className='min-w-[20rem] flex-1 basis-[30rem]'
-          minPlayers={MIN_PLAYERS}
-          maxPlayers={MAX_PLAYERS}
-          {...playerProps}
-        />
+        <Card className='min-w-[20rem] flex-1 basis-120'>
+          <CardHeader>
+            <h2 className='text-xl font-semibold'>How to play Yaniv</h2>
+          </CardHeader>
+          <CardContent>
+            <HowTo />
+          </CardContent>
+        </Card>
       </div>
     </GameLayout>
   );
