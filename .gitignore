@@ -7,7 +7,7 @@ node_modules
 
 # testing
 coverage
-tests/ui/.results
+**/tests/ui/.results
 
 # next.js
 .next/
