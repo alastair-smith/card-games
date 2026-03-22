@@ -56,7 +56,7 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install chromium
       - name: Run UI flow tests
-        run: pnpm --filter @repo/web test:e2e
+        run: pnpm --filter @repo/web test:ui
 
   build:
     name: Build
