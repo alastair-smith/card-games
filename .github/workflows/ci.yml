@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - name: Install Playwright browsers
-        run: pnpm --filter @repo/web exec playwright install chromium
+        run: pnpm --filter @repo/web exec playwright install chromium firefox
       - name: Run UI flow tests
         run: pnpm --filter @repo/web test:ui
 

@@ -20,8 +20,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'mobile',
+      name: 'chromium-mobile',
       use: { ...devices['Pixel 7'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'firefox-mobile',
+      use: { browserName: 'firefox', viewport: { width: 412, height: 915 } },
     },
   ],
 
