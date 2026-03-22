@@ -9,8 +9,8 @@ test.describe('Yaniv lobby', () => {
     ).toBeVisible({
       timeout: 10_000,
     });
-    // Bob is a non-user player shown as a table cell in the players table
-    await expect(page.getByRole('cell', { name: 'Bob' })).toBeVisible();
+    // Bob appears in the players list (table cell on desktop, span on mobile)
+    await expect(page.locator(':text-is("Bob"):visible')).toBeVisible();
   });
 
   test('shows invite players section with game code', async ({ page }) => {
