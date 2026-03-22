@@ -33,4 +33,3 @@ export const shuffle = <T>(deck: T[]): T[] => {
 
   return newDeck;
 };
-

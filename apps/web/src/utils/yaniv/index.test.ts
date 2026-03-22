@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { JokerSuit, JOKER_RANK, Rank, Suit } from '~/types/cards';
+import { JOKER_RANK, JokerSuit, Rank, Suit } from '~/types/cards';
 import { sumYanivHand } from '.';
 
 describe('sumYanivHand', () => {

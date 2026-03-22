@@ -74,14 +74,19 @@ export default function Game({
     return players.find((player) => player.id === userId);
   }, [players, userId]);
 
+  if (!userPlayer) {
+    throw new Error(`Current user ${userId} not found in players`);
+  }
+
   const playerTakingTurn = useMemo(() => {
-    return players.find((player) => player.isPlayersTurn) ?? players[0];
+    return players.find((player) => player.isPlayersTurn);
   }, [players]);
 
-  const isUserTakingTurn =
-    !!userPlayer &&
-    !!playerTakingTurn &&
-    userPlayer?.id === playerTakingTurn?.id;
+  if (!playerTakingTurn) {
+    throw new Error('No player taking turn found in players');
+  }
+
+  const isUserTakingTurn = userPlayer.id === playerTakingTurn.id;
 
   const cardsWithSelection = useMemo(() => {
     return cards.map((card) => ({
@@ -103,7 +108,7 @@ export default function Game({
 
   const handTotal =
     stage === 'end-of-round'
-      ? (userPlayer?.roundScore.original ?? 0)
+      ? userPlayer.roundScore.original
       : sumYanivHand(cards);
 
   return (
@@ -143,7 +148,7 @@ export default function Game({
         onEndTurnClick={onEndTurnClick}
         onYanivClick={onYanivClick}
         onPlayCards={onPlayCards}
-        playerTakingTurn={playerTakingTurn?.name}
+        playerTakingTurn={playerTakingTurn.name}
         stage={stage}
       />
 
@@ -151,9 +156,9 @@ export default function Game({
         className='md:text-2xl sm:text-lg'
         cards={cardsWithSelection}
         handTotal={handTotal}
-        isFiftyScoreHalved={!!userPlayer?.isFiftyScoreHalved}
-        isHundredScoreHalved={!!userPlayer?.isHundredScoreHalved}
-        totalScore={userPlayer?.score ?? 0}
+        isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}
+        isHundredScoreHalved={userPlayer.isHundredScoreHalved}
+        totalScore={userPlayer.score}
         onCardClick={onCardToggle}
         isHighlighted={stage === 'picking-cards' && isUserTakingTurn}
       />
