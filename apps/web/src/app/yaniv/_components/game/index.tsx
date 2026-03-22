@@ -32,6 +32,7 @@ type BaseGameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
+    roundScore: { original: number; adjusted: number };
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji; id: number };
     isPlayersTurn?: boolean;
@@ -41,21 +42,14 @@ type BaseGameProps = {
   discardCard: YanivPlayingCard | null;
 };
 
-type InProgressGameProps = BaseGameProps & {
-  stage: 'waiting-for-player' | 'picking-cards' | 'drawing-cards' | 'end-turn';
-  roundSummary: null;
+type GameProps = BaseGameProps & {
+  stage:
+    | 'waiting-for-player'
+    | 'picking-cards'
+    | 'drawing-cards'
+    | 'end-turn'
+    | 'end-of-round';
 };
-
-type EndOfRoundGameProps = BaseGameProps & {
-  stage: 'end-of-round';
-  roundSummary: {
-    id: UserId;
-    name: PlayerName;
-    roundScore: { original: number; adjusted: number };
-  }[];
-};
-
-type GameProps = InProgressGameProps | EndOfRoundGameProps;
 
 export default function Game({
   onEmojiClick,
@@ -72,7 +66,6 @@ export default function Game({
   userId,
   playedCards,
   discardCard,
-  roundSummary,
   drawnCard,
   canAutoPlay,
   onAutoPlayDrawnCard,
@@ -100,9 +93,17 @@ export default function Game({
     }));
   }, [cards, selectedCards]);
 
+  const roundSummary = useMemo(
+    () =>
+      [...players]
+        .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted)
+        .map(({ id, name, roundScore }) => ({ id, name, roundScore })),
+    [players],
+  );
+
   const handTotal =
     stage === 'end-of-round'
-      ? (roundSummary.find(({ id }) => id === userId)?.roundScore.original ?? 0)
+      ? (userPlayer?.roundScore.original ?? 0)
       : sumYanivHand(cards);
 
   return (

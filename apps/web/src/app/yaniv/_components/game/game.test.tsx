@@ -53,6 +53,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Alice' as PlayerName,
       score: 10,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
       isPlayersTurn: true,
     },
@@ -63,6 +64,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Bob' as PlayerName,
       score: 20,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
     },
   ],
@@ -71,7 +73,6 @@ const baseProps = {
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
   discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
   stage: 'picking-cards' as const,
-  roundSummary: null,
 };
 
 describe('Game', () => {
@@ -92,24 +93,7 @@ describe('Game', () => {
   });
 
   test('shows the round summary at the end of a round', () => {
-    render(
-      <Game
-        {...baseProps}
-        stage='end-of-round'
-        roundSummary={[
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            roundScore: { original: 5, adjusted: 5 },
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            roundScore: { original: 15, adjusted: 15 },
-          },
-        ]}
-      />,
-    );
+    render(<Game {...baseProps} stage='end-of-round' />);
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
   });
 });

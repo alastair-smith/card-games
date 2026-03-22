@@ -26,6 +26,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
       score: 0,
+      roundScore: { original: 5, adjusted: 0 },
       isYanivCalled: false,
       isPlayersTurn: true,
     },
@@ -38,6 +39,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
         '',
       ) as PlayerName,
       score: 12,
+      roundScore: { original: 12, adjusted: 12 },
       isYanivCalled: false,
     },
     {
@@ -47,6 +49,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Paul' as PlayerName,
       score: 14,
+      roundScore: { original: 7, adjusted: 25 },
       isYanivCalled: true,
     },
     {
@@ -56,6 +59,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Viola' as PlayerName,
       score: 0,
+      roundScore: { original: 4, adjusted: 4 },
       isYanivCalled: false,
     },
     {
@@ -65,6 +69,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Duncan' as PlayerName,
       score: 0,
+      roundScore: { original: 13, adjusted: 13 },
       isYanivCalled: false,
     },
     {
@@ -74,6 +79,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Kathy' as PlayerName,
       score: 0,
+      roundScore: { original: 10, adjusted: 10 },
       isYanivCalled: false,
     },
   ],
@@ -126,7 +132,6 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     suit: Suit.CLUBS,
     rank: Rank.FOUR,
   },
-  roundSummary: null,
 };
 
 const limitPlayers = (numberOfPlayers: number) => {
@@ -180,44 +185,7 @@ export const BigHandPlayed = () => (
   />
 );
 
-export const EndOfRound = () => (
-  <Game
-    {...defaultProps}
-    stage='end-of-round'
-    roundSummary={[
-      {
-        id: '1' as UserId,
-        name: 'Kevin' as PlayerName,
-        roundScore: { original: 5, adjusted: 0 },
-      },
-      {
-        id: '2' as UserId,
-        name: 'W' as PlayerName,
-        roundScore: { original: 7, adjusted: 25 },
-      },
-      {
-        id: '3' as UserId,
-        name: 'Paul' as PlayerName,
-        roundScore: { original: 4, adjusted: 4 },
-      },
-      {
-        id: '4' as UserId,
-        name: 'Viola' as PlayerName,
-        roundScore: { original: 12, adjusted: 12 },
-      },
-      {
-        id: '5' as UserId,
-        name: 'Duncan' as PlayerName,
-        roundScore: { original: 20, adjusted: 20 },
-      },
-      {
-        id: '6' as UserId,
-        name: 'Kathy' as PlayerName,
-        roundScore: { original: 3, adjusted: 3 },
-      },
-    ]}
-  />
-);
+export const EndOfRound = () => <Game {...defaultProps} stage='end-of-round' />;
 
 export const emojiReaction = () => {
   const [players, setPlayers] = useState(defaultProps.players);

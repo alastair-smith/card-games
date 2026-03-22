@@ -165,39 +165,9 @@ export default function YanivGameController({
 
   const discardCard = topDiscardCard ?? null;
 
-  if (stage === 'end-of-round') {
-    const roundSummary = [...players]
-      .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted)
-      .map(({ id, name, roundScore }) => ({ id, name, roundScore }));
-
-    return (
-      <Game
-        stage='end-of-round'
-        roundSummary={roundSummary}
-        cards={hand}
-        selectedCards={selectedCards}
-        onCardToggle={handleCardToggle}
-        onPickupFromDeck={handlePickupFromDeck}
-        onPickupFromDiscard={handlePickupFromDiscard}
-        onEmojiClick={handleTriggerEmoji}
-        onEndTurnClick={handleEndTurn}
-        onYanivClick={handleCallYaniv}
-        onPlayCards={handlePlayCards}
-        players={players}
-        userId={userId}
-        playedCards={playedCards}
-        discardCard={discardCard}
-        drawnCard={drawnCard}
-        canAutoPlay={canAutoPlay}
-        onAutoPlayDrawnCard={handleAutoPlayDrawnCard}
-      />
-    );
-  }
-
   return (
     <Game
       stage={stage}
-      roundSummary={null}
       cards={hand}
       selectedCards={selectedCards}
       onCardToggle={handleCardToggle}
