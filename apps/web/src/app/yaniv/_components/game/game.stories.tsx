@@ -25,10 +25,9 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
-      score: 3,
+      score: 0,
       isYanivCalled: false,
       isPlayersTurn: true,
-      roundScore: 0,
     },
     {
       id: '2' as UserId,
@@ -38,9 +37,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
         '',
       ) as PlayerName,
-      score: 0,
+      score: 12,
       isYanivCalled: false,
-      roundScore: 0,
     },
     {
       id: '3' as UserId,
@@ -48,9 +46,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       name: 'Paul' as PlayerName,
-      score: 0,
+      score: 14,
       isYanivCalled: true,
-      roundScore: 0,
     },
     {
       id: '4' as UserId,
@@ -60,7 +57,6 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Viola' as PlayerName,
       score: 0,
       isYanivCalled: false,
-      roundScore: 0,
     },
     {
       id: '5' as UserId,
@@ -70,7 +66,6 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Duncan' as PlayerName,
       score: 0,
       isYanivCalled: false,
-      roundScore: 0,
     },
     {
       id: '6' as UserId,
@@ -80,7 +75,6 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: 'Kathy' as PlayerName,
       score: 0,
       isYanivCalled: false,
-      roundScore: 0,
     },
   ],
   cards: [
@@ -191,12 +185,36 @@ export const EndOfRound = () => (
     {...defaultProps}
     stage='end-of-round'
     roundSummary={[
-      { id: '1' as UserId, name: 'Kevin' as PlayerName, score: 3 },
-      { id: '2' as UserId, name: 'W' as PlayerName, score: 0 },
-      { id: '3' as UserId, name: 'Paul' as PlayerName, score: 0 },
-      { id: '4' as UserId, name: 'Viola' as PlayerName, score: 0 },
-      { id: '5' as UserId, name: 'Duncan' as PlayerName, score: 0 },
-      { id: '6' as UserId, name: 'Kathy' as PlayerName, score: 0 },
+      {
+        id: '1' as UserId,
+        name: 'Kevin' as PlayerName,
+        roundScore: { original: 5, adjusted: 0 },
+      },
+      {
+        id: '2' as UserId,
+        name: 'W' as PlayerName,
+        roundScore: { original: 7, adjusted: 25 },
+      },
+      {
+        id: '3' as UserId,
+        name: 'Paul' as PlayerName,
+        roundScore: { original: 4, adjusted: 4 },
+      },
+      {
+        id: '4' as UserId,
+        name: 'Viola' as PlayerName,
+        roundScore: { original: 12, adjusted: 12 },
+      },
+      {
+        id: '5' as UserId,
+        name: 'Duncan' as PlayerName,
+        roundScore: { original: 20, adjusted: 20 },
+      },
+      {
+        id: '6' as UserId,
+        name: 'Kathy' as PlayerName,
+        roundScore: { original: 3, adjusted: 3 },
+      },
     ]}
   />
 );
