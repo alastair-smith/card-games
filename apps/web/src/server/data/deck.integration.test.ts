@@ -1,11 +1,10 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { yanivDeck } from '~/server/data/deck';
 import { redis } from '~/server/data/redis';
+import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
 import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-
-const makeCode = () => crypto.randomUUID() as GameCode;
 
 const aceOfSpades: YanivPlayingCard = { suit: Suit.SPADES, rank: Rank.ACE };
 const twoOfHearts: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.TWO };
@@ -26,7 +25,7 @@ describe('yanivDeck', () => {
   let code: GameCode;
 
   beforeEach(() => {
-    code = makeCode();
+    code = generateLobbyCode();
   });
 
   afterEach(async () => {
