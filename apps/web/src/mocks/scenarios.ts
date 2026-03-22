@@ -1,8 +1,12 @@
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
-import type { UserId, PlayerName } from '~/types/entities';
-import { GameUpdate, type Player, type ReactionEmoji } from '~/types/game';
-import { GameStage, GameStep, type YanivPlayingCard } from '~/types/games/yaniv';
 import { Rank, Suit } from '~/types/cards';
+import type { PlayerName, UserId } from '~/types/entities';
+import { GameUpdate, type Player, type ReactionEmoji } from '~/types/game';
+import {
+  GameStage,
+  GameStep,
+  type YanivPlayingCard,
+} from '~/types/games/yaniv';
 
 export const TEST_USER_ID = 'aaaaaaaa-0000-0000-0000-aaaaaaaaaaaa' as UserId;
 export const TEST_USER_NAME = 'Alice' as PlayerName;
@@ -76,9 +80,16 @@ export function lobbyScenario(): StateSubscription {
       {
         id: TEST_USER_ID,
         name: TEST_USER_NAME,
-        isReady: false,
+        isReady: true,
         isUser: true,
         isHost: true,
+      },
+      {
+        id: OTHER_USER_ID,
+        name: OTHER_USER_NAME,
+        isReady: true,
+        isUser: false,
+        isHost: false,
       },
     ],
   };
@@ -162,6 +173,42 @@ export function roundSummaryScenario(): StateSubscription {
       ],
       playedCards: [],
       topDiscardCard: null,
+      currentPlayerId: TEST_USER_ID,
+    } as ClientGameState,
+  };
+}
+
+// After picking up a card — player must end their turn (PROCEED step)
+export function proceedScenario(): StateSubscription {
+  return {
+    update: GameUpdate.GAME_STATE_UPDATE,
+    state: {
+      gameStage: GameStage.IN_PROGRESS,
+      gameStep: GameStep.PROCEED,
+      hand: [...HAND_CARDS, DISCARD_CARD],
+      players: [{ ...aliceInProgress, cardCount: 4 }, bobInProgress],
+      playedCards: [],
+      topDiscardCard: null,
+      currentPlayerId: TEST_USER_ID,
+    } as ClientGameState,
+  };
+}
+
+// PLAY_CARDS step with high hand total (11 > 7) — Yaniv not callable, "Play Cards" shown
+export function highHandScenario(): StateSubscription {
+  const highHand: YanivPlayingCard[] = [
+    { rank: Rank.FIVE, suit: Suit.SPADES },
+    { rank: Rank.SIX, suit: Suit.HEARTS },
+  ];
+  return {
+    update: GameUpdate.GAME_STATE_UPDATE,
+    state: {
+      gameStage: GameStage.IN_PROGRESS,
+      gameStep: GameStep.PLAY_CARDS,
+      hand: highHand,
+      players: [{ ...aliceInProgress, cardCount: 2 }, bobInProgress],
+      playedCards: [DISCARD_CARD],
+      topDiscardCard: DISCARD_CARD,
       currentPlayerId: TEST_USER_ID,
     } as ClientGameState,
   };

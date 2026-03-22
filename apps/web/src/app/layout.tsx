@@ -2,7 +2,7 @@ import { GeistSans } from 'geist/font/sans';
 import type { Metadata, Viewport } from 'next';
 import '~/styles/globals.css';
 import 'sonner/dist/styles.css'; // required as lib-injected styles are blocked by CSP
-import { MSWInit } from '~/app/msw-init';
+import { MSWProvider } from '~/app/msw-init';
 import { Toaster } from '~/components/ui/toast';
 import { TRPCReactProvider } from '~/trpc/react';
 
@@ -51,9 +51,10 @@ export default function RootLayout({
   return (
     <html lang='en' className={`${GeistSans.variable}`}>
       <body className='bg-dark-green background-noise text-dark-text'>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-        <Toaster />
-        <MSWInit />
+        <MSWProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <Toaster />
+        </MSWProvider>
       </body>
     </html>
   );

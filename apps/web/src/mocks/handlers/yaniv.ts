@@ -1,49 +1,50 @@
-import { http, HttpResponse } from 'msw';
+import type { ServerSentEventResolverExtras } from 'msw';
+import { HttpResponse, http, sse } from 'msw';
 import SuperJSON from 'superjson';
 import {
   gameOverScenario,
+  highHandScenario,
   inProgressScenario,
   lobbyScenario,
   pickupScenario,
   pickupStepScenario,
+  proceedScenario,
   roundSummaryScenario,
   type StateSubscription,
   waitingForOpponentScenario,
 } from '../scenarios';
 
-type StreamState = {
-  controller: ReadableStreamDefaultController<Uint8Array>;
-  eventId: number;
-};
+type SseEventMap = { message: unknown; connected: unknown };
+type SseClient = ServerSentEventResolverExtras<
+  SseEventMap,
+  Record<string, string>
+>['client'];
 
-export const activeStreams = new Map<string, StreamState>();
+// Per-game-code SSE client references — mutation handlers push events here
+export const activeClients = new Map<string, SseClient>();
 
-function sseEvent(streamState: StreamState, data: unknown): string {
-  const payload = SuperJSON.serialize(data);
-  const envelope = { id: null, result: { type: 'data', data: payload } };
-  const line = `id: ${streamState.eventId}\ndata: ${JSON.stringify(envelope)}\n\n`;
-  streamState.eventId += 1;
-  return line;
+function sendEvent(client: SseClient, data: StateSubscription): void {
+  client.send({ data: JSON.stringify(SuperJSON.serialize(data)) });
 }
 
-function pushEvent(code: string, data: StateSubscription): void {
-  const streamState = activeStreams.get(code);
-  if (!streamState) return;
-  const encoder = new TextEncoder();
-  streamState.controller.enqueue(
-    encoder.encode(sseEvent(streamState, data)),
-  );
+function pushToCode(code: string, data: StateSubscription): void {
+  const client = activeClients.get(code);
+  if (client) sendEvent(client, data);
 }
 
 function getInitialState(code: string): StateSubscription {
   switch (code) {
-    case 'LOBBY1':
+    case 'LBBY11':
       return lobbyScenario();
-    case 'GAME01':
+    case 'GAME11':
       return inProgressScenario();
-    case 'ROUND1':
+    case 'PRCD11':
+      return proceedScenario();
+    case 'HIHN11':
+      return highHandScenario();
+    case 'RNDS11':
       return roundSummaryScenario();
-    case 'GOVER1':
+    case 'GVER11':
       return gameOverScenario();
     default:
       return { update: 'GAME_NOT_FOUND' } as StateSubscription;
@@ -56,75 +57,80 @@ function mutationOk() {
 
 export function getYanivHandlers() {
   return [
-    http.get('/api/trpc/yaniv.state', ({ request }) => {
+    // SSE subscription — MSW sse() intercepts EventSource connections in Chromium
+    sse<SseEventMap>('/api/trpc/yaniv.state', ({ client, request }) => {
       const url = new URL(request.url);
       const inputParam = url.searchParams.get('input');
-      const input = inputParam ? (JSON.parse(inputParam) as Record<string, { json: { code: string } }>) : {};
-      const code = input['0']?.json?.code ?? 'UNKNOWN';
+      // httpSubscriptionLink sends input as {"json":{"code":"..."}} directly (no batch wrapping)
+      const input = inputParam
+        ? (JSON.parse(inputParam) as { json: { code: string } })
+        : null;
+      const code = input?.json?.code ?? 'UNKNOWN';
 
-      const encoder = new TextEncoder();
+      activeClients.set(code, client);
 
-      const stream = new ReadableStream<Uint8Array>({
-        start(controller) {
-          const streamState: StreamState = { controller, eventId: 0 };
-          activeStreams.set(code, streamState);
-          controller.enqueue(
-            encoder.encode(sseEvent(streamState, getInitialState(code))),
-          );
-        },
-        cancel() {
-          activeStreams.delete(code);
-        },
-      });
-
-      return new HttpResponse(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
+      // tRPC sseStreamConsumer waits for the 'connected' event before yielding data
+      client.send({ event: 'connected', data: '{}' });
+      sendEvent(client, getInitialState(code));
     }),
 
     http.post('/api/trpc/yaniv.startGame', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, inProgressScenario());
+      if (code) pushToCode(code, inProgressScenario());
       return mutationOk();
     }),
 
     http.post('/api/trpc/yaniv.playCards', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, pickupStepScenario());
+      if (code) pushToCode(code, pickupStepScenario());
       return mutationOk();
     }),
 
     http.post('/api/trpc/yaniv.pickupCard', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, pickupScenario());
+      if (code) pushToCode(code, pickupScenario());
       return mutationOk();
     }),
 
     http.post('/api/trpc/yaniv.callYaniv', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, roundSummaryScenario());
+      if (code) pushToCode(code, roundSummaryScenario());
       return mutationOk();
     }),
 
     http.post('/api/trpc/yaniv.startNewRound', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, inProgressScenario());
+      if (code) pushToCode(code, inProgressScenario());
       return mutationOk();
     }),
 
     http.post('/api/trpc/yaniv.endTurn', async ({ request }) => {
-      const body = (await request.json()) as Record<string, { json: { code: string } }>;
+      const body = (await request.json()) as Record<
+        string,
+        { json: { code: string } }
+      >;
       const code = body['0']?.json?.code;
-      if (code) pushEvent(code, waitingForOpponentScenario());
+      if (code) pushToCode(code, waitingForOpponentScenario());
       return mutationOk();
     }),
 
