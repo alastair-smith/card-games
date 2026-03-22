@@ -41,8 +41,8 @@ jobs:
       - name: Run integration tests
         run: pnpm turbo run test:integration
 
-  ui-flow-tests:
-    name: UI Flow Tests (${{ matrix.project }})
+  ui-tests:
+    name: UI Tests (${{ matrix.project }})
     runs-on: ubuntu-latest
     strategy:
       matrix:

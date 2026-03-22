@@ -37,7 +37,7 @@ pnpm test  # full suite
 
 ---
 
-## Tier 2 — UI Flow Tests
+## Tier 2 — UI Tests
 
 **Purpose:** Verify client-side game flows end to end from the user's perspective, without needing a real backend or Redis. These tests assert that the right UI states appear in response to realistic game scenarios.
 
@@ -65,7 +65,7 @@ pnpm --filter @repo/web test:ui
 pnpm --filter @repo/web test:ui:debug
 ```
 
-**CI job:** `ui-flow-tests` — runs on every PR.
+**CI job:** `ui-tests` — runs on every PR.
 
 ---
 
