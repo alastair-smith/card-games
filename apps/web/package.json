@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "test": "vitest",
+    "test:integration": "vitest --config vitest.integration.config.js run",
     "test:watch": "vitest --watch"
   },
   "dependencies": {

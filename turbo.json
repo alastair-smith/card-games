@@ -24,6 +24,10 @@
     "test:watch": {
       "dependsOn": ["^test:watch"],
       "outputs": []
+    },
+    "test:integration": {
+      "dependsOn": ["^test:integration"],
+      "outputs": []
     }
   }
 }

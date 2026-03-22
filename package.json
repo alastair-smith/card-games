@@ -15,7 +15,9 @@
     "typecheck:watch": "turbo run typecheck:watch",
     "predev": "pnpm run background-services",
     "test": "turbo run test",
-    "test:watch": "turbo run test:watch"
+    "test:watch": "turbo run test:watch",
+    "pretest:integration": "pnpm run background-services",
+    "test:integration": "turbo run test:integration"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
