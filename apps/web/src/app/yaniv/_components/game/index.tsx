@@ -3,7 +3,7 @@ import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
-import type { YanivPlayingCard } from '~/types/games/yaniv';
+import { GameViewStage, type YanivPlayingCard } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
@@ -43,12 +43,7 @@ type BaseGameProps = {
 };
 
 type GameProps = BaseGameProps & {
-  stage:
-    | 'waiting-for-player'
-    | 'picking-cards'
-    | 'drawing-cards'
-    | 'end-turn'
-    | 'end-of-round';
+  stage: GameViewStage;
 };
 
 export default function Game({
@@ -107,7 +102,7 @@ export default function Game({
   );
 
   const handTotal =
-    stage === 'end-of-round'
+    stage === GameViewStage.END_OF_ROUND
       ? userPlayer.roundScore.original
       : sumYanivHand(cards);
 
@@ -126,13 +121,15 @@ export default function Game({
       </div>
 
       <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
-        {stage === 'end-of-round' ? (
+        {stage === GameViewStage.END_OF_ROUND ? (
           <RoundSummary players={roundSummary} />
         ) : (
           <PlayArea
             playedCards={playedCards}
             discardCard={discardCard}
-            isHighlighted={stage === 'drawing-cards' && isUserTakingTurn}
+            isHighlighted={
+              stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn
+            }
             onDeckClick={onPickupFromDeck}
             onDiscardClick={onPickupFromDiscard}
             className='md:text-2xl sm:text-lg h-fit'
@@ -160,7 +157,9 @@ export default function Game({
         isHundredScoreHalved={userPlayer.isHundredScoreHalved}
         totalScore={userPlayer.score}
         onCardClick={onCardToggle}
-        isHighlighted={stage === 'picking-cards' && isUserTakingTurn}
+        isHighlighted={
+          stage === GameViewStage.PICKING_CARDS && isUserTakingTurn
+        }
       />
     </GameLayout>
   );

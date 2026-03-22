@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { PlayerName } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Controls from '.';
 
 vi.mock('~/components/emoji-reactions', () => ({
@@ -19,12 +20,16 @@ const baseProps = {
 describe('Controls', () => {
   describe('waiting for player', () => {
     test('shows whose turn it is', () => {
-      render(<Controls {...baseProps} stage='waiting-for-player' />);
+      render(
+        <Controls {...baseProps} stage={GameViewStage.WAITING_FOR_PLAYER} />,
+      );
       expect(screen.getByText(/Alice is thinking/)).toBeInTheDocument();
     });
 
     test('does not show action buttons', () => {
-      render(<Controls {...baseProps} stage='waiting-for-player' />);
+      render(
+        <Controls {...baseProps} stage={GameViewStage.WAITING_FOR_PLAYER} />,
+      );
       expect(
         screen.queryByRole('button', { name: /play cards/i }),
       ).not.toBeInTheDocument();
@@ -42,7 +47,7 @@ describe('Controls', () => {
 
   describe('picking cards', () => {
     test('shows Play Cards button', () => {
-      render(<Controls {...baseProps} stage='picking-cards' />);
+      render(<Controls {...baseProps} stage={GameViewStage.PICKING_CARDS} />);
       expect(
         screen.getByRole('button', { name: /play cards/i }),
       ).toBeInTheDocument();
@@ -53,7 +58,7 @@ describe('Controls', () => {
       render(
         <Controls
           {...baseProps}
-          stage='picking-cards'
+          stage={GameViewStage.PICKING_CARDS}
           onPlayCards={onPlayCards}
         />,
       );
@@ -64,14 +69,14 @@ describe('Controls', () => {
 
   describe('end of turn', () => {
     test('shows Yaniv! button', () => {
-      render(<Controls {...baseProps} stage='end-turn' />);
+      render(<Controls {...baseProps} stage={GameViewStage.END_TURN} />);
       expect(
         screen.getByRole('button', { name: /yaniv/i }),
       ).toBeInTheDocument();
     });
 
     test('shows End Turn button', () => {
-      render(<Controls {...baseProps} stage='end-turn' />);
+      render(<Controls {...baseProps} stage={GameViewStage.END_TURN} />);
       expect(
         screen.getByRole('button', { name: /end turn/i }),
       ).toBeInTheDocument();
@@ -82,7 +87,7 @@ describe('Controls', () => {
       render(
         <Controls
           {...baseProps}
-          stage='end-turn'
+          stage={GameViewStage.END_TURN}
           onYanivClick={onYanivClick}
         />,
       );
@@ -95,7 +100,7 @@ describe('Controls', () => {
       render(
         <Controls
           {...baseProps}
-          stage='end-turn'
+          stage={GameViewStage.END_TURN}
           onEndTurnClick={onEndTurnClick}
         />,
       );
@@ -106,7 +111,7 @@ describe('Controls', () => {
 
   describe('end of round', () => {
     test('shows Start new round button', () => {
-      render(<Controls {...baseProps} stage='end-of-round' />);
+      render(<Controls {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
       expect(
         screen.getByRole('button', { name: /start new round/i }),
       ).toBeInTheDocument();
@@ -117,7 +122,7 @@ describe('Controls', () => {
       render(
         <Controls
           {...baseProps}
-          stage='end-of-round'
+          stage={GameViewStage.END_OF_ROUND}
           onPlayCards={onPlayCards}
         />,
       );

@@ -9,6 +9,7 @@ import {
   GameStage,
   type GameState,
   GameStep,
+  GameViewStage,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
@@ -91,19 +92,15 @@ export default function YanivGameController({
     }
   };
 
-  const deriveStage = ():
-    | 'waiting-for-player'
-    | 'picking-cards'
-    | 'drawing-cards'
-    | 'end-turn'
-    | 'end-of-round' => {
-    if (gameStep === GameStep.REDEAL) return 'end-of-round';
+  const deriveStage = (): GameViewStage => {
+    if (gameStep === GameStep.REDEAL) return GameViewStage.END_OF_ROUND;
     if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
-      return 'waiting-for-player';
-    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv) return 'end-turn';
-    if (gameStep === GameStep.PLAY_CARDS) return 'picking-cards';
-    if (gameStep === GameStep.PICKUP_CARD) return 'drawing-cards';
-    return 'end-turn'; // PROCEED
+      return GameViewStage.WAITING_FOR_PLAYER;
+    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv)
+      return GameViewStage.END_TURN;
+    if (gameStep === GameStep.PLAY_CARDS) return GameViewStage.PICKING_CARDS;
+    if (gameStep === GameStep.PICKUP_CARD) return GameViewStage.DRAWING_CARDS;
+    return GameViewStage.END_TURN; // PROCEED
   };
 
   const stage = deriveStage();

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 vi.mock('~/components/layout/game-layout', () => ({
@@ -72,7 +73,7 @@ const baseProps = {
   cards: [{ suit: Suit.CLUBS, rank: Rank.ACE }],
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
   discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
-  stage: 'picking-cards' as const,
+  stage: GameViewStage.PICKING_CARDS,
 };
 
 describe('Game', () => {
@@ -93,7 +94,7 @@ describe('Game', () => {
   });
 
   test('shows the round summary at the end of a round', () => {
-    render(<Game {...baseProps} stage='end-of-round' />);
+    render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
   });
 });

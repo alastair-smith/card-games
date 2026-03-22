@@ -73,6 +73,14 @@ export enum GameStep {
 
 export const gameStepSchema = z.enum(GameStep);
 
+export enum GameViewStage {
+  WAITING_FOR_PLAYER = 'waiting-for-player',
+  PICKING_CARDS = 'picking-cards',
+  DRAWING_CARDS = 'drawing-cards',
+  END_TURN = 'end-turn',
+  END_OF_ROUND = 'end-of-round',
+}
+
 const playerSchema = z.object({
   id: userIdSchema,
   cardCount: z.number(),

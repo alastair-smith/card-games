@@ -6,6 +6,7 @@ import {
   type PlayerName,
   type UserId,
 } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 export default {
@@ -17,7 +18,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
   onPlayCards: action('Play cards clicked'),
-  stage: 'picking-cards',
+  stage: GameViewStage.PICKING_CARDS,
   players: [
     {
       id: '1' as UserId,
@@ -160,15 +161,17 @@ export const OtherPlayerTurn = () => (
       }
       return player;
     })}
-    stage='waiting-for-player'
+    stage={GameViewStage.WAITING_FOR_PLAYER}
   />
 );
 
 export const PickupCard = () => (
-  <Game {...defaultProps} stage='drawing-cards' />
+  <Game {...defaultProps} stage={GameViewStage.DRAWING_CARDS} />
 );
 
-export const EndTurn = () => <Game {...defaultProps} stage='end-turn' />;
+export const EndTurn = () => (
+  <Game {...defaultProps} stage={GameViewStage.END_TURN} />
+);
 
 export const BigHandPlayed = () => (
   <Game
@@ -185,7 +188,9 @@ export const BigHandPlayed = () => (
   />
 );
 
-export const EndOfRound = () => <Game {...defaultProps} stage='end-of-round' />;
+export const EndOfRound = () => (
+  <Game {...defaultProps} stage={GameViewStage.END_OF_ROUND} />
+);
 
 export const emojiReaction = () => {
   const [players, setPlayers] = useState(defaultProps.players);

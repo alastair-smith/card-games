@@ -1,5 +1,6 @@
 import { action } from '@ladle/react';
 import type { PlayerName } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Controls from '.';
 
 export default {
@@ -11,7 +12,7 @@ const defaultProps: React.ComponentProps<typeof Controls> = {
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
   onPlayCards: action('Play cards clicked'),
-  stage: 'waiting-for-player',
+  stage: GameViewStage.WAITING_FOR_PLAYER,
 };
 
 export function WaitForPlayers() {
@@ -21,13 +22,13 @@ export function WaitForPlayers() {
 }
 
 export function PickCards() {
-  return <Controls {...defaultProps} stage='picking-cards' />;
+  return <Controls {...defaultProps} stage={GameViewStage.PICKING_CARDS} />;
 }
 
 export function EndTurn() {
-  return <Controls {...defaultProps} stage='end-turn' />;
+  return <Controls {...defaultProps} stage={GameViewStage.END_TURN} />;
 }
 
 export function EndOfRound() {
-  return <Controls {...defaultProps} stage='end-of-round' />;
+  return <Controls {...defaultProps} stage={GameViewStage.END_OF_ROUND} />;
 }
