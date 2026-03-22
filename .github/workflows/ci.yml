@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Run lint
         run: pnpm lint
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Run test
         run: pnpm test
@@ -36,7 +36,7 @@ jobs:
       REDIS_CONNECTION_STRING: redis://localhost:6379
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Run integration tests
         run: pnpm turbo run test:integration
@@ -62,7 +62,7 @@ jobs:
       REDIS_CONNECTION_STRING: redis://localhost:6379
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install ${{ matrix.browser }}
@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build
