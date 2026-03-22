@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 vi.mock('~/components/layout/game-layout', () => ({
@@ -53,6 +54,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Alice' as PlayerName,
       score: 10,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
       isPlayersTurn: true,
     },
@@ -63,6 +65,7 @@ const baseProps = {
       isHundredScoreHalved: false,
       name: 'Bob' as PlayerName,
       score: 20,
+      roundScore: { original: 0, adjusted: 0 },
       isYanivCalled: false,
     },
   ],
@@ -70,8 +73,7 @@ const baseProps = {
   cards: [{ suit: Suit.CLUBS, rank: Rank.ACE }],
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
   discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
-  stage: 'picking-cards' as const,
-  roundSummary: null,
+  stage: GameViewStage.PICKING_CARDS,
 };
 
 describe('Game', () => {
@@ -92,16 +94,7 @@ describe('Game', () => {
   });
 
   test('shows the round summary at the end of a round', () => {
-    render(
-      <Game
-        {...baseProps}
-        stage='end-of-round'
-        roundSummary={[
-          { id: '1' as UserId, name: 'Alice' as PlayerName, score: 5 },
-          { id: '2' as UserId, name: 'Bob' as PlayerName, score: 15 },
-        ]}
-      />,
-    );
+    render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
   });
 });

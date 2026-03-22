@@ -9,6 +9,7 @@ import { EmojiReactions } from '~/components/emoji-reactions';
 import { Button } from '~/components/ui/button';
 import type { PlayerName } from '~/types/entities';
 import type { ReactionEmoji } from '~/types/game';
+import { GameViewStage } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
 type ControlsProps = {
@@ -18,12 +19,7 @@ type ControlsProps = {
   onYanivClick: () => void;
   onPlayCards: () => void;
   playerTakingTurn?: PlayerName;
-  stage:
-    | 'waiting-for-player'
-    | 'picking-cards'
-    | 'drawing-cards'
-    | 'end-turn'
-    | 'end-of-round';
+  stage: GameViewStage;
 };
 
 export default function Controls({
@@ -47,7 +43,7 @@ export default function Controls({
         className='flex-1 justify-self-center md:justify-self-auto col-span-2'
       />
 
-      {stage === 'waiting-for-player' && (
+      {stage === GameViewStage.WAITING_FOR_PLAYER && (
         <div className='flex gap-2 justify-center col-span-2'>
           <span className='text-balance'>{playerTakingTurn} is thinking</span>
           <div className='flex'>
@@ -58,14 +54,14 @@ export default function Controls({
         </div>
       )}
 
-      {stage === 'picking-cards' && (
+      {stage === GameViewStage.PICKING_CARDS && (
         <Button onClick={onPlayCards} className='col-end-[-1]'>
           <CircleCheckIcon />
           Play Cards
         </Button>
       )}
 
-      {stage === 'end-turn' && (
+      {stage === GameViewStage.END_TURN && (
         <>
           <Button onClick={onYanivClick}>
             <MegaphoneIcon /> Yaniv!
@@ -77,7 +73,7 @@ export default function Controls({
         </>
       )}
 
-      {stage === 'end-of-round' && (
+      {stage === GameViewStage.END_OF_ROUND && (
         <Button onClick={onPlayCards} className='col-end-[-1]'>
           Start new round
           <ArrowRightCircleIcon />

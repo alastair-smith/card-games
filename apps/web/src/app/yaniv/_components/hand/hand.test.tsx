@@ -33,6 +33,7 @@ const cards = [
 
 const defaultProps = {
   cards,
+  handTotal: 16,
   isFiftyScoreHalved: false,
   isHundredScoreHalved: false,
   totalScore: 0,

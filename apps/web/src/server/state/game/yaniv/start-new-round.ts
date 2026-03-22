@@ -27,6 +27,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) => {
     ...player,
     isYanivCalled: false,
     cardCount: 0,
+    roundScore: { original: 0, adjusted: 0 },
   }));
 
   await yanivDeck.createDeck(code, shuffle([...deckWithJokers]));

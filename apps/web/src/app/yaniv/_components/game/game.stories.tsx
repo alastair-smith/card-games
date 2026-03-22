@@ -6,6 +6,7 @@ import {
   type PlayerName,
   type UserId,
 } from '~/types/entities';
+import { GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 export default {
@@ -17,7 +18,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   onEndTurnClick: action('End turn clicked'),
   onYanivClick: action('Yaniv clicked'),
   onPlayCards: action('Play cards clicked'),
-  stage: 'picking-cards',
+  stage: GameViewStage.PICKING_CARDS,
   players: [
     {
       id: '1' as UserId,
@@ -25,7 +26,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       name: 'Kevin' as PlayerName,
-      score: 3,
+      score: 0,
+      roundScore: { original: 5, adjusted: 0 },
       isYanivCalled: false,
       isPlayersTurn: true,
     },
@@ -37,7 +39,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
         '',
       ) as PlayerName,
-      score: 0,
+      score: 12,
+      roundScore: { original: 12, adjusted: 12 },
       isYanivCalled: false,
     },
     {
@@ -46,7 +49,8 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       name: 'Paul' as PlayerName,
-      score: 0,
+      score: 14,
+      roundScore: { original: 7, adjusted: 25 },
       isYanivCalled: true,
     },
     {
@@ -56,6 +60,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Viola' as PlayerName,
       score: 0,
+      roundScore: { original: 4, adjusted: 4 },
       isYanivCalled: false,
     },
     {
@@ -65,6 +70,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Duncan' as PlayerName,
       score: 0,
+      roundScore: { original: 13, adjusted: 13 },
       isYanivCalled: false,
     },
     {
@@ -74,6 +80,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
       isHundredScoreHalved: false,
       name: 'Kathy' as PlayerName,
       score: 0,
+      roundScore: { original: 10, adjusted: 10 },
       isYanivCalled: false,
     },
   ],
@@ -126,7 +133,6 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     suit: Suit.CLUBS,
     rank: Rank.FOUR,
   },
-  roundSummary: null,
 };
 
 const limitPlayers = (numberOfPlayers: number) => {
@@ -155,15 +161,17 @@ export const OtherPlayerTurn = () => (
       }
       return player;
     })}
-    stage='waiting-for-player'
+    stage={GameViewStage.WAITING_FOR_PLAYER}
   />
 );
 
 export const PickupCard = () => (
-  <Game {...defaultProps} stage='drawing-cards' />
+  <Game {...defaultProps} stage={GameViewStage.DRAWING_CARDS} />
 );
 
-export const EndTurn = () => <Game {...defaultProps} stage='end-turn' />;
+export const EndTurn = () => (
+  <Game {...defaultProps} stage={GameViewStage.END_TURN} />
+);
 
 export const BigHandPlayed = () => (
   <Game
@@ -181,18 +189,7 @@ export const BigHandPlayed = () => (
 );
 
 export const EndOfRound = () => (
-  <Game
-    {...defaultProps}
-    stage='end-of-round'
-    roundSummary={[
-      { id: '1' as UserId, name: 'Kevin' as PlayerName, score: 3 },
-      { id: '2' as UserId, name: 'W' as PlayerName, score: 0 },
-      { id: '3' as UserId, name: 'Paul' as PlayerName, score: 0 },
-      { id: '4' as UserId, name: 'Viola' as PlayerName, score: 0 },
-      { id: '5' as UserId, name: 'Duncan' as PlayerName, score: 0 },
-      { id: '6' as UserId, name: 'Kathy' as PlayerName, score: 0 },
-    ]}
-  />
+  <Game {...defaultProps} stage={GameViewStage.END_OF_ROUND} />
 );
 
 export const emojiReaction = () => {

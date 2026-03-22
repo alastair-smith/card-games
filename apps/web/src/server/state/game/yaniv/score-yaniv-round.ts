@@ -8,7 +8,7 @@ import {
   GameStep,
   YANIV_CALLER_PENALTY,
 } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
@@ -53,14 +53,19 @@ export const scoreYanivRound = async (
   const scoredPlayers = state.players.map((player) => {
     const hand = state.hands[player.id];
     if (!hand) throw new Error(`Hand not found for player ${player.id}`);
-    const increment = player.isYanivCalled
+    const handValue = sumYanivHand(hand);
+    const adjusted = player.isYanivCalled
       ? player.score === minCallerScore
         ? 0
         : YANIV_CALLER_PENALTY
-      : sumYanivHand(hand);
-    const newScore = player.score + increment;
+      : handValue;
+    const newScore = player.score + adjusted;
 
-    return { ...player, ...applyScoreHalving(newScore, player) };
+    return {
+      ...player,
+      ...applyScoreHalving(newScore, player),
+      roundScore: { original: handValue, adjusted },
+    };
   });
 
   const scoredCallers = scoredPlayers.filter((player) => player.isYanivCalled);

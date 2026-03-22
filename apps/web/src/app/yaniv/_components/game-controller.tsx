@@ -9,9 +9,10 @@ import {
   GameStage,
   type GameState,
   GameStep,
+  GameViewStage,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 import Game from './game';
 import GameOver from './game-over';
 
@@ -91,19 +92,15 @@ export default function YanivGameController({
     }
   };
 
-  const deriveStage = ():
-    | 'waiting-for-player'
-    | 'picking-cards'
-    | 'drawing-cards'
-    | 'end-turn'
-    | 'end-of-round' => {
-    if (gameStep === GameStep.REDEAL) return 'end-of-round';
+  const deriveStage = (): GameViewStage => {
+    if (gameStep === GameStep.REDEAL) return GameViewStage.END_OF_ROUND;
     if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
-      return 'waiting-for-player';
-    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv) return 'end-turn';
-    if (gameStep === GameStep.PLAY_CARDS) return 'picking-cards';
-    if (gameStep === GameStep.PICKUP_CARD) return 'drawing-cards';
-    return 'end-turn'; // PROCEED
+      return GameViewStage.WAITING_FOR_PLAYER;
+    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv)
+      return GameViewStage.END_TURN;
+    if (gameStep === GameStep.PLAY_CARDS) return GameViewStage.PICKING_CARDS;
+    if (gameStep === GameStep.PICKUP_CARD) return GameViewStage.DRAWING_CARDS;
+    return GameViewStage.END_TURN; // PROCEED
   };
 
   const stage = deriveStage();
@@ -165,41 +162,9 @@ export default function YanivGameController({
 
   const discardCard = topDiscardCard ?? null;
 
-  if (stage === 'end-of-round') {
-    const roundSummary = players.map(({ id, name, score }) => ({
-      id,
-      name,
-      score,
-    }));
-
-    return (
-      <Game
-        stage='end-of-round'
-        roundSummary={roundSummary}
-        cards={hand}
-        selectedCards={selectedCards}
-        onCardToggle={handleCardToggle}
-        onPickupFromDeck={handlePickupFromDeck}
-        onPickupFromDiscard={handlePickupFromDiscard}
-        onEmojiClick={handleTriggerEmoji}
-        onEndTurnClick={handleEndTurn}
-        onYanivClick={handleCallYaniv}
-        onPlayCards={handlePlayCards}
-        players={players}
-        userId={userId}
-        playedCards={playedCards}
-        discardCard={discardCard}
-        drawnCard={drawnCard}
-        canAutoPlay={canAutoPlay}
-        onAutoPlayDrawnCard={handleAutoPlayDrawnCard}
-      />
-    );
-  }
-
   return (
     <Game
       stage={stage}
-      roundSummary={null}
       cards={hand}
       selectedCards={selectedCards}
       onCardToggle={handleCardToggle}
