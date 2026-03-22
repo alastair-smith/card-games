@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { redis } from '~/server/data/redis';
 import { yanivDeck } from '~/server/data/deck';
+import { redis } from '~/server/data/redis';
 import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
@@ -14,7 +14,11 @@ const threeOfDiamonds: YanivPlayingCard = {
   rank: Rank.THREE,
 };
 
-const testCards: YanivPlayingCard[] = [aceOfSpades, twoOfHearts, threeOfDiamonds];
+const testCards: YanivPlayingCard[] = [
+  aceOfSpades,
+  twoOfHearts,
+  threeOfDiamonds,
+];
 
 const deckKey = (code: GameCode) => `deck:yaniv:${code}`;
 
