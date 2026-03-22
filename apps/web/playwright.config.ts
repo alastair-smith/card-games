@@ -22,7 +22,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'pnpm run dev:app',
+    command: 'node ./src/server.js',
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     env: {
