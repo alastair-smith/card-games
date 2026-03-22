@@ -7,7 +7,12 @@ export default {
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
-    exclude: ['**/*.integration.test.ts', '**/node_modules/**', '.next/**', 'tests/ui/**'],
+    exclude: [
+      '**/*.integration.test.ts',
+      '**/node_modules/**',
+      '.next/**',
+      'tests/ui/**',
+    ],
   },
   resolve: {
     alias: {

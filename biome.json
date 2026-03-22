@@ -9,7 +9,8 @@
     "enabled": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": ["**", "!**/public/mockServiceWorker.js"]
   },
   "formatter": {
     "enabled": true,
