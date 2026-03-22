@@ -41,7 +41,7 @@ describe('RoundSummary', () => {
     expect(screen.getByText('15')).toBeInTheDocument();
   });
 
-  test('shows adjusted score with original in brackets when Yaniv was called', () => {
+  test('shows adjusted score with original in brackets when they differ', () => {
     const yanivPlayers = [
       {
         id: '1' as UserId,

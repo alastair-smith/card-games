@@ -36,10 +36,7 @@ export function RoundSummary({ players }: RoundSummaryProps) {
         <TableBody>
           {players.map((player) => {
             const { original, adjusted } = player.roundScore;
-            const scoreDisplay =
-              original !== adjusted
-                ? `${adjusted} (${original})`
-                : String(adjusted);
+            const scoreDisplay = `${adjusted}${original !== adjusted ? ` (${original})` : ''}`;
             return (
               <TableRow key={player.id}>
                 <TableCell className='text-right py-2 md:py-4'>
