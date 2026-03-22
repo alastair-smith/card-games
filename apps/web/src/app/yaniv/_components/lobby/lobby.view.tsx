@@ -36,6 +36,7 @@ export default function LobbyView({ code, ...playerProps }: LobbyProps) {
         <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
           <Players
+            className='flex-1'
             minPlayers={MIN_PLAYERS}
             maxPlayers={MAX_PLAYERS}
             {...playerProps}

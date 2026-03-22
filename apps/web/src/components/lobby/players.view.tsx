@@ -226,7 +226,9 @@ export default function Players({
 
   return (
     <Card className={className}>
-      <CardHeader>Players</CardHeader>
+      <CardHeader>
+        <h2 className='text-xl font-semibold'>Players</h2>
+      </CardHeader>
       <CardContent>
         <div className='flex flex-col sm:hidden divide-y'>
           {players.map((player) => (
