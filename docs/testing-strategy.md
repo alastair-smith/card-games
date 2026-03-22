@@ -58,9 +58,11 @@ pnpm test  # full suite
 
 **Run locally:**
 ```bash
-# Next.js dev server must be running with MSW enabled
-pnpm dev
-pnpm --filter @repo/web playwright test
+# Playwright starts the dev server automatically via webServer config
+pnpm --filter @repo/web test:ui
+
+# With Playwright UI for debugging
+pnpm --filter @repo/web test:ui:debug
 ```
 
 **CI job:** `ui-flow-tests` — runs on every PR.
@@ -135,7 +137,7 @@ TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:s
 
 **Run locally:**
 ```bash
-TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:e2e
+TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:smoke
 ```
 
 **Trigger:** GitHub Actions scheduled workflow — runs daily against the staging environment, not triggered by PRs.
