@@ -17,16 +17,16 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
     }
     mswStarted = true;
 
-    import('../mocks/browser').then(({ worker }) => {
-      worker
-        .start({
-          onUnhandledRequest: 'warn',
-          serviceWorker: {
-            url: '/mockServiceWorker.js',
-          },
-        })
-        .then(() => setReady(true));
-    });
+    void (async () => {
+      const { worker } = await import('../mocks/browser');
+      await worker.start({
+        onUnhandledRequest: 'warn',
+        serviceWorker: {
+          url: '/mockServiceWorker.js',
+        },
+      });
+      setReady(true);
+    })();
   }, []);
 
   if (!ready) return null;
