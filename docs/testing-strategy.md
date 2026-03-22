@@ -33,7 +33,7 @@ pnpm --filter @repo/web test -- run src/path/to/file.test.tsx
 pnpm test  # full suite
 ```
 
-**CI job:** `test` — runs on every PR in parallel with lint and build.
+**CI job:** `test` — runs on every PR.
 
 ---
 
@@ -63,7 +63,7 @@ pnpm dev
 pnpm --filter @repo/web playwright test
 ```
 
-**CI job:** `ui-flow-tests` — runs on every PR. Slower than unit tests; runs as a separate parallel job.
+**CI job:** `ui-flow-tests` — runs on every PR.
 
 ---
 
@@ -73,15 +73,16 @@ pnpm --filter @repo/web playwright test
 
 **Tooling:** Vitest, ioredis, real Redis
 
-**How it works:** Each test seeds Redis with a precise game state (e.g. a known deck order, specific hands, a particular turn), calls a server state function directly, and asserts the resulting Redis state and return value.
+**How it works:** Each test uses a unique game code to isolate state, calls the data layer functions directly against a real Redis instance, and asserts the resulting Redis state and return value.
 
 **Example scenarios:**
-- Picking up the top card from the discard pile → card removed from discard, added to player hand, turn ends
-- Playing a valid set → cards removed from hand, added to discard, score stays unchanged
-- Calling Yaniv with ≤7 points → round scored correctly, assaf triggered when opponent has lower score
-- Starting a new round after a player hits 200 points → that player is eliminated
+- `createDiscard` clears any pre-existing pile for the game code
+- `pushDiscard` / `popDiscard` maintains LIFO ordering
+- `drainDiscard` returns all cards top-first and clears the key
+- `createDeck` / `drawCard` maintains FIFO ordering
+- `deckExists` / `discardExists` reflect accurate presence after mutations
 
-**What they don't cover:** UI, network layer, or tRPC procedure logic.
+**What they don't cover:** UI, network layer, tRPC procedure logic, or higher-level game state functions.
 
 **Run locally:**
 ```bash
@@ -89,14 +90,7 @@ pnpm --filter @repo/web playwright test
 pnpm --filter @repo/web test:integration
 ```
 
-**CI job:** `integration-tests` — runs on every PR with a GitHub Actions Redis service container:
-```yaml
-services:
-  redis:
-    image: redis:7
-    ports:
-      - 6379:6379
-```
+**CI job:** `test-integration` — runs on every PR with a Redis instance provided by the CI environment.
 
 ---
 
@@ -144,10 +138,4 @@ TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:s
 TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:e2e
 ```
 
-**Trigger:** GitHub Actions scheduled workflow (`cron`) — runs daily against the staging environment, not triggered by PRs.
-
-```yaml
-on:
-  schedule:
-    - cron: '0 6 * * *'  # 06:00 UTC daily
-```
+**Trigger:** GitHub Actions scheduled workflow — runs daily against the staging environment, not triggered by PRs.
