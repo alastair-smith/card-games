@@ -8,7 +8,7 @@ import {
   GameStep,
   YANIV_CALLER_PENALTY,
 } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 

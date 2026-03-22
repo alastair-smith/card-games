@@ -4,7 +4,7 @@ import { publishYanivState } from '~/server/events/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 import { scoreYanivRound } from './score-yaniv-round';
 
 export const callYaniv = async (code: GameCode, userId: UserId) => {

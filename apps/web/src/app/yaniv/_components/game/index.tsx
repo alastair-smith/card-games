@@ -4,7 +4,7 @@ import GameLayout from '~/components/layout/game-layout';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
 import { HowToDialog } from '../how-to';

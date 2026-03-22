@@ -11,7 +11,7 @@ import {
   GameStep,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
-import { sumYanivHand } from '~/utils/cards';
+import { sumYanivHand } from '~/utils/yaniv';
 import Game from './game';
 import GameOver from './game-over';
 
