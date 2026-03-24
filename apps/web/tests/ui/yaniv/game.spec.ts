@@ -103,6 +103,48 @@ test.describe('Yaniv game - round summary', () => {
   });
 });
 
+test.describe('Yaniv game - opponent actions', () => {
+  test('shows round summary when opponent calls Yaniv', async ({ page }) => {
+    await page.goto('/yaniv/WAIT11');
+
+    await expect(page.getByText('Bob is thinking')).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Simulate the server pushing a state update triggered by Bob calling Yaniv
+    await page.evaluate(() =>
+      fetch('/api/mock/yaniv/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: 'WAIT11', scenario: 'roundSummary' }),
+      }),
+    );
+
+    await expect(page.getByText('Round Summary')).toBeVisible();
+  });
+
+  test('returns to game board when opponent starts new round', async ({
+    page,
+  }) => {
+    await page.goto('/yaniv/WAIT11');
+
+    await expect(page.getByText('Bob is thinking')).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Simulate the server pushing a new round after Bob starts it
+    await page.evaluate(() =>
+      fetch('/api/mock/yaniv/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: 'WAIT11', scenario: 'inProgress' }),
+      }),
+    );
+
+    await expect(page.getByRole('button', { name: 'Yaniv!' })).toBeVisible();
+  });
+});
+
 test.describe('Yaniv game - game over', () => {
   test('shows winner announcement with final scores', async ({ page }) => {
     await page.goto('/yaniv/GVER11');

@@ -46,6 +46,8 @@ function getInitialState(code: string): StateSubscription {
       return roundSummaryScenario();
     case 'GVER11':
       return gameOverScenario();
+    case 'WAIT11':
+      return waitingForOpponentScenario();
     default:
       return { update: 'GAME_NOT_FOUND' } as StateSubscription;
   }
@@ -135,5 +137,19 @@ export function getYanivHandlers() {
     }),
 
     http.post('/api/trpc/yaniv.triggerEmoji', () => mutationOk()),
+
+    // Test helper — push a named scenario to a game code without user interaction
+    http.post('/api/mock/yaniv/push', async ({ request }) => {
+      const body = (await request.json()) as { code: string; scenario: string };
+      const scenarioMap: Record<string, () => StateSubscription> = {
+        inProgress: inProgressScenario,
+        waitingForOpponent: waitingForOpponentScenario,
+        roundSummary: roundSummaryScenario,
+        gameOver: gameOverScenario,
+      };
+      const fn = scenarioMap[body.scenario];
+      if (fn && body.code) pushToCode(body.code, fn());
+      return HttpResponse.json({ ok: true });
+    }),
   ];
 }
