@@ -37,8 +37,6 @@ const aliceInProgress = {
   id: TEST_USER_ID,
   name: TEST_USER_NAME,
   isUser: true,
-  isHost: true,
-  isReady: true,
   cardCount: 3,
   score: 0,
   roundScore: { original: 0, adjusted: 0 },
@@ -51,8 +49,6 @@ const bobInProgress = {
   id: OTHER_USER_ID,
   name: OTHER_USER_NAME,
   isUser: false,
-  isHost: false,
-  isReady: true,
   cardCount: 7,
   score: 0,
   roundScore: { original: 0, adjusted: 0 },
@@ -96,102 +92,90 @@ export function lobbyScenario(): StateSubscription {
 }
 
 export function inProgressScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PLAY_CARDS,
-      hand: HAND_CARDS,
-      players: [aliceInProgress, bobInProgress],
-      playedCards: [DISCARD_CARD],
-      topDiscardCard: DISCARD_CARD,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PLAY_CARDS,
+    hand: HAND_CARDS,
+    players: [aliceInProgress, bobInProgress],
+    playedCards: [DISCARD_CARD],
+    topDiscardCard: DISCARD_CARD,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 export function pickupStepScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PICKUP_CARD,
-      hand: HAND_CARDS,
-      players: [aliceInProgress, bobInProgress],
-      playedCards: [DISCARD_CARD],
-      topDiscardCard: DISCARD_CARD,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PICKUP_CARD,
+    hand: HAND_CARDS,
+    players: [aliceInProgress, bobInProgress],
+    playedCards: [DISCARD_CARD],
+    topDiscardCard: DISCARD_CARD,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 export function pickupScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PROCEED,
-      hand: [...HAND_CARDS, DISCARD_CARD],
-      players: [{ ...aliceInProgress, cardCount: 4 }, bobInProgress],
-      playedCards: [],
-      topDiscardCard: null,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PROCEED,
+    hand: [...HAND_CARDS, DISCARD_CARD],
+    players: [{ ...aliceInProgress, cardCount: 4 }, bobInProgress],
+    playedCards: [],
+    topDiscardCard: null,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 export function waitingForOpponentScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PLAY_CARDS,
-      hand: HAND_CARDS,
-      players: [aliceInProgress, bobInProgress],
-      playedCards: [DISCARD_CARD],
-      topDiscardCard: DISCARD_CARD,
-      currentPlayerId: OTHER_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PLAY_CARDS,
+    hand: HAND_CARDS,
+    players: [aliceInProgress, bobInProgress],
+    playedCards: [DISCARD_CARD],
+    topDiscardCard: DISCARD_CARD,
+    currentPlayerId: OTHER_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 export function roundSummaryScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.REDEAL,
-      hand: [{ rank: Rank.ACE, suit: Suit.SPADES }],
-      players: [
-        { ...aliceInProgress, isYanivCalled: true, cardCount: 1 },
-        {
-          ...bobInProgress,
-          score: 14,
-          roundScore: { original: 14, adjusted: 14 },
-          cardCount: 5,
-        },
-      ],
-      playedCards: [],
-      topDiscardCard: null,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.REDEAL,
+    hand: [{ rank: Rank.ACE, suit: Suit.SPADES }],
+    players: [
+      { ...aliceInProgress, isYanivCalled: true, cardCount: 1 },
+      {
+        ...bobInProgress,
+        score: 14,
+        roundScore: { original: 14, adjusted: 14 },
+        cardCount: 5,
+      },
+    ],
+    playedCards: [],
+    topDiscardCard: null,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 // After picking up a card — player must end their turn (PROCEED step)
 export function proceedScenario(): StateSubscription {
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PROCEED,
-      hand: [...HAND_CARDS, DISCARD_CARD],
-      players: [{ ...aliceInProgress, cardCount: 4 }, bobInProgress],
-      playedCards: [],
-      topDiscardCard: null,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PROCEED,
+    hand: [...HAND_CARDS, DISCARD_CARD],
+    players: [{ ...aliceInProgress, cardCount: 4 }, bobInProgress],
+    playedCards: [],
+    topDiscardCard: null,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 // PLAY_CARDS step with high hand total (11 > 7) — Yaniv not callable, "Play Cards" shown
@@ -200,37 +184,33 @@ export function highHandScenario(): StateSubscription {
     { rank: Rank.FIVE, suit: Suit.SPADES },
     { rank: Rank.SIX, suit: Suit.HEARTS },
   ];
-  return {
-    update: GameUpdate.GAME_STATE_UPDATE,
-    state: {
-      gameStage: GameStage.IN_PROGRESS,
-      gameStep: GameStep.PLAY_CARDS,
-      hand: highHand,
-      players: [{ ...aliceInProgress, cardCount: 2 }, bobInProgress],
-      playedCards: [DISCARD_CARD],
-      topDiscardCard: DISCARD_CARD,
-      currentPlayerId: TEST_USER_ID,
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.IN_PROGRESS,
+    gameStep: GameStep.PLAY_CARDS,
+    hand: highHand,
+    players: [{ ...aliceInProgress, cardCount: 2 }, bobInProgress],
+    playedCards: [DISCARD_CARD],
+    topDiscardCard: DISCARD_CARD,
+    currentPlayerId: TEST_USER_ID,
   };
+  return { update: GameUpdate.GAME_STATE_UPDATE, state };
 }
 
 export function gameOverScenario(): StateSubscription {
-  return {
-    update: GameUpdate.FINISHED,
-    state: {
-      gameStage: GameStage.FINISHED,
-      hand: [{ rank: Rank.ACE, suit: Suit.SPADES }],
-      players: [
-        {
-          ...aliceInProgress,
-          score: 195,
-        },
-        {
-          ...bobInProgress,
-          score: 205,
-        },
-      ],
-      winners: [TEST_USER_ID],
-    } as ClientGameState,
+  const state = {
+    gameStage: GameStage.FINISHED,
+    hand: [{ rank: Rank.ACE, suit: Suit.SPADES }],
+    players: [
+      {
+        ...aliceInProgress,
+        score: 195,
+      },
+      {
+        ...bobInProgress,
+        score: 205,
+      },
+    ],
+    winners: [TEST_USER_ID],
   };
+  return { update: GameUpdate.FINISHED, state };
 }
