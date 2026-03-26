@@ -11,7 +11,7 @@ type HandProps = {
   isHundredScoreHalved: boolean;
   totalScore: number;
   onCardClick?: (card: YanivPlayingCard & { selected?: boolean }) => void;
-  isHighlighted?: boolean;
+  isActive?: boolean;
 };
 
 export default function Hand({
@@ -22,7 +22,7 @@ export default function Hand({
   isHundredScoreHalved,
   totalScore,
   onCardClick,
-  isHighlighted,
+  isActive,
 }: HandProps) {
   const scoreNote =
     !isFiftyScoreHalved && totalScore < 50
@@ -38,7 +38,7 @@ export default function Hand({
       <div
         className={cn(
           'flex flex-row flex-wrap gap-2 rounded-lg p-2',
-          isHighlighted ? 'animate-pulse-bg' : '',
+          isActive ? 'animate-pulse-bg' : '',
         )}
       >
         {sortedCards.map((card) => (

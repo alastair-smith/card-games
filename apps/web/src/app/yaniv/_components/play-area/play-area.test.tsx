@@ -103,30 +103,62 @@ describe('PlayArea', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('calls the deck handler when the deck is clicked', () => {
+  test('calls the deck handler when the deck is clicked and the play area is active', () => {
     const onDeckClick = vi.fn();
     render(
       <PlayArea
         discardCard={discardCard}
         playedCards={playedCards}
         onDeckClick={onDeckClick}
+        isActive
       />,
     );
     fireEvent.click(screen.getByTestId('deck-click'));
     expect(onDeckClick).toHaveBeenCalledOnce();
   });
 
-  test('calls the discard handler when the discard card is clicked', () => {
+  test('calls the discard handler when the discard card is clicked and the play area is active', () => {
     const onDiscardClick = vi.fn();
     render(
       <PlayArea
         discardCard={discardCard}
         playedCards={playedCards}
         onDiscardClick={onDiscardClick}
+        isActive
       />,
     );
     fireEvent.click(screen.getByTestId(`card-${Suit.CLUBS}-${Rank.FOUR}`));
     expect(onDiscardClick).toHaveBeenCalledOnce();
+  });
+
+  describe('when the play area is not active', () => {
+    test('does not call the deck handler when the deck is clicked', () => {
+      const onDeckClick = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          onDeckClick={onDeckClick}
+          isActive={false}
+        />,
+      );
+      fireEvent.click(screen.getByTestId('deck-click'));
+      expect(onDeckClick).not.toHaveBeenCalled();
+    });
+
+    test('does not call the discard handler when the discard card is clicked', () => {
+      const onDiscardClick = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          onDiscardClick={onDiscardClick}
+          isActive={false}
+        />,
+      );
+      fireEvent.click(screen.getByTestId(`card-${Suit.CLUBS}-${Rank.FOUR}`));
+      expect(onDiscardClick).not.toHaveBeenCalled();
+    });
   });
 
   describe('drawn card', () => {
