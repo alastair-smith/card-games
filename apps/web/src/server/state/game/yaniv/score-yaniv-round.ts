@@ -43,19 +43,24 @@ export const scoreYanivRound = async (
   code: GameCode,
   state: InProgressState,
 ) => {
-  const yanivCallers = state.players.filter((player) => player.isYanivCalled);
-  if (yanivCallers.length === 0) throw new Error('Yaniv caller not found');
-
-  const minCallerScore = Math.min(
-    ...yanivCallers.map((player) => player.score),
-  );
-
-  const scoredPlayers = state.players.map((player) => {
+  const playersWithHandValues = state.players.map((player) => {
     const hand = state.hands[player.id];
     if (!hand) throw new Error(`Hand not found for player ${player.id}`);
-    const handValue = sumYanivHand(hand);
+    return { player, handValue: sumYanivHand(hand) };
+  });
+
+  const callers = playersWithHandValues.filter(
+    ({ player }) => player.isYanivCalled,
+  );
+  if (callers.length === 0) throw new Error('Yaniv caller not found');
+
+  const minCallerHandValue = Math.min(
+    ...callers.map(({ handValue }) => handValue),
+  );
+
+  const scoredPlayers = playersWithHandValues.map(({ player, handValue }) => {
     const adjusted = player.isYanivCalled
-      ? player.score === minCallerScore
+      ? handValue === minCallerHandValue
         ? 0
         : YANIV_CALLER_PENALTY
       : handValue;

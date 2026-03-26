@@ -165,8 +165,8 @@ describe('callYaniv', () => {
   });
 
   test('scores and ends the round when all players have taken their final turn', async () => {
-    // USER_2 called Yaniv first (score=10); USER_1 takes their final turn and also calls Yaniv (score=0)
-    // minCallerScore = 0 (USER_1) → USER_1 gets +0, USER_2 gets +25
+    // USER_2 called Yaniv first (hand=4); USER_1 takes their final turn and also calls Yaniv (hand=3)
+    // USER_1 has lower hand value → USER_1 gets +0, USER_2 gets +25
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
@@ -194,7 +194,7 @@ describe('callYaniv', () => {
         hands: {
           [USER_1]: [
             { suit: Suit.HEARTS, rank: Rank.ACE },
-            { suit: Suit.SPADES, rank: Rank.FOUR },
+            { suit: Suit.SPADES, rank: Rank.TWO },
           ] as YanivPlayingCard[],
           [USER_2]: [
             { suit: Suit.DIAMONDS, rank: Rank.ACE },
