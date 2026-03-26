@@ -127,9 +127,7 @@ export default function Game({
           <PlayArea
             playedCards={playedCards}
             discardCard={discardCard}
-            isHighlighted={
-              stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn
-            }
+            isActive={stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn}
             onDeckClick={onPickupFromDeck}
             onDiscardClick={onPickupFromDiscard}
             className='md:text-2xl sm:text-lg h-fit'
@@ -157,9 +155,7 @@ export default function Game({
         isHundredScoreHalved={userPlayer.isHundredScoreHalved}
         totalScore={userPlayer.score}
         onCardClick={onCardToggle}
-        isHighlighted={
-          stage === GameViewStage.PICKING_CARDS && isUserTakingTurn
-        }
+        isActive={stage === GameViewStage.PICKING_CARDS && isUserTakingTurn}
       />
     </GameLayout>
   );
