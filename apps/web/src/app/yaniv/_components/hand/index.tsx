@@ -36,6 +36,7 @@ export default function Hand({
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
       <div
+        data-testid='hand'
         className={cn(
           'flex flex-row flex-wrap gap-2 rounded-lg p-2',
           isHighlighted ? 'animate-pulse-bg' : '',

@@ -11,7 +11,7 @@ export default {
       '**/*.integration.test.ts',
       '**/node_modules/**',
       '.next/**',
-      'tests/ui/**',
+      'tests/e2e/**',
     ],
   },
   resolve: {

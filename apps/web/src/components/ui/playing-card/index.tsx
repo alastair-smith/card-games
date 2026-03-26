@@ -81,6 +81,7 @@ export function PlayingCard({
     <div
       onClick={onClick}
       style={style}
+      data-testid={card ? `card-${card.suit}-${card.rank}` : undefined}
       className={cn(
         PLAYING_CARD_PROPORTIONS,
         onClick ? 'cursor-pointer' : '',

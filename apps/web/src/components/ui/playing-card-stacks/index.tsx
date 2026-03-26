@@ -24,7 +24,10 @@ export function PlayingCardDeck({
 }: PlayingCardDeckProps) {
   const showDrawnCard = drawnCardDisplay !== undefined;
   return (
-    <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
+    <div
+      data-testid='deck'
+      className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}
+    >
       <div className='w-fit relative'>
         <div className='w-[3.75em] h-[5.25em] absolute inset-0 translate-x-[0.32em] -translate-y-[0.44em] rounded-[0.22em] border-[0.056em] border-border/50 bg-white' />
         <div className='w-[3.75em] h-[5.25em] absolute inset-0 translate-x-[0.24em] -translate-y-[0.33em] rounded-[0.22em] border-[0.056em] border-border/50 bg-white' />

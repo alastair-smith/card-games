@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/ui',
-  outputDir: './tests/ui/.results',
+  testDir: './tests/e2e',
+  outputDir: './tests/e2e/.results',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -11,7 +11,6 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3001',
     trace: 'on-first-retry',
-    serviceWorkers: 'allow',
   },
 
   projects: [
@@ -38,7 +37,6 @@ export default defineConfig({
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     env: {
-      NEXT_PUBLIC_API_MOCKING: 'enabled',
       PORT: '3001',
       AUTH_SECRET: 'playwright-test-secret-placeholder-32ch!',
       REDIS_CONNECTION_STRING: 'redis://localhost:6379',

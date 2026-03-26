@@ -7,10 +7,9 @@ This document describes the five-tier testing strategy for the card games platfo
 | Tier | Name | Tooling | What it tests | When it runs |
 |------|------|---------|---------------|--------------|
 | 1 | Unit tests | Vitest + jsdom | Individual functions and components in isolation | PR CI |
-| 2 | UI flow tests | Playwright + MSW | Client-side game flows with a mocked backend | PR CI |
 | 3 | Backend integration tests | Vitest + Redis | Server-side game logic against a real Redis instance | PR CI |
 | 4 | Smoke tests | Playwright | Core happy path against the deployed environment | Post-deployment |
-| 5 | Full game simulation | Playwright | Complete Yaniv game played to completion | Daily cron |
+| 5 | Full game simulation | Playwright | Complete Yaniv game played to completion | PR CI |
 
 ---
 
@@ -34,38 +33,6 @@ pnpm test  # full suite
 ```
 
 **CI job:** `test` — runs on every PR.
-
----
-
-## Tier 2 — UI Tests
-
-**Purpose:** Verify client-side game flows end to end from the user's perspective, without needing a real backend or Redis. These tests assert that the right UI states appear in response to realistic game scenarios.
-
-**Tooling:** Playwright, MSW (v2)
-
-**How it works:** MSW runs as a service worker in the browser and intercepts all tRPC HTTP requests (mutations and SSE subscriptions). Each test sets up a specific scenario — e.g. "it's your turn and you have a valid set in hand" — and asserts the UI responds correctly.
-
-**Example scenarios:**
-- Joining a lobby: entering a name and game code → seeing the lobby waiting screen
-- Launching a game: host starts the game → game board appears with dealt cards
-- Playing a card: selecting a card and confirming → discard pile updates, turn passes
-- Picking up from discard: selecting a card from the discard pile → it appears in hand
-- Calling Yaniv: clicking the Yaniv button → round summary screen appears
-- Viewing round summary: scores displayed correctly before next round begins
-- Game over: final scores shown after a player is eliminated
-
-**What they don't cover:** Real backend correctness, Redis state, or actual card shuffling/distribution.
-
-**Run locally:**
-```bash
-# Playwright starts the dev server automatically via webServer config
-pnpm --filter @repo/web test:ui
-
-# With Playwright UI for debugging
-pnpm --filter @repo/web test:ui:debug
-```
-
-**CI job:** `ui-tests` — runs on every PR.
 
 ---
 
@@ -128,16 +95,22 @@ TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:s
 **Tooling:** Playwright (multiple browser contexts to simulate multiple players)
 
 **Scope:**
-- Two or more browser contexts join the same game
-- Each context takes turns playing cards, picking up, or calling Yaniv
-- The simulation continues until one player accumulates enough points to be eliminated
-- Assertions cover: round summaries between rounds, score accumulation, game-over screen with final standings
-
-**Why not in PR CI:** Game length is non-deterministic and multi-player orchestration adds meaningful overhead. Running daily on a schedule is more appropriate — it provides a daily regression signal without slowing down PR feedback.
+- Three browser contexts join the same Yaniv lobby
+- Each context takes turns playing cards, picking up from the deck, or calling Yaniv
+- A greedy strategy is used: call Yaniv whenever eligible (hand ≤ 7), otherwise play one card and draw from the deck
+- The simulation continues until one player reaches the elimination threshold
+- Assertions cover: lobby with all players visible, game start, round summaries between rounds, game-over screen with final standings
 
 **Run locally:**
 ```bash
-TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:smoke
+# Requires Redis running locally
+pnpm --filter @repo/web test:e2e
+
+# Open Playwright UI panel for interactive debugging
+pnpm --filter @repo/web test:e2e:ui
+
+# Run with full traces saved (view with: pnpm exec playwright show-report)
+pnpm --filter @repo/web test:e2e:trace
 ```
 
-**Trigger:** GitHub Actions scheduled workflow — runs daily against the staging environment, not triggered by PRs.
+**CI job:** `ui-tests` — runs on every PR with a Redis instance provided by the CI environment.
