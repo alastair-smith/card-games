@@ -9,7 +9,6 @@ import {
   type GameState,
   GameStep,
   YANIV_CALLER_PENALTY,
-  type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
 type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
@@ -36,6 +35,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [
+        { suit: Suit.HEARTS, rank: Rank.ACE },
+        { suit: Suit.SPADES, rank: Rank.TWO },
+      ],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -46,6 +49,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -54,16 +61,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [
-      { suit: Suit.HEARTS, rank: Rank.ACE },
-      { suit: Suit.SPADES, rank: Rank.TWO },
-    ] as YanivPlayingCard[],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ] as YanivPlayingCard[],
-  },
   playedCards: [],
   drawnCard: undefined,
   ...overrides,
@@ -85,6 +82,10 @@ describe('scoreYanivRound', () => {
         {
           id: USER_1,
           cardCount: 2,
+          hand: [
+            { suit: Suit.HEARTS, rank: Rank.ACE },
+            { suit: Suit.SPADES, rank: Rank.TWO },
+          ],
           name: 'Player 1' as PlayerName,
           score: 0,
           isFiftyScoreHalved: false,
@@ -95,6 +96,10 @@ describe('scoreYanivRound', () => {
         {
           id: USER_2,
           cardCount: 2,
+          hand: [
+            { suit: Suit.DIAMONDS, rank: Rank.THREE },
+            { suit: Suit.CLUBS, rank: Rank.FOUR },
+          ],
           name: 'Player 2' as PlayerName,
           score: 0,
           isFiftyScoreHalved: false,
@@ -103,16 +108,6 @@ describe('scoreYanivRound', () => {
           roundScore: { original: 0, adjusted: 0 },
         },
       ],
-      hands: {
-        [USER_1]: [
-          { suit: Suit.HEARTS, rank: Rank.ACE },
-          { suit: Suit.SPADES, rank: Rank.TWO },
-        ] as YanivPlayingCard[],
-        [USER_2]: [
-          { suit: Suit.DIAMONDS, rank: Rank.THREE },
-          { suit: Suit.CLUBS, rank: Rank.FOUR },
-        ] as YanivPlayingCard[],
-      },
     });
 
     await scoreYanivRound(CODE, state);
@@ -135,6 +130,10 @@ describe('scoreYanivRound', () => {
         {
           id: USER_1,
           cardCount: 2,
+          hand: [
+            { suit: Suit.HEARTS, rank: Rank.ACE },
+            { suit: Suit.SPADES, rank: Rank.TWO },
+          ],
           name: 'Player 1' as PlayerName,
           score: 0,
           isFiftyScoreHalved: false,
@@ -145,6 +144,10 @@ describe('scoreYanivRound', () => {
         {
           id: USER_2,
           cardCount: 2,
+          hand: [
+            { suit: Suit.DIAMONDS, rank: Rank.ACE },
+            { suit: Suit.CLUBS, rank: Rank.TWO },
+          ],
           name: 'Player 2' as PlayerName,
           score: 0,
           isFiftyScoreHalved: false,
@@ -153,16 +156,6 @@ describe('scoreYanivRound', () => {
           roundScore: { original: 0, adjusted: 0 },
         },
       ],
-      hands: {
-        [USER_1]: [
-          { suit: Suit.HEARTS, rank: Rank.ACE },
-          { suit: Suit.SPADES, rank: Rank.TWO },
-        ] as YanivPlayingCard[],
-        [USER_2]: [
-          { suit: Suit.DIAMONDS, rank: Rank.ACE },
-          { suit: Suit.CLUBS, rank: Rank.TWO },
-        ] as YanivPlayingCard[],
-      },
     });
 
     await scoreYanivRound(CODE, state);
@@ -200,6 +193,7 @@ describe('scoreYanivRound', () => {
         {
           id: USER_1,
           cardCount: 1,
+          hand: [{ suit: Suit.HEARTS, rank: Rank.ACE }],
           name: 'Player 1' as PlayerName,
           score: 10,
           isFiftyScoreHalved: false,
@@ -210,6 +204,7 @@ describe('scoreYanivRound', () => {
         {
           id: USER_2,
           cardCount: 1,
+          hand: [{ suit: Suit.DIAMONDS, rank: Rank.ACE }],
           name: 'Player 2' as PlayerName,
           score: 20,
           isFiftyScoreHalved: false,
@@ -220,6 +215,7 @@ describe('scoreYanivRound', () => {
         {
           id: USER_3,
           cardCount: 1,
+          hand: [{ suit: Suit.CLUBS, rank: Rank.FIVE }],
           name: 'Player 3' as PlayerName,
           score: 30,
           isFiftyScoreHalved: false,
@@ -228,13 +224,6 @@ describe('scoreYanivRound', () => {
           roundScore: { original: 0, adjusted: 0 },
         },
       ],
-      hands: {
-        [USER_1]: [{ suit: Suit.HEARTS, rank: Rank.ACE }] as YanivPlayingCard[],
-        [USER_2]: [
-          { suit: Suit.DIAMONDS, rank: Rank.ACE },
-        ] as YanivPlayingCard[],
-        [USER_3]: [{ suit: Suit.CLUBS, rank: Rank.FIVE }] as YanivPlayingCard[],
-      },
     });
 
     await scoreYanivRound(CODE, state);

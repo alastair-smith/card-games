@@ -74,6 +74,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 3,
+      hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
       name: 'Player 1' as PlayerName,
       score: 10,
       isFiftyScoreHalved: false,
@@ -84,6 +85,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 5,
+      hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
       name: 'Player 2' as PlayerName,
       score: 20,
       isFiftyScoreHalved: false,
@@ -92,10 +94,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 5, adjusted: 5 },
     },
   ],
-  hands: {
-    [USER_1]: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-    [USER_2]: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
-  },
   playedCards: [{ suit: Suit.CLUBS, rank: Rank.THREE }],
   ...overrides,
 });
@@ -178,13 +176,13 @@ describe('startNewRound', () => {
   test('deals hands to all players', async () => {
     await startNewRound(CODE, USER_1);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
-    expect(savedState).toMatchObject({
-      hands: {
-        [USER_1]: USER_1_CARDS,
-        [USER_2]: USER_2_CARDS,
-      },
-    });
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    expect(savedState.players.find(({ id }) => id === USER_1)?.hand).toEqual(
+      USER_1_CARDS,
+    );
+    expect(savedState.players.find(({ id }) => id === USER_2)?.hand).toEqual(
+      USER_2_CARDS,
+    );
   });
 
   test('clears played cards', async () => {

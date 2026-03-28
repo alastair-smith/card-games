@@ -17,8 +17,9 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
     throw new Error('Not the proceed step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
-  const callerHand = state.hands[userId] ?? [];
-  if (sumYanivHand(callerHand) > 7)
+  const caller = state.players.find((player) => player.id === userId);
+  if (!caller) throw new Error('Player not found');
+  if (sumYanivHand(caller.hand) > 7)
     throw new Error('Hand value is too high to call Yaniv');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);

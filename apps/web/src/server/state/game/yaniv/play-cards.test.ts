@@ -50,6 +50,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [CARD_1, CARD_2],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -60,6 +61,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -68,13 +73,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [CARD_1, CARD_2],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ],
-  },
   playedCards: [],
   ...overrides,
 });
@@ -131,12 +129,17 @@ describe('playCards', () => {
     );
   });
 
-  test('throws when hand not found', async () => {
-    vi.mocked(getYanivState).mockResolvedValue(makeState({ hands: {} }));
-
-    await expect(playCards(CODE, USER_1, [CARD_1])).rejects.toThrow(
-      'Hand not found',
+  test('throws when player not found', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({
+        currentPlayerId: 'unknown' as UserId,
+        players: [],
+      }),
     );
+
+    await expect(
+      playCards(CODE, 'unknown' as UserId, [CARD_1]),
+    ).rejects.toThrow('Player not found');
   });
 
   test('throws when a card is not in the player hand', async () => {
@@ -158,9 +161,10 @@ describe('playCards', () => {
   test('removes played cards from the player hand', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
-    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-      hands: { [USER_1]: [CARD_2] },
-    });
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    expect(savedState.players.find(({ id }) => id === USER_1)?.hand).toEqual([
+      CARD_2,
+    ]);
   });
 
   test('decrements the player card count', async () => {
@@ -176,9 +180,6 @@ describe('playCards', () => {
   test('sets played cards using the ordered cards from validation', async () => {
     const orderedCards = [CARD_2, CARD_1];
     vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay(orderedCards));
-    vi.mocked(getYanivState).mockResolvedValue(
-      makeState({ hands: { [USER_1]: [CARD_1, CARD_2] } }),
-    );
 
     await playCards(CODE, USER_1, [CARD_1, CARD_2]);
 
@@ -293,9 +294,10 @@ describe('playCards', () => {
     test('removes the played card from hand', async () => {
       await playCards(CODE, USER_1, [CARD_1]);
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        hands: { [USER_1]: [CARD_2] },
-      });
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState.players.find(({ id }) => id === USER_1)?.hand).toEqual([
+        CARD_2,
+      ]);
     });
 
     test('decrements the player card count', async () => {
@@ -370,7 +372,19 @@ describe('playCards', () => {
             gameStep: GameStep.PROCEED,
             drawnCard: CARD_EXTENDING_END,
             playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
-            hands: { [USER_1]: [CARD_EXTENDING_END, CARD_2] },
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                hand: [CARD_EXTENDING_END, CARD_2],
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+                roundScore: { original: 0, adjusted: 0 },
+              },
+            ],
           }),
         );
         vi.mocked(isValidYanivPlay).mockReturnValue(
@@ -394,7 +408,19 @@ describe('playCards', () => {
             gameStep: GameStep.PROCEED,
             drawnCard: CARD_EXTENDING_START,
             playedCards: [FIRST_CARD, MIDDLE_CARD, LAST_CARD],
-            hands: { [USER_1]: [CARD_EXTENDING_START, CARD_2] },
+            players: [
+              {
+                id: USER_1,
+                cardCount: 2,
+                hand: [CARD_EXTENDING_START, CARD_2],
+                name: 'Player 1' as PlayerName,
+                score: 0,
+                isFiftyScoreHalved: false,
+                isHundredScoreHalved: false,
+                isYanivCalled: false,
+                roundScore: { original: 0, adjusted: 0 },
+              },
+            ],
           }),
         );
         vi.mocked(isValidYanivPlay).mockReturnValue({ isValid: false });

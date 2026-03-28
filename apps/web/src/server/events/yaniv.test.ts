@@ -36,6 +36,7 @@ const makeInProgressState = () => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [{ suit: Suit.CLUBS, rank: Rank.TWO }],
       name: 'Player 1' as PlayerName,
       score: 0,
       roundScore: { original: 0, adjusted: 0 },
@@ -46,6 +47,7 @@ const makeInProgressState = () => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
       name: 'Player 2' as PlayerName,
       score: 0,
       roundScore: { original: 0, adjusted: 0 },
@@ -55,10 +57,6 @@ const makeInProgressState = () => ({
     },
   ],
   playedCards: [],
-  hands: {
-    [USER_1]: [{ suit: Suit.CLUBS, rank: Rank.TWO }],
-    [USER_2]: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
-  },
 });
 
 describe('publishYanivState', () => {

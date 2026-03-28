@@ -43,11 +43,10 @@ export const scoreYanivRound = async (
   code: GameCode,
   state: InProgressState,
 ) => {
-  const playersWithHandValues = state.players.map((player) => {
-    const hand = state.hands[player.id];
-    if (!hand) throw new Error(`Hand not found for player ${player.id}`);
-    return { player, handValue: sumYanivHand(hand) };
-  });
+  const playersWithHandValues = state.players.map((player) => ({
+    player,
+    handValue: sumYanivHand(player.hand),
+  }));
 
   const callers = playersWithHandValues.filter(
     ({ player }) => player.isYanivCalled,
@@ -97,7 +96,6 @@ export const scoreYanivRound = async (
               Math.min(...scoredPlayers.map((scored) => scored.score)),
           )
           .map((player) => player.id),
-        hands: state.hands,
       }
     : {
         ...state,

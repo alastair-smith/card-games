@@ -118,10 +118,11 @@ describe('startGame', () => {
     await startGame(CODE, HOST);
     expect(mockSetYanivState).toHaveBeenCalledOnce();
     const state = mockSetYanivState.mock.calls[0]?.[1] as {
-      hands: Record<string, unknown[]>;
+      players: Array<{ id: string; hand: unknown[] }>;
     };
-    expect(state.hands[HOST]).toHaveLength(HAND_SIZE);
-    expect(state.hands[PLAYER_2]).toHaveLength(HAND_SIZE);
+    for (const player of state.players) {
+      expect(player.hand).toHaveLength(HAND_SIZE);
+    }
   });
 
   test('sets card count to the hand size for each player', async () => {

@@ -12,7 +12,6 @@ import {
   HAND_SIZE,
   MAX_PLAYERS,
   MIN_PLAYERS,
-  type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { shuffle } from '~/utils/cards/index';
 
@@ -26,27 +25,22 @@ export const startGame = async (code: GameCode, userId: UserId) => {
   if (lobby.players.length > MAX_PLAYERS)
     throw new Error('Too many players to start the game');
 
-  const players = lobby.players.map((player) => ({
-    id: player.id,
-    name: player.name,
-    cardCount: 0,
-    score: 0,
-    roundScore: { original: 0, adjusted: 0 },
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    isYanivCalled: false,
-  }));
-
   await yanivDeck.createDeck(code, shuffle(deckWithJokers));
 
-  const hands: Record<UserId, YanivPlayingCard[]> = {} as Record<
-    UserId,
-    YanivPlayingCard[]
-  >;
-  for (const player of players) {
+  const players = [];
+  for (const lobbyPlayer of lobby.players) {
     const cards = await yanivDeck.drawCards(code, HAND_SIZE);
-    hands[player.id] = cards;
-    player.cardCount = cards.length;
+    players.push({
+      id: lobbyPlayer.id,
+      name: lobbyPlayer.name,
+      cardCount: cards.length,
+      hand: cards,
+      score: 0,
+      roundScore: { original: 0, adjusted: 0 },
+      isFiftyScoreHalved: false,
+      isHundredScoreHalved: false,
+      isYanivCalled: false,
+    });
   }
 
   await yanivDiscard.createDiscard(code);
@@ -62,8 +56,7 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     gameStep: GameStep.PLAY_CARDS,
     currentPlayerId: firstPlayer.id,
     players,
-    hands,
-    playedCards: [] as YanivPlayingCard[],
+    playedCards: [],
   };
 
   await setYanivState({ code }, state);
