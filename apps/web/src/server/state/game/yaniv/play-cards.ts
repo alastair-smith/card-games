@@ -28,6 +28,17 @@ const removeFromHand = (
   return remaining;
 };
 
+const updatePlayerHand = (
+  state: InProgressState,
+  userId: UserId,
+  newHand: YanivPlayingCard[],
+) =>
+  state.players.map((player) =>
+    player.id === userId
+      ? { ...player, hand: newHand, cardCount: newHand.length }
+      : player,
+  );
+
 const playCardsOnTurn = async (
   code: GameCode,
   state: InProgressState,
@@ -42,16 +53,9 @@ const playCardsOnTurn = async (
   const playResult = isValidYanivPlay(cards, topDiscard);
   if (!playResult.isValid) throw new Error('Invalid card combination');
 
-  const updatedPlayers = state.players.map((player) =>
-    player.id === userId
-      ? { ...player, cardCount: remainingHand.length }
-      : player,
-  );
-
   return {
     ...state,
-    players: updatedPlayers,
-    hands: { ...state.hands, [userId]: remainingHand },
+    players: updatePlayerHand(state, userId, remainingHand),
     playedCards: playResult.orderedCards,
     gameStep: playResult.isPickupRequired
       ? GameStep.PICKUP_CARD
@@ -79,16 +83,9 @@ const playDrawnCard = (
   const playResult = isValidYanivPlay(cards, topPlayedCard);
   if (!playResult.isValid) throw new Error('Invalid card combination');
 
-  const updatedPlayers = state.players.map((player) =>
-    player.id === userId
-      ? { ...player, cardCount: remainingHand.length }
-      : player,
-  );
-
   return {
     ...state,
-    players: updatedPlayers,
-    hands: { ...state.hands, [userId]: remainingHand },
+    players: updatePlayerHand(state, userId, remainingHand),
     playedCards: [...state.playedCards, ...playResult.orderedCards],
     gameStep: GameStep.PROCEED,
     drawnCard: undefined,
@@ -112,13 +109,13 @@ export const playCards = async (
     throw new Error('Cannot play cards in this game step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
-  const hand = state.hands[userId];
-  if (!hand) throw new Error('Hand not found');
+  const currentPlayer = state.players.find((player) => player.id === userId);
+  if (!currentPlayer) throw new Error('Player not found');
 
   const newState =
     state.gameStep === GameStep.PROCEED
-      ? playDrawnCard(state, userId, hand, cards)
-      : await playCardsOnTurn(code, state, userId, hand, cards);
+      ? playDrawnCard(state, userId, currentPlayer.hand, cards)
+      : await playCardsOnTurn(code, state, userId, currentPlayer.hand, cards);
 
   await setYanivState({ code }, newState);
   await publishYanivState(code, newState);

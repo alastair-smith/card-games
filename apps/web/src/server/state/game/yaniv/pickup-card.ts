@@ -42,23 +42,24 @@ export const pickupCard = async (
   if (state.gameStep !== GameStep.PICKUP_CARD)
     throw new Error('Not the pickup card step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
-  if (!state.hands[userId]) throw new Error('Not got a hand in the game');
+
+  const currentPlayer = state.players.find((player) => player.id === userId);
+  if (!currentPlayer) throw new Error('Player not found');
 
   const drawnCard =
     source === 'deck' ? await drawFromDeck(code) : await drawFromDiscard(code);
 
-  const updatedHand = [...state.hands[userId], drawnCard];
+  const updatedHand = [...currentPlayer.hand, drawnCard];
 
   const updatedPlayers = state.players.map((player) =>
     player.id === userId
-      ? { ...player, cardCount: updatedHand.length }
+      ? { ...player, hand: updatedHand, cardCount: updatedHand.length }
       : player,
   );
 
   const newState = {
     ...state,
     players: updatedPlayers,
-    hands: { ...state.hands, [userId]: updatedHand },
     gameStep: GameStep.PROCEED,
     ...(source === 'deck' ? { drawnCard } : { drawnCard: undefined }),
   };

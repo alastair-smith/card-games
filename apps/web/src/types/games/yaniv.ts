@@ -84,6 +84,7 @@ export enum GameViewStage {
 const playerSchema = z.object({
   id: userIdSchema,
   cardCount: z.number(),
+  hand: z.array(yanivPlayingCardSchema),
   isFiftyScoreHalved: z.boolean(),
   isHundredScoreHalved: z.boolean(),
   name: playerNameSchema,
@@ -103,14 +104,12 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     playedCards: z.array(yanivPlayingCardSchema),
     topDiscardCard: yanivPlayingCardSchema.nullable().optional(),
     currentPlayerId: userIdSchema,
-    hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
     drawnCard: yanivPlayingCardSchema.optional(),
   }),
   z.object({
     gameStage: z.literal(GameStage.FINISHED),
     players: z.array(playerSchema),
     winners: z.array(userIdSchema),
-    hands: z.record(userIdSchema, z.array(yanivPlayingCardSchema)),
   }),
 ]);
 

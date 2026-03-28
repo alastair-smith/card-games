@@ -58,6 +58,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [CARD_1, CARD_2],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -68,6 +69,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -76,13 +81,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [CARD_1, CARD_2],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ],
-  },
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
   ...overrides,
 });
@@ -155,9 +153,12 @@ describe('pickupCard', () => {
     test('adds drawn card to hand', async () => {
       await pickupCard(CODE, USER_1, 'deck');
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        hands: { [USER_1]: [CARD_1, CARD_2, DRAWN_CARD] },
-      });
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState.players.find(({ id }) => id === USER_1)?.hand).toEqual([
+        CARD_1,
+        CARD_2,
+        DRAWN_CARD,
+      ]);
     });
 
     test('increments card count', async () => {
@@ -260,9 +261,12 @@ describe('pickupCard', () => {
     test('adds popped card to hand', async () => {
       await pickupCard(CODE, USER_1, 'discard');
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        hands: { [USER_1]: [CARD_1, CARD_2, DRAWN_CARD] },
-      });
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState.players.find(({ id }) => id === USER_1)?.hand).toEqual([
+        CARD_1,
+        CARD_2,
+        DRAWN_CARD,
+      ]);
     });
 
     test('increments card count', async () => {

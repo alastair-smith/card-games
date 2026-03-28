@@ -5,12 +5,7 @@ import { publishYanivState } from '~/server/events/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import {
-  GameStage,
-  type GameState,
-  GameStep,
-  type YanivPlayingCard,
-} from '~/types/games/yaniv';
+import { GameStage, type GameState, GameStep } from '~/types/games/yaniv';
 
 type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
@@ -42,6 +37,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [
+        { suit: Suit.HEARTS, rank: Rank.ACE },
+        { suit: Suit.SPADES, rank: Rank.FOUR },
+      ],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -52,6 +51,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -60,16 +63,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [
-      { suit: Suit.HEARTS, rank: Rank.ACE },
-      { suit: Suit.SPADES, rank: Rank.FOUR },
-    ],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ],
-  },
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
   drawnCard: undefined,
   ...overrides,
@@ -115,16 +108,36 @@ describe('callYaniv', () => {
   test('throws when hand value is too high to call Yaniv', async () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
-        hands: {
-          [USER_1]: [
-            { suit: Suit.HEARTS, rank: Rank.FIVE },
-            { suit: Suit.SPADES, rank: Rank.FIVE },
-          ] as YanivPlayingCard[],
-          [USER_2]: [
-            { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-            { suit: Suit.CLUBS, rank: Rank.SIX },
-          ] as YanivPlayingCard[],
-        },
+        players: [
+          {
+            id: USER_1,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.HEARTS, rank: Rank.FIVE },
+              { suit: Suit.SPADES, rank: Rank.FIVE },
+            ],
+            name: 'Player 1' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+          {
+            id: USER_2,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+              { suit: Suit.CLUBS, rank: Rank.SIX },
+            ],
+            name: 'Player 2' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+        ],
       }),
     );
 
@@ -165,14 +178,18 @@ describe('callYaniv', () => {
   });
 
   test('scores and ends the round when all players have taken their final turn', async () => {
-    // USER_2 called Yaniv first (score=10); USER_1 takes their final turn and also calls Yaniv (score=0)
-    // minCallerScore = 0 (USER_1) → USER_1 gets +0, USER_2 gets +25
+    // USER_2 called Yaniv first (hand=4); USER_1 takes their final turn and also calls Yaniv (hand=3)
+    // USER_1 has lower hand value → USER_1 gets +0, USER_2 gets +25
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
           {
             id: USER_1,
             cardCount: 2,
+            hand: [
+              { suit: Suit.HEARTS, rank: Rank.ACE },
+              { suit: Suit.SPADES, rank: Rank.TWO },
+            ],
             name: 'Player 1' as PlayerName,
             score: 0,
             isFiftyScoreHalved: false,
@@ -183,6 +200,10 @@ describe('callYaniv', () => {
           {
             id: USER_2,
             cardCount: 2,
+            hand: [
+              { suit: Suit.DIAMONDS, rank: Rank.ACE },
+              { suit: Suit.CLUBS, rank: Rank.THREE },
+            ],
             name: 'Player 2' as PlayerName,
             score: 10,
             isFiftyScoreHalved: false,
@@ -191,16 +212,6 @@ describe('callYaniv', () => {
             roundScore: { original: 0, adjusted: 0 },
           },
         ],
-        hands: {
-          [USER_1]: [
-            { suit: Suit.HEARTS, rank: Rank.ACE },
-            { suit: Suit.SPADES, rank: Rank.FOUR },
-          ] as YanivPlayingCard[],
-          [USER_2]: [
-            { suit: Suit.DIAMONDS, rank: Rank.ACE },
-            { suit: Suit.CLUBS, rank: Rank.THREE },
-          ] as YanivPlayingCard[],
-        },
       }),
     );
 
@@ -213,16 +224,19 @@ describe('callYaniv', () => {
     expect(savedState.currentPlayerId).toBe(USER_1);
   });
 
-  test('caller with higher pre-round score among those who called Yaniv gets +25 penalty', async () => {
-    // USER_2 called Yaniv first (score=20); USER_1 also calls Yaniv (score=0)
-    // minCallerScore = 0 (USER_1) → USER_2 gets +25, final score 45
-    // USER_1 has lower score among callers → goes first
+  test('caller with higher hand value among those who called Yaniv gets +25 penalty', async () => {
+    // USER_2 called Yaniv first (hand=4); USER_1 also calls Yaniv (hand=3)
+    // USER_1 has lower hand value → USER_1 gets +0, USER_2 gets +25, final score 45
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
           {
             id: USER_1,
             cardCount: 2,
+            hand: [
+              { suit: Suit.HEARTS, rank: Rank.ACE },
+              { suit: Suit.SPADES, rank: Rank.TWO },
+            ],
             name: 'Player 1' as PlayerName,
             score: 0,
             isFiftyScoreHalved: false,
@@ -233,6 +247,10 @@ describe('callYaniv', () => {
           {
             id: USER_2,
             cardCount: 2,
+            hand: [
+              { suit: Suit.DIAMONDS, rank: Rank.ACE },
+              { suit: Suit.CLUBS, rank: Rank.THREE },
+            ],
             name: 'Player 2' as PlayerName,
             score: 20,
             isFiftyScoreHalved: false,
@@ -241,16 +259,6 @@ describe('callYaniv', () => {
             roundScore: { original: 0, adjusted: 0 },
           },
         ],
-        hands: {
-          [USER_1]: [
-            { suit: Suit.HEARTS, rank: Rank.ACE },
-            { suit: Suit.SPADES, rank: Rank.TWO },
-          ] as YanivPlayingCard[],
-          [USER_2]: [
-            { suit: Suit.DIAMONDS, rank: Rank.ACE },
-            { suit: Suit.CLUBS, rank: Rank.THREE },
-          ] as YanivPlayingCard[],
-        },
       }),
     );
 
@@ -274,16 +282,36 @@ describe('callYaniv', () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         currentPlayerId: USER_2,
-        hands: {
-          [USER_1]: [
-            { suit: Suit.HEARTS, rank: Rank.ACE },
-            { suit: Suit.SPADES, rank: Rank.FOUR },
-          ] as YanivPlayingCard[],
-          [USER_2]: [
-            { suit: Suit.DIAMONDS, rank: Rank.ACE },
-            { suit: Suit.CLUBS, rank: Rank.THREE },
-          ] as YanivPlayingCard[],
-        },
+        players: [
+          {
+            id: USER_1,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.HEARTS, rank: Rank.ACE },
+              { suit: Suit.SPADES, rank: Rank.FOUR },
+            ],
+            name: 'Player 1' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+          {
+            id: USER_2,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.DIAMONDS, rank: Rank.ACE },
+              { suit: Suit.CLUBS, rank: Rank.THREE },
+            ],
+            name: 'Player 2' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+        ],
       }),
     );
 

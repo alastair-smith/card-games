@@ -12,9 +12,11 @@ type Player = Extract<
   { gameStage: GameStage.IN_PROGRESS }
 >['players'][number];
 
-export type ClientGameState = Omit<GameState, 'hands'> & {
+type ClientPlayer = Omit<Player, 'hand'> & { isUser: boolean };
+
+export type ClientGameState = Omit<GameState, 'players'> & {
   hand: YanivPlayingCard[];
-  players: (Player & { isUser: boolean })[];
+  players: ClientPlayer[];
 };
 
 type ActiveGameState = Extract<
@@ -26,19 +28,20 @@ export const toClientGameState = (
   rawState: ActiveGameState,
   userId: UserId,
 ): ClientGameState => {
-  const { hands, ...rest } = rawState;
-  const hand = hands[userId];
+  const requestingPlayer = rawState.players.find(
+    (player) => player.id === userId,
+  );
 
-  if (hand === undefined) {
+  if (!requestingPlayer) {
     throw new Error('Player not in game');
   }
 
-  const players = rest.players.map((player) => ({
+  const players = rawState.players.map(({ hand: _hand, ...player }) => ({
     ...player,
     isUser: player.id === userId,
   }));
 
-  return { ...rest, hand, players };
+  return { ...rawState, hand: requestingPlayer.hand, players };
 };
 
 export const getGameState = async (

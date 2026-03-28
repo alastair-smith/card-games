@@ -36,6 +36,7 @@ const makePlayers = () => [
   {
     id: USER_1,
     cardCount: 2,
+    hand: USER_1_CARDS,
     name: 'Player 1' as PlayerName,
     score: 10,
     isFiftyScoreHalved: false,
@@ -46,6 +47,7 @@ const makePlayers = () => [
   {
     id: USER_2,
     cardCount: 2,
+    hand: USER_2_CARDS,
     name: 'Player 2' as PlayerName,
     score: 20,
     isFiftyScoreHalved: false,
@@ -63,10 +65,6 @@ const makeInProgressState = (
   currentPlayerId: USER_1,
   players: makePlayers(),
   playedCards: [],
-  hands: {
-    [USER_1]: USER_1_CARDS,
-    [USER_2]: USER_2_CARDS,
-  },
   ...overrides,
 });
 
@@ -76,10 +74,6 @@ const makeFinishedState = (
   gameStage: GameStage.FINISHED,
   players: makePlayers(),
   winners: [USER_1],
-  hands: {
-    [USER_1]: USER_1_CARDS,
-    [USER_2]: USER_2_CARDS,
-  },
   ...overrides,
 });
 
@@ -156,10 +150,12 @@ describe('toClientGameState', () => {
     );
   });
 
-  test('does not include hands in the returned state', () => {
+  test('does not include hand on player objects', () => {
     const result = toClientGameState(makeInProgressState(), USER_1);
 
-    expect(result).not.toHaveProperty('hands');
+    for (const player of result.players) {
+      expect(player).not.toHaveProperty('hand');
+    }
   });
 
   describe('finished game', () => {

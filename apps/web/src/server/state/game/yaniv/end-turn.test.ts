@@ -35,6 +35,15 @@ const USER_2 = 'user-2' as UserId;
 
 const DRAWN_CARD: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.THREE };
 
+const USER_1_HAND: YanivPlayingCard[] = [
+  { suit: Suit.HEARTS, rank: Rank.ACE },
+  { suit: Suit.SPADES, rank: Rank.FOUR },
+];
+const USER_2_HAND: YanivPlayingCard[] = [
+  { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+  { suit: Suit.CLUBS, rank: Rank.SIX },
+];
+
 // Normal state: no Yaniv called, USER_1 is current player
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
@@ -44,6 +53,11 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 3,
+      hand: [
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+        { suit: Suit.SPADES, rank: Rank.SEVEN },
+        DRAWN_CARD,
+      ],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -54,6 +68,10 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -62,17 +80,6 @@ const makeState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [
-      { suit: Suit.HEARTS, rank: Rank.FIVE },
-      { suit: Suit.SPADES, rank: Rank.SEVEN },
-      DRAWN_CARD,
-    ],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ],
-  },
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
   drawnCard: DRAWN_CARD,
   ...overrides,
@@ -88,6 +95,10 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_1,
       cardCount: 2,
+      hand: [
+        { suit: Suit.HEARTS, rank: Rank.ACE },
+        { suit: Suit.SPADES, rank: Rank.FOUR },
+      ],
       name: 'Player 1' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -98,6 +109,10 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
     {
       id: USER_2,
       cardCount: 2,
+      hand: [
+        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+      ],
       name: 'Player 2' as PlayerName,
       score: 0,
       isFiftyScoreHalved: false,
@@ -106,16 +121,6 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
       roundScore: { original: 0, adjusted: 0 },
     },
   ],
-  hands: {
-    [USER_1]: [
-      { suit: Suit.HEARTS, rank: Rank.ACE },
-      { suit: Suit.SPADES, rank: Rank.FOUR },
-    ],
-    [USER_2]: [
-      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-      { suit: Suit.CLUBS, rank: Rank.SIX },
-    ],
-  },
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
   drawnCard: undefined,
   ...overrides,
@@ -241,19 +246,38 @@ describe('endTurn', () => {
     });
 
     test('caller score stays at 0 when they are the only caller regardless of other hand values', async () => {
-      // USER_2 has a lower hand than USER_1 — only score comparison among callers applies
       vi.mocked(getYanivState).mockResolvedValue(
         makeYanivCalledState({
-          hands: {
-            [USER_1]: [
-              { suit: Suit.HEARTS, rank: Rank.ACE },
-              { suit: Suit.SPADES, rank: Rank.FOUR },
-            ] as YanivPlayingCard[],
-            [USER_2]: [
-              { suit: Suit.DIAMONDS, rank: Rank.TWO },
-              { suit: Suit.CLUBS, rank: Rank.THREE },
-            ] as YanivPlayingCard[],
-          },
+          players: [
+            {
+              id: USER_1,
+              cardCount: 2,
+              hand: [
+                { suit: Suit.HEARTS, rank: Rank.ACE },
+                { suit: Suit.SPADES, rank: Rank.FOUR },
+              ],
+              name: 'Player 1' as PlayerName,
+              score: 0,
+              isFiftyScoreHalved: false,
+              isHundredScoreHalved: false,
+              isYanivCalled: true,
+              roundScore: { original: 0, adjusted: 0 },
+            },
+            {
+              id: USER_2,
+              cardCount: 2,
+              hand: [
+                { suit: Suit.DIAMONDS, rank: Rank.TWO },
+                { suit: Suit.CLUBS, rank: Rank.THREE },
+              ],
+              name: 'Player 2' as PlayerName,
+              score: 0,
+              isFiftyScoreHalved: false,
+              isHundredScoreHalved: false,
+              isYanivCalled: false,
+              roundScore: { original: 0, adjusted: 0 },
+            },
+          ],
         }),
       );
 
@@ -272,6 +296,10 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.HEARTS, rank: Rank.ACE },
+                  { suit: Suit.SPADES, rank: Rank.FOUR },
+                ],
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -282,6 +310,10 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.DIAMONDS, rank: Rank.TWO },
+                  { suit: Suit.CLUBS, rank: Rank.FOUR },
+                ],
                 name: 'Player 2' as PlayerName,
                 score: 44,
                 isFiftyScoreHalved: false,
@@ -290,16 +322,6 @@ describe('endTurn', () => {
                 roundScore: { original: 0, adjusted: 0 },
               },
             ],
-            hands: {
-              [USER_1]: [
-                { suit: Suit.HEARTS, rank: Rank.ACE },
-                { suit: Suit.SPADES, rank: Rank.FOUR },
-              ] as YanivPlayingCard[],
-              [USER_2]: [
-                { suit: Suit.DIAMONDS, rank: Rank.TWO },
-                { suit: Suit.CLUBS, rank: Rank.FOUR },
-              ] as YanivPlayingCard[],
-            },
           }),
         );
 
@@ -319,6 +341,7 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -329,6 +352,7 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
                 score: 90,
                 isFiftyScoreHalved: true,
@@ -356,6 +380,7 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -366,6 +391,7 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
                 score: 44,
                 isFiftyScoreHalved: true,
@@ -391,6 +417,10 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.HEARTS, rank: Rank.ACE },
+                  { suit: Suit.SPADES, rank: Rank.FOUR },
+                ],
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -401,6 +431,10 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                  { suit: Suit.CLUBS, rank: Rank.FOUR },
+                ],
                 name: 'Player 2' as PlayerName,
                 score: 45,
                 isFiftyScoreHalved: false,
@@ -409,16 +443,6 @@ describe('endTurn', () => {
                 roundScore: { original: 0, adjusted: 0 },
               },
             ],
-            hands: {
-              [USER_1]: [
-                { suit: Suit.HEARTS, rank: Rank.ACE },
-                { suit: Suit.SPADES, rank: Rank.FOUR },
-              ] as YanivPlayingCard[],
-              [USER_2]: [
-                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-                { suit: Suit.CLUBS, rank: Rank.FOUR },
-              ] as YanivPlayingCard[],
-            },
           }),
         );
 
@@ -474,6 +498,7 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -484,6 +509,7 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
                 score: 195,
                 isFiftyScoreHalved: false,
@@ -509,6 +535,7 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
                 score: 0,
                 isFiftyScoreHalved: false,
@@ -519,6 +546,7 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
                 score: 195,
                 isFiftyScoreHalved: false,
@@ -552,6 +580,10 @@ describe('endTurn', () => {
               {
                 id: USER_1,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.HEARTS, rank: Rank.ACE },
+                  { suit: Suit.SPADES, rank: Rank.FOUR },
+                ],
                 name: 'Player 1' as PlayerName,
                 score: 10,
                 isFiftyScoreHalved: false,
@@ -562,6 +594,10 @@ describe('endTurn', () => {
               {
                 id: USER_2,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                  { suit: Suit.CLUBS, rank: Rank.SIX },
+                ],
                 name: 'Player 2' as PlayerName,
                 score: 195,
                 isFiftyScoreHalved: false,
@@ -572,6 +608,10 @@ describe('endTurn', () => {
               {
                 id: USER_3,
                 cardCount: 2,
+                hand: [
+                  { suit: Suit.HEARTS, rank: Rank.TWO },
+                  { suit: Suit.SPADES, rank: Rank.THREE },
+                ],
                 name: 'Player 3' as PlayerName,
                 score: 5,
                 isFiftyScoreHalved: false,
@@ -580,20 +620,6 @@ describe('endTurn', () => {
                 roundScore: { original: 0, adjusted: 0 },
               },
             ],
-            hands: {
-              [USER_1]: [
-                { suit: Suit.HEARTS, rank: Rank.ACE },
-                { suit: Suit.SPADES, rank: Rank.FOUR },
-              ] as YanivPlayingCard[],
-              [USER_2]: [
-                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-                { suit: Suit.CLUBS, rank: Rank.SIX },
-              ] as YanivPlayingCard[],
-              [USER_3]: [
-                { suit: Suit.HEARTS, rank: Rank.TWO },
-                { suit: Suit.SPADES, rank: Rank.THREE },
-              ] as YanivPlayingCard[],
-            },
           }),
         );
 
@@ -609,12 +635,16 @@ describe('endTurn', () => {
         expect(savedState.winners).not.toContain(USER_2);
       });
 
-      test('includes hands in finished state', async () => {
+      test('preserves hands on players in finished state', async () => {
         const state = makeYanivCalledState({
           players: [
             {
               id: USER_1,
               cardCount: 2,
+              hand: [
+                { suit: Suit.HEARTS, rank: Rank.ACE },
+                { suit: Suit.SPADES, rank: Rank.FOUR },
+              ],
               name: 'Player 1' as PlayerName,
               score: 0,
               isFiftyScoreHalved: false,
@@ -625,6 +655,10 @@ describe('endTurn', () => {
             {
               id: USER_2,
               cardCount: 2,
+              hand: [
+                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+                { suit: Suit.CLUBS, rank: Rank.SIX },
+              ],
               name: 'Player 2' as PlayerName,
               score: 195,
               isFiftyScoreHalved: false,
@@ -643,7 +677,10 @@ describe('endTurn', () => {
           GameState,
           { gameStage: GameStage.FINISHED }
         >;
-        expect(savedState.hands).toEqual(state.hands);
+        const user1 = savedState.players.find((p) => p.id === USER_1);
+        const user2 = savedState.players.find((p) => p.id === USER_2);
+        expect(user1?.hand).toEqual(state.players[0]?.hand);
+        expect(user2?.hand).toEqual(state.players[1]?.hand);
       });
     });
 
