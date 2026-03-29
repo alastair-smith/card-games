@@ -72,45 +72,51 @@ export function PlayingCard({
   style?: CSSProperties;
   border?: boolean;
 }) {
-  const highlightedClass = highlighted ? 'ring-4 ring-ring' : '';
-  return (
-    // TODO remove onClick in favour of composition using <Button variant='raw />
-    // TODO fix accessibility issues
-    // biome-ignore lint/a11y/noStaticElementInteractions: todo
-    // biome-ignore lint/a11y/useKeyWithClickEvents: todo
-    <div
-      onClick={onClick}
-      style={style}
-      className={cn(
-        PLAYING_CARD_PROPORTIONS,
-        onClick ? 'cursor-pointer' : '',
-        selected && '-translate-y-12',
-        className,
-      )}
-    >
-      <FlippableRoot showFront={!!card}>
-        <FlippableFront>
-          <PlayingCardFace
-            card={card}
-            design={design}
-            className={cn(
-              highlightedClass,
-              border ? BORDER : '',
-              cardClassName,
-            )}
-          />
-        </FlippableFront>
+  const highlightedClass = highlighted ? 'bg-highlighted-card-background' : '';
 
-        <FlippableBack>
-          <PlayingCardBack
-            className={cn(
-              highlightedClass,
-              border ? BORDER : '',
-              cardClassName,
-            )}
-          />
-        </FlippableBack>
-      </FlippableRoot>
+  const cardContent = (
+    <FlippableRoot showFront={!!card}>
+      <FlippableFront>
+        <PlayingCardFace
+          card={card}
+          design={design}
+          className={cn(highlightedClass, border ? BORDER : '', cardClassName)}
+        />
+      </FlippableFront>
+
+      <FlippableBack>
+        <PlayingCardBack
+          className={cn(highlightedClass, border ? BORDER : '', cardClassName)}
+        />
+      </FlippableBack>
+    </FlippableRoot>
+  );
+
+  const sharedClassName = cn(
+    PLAYING_CARD_PROPORTIONS,
+    selected && '-translate-y-12',
+    className,
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type='button'
+        onClick={onClick}
+        style={style}
+        className={cn(
+          sharedClassName,
+          'cursor-pointer rounded-[0.22em] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2',
+        )}
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return (
+    <div style={style} className={sharedClassName}>
+      {cardContent}
     </div>
   );
 }
