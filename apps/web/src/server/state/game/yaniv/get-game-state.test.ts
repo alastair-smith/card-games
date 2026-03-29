@@ -168,7 +168,8 @@ describe('toClientGameState', () => {
       });
 
       const result = toClientGameState(state, USER_1);
-      if (result.gameStage !== GameStage.IN_PROGRESS) throw new Error('Expected IN_PROGRESS state');
+      if (result.gameStage !== GameStage.IN_PROGRESS)
+        throw new Error('Expected IN_PROGRESS state');
 
       expect(result.drawnCard).toEqual(DRAWN_CARD);
     });
@@ -180,7 +181,8 @@ describe('toClientGameState', () => {
       });
 
       const result = toClientGameState(state, USER_2);
-      if (result.gameStage !== GameStage.IN_PROGRESS) throw new Error('Expected IN_PROGRESS state');
+      if (result.gameStage !== GameStage.IN_PROGRESS)
+        throw new Error('Expected IN_PROGRESS state');
 
       expect(result.drawnCard).toBeUndefined();
     });

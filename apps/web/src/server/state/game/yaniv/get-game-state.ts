@@ -16,7 +16,7 @@ type ClientPlayer = Omit<Player, 'hand'> & { isUser: boolean };
 
 // Distributive omit: applied per union member so variant-specific fields (e.g.
 // drawnCard on IN_PROGRESS) are preserved in the resulting union.
-type DistributiveOmit<T, K extends keyof any> = T extends unknown
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
   ? Omit<T, K>
   : never;
 
