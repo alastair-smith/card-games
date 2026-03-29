@@ -97,4 +97,9 @@ describe('Game', () => {
     render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
   });
+
+  test('shows the round summary when waiting for new round', () => {
+    render(<Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />);
+    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+  });
 });

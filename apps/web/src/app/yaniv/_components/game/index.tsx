@@ -102,7 +102,8 @@ export default function Game({
   );
 
   const handTotal =
-    stage === GameViewStage.END_OF_ROUND
+    stage === GameViewStage.END_OF_ROUND ||
+    stage === GameViewStage.WAITING_FOR_NEW_ROUND
       ? userPlayer.roundScore.original
       : sumYanivHand(cards);
 
@@ -121,7 +122,8 @@ export default function Game({
       </div>
 
       <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
-        {stage === GameViewStage.END_OF_ROUND ? (
+        {stage === GameViewStage.END_OF_ROUND ||
+        stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
           <RoundSummary players={roundSummary} />
         ) : (
           <PlayArea

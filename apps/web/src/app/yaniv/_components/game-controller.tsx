@@ -93,7 +93,10 @@ export default function YanivGameController({
   };
 
   const deriveStage = (): GameViewStage => {
-    if (gameStep === GameStep.REDEAL) return GameViewStage.END_OF_ROUND;
+    if (gameStep === GameStep.REDEAL)
+      return isMyTurn
+        ? GameViewStage.END_OF_ROUND
+        : GameViewStage.WAITING_FOR_NEW_ROUND;
     if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
       return GameViewStage.WAITING_FOR_PLAYER;
     if (gameStep === GameStep.PLAY_CARDS && canCallYaniv)
