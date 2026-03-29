@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
@@ -13,6 +14,7 @@ import {
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
+import { isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
 
@@ -127,9 +129,20 @@ export default function YanivGameController({
   const handlePlayCards = () => {
     if (gameStep === GameStep.REDEAL) {
       startNewRoundMutation.mutate({ code });
-    } else {
-      playCardsMutation.mutate({ code, cards: selectedCards });
+      return;
     }
+    if (selectedCards.length === 0) {
+      toast.info('Select at least one card to play');
+      return;
+    }
+    if (
+      topDiscardCard &&
+      !isValidYanivPlay(selectedCards, topDiscardCard).isValid
+    ) {
+      toast.info("You can't play that combination of cards");
+      return;
+    }
+    playCardsMutation.mutate({ code, cards: selectedCards });
   };
 
   const handleEndTurn = () => {
@@ -142,6 +155,10 @@ export default function YanivGameController({
   };
 
   const handleCallYaniv = () => {
+    if (!canCallYaniv) {
+      toast.info('You need a hand total of 7 or less to call Yaniv');
+      return;
+    }
     callYanivMutation.mutate({ code });
   };
 
