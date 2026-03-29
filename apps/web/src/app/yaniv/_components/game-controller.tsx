@@ -11,6 +11,7 @@ import {
   type GameState,
   GameStep,
   GameViewStage,
+  YANIV_CALL_THRESHOLD,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
@@ -78,8 +79,7 @@ export default function YanivGameController({
 
   const isMyTurn = currentPlayerId === userId;
 
-  const canCallYaniv =
-    isMyTurn && gameStep === GameStep.PLAY_CARDS && sumYanivHand(hand) <= 7;
+  const canCallYaniv = sumYanivHand(hand) <= YANIV_CALL_THRESHOLD;
 
   const lastPlayedCard = playedCards[playedCards.length - 1];
   const canAutoPlay = !!(
@@ -101,11 +101,9 @@ export default function YanivGameController({
         : GameViewStage.WAITING_FOR_NEW_ROUND;
     if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
       return GameViewStage.WAITING_FOR_PLAYER;
-    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv)
-      return GameViewStage.END_TURN;
     if (gameStep === GameStep.PLAY_CARDS) return GameViewStage.PICKING_CARDS;
     if (gameStep === GameStep.PICKUP_CARD) return GameViewStage.DRAWING_CARDS;
-    return GameViewStage.END_TURN; // PROCEED
+    return GameViewStage.END_TURN;
   };
 
   const stage = deriveStage();
@@ -156,7 +154,9 @@ export default function YanivGameController({
 
   const handleCallYaniv = () => {
     if (!canCallYaniv) {
-      toast.info('You need a hand total of 7 or less to call Yaniv');
+      toast.info(
+        `You need a hand total of ${YANIV_CALL_THRESHOLD} or less to call Yaniv`,
+      );
       return;
     }
     callYanivMutation.mutate({ code });

@@ -55,15 +55,10 @@ export default function Controls({
       )}
 
       {stage === GameViewStage.PICKING_CARDS && (
-        <>
-          <Button onClick={onYanivClick}>
-            <MegaphoneIcon /> Yaniv!
-          </Button>
-          <Button onClick={onPlayCards}>
-            <CircleCheckIcon />
-            Play Cards
-          </Button>
-        </>
+        <Button onClick={onPlayCards} className='col-end-[-1]'>
+          <CircleCheckIcon />
+          Play Cards
+        </Button>
       )}
 
       {stage === GameViewStage.END_TURN && (

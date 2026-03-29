@@ -3,7 +3,7 @@ import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import { GameStage, GameStep } from '~/types/games/yaniv';
+import { GameStage, GameStep, YANIV_CALL_THRESHOLD } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
 import { scoreYanivRound } from './score-yaniv-round';
 
@@ -19,7 +19,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
 
   const caller = state.players.find((player) => player.id === userId);
   if (!caller) throw new Error('Player not found');
-  if (sumYanivHand(caller.hand) > 7)
+  if (sumYanivHand(caller.hand) > YANIV_CALL_THRESHOLD)
     throw new Error('Hand value is too high to call Yaniv');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);

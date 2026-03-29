@@ -11,6 +11,7 @@ export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
 export const HAND_SIZE = 7;
 export const MINIMUM_RUN_SIZE = 3;
+export const YANIV_CALL_THRESHOLD = 7;
 export const YANIV_CALLER_PENALTY = 25;
 export const GAME_OVER_SCORE = 200;
 
