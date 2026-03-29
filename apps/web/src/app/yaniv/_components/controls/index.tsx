@@ -82,7 +82,9 @@ export default function Controls({
 
       {stage === GameViewStage.WAITING_FOR_NEW_ROUND && (
         <div className='flex gap-2 justify-center col-span-2'>
-          <span className='text-balance'>{playerTakingTurn} to deal</span>
+          <span className='text-balance'>
+            Waiting for {playerTakingTurn} to deal
+          </span>
           <div className='flex'>
             <CogIcon className='animate-spin' />
             <BrainIcon className='animate-pulse' />
