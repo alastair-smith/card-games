@@ -158,6 +158,36 @@ describe('toClientGameState', () => {
     }
   });
 
+  describe('drawn card visibility', () => {
+    const DRAWN_CARD: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.ACE };
+
+    test('includes drawn card for the player who drew it', () => {
+      const state = makeInProgressState({
+        currentPlayerId: USER_1,
+        drawnCard: DRAWN_CARD,
+      });
+
+      const result = toClientGameState(state, USER_1) as {
+        drawnCard?: YanivPlayingCard;
+      };
+
+      expect(result.drawnCard).toEqual(DRAWN_CARD);
+    });
+
+    test('hides drawn card from other players', () => {
+      const state = makeInProgressState({
+        currentPlayerId: USER_1,
+        drawnCard: DRAWN_CARD,
+      });
+
+      const result = toClientGameState(state, USER_2) as {
+        drawnCard?: YanivPlayingCard;
+      };
+
+      expect(result.drawnCard).toBeUndefined();
+    });
+  });
+
   describe('finished game', () => {
     test('returns correct hand for requesting user', () => {
       const result = toClientGameState(makeFinishedState(), USER_2);

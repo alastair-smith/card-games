@@ -1,10 +1,10 @@
 import { getYanivState } from '~/server/data/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import type {
+import {
   GameStage,
-  GameState,
-  YanivPlayingCard,
+  type GameState,
+  type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
 type Player = Extract<
@@ -40,6 +40,18 @@ export const toClientGameState = (
     ...player,
     isUser: player.id === userId,
   }));
+
+  if (rawState.gameStage === GameStage.IN_PROGRESS) {
+    const { drawnCard, ...rest } = rawState;
+    const visibleDrawnCard =
+      rawState.currentPlayerId === userId ? drawnCard : undefined;
+    return {
+      ...rest,
+      drawnCard: visibleDrawnCard,
+      hand: requestingPlayer.hand,
+      players,
+    } as ClientGameState;
+  }
 
   return { ...rawState, hand: requestingPlayer.hand, players };
 };
