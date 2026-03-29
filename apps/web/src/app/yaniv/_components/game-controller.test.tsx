@@ -121,16 +121,6 @@ describe('YanivGameController', () => {
       expect(capturedGameProps.stage).toBe(GameViewStage.WAITING_FOR_PLAYER);
     });
 
-    test('derives waiting for player stage during initial deal', () => {
-      render(
-        <YanivGameController
-          {...baseProps}
-          gameState={inProgressState({ gameStep: GameStep.INITIAL_DEAL })}
-        />,
-      );
-      expect(capturedGameProps.stage).toBe(GameViewStage.WAITING_FOR_PLAYER);
-    });
-
     test('derives picking cards stage during play cards step', () => {
       render(
         <YanivGameController

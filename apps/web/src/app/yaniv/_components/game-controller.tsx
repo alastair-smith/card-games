@@ -99,8 +99,7 @@ export default function YanivGameController({
       return isMyTurn
         ? GameViewStage.END_OF_ROUND
         : GameViewStage.WAITING_FOR_NEW_ROUND;
-    if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
-      return GameViewStage.WAITING_FOR_PLAYER;
+    if (!isMyTurn) return GameViewStage.WAITING_FOR_PLAYER;
     if (gameStep === GameStep.PLAY_CARDS) return GameViewStage.PICKING_CARDS;
     if (gameStep === GameStep.PICKUP_CARD) return GameViewStage.DRAWING_CARDS;
     return GameViewStage.END_TURN;

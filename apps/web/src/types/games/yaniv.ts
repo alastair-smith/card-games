@@ -65,7 +65,6 @@ export enum GameStage {
 export const gameStageSchema = z.enum(GameStage);
 
 export enum GameStep {
-  INITIAL_DEAL = 'INITIAL_DEAL',
   PLAY_CARDS = 'PLAY_CARDS',
   PICKUP_CARD = 'PICKUP_CARD',
   PROCEED = 'PROCEED', // end turn, optionally calling yaniv
