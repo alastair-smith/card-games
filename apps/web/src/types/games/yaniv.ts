@@ -79,6 +79,7 @@ export enum GameViewStage {
   DRAWING_CARDS = 'drawing-cards',
   END_TURN = 'end-turn',
   END_OF_ROUND = 'end-of-round',
+  WAITING_FOR_NEW_ROUND = 'waiting-for-new-round',
 }
 
 const playerSchema = z.object({

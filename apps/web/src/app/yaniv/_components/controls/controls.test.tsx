@@ -109,6 +109,24 @@ describe('Controls', () => {
     });
   });
 
+  describe('waiting for new round', () => {
+    test('shows who can start the next round', () => {
+      render(
+        <Controls {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />,
+      );
+      expect(screen.getByText(/Alice to deal/i)).toBeInTheDocument();
+    });
+
+    test('does not show Start new round button', () => {
+      render(
+        <Controls {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />,
+      );
+      expect(
+        screen.queryByRole('button', { name: /start new round/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe('end of round', () => {
     test('shows Start new round button', () => {
       render(<Controls {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
