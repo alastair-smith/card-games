@@ -144,12 +144,7 @@ export default function YanivGameController({
   };
 
   const handleEndTurn = () => {
-    if (gameStep === GameStep.PROCEED) {
-      endTurnMutation.mutate({ code });
-    } else {
-      // PLAY_CARDS with canCallYaniv — play selected cards
-      playCardsMutation.mutate({ code, cards: selectedCards });
-    }
+    endTurnMutation.mutate({ code });
   };
 
   const handleCallYaniv = () => {
