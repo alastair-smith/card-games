@@ -167,9 +167,8 @@ describe('toClientGameState', () => {
         drawnCard: DRAWN_CARD,
       });
 
-      const result = toClientGameState(state, USER_1) as {
-        drawnCard?: YanivPlayingCard;
-      };
+      const result = toClientGameState(state, USER_1);
+      if (result.gameStage !== GameStage.IN_PROGRESS) throw new Error('Expected IN_PROGRESS state');
 
       expect(result.drawnCard).toEqual(DRAWN_CARD);
     });
@@ -180,9 +179,8 @@ describe('toClientGameState', () => {
         drawnCard: DRAWN_CARD,
       });
 
-      const result = toClientGameState(state, USER_2) as {
-        drawnCard?: YanivPlayingCard;
-      };
+      const result = toClientGameState(state, USER_2);
+      if (result.gameStage !== GameStage.IN_PROGRESS) throw new Error('Expected IN_PROGRESS state');
 
       expect(result.drawnCard).toBeUndefined();
     });

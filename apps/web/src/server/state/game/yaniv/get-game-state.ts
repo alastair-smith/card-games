@@ -14,7 +14,13 @@ type Player = Extract<
 
 type ClientPlayer = Omit<Player, 'hand'> & { isUser: boolean };
 
-export type ClientGameState = Omit<GameState, 'players'> & {
+// Distributive omit: applied per union member so variant-specific fields (e.g.
+// drawnCard on IN_PROGRESS) are preserved in the resulting union.
+type DistributiveOmit<T, K extends keyof any> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type ClientGameState = DistributiveOmit<GameState, 'players'> & {
   hand: YanivPlayingCard[];
   players: ClientPlayer[];
 };
@@ -50,7 +56,7 @@ export const toClientGameState = (
       drawnCard: visibleDrawnCard,
       hand: requestingPlayer.hand,
       players,
-    } as ClientGameState;
+    };
   }
 
   return { ...rawState, hand: requestingPlayer.hand, players };
