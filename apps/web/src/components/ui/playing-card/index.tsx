@@ -3,6 +3,8 @@
 import {
   BotIcon,
   BotMessageSquareIcon,
+  ChessKingIcon,
+  ChessQueenIcon,
   ClubIcon,
   DiamondIcon,
   HeartIcon,
@@ -45,8 +47,8 @@ const suitSymbol = {
 } satisfies Record<Suit, typeof Icon>;
 
 const pictureCardSymbol = {
-  [Rank.KING]: BotIcon,
-  [Rank.QUEEN]: BotMessageSquareIcon,
+  [Rank.KING]: ChessKingIcon,
+  [Rank.QUEEN]: ChessQueenIcon,
   [Rank.JACK]: SwordsIcon,
   [JOKER_RANK]: ScanFaceIcon,
 };
