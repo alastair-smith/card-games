@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
@@ -10,9 +11,11 @@ import {
   type GameState,
   GameStep,
   GameViewStage,
+  YANIV_CALL_THRESHOLD,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
+import { isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
 
@@ -76,8 +79,7 @@ export default function YanivGameController({
 
   const isMyTurn = currentPlayerId === userId;
 
-  const canCallYaniv =
-    isMyTurn && gameStep === GameStep.PLAY_CARDS && sumYanivHand(hand) <= 7;
+  const canCallYaniv = sumYanivHand(hand) <= YANIV_CALL_THRESHOLD;
 
   const lastPlayedCard = playedCards[playedCards.length - 1];
   const canAutoPlay = !!(
@@ -97,13 +99,10 @@ export default function YanivGameController({
       return isMyTurn
         ? GameViewStage.END_OF_ROUND
         : GameViewStage.WAITING_FOR_NEW_ROUND;
-    if (!isMyTurn || gameStep === GameStep.INITIAL_DEAL)
-      return GameViewStage.WAITING_FOR_PLAYER;
-    if (gameStep === GameStep.PLAY_CARDS && canCallYaniv)
-      return GameViewStage.END_TURN;
+    if (!isMyTurn) return GameViewStage.WAITING_FOR_PLAYER;
     if (gameStep === GameStep.PLAY_CARDS) return GameViewStage.PICKING_CARDS;
     if (gameStep === GameStep.PICKUP_CARD) return GameViewStage.DRAWING_CARDS;
-    return GameViewStage.END_TURN; // PROCEED
+    return GameViewStage.END_TURN;
   };
 
   const stage = deriveStage();
@@ -127,21 +126,33 @@ export default function YanivGameController({
   const handlePlayCards = () => {
     if (gameStep === GameStep.REDEAL) {
       startNewRoundMutation.mutate({ code });
-    } else {
-      playCardsMutation.mutate({ code, cards: selectedCards });
+      return;
     }
+    if (selectedCards.length === 0) {
+      toast.info('Select at least one card to play');
+      return;
+    }
+    if (
+      topDiscardCard &&
+      !isValidYanivPlay(selectedCards, topDiscardCard).isValid
+    ) {
+      toast.info("You can't play that combination of cards");
+      return;
+    }
+    playCardsMutation.mutate({ code, cards: selectedCards });
   };
 
   const handleEndTurn = () => {
-    if (gameStep === GameStep.PROCEED) {
-      endTurnMutation.mutate({ code });
-    } else {
-      // PLAY_CARDS with canCallYaniv — play selected cards
-      playCardsMutation.mutate({ code, cards: selectedCards });
-    }
+    endTurnMutation.mutate({ code });
   };
 
   const handleCallYaniv = () => {
+    if (!canCallYaniv) {
+      toast.info(
+        `You need a hand total of ${YANIV_CALL_THRESHOLD} or less to call Yaniv`,
+      );
+      return;
+    }
     callYanivMutation.mutate({ code });
   };
 
