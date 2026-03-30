@@ -111,7 +111,7 @@ export default function Game({
     <GameLayout
       actions={<HowToDialog />}
       gameType={GameType.YANIV}
-      className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4'
+      className='flex flex-col h-dvh w-full overflow-hidden px-2 pb-2 gap-4'
     >
       <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
         {players.map(({ id, emojiReaction, ...player }) => (
