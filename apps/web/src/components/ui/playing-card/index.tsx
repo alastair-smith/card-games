@@ -72,7 +72,9 @@ export function PlayingCard({
   style?: CSSProperties;
   border?: boolean;
 }) {
-  const highlightedClass = highlighted ? 'bg-highlighted-card-background' : '';
+  const highlightedClass = highlighted
+    ? 'bg-highlighted-playing-card-background'
+    : '';
 
   const cardContent = (
     <FlippableRoot showFront={!!card}>

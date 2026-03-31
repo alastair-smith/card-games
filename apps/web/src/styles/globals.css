@@ -22,6 +22,7 @@
   --color-main-background: var(--color-dark-green);
   --color-card-background: var(--color-white);
   --color-highlighted-card-background: var(--color-dark-white);
+  --color-highlighted-playing-card-background: hsl(48 80% 85%);
   --color-alt-background: var(--color-grey-lily-white);
   --color-input-background: var(--color-lily-white);
 
