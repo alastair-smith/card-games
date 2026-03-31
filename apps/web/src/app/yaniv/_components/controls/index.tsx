@@ -34,7 +34,7 @@ export default function Controls({
   return (
     <div
       className={cn(
-        'grid grid-cols-2 md:grid-cols-4 gap-2 items-center px-2 min-h-10',
+        'grid grid-cols-2 grid-rows-[auto_minmax(theme(spacing.10),auto)] md:grid-cols-4 md:grid-rows-[minmax(theme(spacing.10),auto)] gap-2 items-center px-2',
         className,
       )}
     >
