@@ -34,7 +34,7 @@ export default function Controls({
   return (
     <div
       className={cn(
-        'grid grid-cols-2 md:grid-cols-4 gap-2 items-center px-2',
+        'grid grid-cols-2 grid-rows-[auto_--spacing(10)] md:grid-cols-4 md:grid-rows-[--spacing(10)] gap-2 items-center px-2',
         className,
       )}
     >
@@ -55,7 +55,7 @@ export default function Controls({
       )}
 
       {stage === GameViewStage.PICKING_CARDS && (
-        <Button onClick={onPlayCards} className='col-end-[-1]'>
+        <Button onClick={onPlayCards} className='-col-end-1'>
           <CircleCheckIcon />
           Play Cards
         </Button>
@@ -74,7 +74,7 @@ export default function Controls({
       )}
 
       {stage === GameViewStage.END_OF_ROUND && (
-        <Button onClick={onPlayCards} className='col-end-[-1]'>
+        <Button onClick={onPlayCards} className='-col-end-1'>
           Start new round
           <ArrowRightCircleIcon />
         </Button>

@@ -4,6 +4,7 @@ import { Rank, Suit } from '~/types/cards';
 import Hand from '.';
 
 vi.mock('~/components/ui/playing-card', () => ({
+  PLAYING_CARD_PROPORTIONS: 'w-[3.75em] h-[5.25em]',
   PlayingCard: ({
     card,
     highlighted,
