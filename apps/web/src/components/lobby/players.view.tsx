@@ -275,7 +275,7 @@ export default function Players({
           ))}
 
           {Array.from({ length: requiredPlayers }).map((_, index) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <placholder row>
+            // biome-ignore lint/suspicious/noArrayIndexKey: placholder row
             <div key={index} className='flex justify-center gap-4 py-4'>
               <UserIcon size={22} />
               <span>Required Player</span>
@@ -284,7 +284,7 @@ export default function Players({
 
           {Array.from({ length: optionalPlayers }).map((_, index) => (
             <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: <placholder row>
+              // biome-ignore lint/suspicious/noArrayIndexKey: placholder row
               key={index}
               className='flex justify-center gap-4 opacity-50 py-4'
             >

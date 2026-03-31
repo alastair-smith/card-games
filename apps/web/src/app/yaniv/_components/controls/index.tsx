@@ -34,7 +34,7 @@ export default function Controls({
   return (
     <div
       className={cn(
-        'grid grid-cols-2 md:grid-cols-4 gap-2 items-center px-2',
+        'grid grid-cols-2 md:grid-cols-4 gap-2 items-center px-2 min-h-10',
         className,
       )}
     >
@@ -42,10 +42,6 @@ export default function Controls({
         onEmojiClick={onEmojiClick}
         className='flex-1 justify-self-center md:justify-self-auto col-span-2'
       />
-
-      {stage === GameViewStage.DRAWING_CARDS && (
-        <div className='h-10 col-span-2' aria-hidden='true' />
-      )}
 
       {stage === GameViewStage.WAITING_FOR_PLAYER && (
         <div className='flex gap-2 justify-center col-span-2'>
