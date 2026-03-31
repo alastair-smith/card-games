@@ -18,6 +18,7 @@ vi.mock('~/components/emoji-rain/emoji-rain', () => ({
 }));
 
 vi.mock('~/components/ui/playing-card', () => ({
+  PLAYING_CARD_PROPORTIONS: 'w-[3.75em] h-[5.25em]',
   PlayingCard: ({ card }: { card: { suit: string; rank: string } }) => (
     <div data-testid={`card-${card.suit}-${card.rank}`}>{card.rank}</div>
   ),

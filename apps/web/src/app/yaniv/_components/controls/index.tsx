@@ -43,6 +43,10 @@ export default function Controls({
         className='flex-1 justify-self-center md:justify-self-auto col-span-2'
       />
 
+      {stage === GameViewStage.DRAWING_CARDS && (
+        <div className='h-10 col-span-2' aria-hidden='true' />
+      )}
+
       {stage === GameViewStage.WAITING_FOR_PLAYER && (
         <div className='flex gap-2 justify-center col-span-2'>
           <span className='text-balance'>{playerTakingTurn} is thinking</span>

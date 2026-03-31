@@ -1,5 +1,8 @@
-import { PlayingCard } from '~/components/ui/playing-card';
-import type { YanivPlayingCard } from '~/types/games/yaniv';
+import {
+  PLAYING_CARD_PROPORTIONS,
+  PlayingCard,
+} from '~/components/ui/playing-card';
+import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 import { sortYanivHand } from '~/utils/yaniv/sort';
 
@@ -47,6 +50,14 @@ export default function Hand({
             card={card}
             highlighted={card.selected}
             onClick={onCardClick ? () => onCardClick(card) : undefined}
+          />
+        ))}
+        {Array.from({ length: HAND_SIZE - cards.length }).map((_, index) => (
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
+            key={`placeholder-${index}`}
+            className={cn(PLAYING_CARD_PROPORTIONS, 'invisible')}
+            aria-hidden='true'
           />
         ))}
       </div>

@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  BotIcon,
-  BotMessageSquareIcon,
   ChessKingIcon,
   ChessQueenIcon,
   ClubIcon,
