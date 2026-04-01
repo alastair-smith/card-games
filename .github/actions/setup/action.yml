@@ -10,11 +10,11 @@ runs:
         echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
         echo "PNPM_VERSION=$(grep pnpm .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
     - name: Setup PNPM
-      uses: pnpm/action-setup@v4
+      uses: pnpm/action-setup@v5
       with:
         version: ${{ steps.versions.outputs.PNPM_VERSION }}
     - name: Setup Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ steps.versions.outputs.NODE_VERSION }}
         cache: 'pnpm'
