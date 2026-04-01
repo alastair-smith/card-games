@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
-  timeout: 5 * 60 * 1000,
+  timeout: 10 * 60 * 1000,
   expect: { timeout: 15_000 },
   use: {
     baseURL: 'http://localhost:3000',

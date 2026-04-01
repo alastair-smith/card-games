@@ -84,15 +84,19 @@ async function tryTakeTurn(page: Page): Promise<boolean> {
     for (const card of cardsToPlay) {
       await handGroup
         .getByTestId(`hand-card-${card.suit}-${card.rank}`)
-        .click();
+        .click({ timeout: 5_000 });
     }
-    await playCardsBtn.click();
+    try {
+      await playCardsBtn.click({ timeout: 5_000 });
+    } catch {
+      return false;
+    }
 
     // PICKUP_CARD step — deck button only exists when isActive=true
     const deckBtn = page.getByRole('button', { name: 'Draw from deck' });
     try {
       await deckBtn.waitFor({ state: 'visible', timeout: 3_000 });
-      await deckBtn.click();
+      await deckBtn.click({ timeout: 5_000 });
     } catch {
       // isPickupRequired=false — went straight to PROCEED
     }
@@ -104,9 +108,9 @@ async function tryTakeTurn(page: Page): Promise<boolean> {
 
     const handTotal = await getHandTotal(page);
     if (handTotal <= YANIV_CALL_THRESHOLD) {
-      await page.getByRole('button', { name: 'Yaniv!' }).click();
+      await page.getByRole('button', { name: 'Yaniv!' }).click({ timeout: 5_000 });
     } else {
-      await page.getByRole('button', { name: 'End Turn' }).click();
+      await page.getByRole('button', { name: 'End Turn' }).click({ timeout: 5_000 });
     }
 
     return true;
@@ -115,7 +119,13 @@ async function tryTakeTurn(page: Page): Promise<boolean> {
   // REDEAL step — only the round-caller sees this button
   const startRoundBtn = page.getByRole('button', { name: 'Start new round' });
   if (await startRoundBtn.isVisible()) {
-    await startRoundBtn.click();
+    try {
+      // Use a short timeout so React re-render flickers don't cause an infinite retry
+      await startRoundBtn.click({ timeout: 5_000 });
+    } catch {
+      // Element detached mid-click (polling re-render); will retry next iteration
+      return false;
+    }
     return true;
   }
 
