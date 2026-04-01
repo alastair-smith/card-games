@@ -7,6 +7,7 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     headless: true,
+    trace: 'on-first-retry',
   },
   webServer: {
     command: 'pnpm test:e2e:start-server',

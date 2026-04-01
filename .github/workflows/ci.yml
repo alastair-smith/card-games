@@ -57,6 +57,7 @@ jobs:
         with:
           name: build-output
           path: apps/web/.next
+          include-hidden-files: true
 
   test-e2e:
     name: E2E Tests
@@ -84,3 +85,10 @@ jobs:
         run: pnpm --filter @repo/web exec playwright install --with-deps chromium
       - name: Run E2E tests
         run: pnpm --filter @repo/web test:e2e
+      - name: Upload Playwright trace
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: apps/web/test-results
+          retention-days: 7
