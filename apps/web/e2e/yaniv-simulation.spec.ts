@@ -59,8 +59,11 @@ async function isGameOver(page: Page): Promise<boolean> {
 
 async function joinLobby(page: Page, gameUrl: string): Promise<void> {
   await page.goto(gameUrl);
-  // Toggle Ready switch (not yet ready by default)
-  await page.getByRole('switch').click();
+  // Toggle the current player's own Ready switch (other players' switches are disabled)
+  await page
+    .getByRole('switch')
+    .filter({ hasNot: page.locator('[data-disabled]') })
+    .click();
 }
 
 // ---------------------------------------------------------------------------
@@ -143,8 +146,11 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
   // Players 2 and 3 join
   await Promise.all([joinLobby(p2, gameUrl), joinLobby(p3, gameUrl)]);
 
-  // Player 1 marks ready too
-  await p1.getByRole('switch').click();
+  // Player 1 marks ready too (other players' switches are disabled)
+  await p1
+    .getByRole('switch')
+    .filter({ hasNot: p1.locator('[data-disabled]') })
+    .click();
 
   // Wait for all 3 to show as ready, then player 1 starts the game
   const startGameBtn = p1.getByRole('button', { name: 'Start Game' });
