@@ -1,21 +1,29 @@
+import { JOKER_RANK } from '~/types/cards';
 import { YANIV_RANK_SCORE, type YanivPlayingCard } from '~/types/games/yaniv';
 
 /** Picks the best cards to play from a hand given the top discard card.
  *
+ * Jokers are never played — they score 0 and are too valuable to discard.
+ *
  * Priority:
- * 1. All cards whose rank matches the discard rank (no pickup required)
+ * 1. All non-joker cards whose rank matches the discard rank (no pickup required)
  * 2. The largest same-rank group (ties broken by highest score value)
- * 3. The single highest-value card
+ * 3. The single highest-value non-joker card
  */
 export const pickBestMove = (
   hand: YanivPlayingCard[],
   topDiscardCard: YanivPlayingCard,
 ): YanivPlayingCard[] => {
-  const matchingDiscard = hand.filter((c) => c.rank === topDiscardCard.rank);
+  const nonJokers = hand.filter((card) => card.rank !== JOKER_RANK);
+  const playableHand = nonJokers.length > 0 ? nonJokers : hand;
+
+  const matchingDiscard = playableHand.filter(
+    (card) => card.rank === topDiscardCard.rank,
+  );
   if (matchingDiscard.length > 0) return matchingDiscard;
 
   const rankGroups = new Map<string, YanivPlayingCard[]>();
-  for (const card of hand) {
+  for (const card of playableHand) {
     const key = String(card.rank);
     const group = rankGroups.get(key) ?? [];
     group.push(card);
@@ -36,7 +44,7 @@ export const pickBestMove = (
   }
 
   return [
-    hand.reduce((highest, card) =>
+    playableHand.reduce((highest, card) =>
       YANIV_RANK_SCORE[card.rank] > YANIV_RANK_SCORE[highest.rank]
         ? card
         : highest,

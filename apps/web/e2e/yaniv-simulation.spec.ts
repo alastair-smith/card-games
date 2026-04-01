@@ -1,10 +1,12 @@
 import { expect, type Page, test } from '@playwright/test';
-import { JOKER_RANK } from '../src/types/cards';
+import { JOKER_RANK, Rank } from '../src/types/cards';
 import {
   YANIV_CALL_THRESHOLD,
+  YANIV_RANK_SCORE,
   type YanivPlayingCard,
 } from '../src/types/games/yaniv';
 import { pickBestMove } from '../src/utils/yaniv/pick-best-move';
+import { pickWorstMove } from '../src/utils/yaniv/pick-worst-move';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -49,10 +51,6 @@ async function getHandTotal(page: Page): Promise<number> {
   return Number(text?.trim() ?? '0');
 }
 
-async function isGameOver(page: Page): Promise<boolean> {
-  return page.getByRole('link', { name: 'Pick Another Game' }).isVisible();
-}
-
 // ---------------------------------------------------------------------------
 // Lobby setup
 // ---------------------------------------------------------------------------
@@ -70,15 +68,49 @@ async function joinLobby(page: Page, gameUrl: string): Promise<void> {
 // Per-turn logic
 // ---------------------------------------------------------------------------
 
+type MovePicker = (
+  hand: YanivPlayingCard[],
+  topDiscardCard: YanivPlayingCard,
+) => YanivPlayingCard[];
+
+/** Returns true if the discard card is worth picking up instead of drawing from the deck. */
+type PickupStrategy = (discardCard: YanivPlayingCard) => boolean;
+
+/** Optimal player picks up jokers, aces, and twos from the discard pile. */
+const shouldPickupOptimal: PickupStrategy = (card) =>
+  card.rank === JOKER_RANK || card.rank === Rank.ACE || card.rank === Rank.TWO;
+
+/** Bad player picks up high-value cards (8+) from the discard pile. */
+const shouldPickupWorst: PickupStrategy = (card) =>
+  card.rank !== JOKER_RANK && YANIV_RANK_SCORE[card.rank] >= 8;
+
+/** Returns true if this page is waiting for another player (i.e. it's not our turn). */
+async function isWaitingForOtherPlayer(page: Page): Promise<boolean> {
+  const thinkingVisible = await page
+    .getByText('is thinking')
+    .isVisible()
+    .catch(() => false);
+  if (thinkingVisible) return true;
+  const dealingVisible = await page
+    .getByText('to deal')
+    .isVisible()
+    .catch(() => false);
+  return dealingVisible;
+}
+
 /** Attempts to perform one full turn for the given page.
  *  Returns true if an action was taken, false if it was not this player's turn. */
-async function tryTakeTurn(page: Page): Promise<boolean> {
+async function tryTakeTurn(
+  page: Page,
+  movePicker: MovePicker,
+  shouldPickupDiscard: PickupStrategy,
+): Promise<boolean> {
   // PLAY_CARDS step
   const playCardsBtn = page.getByRole('button', { name: 'Play Cards' });
   if (await playCardsBtn.isVisible()) {
     const hand = await getHandCards(page);
     const discard = await getDiscardCard(page);
-    const cardsToPlay = pickBestMove(hand, discard);
+    const cardsToPlay = movePicker(hand, discard);
 
     const handGroup = page.getByTestId('player-hand');
     for (const card of cardsToPlay) {
@@ -92,25 +124,44 @@ async function tryTakeTurn(page: Page): Promise<boolean> {
       return false;
     }
 
-    // PICKUP_CARD step — deck button only exists when isActive=true
-    const deckBtn = page.getByRole('button', { name: 'Draw from deck' });
-    try {
-      await deckBtn.waitFor({ state: 'visible', timeout: 3_000 });
-      await deckBtn.click({ timeout: 5_000 });
-    } catch {
-      // isPickupRequired=false — went straight to PROCEED
-    }
+    // Wait for Play Cards to disappear, confirming the server accepted the play
+    await playCardsBtn.waitFor({ state: 'hidden', timeout: 15_000 });
 
-    // PROCEED step — call Yaniv immediately if hand total ≤ threshold
-    await page
-      .getByRole('button', { name: 'End Turn' })
-      .waitFor({ state: 'visible', timeout: 15_000 });
+    // Either pickup is required (deck button appears) or we skip to PROCEED (End Turn)
+    const deckBtn = page.getByRole('button', { name: 'Draw from deck' });
+    const endTurnBtn = page.getByRole('button', { name: 'End Turn' });
+
+    const nextStep = await Promise.race([
+      deckBtn
+        .waitFor({ state: 'visible', timeout: 15_000 })
+        .then(() => 'pickup' as const),
+      endTurnBtn
+        .waitFor({ state: 'visible', timeout: 15_000 })
+        .then(() => 'proceed' as const),
+    ]);
+
+    if (nextStep === 'pickup') {
+      const discard = await getDiscardCard(page);
+      if (shouldPickupDiscard(discard)) {
+        await page
+          .getByTestId('top-discard')
+          .locator('button')
+          .click({ timeout: 5_000 });
+      } else {
+        await deckBtn.click({ timeout: 5_000 });
+      }
+      await endTurnBtn.waitFor({ state: 'visible', timeout: 15_000 });
+    }
 
     const handTotal = await getHandTotal(page);
     if (handTotal <= YANIV_CALL_THRESHOLD) {
-      await page.getByRole('button', { name: 'Yaniv!' }).click({ timeout: 5_000 });
+      await page
+        .getByRole('button', { name: 'Yaniv!' })
+        .click({ timeout: 5_000 });
     } else {
-      await page.getByRole('button', { name: 'End Turn' }).click({ timeout: 5_000 });
+      await page
+        .getByRole('button', { name: 'End Turn' })
+        .click({ timeout: 5_000 });
     }
 
     return true;
@@ -168,26 +219,47 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
   await startGameBtn.click();
 
   // Game loop — players take turns until the game is over
+  // Player 1 plays optimally; players 2 and 3 play the worst possible move
   const MAX_ITERATIONS = 2_000;
-  const pages = [p1, p2, p3];
+  const players: Array<{
+    page: Page;
+    movePicker: MovePicker;
+    pickupStrategy: PickupStrategy;
+  }> = [
+    { page: p1, movePicker: pickBestMove, pickupStrategy: shouldPickupOptimal },
+    { page: p2, movePicker: pickWorstMove, pickupStrategy: shouldPickupWorst },
+    { page: p3, movePicker: pickWorstMove, pickupStrategy: shouldPickupWorst },
+  ];
+
+  // Listen for game over on any page — resolves as soon as one page shows it
+  const gameOverLink = { name: 'Pick Another Game' } as const;
+  const gameOverPromise = Promise.race(
+    players.map(({ page }) =>
+      page.getByRole('link', gameOverLink).waitFor({ state: 'visible' }),
+    ),
+  );
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
-    // Check for game over on any page
-    for (const page of pages) {
-      if (await isGameOver(page)) {
-        // Verify the other players also see the finished screen
-        for (const otherPage of pages) {
-          await expect(
-            otherPage.getByRole('link', { name: 'Pick Another Game' }),
-          ).toBeVisible({ timeout: 15_000 });
+    // Race the next turn against the game-over listener
+    const result = await Promise.race([
+      gameOverPromise.then(() => 'gameOver' as const),
+      (async () => {
+        for (const { page, movePicker, pickupStrategy } of players) {
+          if (await isWaitingForOtherPlayer(page)) continue;
+          if (await tryTakeTurn(page, movePicker, pickupStrategy))
+            return 'turnTaken' as const;
         }
-        return;
-      }
-    }
+        return 'noAction' as const;
+      })(),
+    ]);
 
-    // Try to take a turn on each player's page
-    for (const page of pages) {
-      if (await tryTakeTurn(page)) break;
+    if (result === 'gameOver') {
+      for (const { page } of players) {
+        await expect(page.getByRole('link', gameOverLink)).toBeVisible({
+          timeout: 15_000,
+        });
+      }
+      return;
     }
   }
 
