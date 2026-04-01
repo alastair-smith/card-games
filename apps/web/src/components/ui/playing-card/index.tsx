@@ -61,6 +61,8 @@ export function PlayingCard({
   design,
   style,
   border,
+  testId,
+  ariaLabel,
 }: {
   card: PlayingCardValue | null;
   className?: string;
@@ -71,6 +73,8 @@ export function PlayingCard({
   design?: 'default' | 'simple';
   style?: CSSProperties;
   border?: boolean;
+  testId?: string;
+  ariaLabel?: string;
 }) {
   const highlightedClass = highlighted
     ? 'bg-highlighted-playing-card-background'
@@ -106,6 +110,8 @@ export function PlayingCard({
         type='button'
         onClick={onClick}
         style={style}
+        data-testid={testId}
+        aria-label={ariaLabel}
         className={cn(
           sharedClassName,
           'cursor-pointer rounded-[0.22em] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2',

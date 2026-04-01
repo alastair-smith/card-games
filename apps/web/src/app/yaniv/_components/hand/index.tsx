@@ -39,6 +39,7 @@ export default function Hand({
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
       <div
+        data-testid='player-hand'
         className={cn(
           'flex flex-row flex-wrap gap-2 rounded-lg p-2',
           isActive ? 'animate-pulse-bg' : '',
@@ -49,6 +50,7 @@ export default function Hand({
             key={`${card.suit}-${card.rank}`}
             card={card}
             highlighted={card.selected}
+            testId={`hand-card-${card.suit}-${card.rank}`}
             onClick={onCardClick ? () => onCardClick(card) : undefined}
           />
         ))}
@@ -65,7 +67,12 @@ export default function Hand({
       <div className='flex flex-col bg-alt-background rounded p-2 h-fit'>
         <div className='flex flex-col items-center'>
           <div>Hand total:</div>
-          <div className='min-w-[2ch] text-2xl font-semibold'>{handTotal}</div>
+          <div
+            data-testid='hand-total'
+            className='min-w-[2ch] text-2xl font-semibold'
+          >
+            {handTotal}
+          </div>
         </div>
         <div className='text-sm'>
           Your total score is{' '}

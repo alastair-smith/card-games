@@ -98,13 +98,20 @@ export default function PlayArea({
           drawnCardDisplay={showOverlay ? displayedCard : undefined}
           onDrawnCardClick={handleDrawnCardClick}
           drawnCardClassName={exitClassName}
+          ariaLabel='Draw from deck'
         />
         <PlayingCardDiscardPile>
           {discardCard && (
-            <PlayingCard
-              card={discardCard}
-              onClick={isActive ? onDiscardClick : undefined}
-            />
+            <div
+              data-testid='top-discard'
+              data-suit={discardCard.suit}
+              data-rank={String(discardCard.rank)}
+            >
+              <PlayingCard
+                card={discardCard}
+                onClick={isActive ? onDiscardClick : undefined}
+              />
+            </div>
           )}
         </PlayingCardDiscardPile>
       </div>

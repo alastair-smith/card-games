@@ -50,3 +50,28 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build
+
+  test-e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+    env:
+      REDIS_CONNECTION_STRING: redis://localhost:6379
+      AUTH_SECRET: "this-is-a-test-secret-at-least-32-characters-long"
+      NODE_ENV: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - name: Install Playwright browsers
+        run: pnpm --filter @repo/web exec playwright install --with-deps chromium
+      - name: Build app
+        run: pnpm build
+        env:
+          SKIP_ENV_VALIDATION: "true"
+      - name: Run E2E tests
+        run: pnpm --filter @repo/web test:e2e
