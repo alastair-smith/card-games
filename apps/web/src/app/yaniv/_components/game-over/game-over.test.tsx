@@ -9,6 +9,12 @@ vi.mock('~/components/layout/game-layout', () => ({
   ),
 }));
 
+vi.mock('~/components/emoji-rain/celebration-rain', () => ({
+  CelebrationRain: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
+
 vi.mock('../how-to', () => ({
   HowToDialog: () => null,
 }));

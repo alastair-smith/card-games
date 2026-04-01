@@ -1,4 +1,6 @@
 import { CrownIcon, Share2Icon } from 'lucide-react';
+import { useState } from 'react';
+import { CelebrationRain } from '~/components/emoji-rain/celebration-rain';
 import GameLayout from '~/components/layout/game-layout';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -29,6 +31,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
   const winners = players.filter((player) => player.isWinner);
   const winningScore = winners[0]?.score;
   const userWins = winners.some((player) => player.id === userId);
+  const [isCelebrating, setIsCelebrating] = useState(false);
 
   const handleShare = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -70,62 +73,73 @@ export default function GameOver({ players, userId }: GameOverProps) {
   };
 
   return (
-    <GameLayout
-      actions={<HowToDialog />}
-      gameType={GameType.YANIV}
-      className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4 items-center'
+    <CelebrationRain
+      emoji={userWins ? '🏆' : '🗑️'}
+      isActive={isCelebrating}
+      className='h-dvh'
     >
-      <div className='flex flex-col gap-3 items-center w-fit max-w-xl'>
-        <Card className='w-full'>
-          <CardContent className='pt-4'>
-            <div className='flex flex-col items-center'>
-              <CrownIcon size='100' />
-              <span className='text-2xl'>
-                {winners
-                  .map(({ id, name }) => (id === userId ? 'You' : name))
-                  .join(' & ') || 'Unknown Player'}{' '}
-                {!userWins && winners.length === 1 ? 'wins ' : 'win '}
-                with a score of {winningScore}!
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+      <GameLayout
+        actions={<HowToDialog />}
+        gameType={GameType.YANIV}
+        className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4 items-center'
+      >
+        <div className='flex flex-col gap-3 items-center w-fit max-w-xl'>
+          <Card className='w-full'>
+            <CardContent className='pt-4'>
+              <div className='flex flex-col items-center'>
+                <CrownIcon
+                  size='100'
+                  role='button'
+                  className='cursor-pointer'
+                  onClick={() => setIsCelebrating((previous) => !previous)}
+                />
+                <span className='text-2xl'>
+                  {winners
+                    .map(({ id, name }) => (id === userId ? 'You' : name))
+                    .join(' & ') || 'Unknown Player'}{' '}
+                  {!userWins && winners.length === 1 ? 'wins ' : 'win '}
+                  with a score of {winningScore}!
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className='max-w-xl w-full'>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Player</TableHead>
-                  <TableHead>Score</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {players.map(({ id, name, score }) => (
-                  <TableRow key={id}>
-                    <TableCell>
-                      {name}
-                      {id === userId && ' (You)'}
-                    </TableCell>
-                    <TableCell>{score}</TableCell>
+          <Card className='max-w-xl w-full'>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Player</TableHead>
+                    <TableHead>Score</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
 
-        <div className='flex flex-wrap gap-2 justify-end w-full'>
-          <Button variant='secondary' onClick={handleShare}>
-            <Share2Icon />
-            Share
-          </Button>
-          <Button asChild>
-            <a href='/'>Pick Another Game</a>
-          </Button>
+                <TableBody>
+                  {players.map(({ id, name, score }) => (
+                    <TableRow key={id}>
+                      <TableCell>
+                        {name}
+                        {id === userId && ' (You)'}
+                      </TableCell>
+                      <TableCell>{score}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <div className='flex flex-wrap gap-2 justify-end w-full'>
+            <Button variant='secondary' onClick={handleShare}>
+              <Share2Icon />
+              Share
+            </Button>
+            <Button asChild>
+              <a href='/'>Pick Another Game</a>
+            </Button>
+          </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+    </CelebrationRain>
   );
 }
