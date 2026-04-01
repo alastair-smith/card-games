@@ -30,14 +30,14 @@ describe('pickBestMove', () => {
       ]);
     });
 
-    test('plays jokers when discard is also a joker', () => {
+    test('keeps jokers even when discard is also a joker', () => {
       const hand = [
         { suit: JokerSuit.RED, rank: JOKER_RANK },
         { suit: Suit.CLUBS, rank: Rank.KING },
       ];
       const discard = { suit: JokerSuit.BLACK, rank: JOKER_RANK };
       expect(pickBestMove(hand, discard)).toEqual([
-        { suit: JokerSuit.RED, rank: JOKER_RANK },
+        { suit: Suit.CLUBS, rank: Rank.KING },
       ]);
     });
   });
