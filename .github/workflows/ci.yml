@@ -50,9 +50,17 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build
+        env:
+          SKIP_ENV_VALIDATION: "true"
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: apps/web/.next
 
   test-e2e:
     name: E2E Tests
+    needs: build
     runs-on: ubuntu-latest
     services:
       redis:
@@ -67,11 +75,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: ./.github/actions/setup
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: apps/web/.next
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install --with-deps chromium
-      - name: Build app
-        run: pnpm build
-        env:
-          SKIP_ENV_VALIDATION: "true"
       - name: Run E2E tests
         run: pnpm --filter @repo/web test:e2e
