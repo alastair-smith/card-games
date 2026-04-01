@@ -91,4 +91,5 @@ jobs:
         with:
           name: playwright-traces
           path: apps/web/test-results
+          if-no-files-found: ignore
           retention-days: 7
