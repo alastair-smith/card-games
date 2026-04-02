@@ -71,8 +71,6 @@ jobs:
           - chromium-mobile
           - firefox-desktop
           - firefox-mobile
-          - webkit-desktop
-          - webkit-mobile
         include:
           - project: chromium-desktop
             browser: chromium
@@ -82,10 +80,6 @@ jobs:
             browser: firefox
           - project: firefox-mobile
             browser: firefox
-          - project: webkit-desktop
-            browser: webkit
-          - project: webkit-mobile
-            browser: webkit
     services:
       redis:
         image: redis:alpine

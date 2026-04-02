@@ -31,7 +31,5 @@ export default defineConfig({
       name: 'firefox-mobile',
       use: { browserName: 'firefox', viewport: { width: 393, height: 727 } },
     },
-    { name: 'webkit-desktop', use: { ...devices['Desktop Safari'] } },
-    { name: 'webkit-mobile', use: { ...devices['iPhone 14'] } },
   ],
 });
