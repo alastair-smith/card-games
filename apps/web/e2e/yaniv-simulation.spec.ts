@@ -51,6 +51,79 @@ async function getHandTotal(page: Page): Promise<number> {
   return Number(text?.trim() ?? '0');
 }
 
+/** Collects a diagnostic snapshot of the game state visible to a single player. */
+async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
+  const lines: string[] = [`  ${label}:`];
+
+  // Hand cards
+  const hand = await getHandCards(page);
+  const handStr = hand.map((card) => `${card.suit}-${card.rank}`).join(', ');
+  lines.push(`    Hand: [${handStr}]`);
+
+  // Hand total
+  const handTotal = await getHandTotal(page);
+  lines.push(`    Hand total: ${handTotal}`);
+
+  // Discard card
+  try {
+    const discard = await getDiscardCard(page);
+    lines.push(`    Top discard: ${discard.suit}-${discard.rank}`);
+  } catch {
+    lines.push('    Top discard: (none)');
+  }
+
+  // Whose turn (from "is thinking" or controls)
+  const thinkingEl = page.getByText('is thinking');
+  if (await thinkingEl.isVisible().catch(() => false)) {
+    const text = await thinkingEl.textContent();
+    lines.push(`    Waiting for: ${text?.trim()}`);
+  } else {
+    lines.push("    Waiting for: (this player's turn)");
+  }
+
+  // Visible action buttons
+  const buttonNames = [
+    'Play Cards',
+    'End Turn',
+    'Yaniv!',
+    'Draw from deck',
+    'Start new round',
+    'Pick Another Game',
+  ];
+  const visibleButtons: string[] = [];
+  for (const name of buttonNames) {
+    const visible = await page
+      .getByRole('button', { name })
+      .or(page.getByRole('link', { name }))
+      .isVisible()
+      .catch(() => false);
+    if (visible) visibleButtons.push(name);
+  }
+  lines.push(`    Visible buttons: [${visibleButtons.join(', ')}]`);
+
+  // All player scores and card counts from scorecards
+  // Scorecards render: card count, "Score: N", and player name
+  const scoreTexts = await page.locator('text=/Score: \\d+/').allTextContents();
+  if (scoreTexts.length > 0) {
+    lines.push(
+      `    Scoreboard: ${scoreTexts.map((text) => text.trim()).join(' | ')}`,
+    );
+  }
+
+  return lines.join('\n');
+}
+
+/** Builds a full diagnostic snapshot across all players. */
+async function getGameSnapshot(
+  players: Array<{ page: Page; label: string }>,
+  iteration: number,
+): Promise<string> {
+  const snapshots = await Promise.all(
+    players.map(({ page, label }) => getPlayerSnapshot(page, label)),
+  );
+  return [`Game state at iteration ${iteration}:`, ...snapshots].join('\n');
+}
+
 // ---------------------------------------------------------------------------
 // Lobby setup
 // ---------------------------------------------------------------------------
@@ -263,7 +336,15 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
     }
   }
 
+  const snapshot = await getGameSnapshot(
+    [
+      { page: p1, label: 'Player 1 (optimal)' },
+      { page: p2, label: 'Player 2 (worst)' },
+      { page: p3, label: 'Player 3 (worst)' },
+    ],
+    MAX_ITERATIONS,
+  );
   throw new Error(
-    `Game did not finish within ${MAX_ITERATIONS} iterations — possible deadlock`,
+    `Game did not finish within ${MAX_ITERATIONS} iterations — possible deadlock\n\n${snapshot}`,
   );
 });
