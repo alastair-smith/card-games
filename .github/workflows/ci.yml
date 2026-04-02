@@ -107,7 +107,7 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
-        run: pnpm --filter @repo/web test:e2e -- --project=${{ matrix.project }}
+        run: pnpm --filter @repo/web test:e2e --project=${{ matrix.project }}
       - name: Upload Playwright trace
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
