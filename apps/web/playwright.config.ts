@@ -23,5 +23,15 @@ export default defineConfig({
       PORT: '3000',
     },
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium-mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
+    {
+      name: 'firefox-mobile',
+      use: { browserName: 'firefox', viewport: { width: 393, height: 727 } },
+    },
+    { name: 'webkit-desktop', use: { ...devices['Desktop Safari'] } },
+    { name: 'webkit-mobile', use: { ...devices['iPhone 14'] } },
+  ],
 });

@@ -60,9 +60,32 @@ jobs:
           include-hidden-files: true
 
   test-e2e:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.project }})
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - chromium-desktop
+          - chromium-mobile
+          - firefox-desktop
+          - firefox-mobile
+          - webkit-desktop
+          - webkit-mobile
+        include:
+          - project: chromium-desktop
+            browser: chromium
+          - project: chromium-mobile
+            browser: chromium
+          - project: firefox-desktop
+            browser: firefox
+          - project: firefox-mobile
+            browser: firefox
+          - project: webkit-desktop
+            browser: webkit
+          - project: webkit-mobile
+            browser: webkit
     services:
       redis:
         image: redis:alpine
@@ -82,14 +105,14 @@ jobs:
           name: build-output
           path: apps/web/.next
       - name: Install Playwright browsers
-        run: pnpm --filter @repo/web exec playwright install --with-deps chromium
+        run: pnpm --filter @repo/web exec playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
-        run: pnpm --filter @repo/web test:e2e
+        run: pnpm --filter @repo/web test:e2e -- --project=${{ matrix.project }}
       - name: Upload Playwright trace
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-traces
+          name: playwright-traces-${{ matrix.project }}
           path: apps/web/test-results
           if-no-files-found: ignore
           retention-days: 7
