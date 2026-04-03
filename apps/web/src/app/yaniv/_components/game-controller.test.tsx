@@ -216,6 +216,25 @@ describe('YanivGameController', () => {
     });
   });
 
+  describe('ending turn', () => {
+    test('shows a toast when ending turn with no cards in hand', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            gameStep: GameStep.PROCEED,
+            hand: [],
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByTestId('end-turn'));
+      expect(toast.info).toHaveBeenCalledWith(
+        'You must call Yaniv when you have no cards',
+      );
+      expect(mutate).not.toHaveBeenCalled();
+    });
+  });
+
   describe('calling Yaniv', () => {
     test('shows a toast when hand total is above the threshold', () => {
       render(
