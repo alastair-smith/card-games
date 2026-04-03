@@ -201,7 +201,7 @@ export default function HighCardGameView({
           </DialogHeader>
         </DialogContent>
 
-        <div className='flex-grow flex h-full flex-col'>
+        <div className='grow flex h-full flex-col'>
           <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
             {/* mobile and desktop game board */}
             <div

@@ -13,8 +13,8 @@ export default async function Home() {
 
       <main className='flex-1 w-full flex flex-col gap-6'>
         <div className='flex w-full flex-wrap gap-6'>
-          <About className='flex-shrink-0 flex-grow-[2] basis-0' />
-          <JoinGame className='flex-shrink flex-grow basis-0' />
+          <About className='shrink-0 grow-2 basis-0' />
+          <JoinGame className='shrink grow basis-0' />
         </div>
 
         <NewGame />

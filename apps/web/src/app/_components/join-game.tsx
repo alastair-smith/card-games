@@ -53,7 +53,7 @@ export function JoinGame({ className }: { className?: string }) {
               control={form.control}
               name='code'
               render={({ field }) => (
-                <FormItem className='w-full min-w-[12rem] sm:min-w-xs'>
+                <FormItem className='w-full min-w-48 sm:min-w-xs'>
                   <FormLabel className='sr-only'>Join game code</FormLabel>
                   <FormControl>
                     <Input
