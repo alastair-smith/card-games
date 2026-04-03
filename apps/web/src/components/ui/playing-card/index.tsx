@@ -99,6 +99,7 @@ export function PlayingCard({
 
   const sharedClassName = cn(
     PLAYING_CARD_PROPORTIONS,
+    'select-none',
     selected && '-translate-y-12',
     className,
   );
