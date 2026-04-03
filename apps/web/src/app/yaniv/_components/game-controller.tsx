@@ -52,7 +52,9 @@ export default function YanivGameController({
   const pickupCardMutation = api.yaniv.pickupCard.useMutation();
   const callYanivMutation = api.yaniv.callYaniv.useMutation();
   const startNewRoundMutation = api.yaniv.startNewRound.useMutation();
-  const endTurnMutation = api.yaniv.endTurn.useMutation();
+  const endTurnMutation = api.yaniv.endTurn.useMutation({
+    onError: (error) => toast.error(error.message),
+  });
   const triggerEmojiMutation = api.yaniv.triggerEmoji.useMutation();
 
   const userId = gameState.players.find((player) => player.isUser)?.id;
@@ -143,6 +145,10 @@ export default function YanivGameController({
   };
 
   const handleEndTurn = () => {
+    if (hand.length === 0) {
+      toast.info('You must call Yaniv when you have no cards');
+      return;
+    }
     endTurnMutation.mutate({ code });
   };
 

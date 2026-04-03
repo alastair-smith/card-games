@@ -161,6 +161,41 @@ describe('endTurn', () => {
     await expect(endTurn(CODE, USER_2)).rejects.toThrow('Not your turn');
   });
 
+  test('throws when player has no cards in hand', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({
+        players: [
+          {
+            id: USER_1,
+            cardCount: 0,
+            hand: [],
+            name: 'Player 1' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+          {
+            id: USER_2,
+            cardCount: 2,
+            hand: USER_2_HAND,
+            name: 'Player 2' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+        ],
+      }),
+    );
+
+    await expect(endTurn(CODE, USER_1)).rejects.toThrow(
+      'You must call Yaniv when you have no cards',
+    );
+  });
+
   test('pushes played cards to the discard pile', async () => {
     const state = makeState();
     await endTurn(CODE, USER_1);

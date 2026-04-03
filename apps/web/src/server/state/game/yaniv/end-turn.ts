@@ -16,6 +16,11 @@ export const endTurn = async (code: GameCode, userId: UserId) => {
     throw new Error('Not the proceed step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
+  const currentPlayer = state.players.find(({ id }) => id === userId);
+  if (!currentPlayer) throw new Error('Player not found');
+  if (currentPlayer.hand.length === 0)
+    throw new Error('You must call Yaniv when you have no cards');
+
   const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
   const nextPlayer = state.players[nextIndex];
