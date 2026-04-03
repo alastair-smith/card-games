@@ -53,9 +53,6 @@ export default async function Contact() {
             <CopyToClipboard value={CONTACT_EMAIL} className='sm:w-auto w-full'>
               Copy Email To Clipboard
             </CopyToClipboard>
-            <Button asChild className='sm:w-auto w-full'>
-              <a href='mailto:contact@playcards.games'>Open Email Client</a>
-            </Button>
           </CardFooter>
         </Card>
       </main>
