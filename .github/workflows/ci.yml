@@ -87,7 +87,7 @@ jobs:
           - 6379:6379
     env:
       REDIS_CONNECTION_STRING: redis://localhost:6379
-      AUTH_SECRET: "this-is-a-test-secret-at-least-32-characters-long"
+      AUTH_SECRET: "test-secret-at-least-32-characters-long!!"
       NODE_ENV: test
     steps:
       - name: Checkout

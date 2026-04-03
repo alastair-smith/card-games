@@ -323,9 +323,23 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
       gameOverPromise.then(() => 'gameOver' as const),
       (async () => {
         for (const { page, movePicker, pickupStrategy } of players) {
-          if (await isWaitingForOtherPlayer(page)) continue;
-          if (await tryTakeTurn(page, movePicker, pickupStrategy))
-            return 'turnTaken' as const;
+          try {
+            if (await isWaitingForOtherPlayer(page)) continue;
+            if (await tryTakeTurn(page, movePicker, pickupStrategy))
+              return 'turnTaken' as const;
+          } catch (error) {
+            const snapshot = await getGameSnapshot(
+              [
+                { page: p1, label: 'Player 1 (optimal)' },
+                { page: p2, label: 'Player 2 (worst)' },
+                { page: p3, label: 'Player 3 (worst)' },
+              ],
+              i,
+            );
+            throw new Error(
+              `Turn failed at iteration ${i}: ${error instanceof Error ? error.message : error}\n\n${snapshot}`,
+            );
+          }
         }
         return 'noAction' as const;
       })(),
