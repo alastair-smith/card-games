@@ -22,12 +22,13 @@ import {
   type PictureCardRank,
   type PlayingCardValue,
   RANK_DISPLAY,
+  RANK_FULL_NAME,
   Rank,
   Suit,
   suitColor,
   ZERO_RANK,
 } from '~/types/cards';
-import { isPictureCard } from '~/utils/cards';
+import { cardAriaLabel, isPictureCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 
 const RANK_FACE_SYMBOL_SIZE = '0.61em';
@@ -61,7 +62,6 @@ export function PlayingCard({
   design,
   style,
   border,
-  testId,
   ariaLabel,
 }: {
   card: PlayingCardValue | null;
@@ -73,7 +73,6 @@ export function PlayingCard({
   design?: 'default' | 'simple';
   style?: CSSProperties;
   border?: boolean;
-  testId?: string;
   ariaLabel?: string;
 }) {
   const highlightedClass = highlighted
@@ -104,14 +103,19 @@ export function PlayingCard({
     className,
   );
 
+  const resolvedAriaLabel = ariaLabel ?? cardAriaLabel(card);
+  const dataAttributes = card
+    ? { 'data-suit': card.suit, 'data-rank': RANK_FULL_NAME[card.rank] }
+    : {};
+
   if (onClick) {
     return (
       <button
         type='button'
         onClick={onClick}
         style={style}
-        data-testid={testId}
-        aria-label={ariaLabel}
+        aria-label={resolvedAriaLabel}
+        {...dataAttributes}
         className={cn(
           sharedClassName,
           'cursor-pointer rounded-[0.22em] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -123,7 +127,13 @@ export function PlayingCard({
   }
 
   return (
-    <div style={style} className={sharedClassName}>
+    <div
+      role='img'
+      style={style}
+      aria-label={resolvedAriaLabel}
+      {...dataAttributes}
+      className={sharedClassName}
+    >
       {cardContent}
     </div>
   );
@@ -284,7 +294,7 @@ export function PlayingCardBack({ className }: { className?: string }) {
       <div
         className={cn(
           'w-[calc(100%-0.44em)] h-[calc(100%-0.44em)]',
-          'bg-red-200 [background-image:repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
+          'bg-red-200 bg-[repeating-linear-gradient(45deg,transparent,transparent_0.28em,#ef9a9a_0.28em,#ef9a9a_0.56em)]',
         )}
       />
     </div>

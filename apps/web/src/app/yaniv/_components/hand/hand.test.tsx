@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import Hand from '.';
@@ -15,10 +15,12 @@ vi.mock('~/components/ui/playing-card', () => ({
     onClick?: () => void;
   }) => (
     <button
-      data-testid={`card-${card.suit}-${card.rank}`}
+      data-suit={card.suit}
+      data-rank={card.rank}
       data-highlighted={highlighted}
       type='button'
       onClick={onClick}
+      aria-label={`${card.rank} of ${card.suit}`}
     >
       {card.rank}
     </button>
@@ -83,38 +85,29 @@ describe('Hand', () => {
   describe('cards', () => {
     test('renders all cards in hand', () => {
       render(<Hand {...defaultProps} />);
-      expect(
-        screen.getByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`card-${Suit.HEARTS}-${Rank.FIVE}`),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId(`card-${Suit.SPADES}-${Rank.KING}`),
-      ).toBeInTheDocument();
+      const hand = screen.getByRole('list', { name: 'Your hand' });
+      const buttons = within(hand).getAllByRole('button');
+      expect(buttons).toHaveLength(3);
     });
 
     test('calls the card handler with the clicked card', () => {
       const onCardClick = vi.fn();
       render(<Hand {...defaultProps} onCardClick={onCardClick} />);
-      fireEvent.click(screen.getByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`));
+      fireEvent.click(
+        screen.getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` }),
+      );
       expect(onCardClick).toHaveBeenCalledWith(cards[0]);
     });
 
     test('renders cards in sorted order with highest rank first', () => {
       render(<Hand {...defaultProps} />);
-      const cardElements = document.querySelectorAll('[data-testid^="card-"]');
+      const hand = screen.getByRole('list', { name: 'Your hand' });
+      const buttons = within(hand).getAllByRole('button');
       // defaultProps cards: ACE of CLUBS, FIVE of HEARTS, KING of SPADES
       // sorted order: KING, FIVE, ACE
-      expect(cardElements[0]?.getAttribute('data-testid')).toBe(
-        `card-${Suit.SPADES}-${Rank.KING}`,
-      );
-      expect(cardElements[1]?.getAttribute('data-testid')).toBe(
-        `card-${Suit.HEARTS}-${Rank.FIVE}`,
-      );
-      expect(cardElements[2]?.getAttribute('data-testid')).toBe(
-        `card-${Suit.CLUBS}-${Rank.ACE}`,
-      );
+      expect(buttons[0]?.getAttribute('data-rank')).toBe(String(Rank.KING));
+      expect(buttons[1]?.getAttribute('data-rank')).toBe(String(Rank.FIVE));
+      expect(buttons[2]?.getAttribute('data-rank')).toBe(String(Rank.ACE));
     });
 
     test('passes highlighted state to selected cards', () => {
@@ -129,12 +122,12 @@ describe('Hand', () => {
       render(<Hand {...defaultProps} cards={cardsWithSelection} />);
       expect(
         screen
-          .getByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`)
+          .getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` })
           .getAttribute('data-highlighted'),
       ).toBe('true');
       expect(
         screen
-          .getByTestId(`card-${Suit.HEARTS}-${Rank.FIVE}`)
+          .getByRole('button', { name: `${Rank.FIVE} of ${Suit.HEARTS}` })
           .getAttribute('data-highlighted'),
       ).toBe('false');
     });

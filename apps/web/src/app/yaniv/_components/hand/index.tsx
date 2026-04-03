@@ -38,41 +38,41 @@ export default function Hand({
 
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
-      <div
-        data-testid='player-hand'
+      <ol
+        aria-label='Your hand'
         className={cn(
-          'flex flex-row flex-wrap gap-2 rounded-lg p-2',
+          'flex flex-row flex-wrap gap-2 rounded-lg p-2 list-none',
           isActive ? 'animate-pulse-bg' : '',
         )}
       >
         {sortedCards.map((card) => (
-          <PlayingCard
-            key={`${card.suit}-${card.rank}`}
-            card={card}
-            highlighted={card.selected}
-            testId={`hand-card-${card.suit}-${card.rank}`}
-            onClick={onCardClick ? () => onCardClick(card) : undefined}
-          />
+          <li key={`${card.suit}-${card.rank}`}>
+            <PlayingCard
+              card={card}
+              highlighted={card.selected}
+              onClick={onCardClick ? () => onCardClick(card) : undefined}
+            />
+          </li>
         ))}
         {Array.from({ length: HAND_SIZE - cards.length }).map((_, index) => (
-          <div
+          <li
             // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
             key={`placeholder-${index}`}
             className={cn(PLAYING_CARD_PROPORTIONS, 'invisible')}
             aria-hidden='true'
           />
         ))}
-      </div>
+      </ol>
 
       <div className='flex flex-col bg-alt-background rounded p-2 h-fit'>
         <div className='flex flex-col items-center'>
           <div>Hand total:</div>
-          <div
-            data-testid='hand-total'
+          <output
+            aria-label='Hand total'
             className='min-w-[2ch] text-2xl font-semibold'
           >
             {handTotal}
-          </div>
+          </output>
         </div>
         <div className='text-sm'>
           Your total score is{' '}

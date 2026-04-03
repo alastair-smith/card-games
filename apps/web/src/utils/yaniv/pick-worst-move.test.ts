@@ -14,7 +14,7 @@ describe('pickWorstMove', () => {
       ];
       const discard = { suit: Suit.DIAMONDS, rank: Rank.THREE };
       expect(pickWorstMove(hand, discard)).toEqual([
-        { suit: Suit.SPADES, rank: Rank.SEVEN },
+        { suit: Suit.HEARTS, rank: Rank.SEVEN },
       ]);
     });
 

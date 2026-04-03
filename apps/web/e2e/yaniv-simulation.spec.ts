@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { JOKER_RANK, Rank } from '../src/types/cards';
+import { JOKER_RANK, RANK_FULL_NAME, Rank } from '../src/types/cards';
 import {
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
@@ -12,12 +12,19 @@ import { pickWorstMove } from '../src/utils/yaniv/pick-worst-move';
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Re-constructs a YanivPlayingCard from a `hand-card-{suit}-{rank}` testid. */
-function parseCardFromTestId(testId: string): YanivPlayingCard {
-  const rest = testId.replace(/^hand-card-/, '');
-  const lastDash = rest.lastIndexOf('-');
-  const suit = rest.substring(0, lastDash);
-  const rankStr = rest.substring(lastDash + 1);
+/** Reverse lookup from RANK_FULL_NAME value (e.g. "A", "K", "7") back to the rank. */
+const DISPLAY_TO_RANK = Object.fromEntries(
+  Object.entries(RANK_FULL_NAME).map(([rank, display]) => [display, rank]),
+);
+
+/** Re-constructs a YanivPlayingCard from data-suit / data-rank attributes on an element. */
+async function parseCardFromElement(
+  element: import('@playwright/test').Locator,
+): Promise<YanivPlayingCard | null> {
+  const suit = await element.getAttribute('data-suit');
+  const rankDisplay = await element.getAttribute('data-rank');
+  if (!suit || !rankDisplay) return null;
+  const rankStr = DISPLAY_TO_RANK[rankDisplay] ?? rankDisplay;
   return {
     suit,
     rank: rankStr === JOKER_RANK ? JOKER_RANK : Number(rankStr),
@@ -25,29 +32,26 @@ function parseCardFromTestId(testId: string): YanivPlayingCard {
 }
 
 async function getHandCards(page: Page): Promise<YanivPlayingCard[]> {
-  const hand = page.getByTestId('player-hand');
-  const buttons = await hand.locator('[data-testid^="hand-card-"]').all();
+  const hand = page.getByRole('list', { name: 'Your hand' });
+  const buttons = await hand.getByRole('button').all();
   const cards: YanivPlayingCard[] = [];
   for (const btn of buttons) {
-    const testId = await btn.getAttribute('data-testid');
-    if (testId) cards.push(parseCardFromTestId(testId));
+    const card = await parseCardFromElement(btn);
+    if (card) cards.push(card);
   }
   return cards;
 }
 
 async function getDiscardCard(page: Page): Promise<YanivPlayingCard> {
-  const el = page.getByTestId('top-discard');
-  const suit = await el.getAttribute('data-suit');
-  const rankStr = await el.getAttribute('data-rank');
-  if (!suit || !rankStr) throw new Error('Discard card not found in DOM');
-  return {
-    suit,
-    rank: rankStr === JOKER_RANK ? JOKER_RANK : Number(rankStr),
-  } as YanivPlayingCard;
+  const pile = page.getByLabel('Discard pile');
+  const cardElement = pile.locator('[data-suit]').first();
+  const card = await parseCardFromElement(cardElement);
+  if (!card) throw new Error('Discard card not found in DOM');
+  return card;
 }
 
 async function getHandTotal(page: Page): Promise<number> {
-  const text = await page.getByTestId('hand-total').textContent();
+  const text = await page.getByLabel('Hand total').textContent();
   return Number(text?.trim() ?? '0');
 }
 
@@ -185,10 +189,11 @@ async function tryTakeTurn(
     const discard = await getDiscardCard(page);
     const cardsToPlay = movePicker(hand, discard);
 
-    const handGroup = page.getByTestId('player-hand');
+    const handGroup = page.getByRole('list', { name: 'Your hand' });
     for (const card of cardsToPlay) {
+      const rankDisplay = RANK_FULL_NAME[card.rank];
       await handGroup
-        .getByTestId(`hand-card-${card.suit}-${card.rank}`)
+        .locator(`[data-suit="${card.suit}"][data-rank="${rankDisplay}"]`)
         .click({ timeout: 5_000 });
     }
     try {
@@ -217,8 +222,8 @@ async function tryTakeTurn(
       const discard = await getDiscardCard(page);
       if (shouldPickupDiscard(discard)) {
         await page
-          .getByTestId('top-discard')
-          .locator('button')
+          .getByLabel('Discard pile')
+          .getByRole('button')
           .click({ timeout: 5_000 });
       } else {
         await deckBtn.click({ timeout: 5_000 });

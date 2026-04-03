@@ -102,16 +102,10 @@ export default function PlayArea({
         />
         <PlayingCardDiscardPile>
           {discardCard && (
-            <div
-              data-testid='top-discard'
-              data-suit={discardCard.suit}
-              data-rank={String(discardCard.rank)}
-            >
-              <PlayingCard
-                card={discardCard}
-                onClick={isActive ? onDiscardClick : undefined}
-              />
-            </div>
+            <PlayingCard
+              card={discardCard}
+              onClick={isActive ? onDiscardClick : undefined}
+            />
           )}
         </PlayingCardDiscardPile>
       </div>
