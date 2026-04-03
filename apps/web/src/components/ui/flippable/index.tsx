@@ -32,12 +32,7 @@ type FlippableFrontProps = {
 
 export function FlippableFront({ children, className }: FlippableFrontProps) {
   return (
-    <div
-      className={cn(
-        'absolute w-full h-full backface-hidden',
-        className,
-      )}
-    >
+    <div className={cn('absolute w-full h-full backface-hidden', className)}>
       {children}
     </div>
   );
