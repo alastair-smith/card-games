@@ -57,22 +57,6 @@ export enum Rank {
   ACE = 14,
 }
 
-export const RANK_FULL_NAME = {
-  [Rank.TWO]: 'Two',
-  [Rank.THREE]: 'Three',
-  [Rank.FOUR]: 'Four',
-  [Rank.FIVE]: 'Five',
-  [Rank.SIX]: 'Six',
-  [Rank.SEVEN]: 'Seven',
-  [Rank.EIGHT]: 'Eight',
-  [Rank.NINE]: 'Nine',
-  [Rank.TEN]: 'Ten',
-  [Rank.JACK]: 'Jack',
-  [Rank.QUEEN]: 'Queen',
-  [Rank.KING]: 'King',
-  [Rank.ACE]: 'Ace',
-};
-
 export const rankSchema = z.enum(Rank);
 
 export const RANKS = [
@@ -144,6 +128,24 @@ export const RANK_DISPLAY = {
   [Rank.ACE]: 'A',
   [JOKER_RANK]: 'JOKER',
   [ZERO_RANK]: '0',
+} as const satisfies Record<Rank | JokerRank | ZeroRank, string>;
+
+export const RANK_FULL_NAME = {
+  [Rank.TWO]: 'Two',
+  [Rank.THREE]: 'Three',
+  [Rank.FOUR]: 'Four',
+  [Rank.FIVE]: 'Five',
+  [Rank.SIX]: 'Six',
+  [Rank.SEVEN]: 'Seven',
+  [Rank.EIGHT]: 'Eight',
+  [Rank.NINE]: 'Nine',
+  [Rank.TEN]: 'Ten',
+  [Rank.JACK]: 'Jack',
+  [Rank.QUEEN]: 'Queen',
+  [Rank.KING]: 'King',
+  [Rank.ACE]: 'Ace',
+  [JOKER_RANK]: 'Joker',
+  [ZERO_RANK]: 'Zero',
 } as const satisfies Record<Rank | JokerRank | ZeroRank, string>;
 
 /* [---------------- Cards ----------------] */

@@ -13,6 +13,9 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:start-server": "node src/server.js",
     "test:integration": "vitest --config vitest.integration.config.js run",
     "test:watch": "vitest --watch"
   },
@@ -64,6 +67,7 @@
     "@types/node": "^22.18.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@playwright/test": "^1.50.0",
     "@vitejs/plugin-react": "^5.1.4",
     "jsdom": "^28.1.0",
     "pino-pretty": "^13.1.3",

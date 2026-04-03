@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - name: Run lint
         run: pnpm lint
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - name: Run test
         run: pnpm test
@@ -36,7 +36,7 @@ jobs:
       REDIS_CONNECTION_STRING: redis://localhost:6379
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - name: Run integration tests
         run: pnpm turbo run test:integration
@@ -46,7 +46,67 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build
+        env:
+          SKIP_ENV_VALIDATION: "true"
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-output
+          path: apps/web/.next
+          include-hidden-files: true
+
+  test-e2e:
+    name: E2E Tests (${{ matrix.project }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - chromium-desktop
+          - chromium-mobile
+          - firefox-desktop
+          - firefox-mobile
+        include:
+          - project: chromium-desktop
+            browser: chromium
+          - project: chromium-mobile
+            browser: chromium
+          - project: firefox-desktop
+            browser: firefox
+          - project: firefox-mobile
+            browser: firefox
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+    env:
+      REDIS_CONNECTION_STRING: redis://localhost:6379
+      AUTH_SECRET: "test-secret-at-least-32-characters-long!!"
+      NODE_ENV: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: build-output
+          path: apps/web/.next
+      - name: Install Playwright browsers
+        run: pnpm --filter @repo/web exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Run E2E tests
+        run: pnpm --filter @repo/web test:e2e --project=${{ matrix.project }}
+      - name: Upload Playwright trace
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-traces-${{ matrix.project }}
+          path: apps/web/test-results
+          if-no-files-found: ignore
+          retention-days: 7

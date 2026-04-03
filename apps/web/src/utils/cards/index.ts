@@ -1,7 +1,9 @@
 import {
+  JOKER_RANK,
   type PictureCardRank,
   type PlayingCardValue,
   pictureCardRank,
+  RANK_FULL_NAME,
 } from '~/types/cards';
 export const isPictureCard = (
   card: PlayingCardValue,
@@ -10,6 +12,19 @@ export const isPictureCard = (
     (pictureCardRank) => pictureCardRank === card.rank,
   );
 };
+
+function capitalize(str: string): string {
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+}
+
+/** Returns a human-readable label for a playing card, e.g. "Ace of Spades" or "Red Joker". */
+export function cardAriaLabel(card: PlayingCardValue | null): string {
+  if (!card) return 'Facedown card';
+  if (card.rank === JOKER_RANK) {
+    return `${capitalize(card.suit)} Joker`;
+  }
+  return `${RANK_FULL_NAME[card.rank]} of ${capitalize(card.suit)}`;
+}
 
 export const shuffle = <T>(deck: T[]): T[] => {
   const newDeck = [...deck];

@@ -7,6 +7,8 @@ node_modules
 
 # testing
 coverage
+test-results/
+*.zip
 
 # next.js
 .next/

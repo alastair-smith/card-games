@@ -98,6 +98,7 @@ export default function PlayArea({
           drawnCardDisplay={showOverlay ? displayedCard : undefined}
           onDrawnCardClick={handleDrawnCardClick}
           drawnCardClassName={exitClassName}
+          ariaLabel='Draw from deck'
         />
         <PlayingCardDiscardPile>
           {discardCard && (
