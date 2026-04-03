@@ -14,7 +14,7 @@ export const isPictureCard = (
 };
 
 function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }
 
 /** Returns a human-readable label for a playing card, e.g. "Ace of Spades" or "Red Joker". */
