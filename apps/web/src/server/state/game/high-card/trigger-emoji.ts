@@ -11,7 +11,7 @@ export const triggerEmojiState = async (
 ) => {
   const lobby = await getLobby({ code });
 
-  if (!lobby || !lobby.players.some(({ id }) => id === userId)) {
+  if (!lobby?.players.some(({ id }) => id === userId)) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You are not in this game.',
