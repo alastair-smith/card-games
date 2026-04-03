@@ -4,6 +4,24 @@ on:
   - pull_request
 
 jobs:
+  pr-title:
+    name: PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [[ ! "$PR_TITLE" =~ ^(🚀|🔧|📚|🐛)[[:space:]][A-Z] ]]; then
+            echo "::error::PR title must start with one of 🚀 🔧 📚 🐛 followed by a space and a capital letter."
+            echo "Examples:"
+            echo "  🚀 Add new feature"
+            echo "  🐛 Fix card rendering bug"
+            echo "  🔧 Update dependencies"
+            echo "  📚 Document API endpoints"
+            exit 1
+          fi
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
