@@ -2,15 +2,16 @@
 
 import { ClockIcon, UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import Image from '~/components/ui/image';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import { GameType, gameDisplayName, gameURL } from '~/types/game';
 import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
+import { HighCardThumbnail } from './thumbnails/high-card';
+import { YanivThumbnail } from './thumbnails/yaniv';
 
 enum GameLength {
   short = 'Fast Game',
@@ -20,7 +21,7 @@ enum GameLength {
 
 type GameProps = {
   gameType: GameType;
-  image: string;
+  thumbnail: ReactNode;
   players: {
     min: number;
     max: number;
@@ -28,14 +29,13 @@ type GameProps = {
   length: GameLength;
   summary: string;
   disabled?: boolean;
-  preloadImage?: boolean;
 };
 
 // TODO update min + max players
 const games: GameProps[] = [
   {
     gameType: GameType.HIGH_CARD,
-    image: '/images/high-card.square.png',
+    thumbnail: <HighCardThumbnail />,
     players: {
       min: MIN_PLAYERS,
       max: MAX_PLAYERS,
@@ -43,11 +43,10 @@ const games: GameProps[] = [
     length: GameLength.short,
     summary:
       'High Card is a simple luck-based game where the player with the highest card wins.',
-    preloadImage: true,
   },
   {
     gameType: GameType.YANIV,
-    image: '/images/yaniv.square.png',
+    thumbnail: <YanivThumbnail />,
     players: {
       min: 2,
       max: 5,
@@ -55,11 +54,10 @@ const games: GameProps[] = [
     length: GameLength.medium,
     summary: 'Win hands hands worth under 7 points and call Yaniv!',
     disabled: true,
-    preloadImage: true,
   },
   // {
   //   gameType: GameType.BLOB,
-  //   image: '/images/blob.square.png',
+  //   thumbnail: <BlobThumbnail />,
   //   players: {
   //     min: 3,
   //     max: 6,
@@ -70,7 +68,7 @@ const games: GameProps[] = [
   // },
   // {
   //   gameType: GameType.SHITHEAD,
-  //   image: '/images/shithead.square.png',
+  //   thumbnail: <ShitheadThumbnail />,
   //   players: {
   //     min: 2,
   //     max: 4,
@@ -82,7 +80,7 @@ const games: GameProps[] = [
   // },
   // {
   //   gameType: GameType.FOOL,
-  //   image: '/images/fool.square.png',
+  //   thumbnail: <FoolThumbnail />,
   //   players: {
   //     min: 2,
   //     max: 4,
@@ -96,12 +94,11 @@ const games: GameProps[] = [
 function Game({
   className,
   gameType,
-  image,
+  thumbnail,
   players,
   length,
   summary,
   disabled = false,
-  preloadImage = false,
 }: GameProps & { className?: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -126,14 +123,12 @@ function Game({
         <div className='flex flex-col gap-3 justify-between w-full'>
           <GameStats players={players} length={length} />
 
-          <Image
-            className='block sm:hidden self-center rounded-lg'
-            src={image}
-            alt={name}
-            width={250}
-            height={250}
-            priority={preloadImage}
-          />
+          <div
+            aria-hidden='true'
+            className='flex sm:hidden items-center justify-center self-center rounded-lg bg-main-background h-[250px] w-[250px]'
+          >
+            {thumbnail}
+          </div>
 
           <p className='flex-1'>{summary}</p>
 
@@ -151,14 +146,9 @@ function Game({
           </Button>
         </div>
 
-        <Image
-          className='hidden sm:block rounded-lg'
-          src={image}
-          alt={`Image of ${name} game`}
-          width={250}
-          height={250}
-          priority={preloadImage}
-        />
+        <div className='hidden sm:flex items-center justify-center rounded-lg bg-main-background h-[250px] w-[250px] shrink-0'>
+          {thumbnail}
+        </div>
       </CardContent>
     </Card>
   );
