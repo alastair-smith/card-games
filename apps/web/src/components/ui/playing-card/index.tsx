@@ -11,7 +11,7 @@ import {
   SpadeIcon,
   SwordsIcon,
 } from 'lucide-react';
-import { type CSSProperties, createElement } from 'react';
+import { createElement } from 'react';
 import {
   FlippableBack,
   FlippableFront,
@@ -60,7 +60,6 @@ export function PlayingCard({
   selected,
   highlighted,
   design,
-  style,
   border,
   ariaLabel,
 }: {
@@ -71,7 +70,6 @@ export function PlayingCard({
   selected?: boolean;
   highlighted?: boolean;
   design?: 'default' | 'simple';
-  style?: CSSProperties;
   border?: boolean;
   ariaLabel?: string;
 }) {
@@ -114,7 +112,6 @@ export function PlayingCard({
       <button
         type='button'
         onClick={onClick}
-        style={style}
         aria-label={resolvedAriaLabel}
         {...dataAttributes}
         className={cn(
@@ -130,7 +127,6 @@ export function PlayingCard({
   return (
     <div
       role='img'
-      style={style}
       aria-label={resolvedAriaLabel}
       {...dataAttributes}
       className={sharedClassName}
