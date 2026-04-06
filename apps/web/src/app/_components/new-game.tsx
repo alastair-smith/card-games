@@ -53,7 +53,6 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Win hands hands worth under 7 points and call Yaniv!',
-    disabled: true,
   },
   // {
   //   gameType: GameType.BLOB,
