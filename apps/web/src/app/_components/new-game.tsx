@@ -52,7 +52,7 @@ const games: GameProps[] = [
       max: 5,
     },
     length: GameLength.medium,
-    summary: 'Win hands hands worth under 7 points and call Yaniv!',
+    summary: 'Win hands worth under 7 points and call Yaniv!',
   },
   // {
   //   gameType: GameType.BLOB,
