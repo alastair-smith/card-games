@@ -46,7 +46,7 @@ export default function Hand({
         )}
       >
         {sortedCards.map((card) => (
-          <li key={`${card.suit}-${card.rank}`}>
+          <li key={`${card.suit}-${card.rank}`} className='flex'>
             <PlayingCard
               card={card}
               highlighted={card.selected}
