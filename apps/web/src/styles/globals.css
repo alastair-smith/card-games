@@ -44,6 +44,14 @@
   --color-danger: var(--color-red);
   --color-danger-disabled: hsl(from var(--color-red) h s 90%);
 
+  /* suit colors */
+  --color-spades: hsl(207.86, 43.75%, 12.55%);
+  --color-hearts: hsl(0, 100%, 50%);
+  --color-diamonds: var(--color-hearts);
+  --color-clubs: var(--color-spades);
+  --color-joker-black: var(--color-spades);
+  --color-joker-red: var(--color-hearts);
+
   --animate-accoridion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-rain: rain 10s linear forwards;

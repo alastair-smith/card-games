@@ -28,15 +28,15 @@ export const JOKER_SUITS = [
   JokerSuit.BLACK,
 ] as const satisfies JokerSuit[];
 
-export const jokerSuitSchema = z.enum(JokerSuit);
+const jokerSuitSchema = z.enum(JokerSuit);
 
-export const suitColor = {
-  [Suit.SPADES]: '#12212E',
-  [Suit.HEARTS]: '#ff0000',
-  [Suit.DIAMONDS]: '#ff0000',
-  [Suit.CLUBS]: '#12212E',
-  [JokerSuit.BLACK]: '#12212E',
-  [JokerSuit.RED]: '#ff0000',
+export const suitColorClass = {
+  [Suit.SPADES]: 'text-spades',
+  [Suit.HEARTS]: 'text-hearts',
+  [Suit.DIAMONDS]: 'text-diamonds',
+  [Suit.CLUBS]: 'text-clubs',
+  [JokerSuit.BLACK]: 'text-joker-black',
+  [JokerSuit.RED]: 'text-joker-red',
 } as const satisfies Record<Suit | JokerSuit, string>;
 
 /* [---------------- Ranks ----------------] */

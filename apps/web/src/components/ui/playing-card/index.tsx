@@ -11,7 +11,7 @@ import {
   SpadeIcon,
   SwordsIcon,
 } from 'lucide-react';
-import { type CSSProperties, createElement } from 'react';
+import { createElement } from 'react';
 import {
   FlippableBack,
   FlippableFront,
@@ -25,7 +25,7 @@ import {
   RANK_FULL_NAME,
   Rank,
   Suit,
-  suitColor,
+  suitColorClass,
   ZERO_RANK,
 } from '~/types/cards';
 import { cardAriaLabel, isPictureCard } from '~/utils/cards';
@@ -60,7 +60,6 @@ export function PlayingCard({
   selected,
   highlighted,
   design,
-  style,
   border,
   ariaLabel,
 }: {
@@ -71,7 +70,6 @@ export function PlayingCard({
   selected?: boolean;
   highlighted?: boolean;
   design?: 'default' | 'simple';
-  style?: CSSProperties;
   border?: boolean;
   ariaLabel?: string;
 }) {
@@ -114,7 +112,6 @@ export function PlayingCard({
       <button
         type='button'
         onClick={onClick}
-        style={style}
         aria-label={resolvedAriaLabel}
         {...dataAttributes}
         className={cn(
@@ -130,7 +127,6 @@ export function PlayingCard({
   return (
     <div
       role='img'
-      style={style}
       aria-label={resolvedAriaLabel}
       {...dataAttributes}
       className={sharedClassName}
@@ -156,16 +152,15 @@ function PlayingCardFace({
       />
     );
 
-  const color = suitColor[card.suit];
   const isSimple = design === 'simple';
 
   return (
     <div
       className={cn(
         'flex flex-col bg-white p-[0.22em] rounded-[0.22em] w-full h-full',
+        suitColorClass[card.suit],
         className,
       )}
-      style={{ color }}
     >
       <div
         className={cn(
@@ -175,19 +170,18 @@ function PlayingCardFace({
       >
         <div className={cn('font-bold')}>{RANK_DISPLAY[card.rank]}</div>
         {card.rank !== JOKER_RANK &&
-          createElement(suitSymbol[card.suit], { fill: color, size: '0.8em' })}
+          createElement(suitSymbol[card.suit], {
+            fill: 'currentColor',
+            size: '0.8em',
+          })}
       </div>
 
       {!isSimple && (
         <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
-            <PictureCardContent card={card} color={color} />
+            <PictureCardContent card={card} />
           ) : (
-            <RankContent
-              rank={Number(card.rank)}
-              suit={card.suit}
-              color={color}
-            />
+            <RankContent rank={Number(card.rank)} suit={card.suit} />
           )}
         </div>
       )}
@@ -197,10 +191,8 @@ function PlayingCardFace({
 
 function PictureCardContent({
   card,
-  color,
 }: {
   card: PlayingCardValue & { rank: PictureCardRank };
-  color: string;
 }) {
   if (card.rank === ZERO_RANK) {
     return <div className={cn('font-bold text-[2.5em] leading-none')}>0</div>;
@@ -213,19 +205,14 @@ function PictureCardContent({
   const useFill = card.rank === Rank.ACE || card.rank === Rank.JACK;
 
   return (
-    <PictureSymbol className='size-full' fill={useFill ? color : 'none'} />
+    <PictureSymbol
+      className='size-full'
+      fill={useFill ? 'currentColor' : 'none'}
+    />
   );
 }
 
-function RankContent({
-  rank,
-  suit,
-  color,
-}: {
-  rank: number;
-  suit: Suit;
-  color: string;
-}) {
+function RankContent({ rank, suit }: { rank: number; suit: Suit }) {
   const symbolSize = RANK_FACE_SYMBOL_SIZE;
   const SuitSymbol = suitSymbol[suit];
 
@@ -234,7 +221,7 @@ function RankContent({
       <div className='grid grid-cols-1 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={symbolSize} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill='currentColor' />
         ))}
       </div>
     );
@@ -245,7 +232,7 @@ function RankContent({
       <div className='grid grid-cols-2 w-full h-full place-items-center'>
         {Array.from({ length: rank }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={symbolSize} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill='currentColor' />
         ))}
       </div>
     );
@@ -259,25 +246,29 @@ function RankContent({
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={symbolSize} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill='currentColor' />
         ))}
       </div>
       <div className='h-full flex flex-col justify-around'>
         {Array.from({ length: shortColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={symbolSize} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill='currentColor' />
         ))}
         {
           // sneaky hack as the middle col of 7 is not centered
           rank === 7 && (
-            <SuitSymbol size={symbolSize} fill={color} className='invisible' />
+            <SuitSymbol
+              size={symbolSize}
+              fill='currentColor'
+              className='invisible'
+            />
           )
         }
       </div>
       <div className='h-full flex flex-col justify-between'>
         {Array.from({ length: longColLength }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: used for same symbols
-          <SuitSymbol key={i} size={symbolSize} fill={color} />
+          <SuitSymbol key={i} size={symbolSize} fill='currentColor' />
         ))}
       </div>
     </div>
