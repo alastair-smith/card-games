@@ -8,41 +8,41 @@ async function joinLobby(page: Page, gameUrl: string): Promise<void> {
     .click();
 }
 
-test('create a game and see it start', async ({ browser }) => {
-  const ctx1 = await browser.newContext();
+// p1 uses the `page` fixture so it inherits baseURL from the config (the
+// `browser` fixture does not inherit baseURL, so relative URLs would fail).
+// p2/p3 navigate to the absolute gameUrl and don't need it.
+test('create a game and see it start', async ({ page, browser }) => {
   const ctx2 = await browser.newContext();
   const ctx3 = await browser.newContext();
 
-  const p1 = await ctx1.newPage();
   const p2 = await ctx2.newPage();
   const p3 = await ctx3.newPage();
 
   try {
     // Player 1 creates the game
-    await p1.goto('/yaniv');
-    await p1.waitForURL(/\/yaniv\/[A-Z0-9]+/, { timeout: 15_000 });
-    const gameUrl = p1.url();
+    await page.goto('/yaniv');
+    await page.waitForURL(/\/yaniv\/[A-Z0-9]+/, { timeout: 15_000 });
+    const gameUrl = page.url();
 
     // Players 2 and 3 join
     await Promise.all([joinLobby(p2, gameUrl), joinLobby(p3, gameUrl)]);
 
     // Player 1 marks ready
-    await p1
+    await page
       .getByRole('switch')
-      .filter({ hasNot: p1.locator('[data-disabled]') })
+      .filter({ hasNot: page.locator('[data-disabled]') })
       .click();
 
     // All players ready — host starts the game
-    const startBtn = p1.getByRole('button', { name: 'Start Game' });
+    const startBtn = page.getByRole('button', { name: 'Start Game' });
     await startBtn.waitFor({ state: 'visible', timeout: 15_000 });
     await startBtn.click();
 
     // Verify the game board is visible for all players
-    await expect(p1.getByRole('list', { name: 'Your hand' })).toBeVisible();
+    await expect(page.getByRole('list', { name: 'Your hand' })).toBeVisible();
     await expect(p2.getByRole('list', { name: 'Your hand' })).toBeVisible();
     await expect(p3.getByRole('list', { name: 'Your hand' })).toBeVisible();
   } finally {
-    await ctx1.close();
     await ctx2.close();
     await ctx3.close();
   }
