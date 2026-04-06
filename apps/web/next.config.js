@@ -39,6 +39,7 @@ const config = {
       },
     ],
   },
+  output: 'standalone',
   poweredByHeader: false,
   serverExternalPackages: ['sequelize', 'pino', 'pino-pretty'],
 };

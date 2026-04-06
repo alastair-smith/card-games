@@ -19,7 +19,7 @@ COPY apps/web/package.json apps/web/
 RUN pnpm install --frozen-lockfile
 
 # ---------------------------------------------------------------------------
-# Stage 2: Build the Next.js app
+# Stage 2: Build the Next.js app + extract production dependencies
 # ---------------------------------------------------------------------------
 FROM node:22-alpine AS builder
 WORKDIR /repo
@@ -37,24 +37,11 @@ COPY . .
 ENV SKIP_ENV_VALIDATION=true
 RUN pnpm --filter @repo/web build
 
-# ---------------------------------------------------------------------------
-# Stage 3: Prune to production-only dependencies via pnpm deploy
-# ---------------------------------------------------------------------------
-FROM node:22-alpine AS prod-deps
-WORKDIR /repo
-
-RUN corepack enable
-
-COPY --from=builder /repo/.tool-versions ./
-RUN PNPM_VERSION=$(grep '^pnpm' .tool-versions | awk '{print $2}') && \
-    corepack prepare pnpm@${PNPM_VERSION} --activate
-
-COPY --from=builder /repo .
-
-RUN pnpm --filter @repo/web deploy --prod --legacy /deploy
+# Extract production-only dependencies for the custom server
+RUN pnpm --filter @repo/web deploy --prod --legacy /prod-deps
 
 # ---------------------------------------------------------------------------
-# Stage 4: Minimal production runtime image
+# Stage 3: Minimal production runtime image
 # ---------------------------------------------------------------------------
 FROM node:22-alpine AS runner
 WORKDIR /app
@@ -65,11 +52,23 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 --ingroup nodejs nextjs
 
-# App code + production node_modules from pnpm deploy
-COPY --from=prod-deps --chown=nextjs:nodejs /deploy ./
+# Standalone output (includes server code + traced node_modules)
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
 
-# Built Next.js output (not included in pnpm deploy)
-COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next ./.next
+# Static assets (not included in standalone trace)
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
+
+# Public assets
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
+
+# Custom server + env validation (not included in standalone trace)
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/src/server.js ./apps/web/src/server.js
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/src/env.js ./apps/web/src/env.js
+
+# Production dependencies for the custom server (standalone doesn't trace these)
+COPY --from=builder --chown=nextjs:nodejs /prod-deps/node_modules ./apps/web/node_modules
+
+WORKDIR /app/apps/web
 
 USER nextjs
 
