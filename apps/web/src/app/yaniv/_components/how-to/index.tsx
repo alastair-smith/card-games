@@ -19,7 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { JOKER_RANK, JokerSuit, Rank, Suit, suitColor } from '~/types/cards';
+import {
+  JOKER_RANK,
+  JokerSuit,
+  Rank,
+  Suit,
+  suitColorClass,
+} from '~/types/cards';
 import { cn } from '~/utils/cn';
 
 export function HowTo({ className }: { className?: string }) {
@@ -46,31 +52,33 @@ export function HowTo({ className }: { className?: string }) {
             You can play multiple of the same rank card from your hand at once.
             For example:{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.hearts }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.hearts,
+              )}
             >
               7
-              <HeartIcon
-                fill={suitColor.hearts}
-                size={12}
-                aria-label='hearts'
-              />
+              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
             </span>
             ,{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.clubs }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.clubs,
+              )}
             >
-              7<ClubIcon fill={suitColor.clubs} size={12} aria-label='clubs' />
+              7<ClubIcon fill='currentColor' size={12} aria-label='clubs' />
             </span>
             ,{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.diamonds }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.diamonds,
+              )}
             >
               7
               <DiamondIcon
-                fill={suitColor.diamonds}
+                fill='currentColor'
                 size={12}
                 aria-label='diamonds'
               />
@@ -80,39 +88,33 @@ export function HowTo({ className }: { className?: string }) {
           <li>
             You can also play a straight flush of 3 cards or more. For example:{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.hearts }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.hearts,
+              )}
             >
               8
-              <HeartIcon
-                fill={suitColor.hearts}
-                size={12}
-                aria-label='hearts'
-              />
+              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
             </span>
             ,{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.hearts }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.hearts,
+              )}
             >
               9
-              <HeartIcon
-                fill={suitColor.hearts}
-                size={12}
-                aria-label='hearts'
-              />
+              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
             </span>
             ,{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.hearts }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.hearts,
+              )}
             >
               10
-              <HeartIcon
-                fill={suitColor.hearts}
-                size={12}
-                aria-label='hearts'
-              />
+              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
             </span>
             .
           </li>
@@ -120,22 +122,26 @@ export function HowTo({ className }: { className?: string }) {
             If you play the same rank card as the top of the discard then you
             don't need to pickup. For example if the top of the discard pile is{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.diamonds }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.diamonds,
+              )}
             >
               4
               <DiamondIcon
-                fill={suitColor.diamonds}
+                fill='currentColor'
                 size={12}
                 aria-label='diamonds'
               />
             </span>{' '}
             and you have a{' '}
             <span
-              className='inline-flex items-center gap-0.5 font-bold'
-              style={{ color: suitColor.clubs }}
+              className={cn(
+                'inline-flex items-center gap-0.5 font-bold',
+                suitColorClass.clubs,
+              )}
             >
-              4<ClubIcon fill={suitColor.clubs} size={12} aria-label='clubs' />
+              4<ClubIcon fill='currentColor' size={12} aria-label='clubs' />
             </span>{' '}
             in your hand then you can play it without picking up a card.
           </li>
