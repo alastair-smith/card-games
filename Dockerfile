@@ -51,7 +51,7 @@ RUN PNPM_VERSION=$(grep '^pnpm' .tool-versions | awk '{print $2}') && \
 
 COPY --from=builder /repo .
 
-RUN pnpm --filter @repo/web deploy --prod /deploy
+RUN pnpm --filter @repo/web deploy --prod --legacy /deploy
 
 # ---------------------------------------------------------------------------
 # Stage 4: Minimal production runtime image
