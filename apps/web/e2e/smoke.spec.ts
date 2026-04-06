@@ -25,7 +25,8 @@ test('create a game and see it start', async ({ page, browser }) => {
     const gameUrl = page.url();
 
     // Players 2 and 3 join
-    await Promise.all([joinLobby(p2, gameUrl), joinLobby(p3, gameUrl)]);
+    await joinLobby(p2, gameUrl);
+    await joinLobby(p3, gameUrl);
 
     // Player 1 marks ready
     await page
