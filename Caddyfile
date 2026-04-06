@@ -1,0 +1,7 @@
+playcards.games {
+	reverse_proxy app:3000
+}
+
+www.playcards.games {
+	redir https://playcards.games{uri} permanent
+}
