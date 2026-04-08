@@ -173,6 +173,13 @@ export const EndTurn = () => (
   <Game {...defaultProps} stage={GameViewStage.END_TURN} />
 );
 
+export const SingleCardPlayed = () => (
+  <Game
+    {...defaultProps}
+    playedCards={[{ suit: Suit.DIAMONDS, rank: Rank.NINE }]}
+  />
+);
+
 export const BigHandPlayed = () => (
   <Game
     {...defaultProps}
