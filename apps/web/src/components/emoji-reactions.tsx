@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { type ReactionEmoji, reactionEmojis } from '~/types/game';
+
+const COOLDOWN_MS = 1000;
 
 type EmojiReactionsProps = {
   className?: string;
@@ -13,6 +16,15 @@ export function EmojiReactions({
   className,
   onEmojiClick,
 }: EmojiReactionsProps) {
+  const [isOnCooldown, setIsOnCooldown] = useState(false);
+
+  const handleClick = (emoji: ReactionEmoji) => {
+    if (isOnCooldown) return;
+    onEmojiClick(emoji);
+    setIsOnCooldown(true);
+    setTimeout(() => setIsOnCooldown(false), COOLDOWN_MS);
+  };
+
   return (
     <ButtonGroup className={className}>
       {reactionEmojis.map((emoji) => (
@@ -21,7 +33,7 @@ export function EmojiReactions({
           variant='secondary'
           size='sm'
           className='text-lg bg-alt-background'
-          onClick={() => onEmojiClick(emoji)}
+          onClick={() => handleClick(emoji)}
         >
           {emoji}
         </Button>
