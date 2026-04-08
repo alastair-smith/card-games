@@ -177,7 +177,7 @@ function PlayingCardFace({
       </div>
 
       {!isSimple && (
-        <div className='grid place-items-center p-[0.44em] border-[0.03em] rounded-[0.11em] flex-1'>
+        <div className='grid place-items-center p-[0.44em] border-[max(1px,0.03em)] rounded-[0.11em] flex-1'>
           {isPictureCard(card) ? (
             <PictureCardContent card={card} />
           ) : (
