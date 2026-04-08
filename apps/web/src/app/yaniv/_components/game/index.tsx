@@ -11,6 +11,7 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
+import { useYanivCalledToast } from './use-yaniv-called-toast';
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
@@ -65,6 +66,8 @@ export default function Game({
   canAutoPlay,
   onAutoPlayDrawnCard,
 }: GameProps) {
+  useYanivCalledToast(players);
+
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
   }, [players, userId]);
