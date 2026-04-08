@@ -1,20 +1,20 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import type { ReactionEmoji } from '~/types/game';
 import { cn } from '~/utils/cn';
 
 type Emoji = {
   id: string;
-  emoji: ReactionEmoji;
+  emoji: string;
   xPos: number;
   yPos: number;
 };
 
-type Reaction = { emoji: ReactionEmoji; id: number };
+type Reaction = { emoji: string; id: number };
 
 type EmojiRainProps = {
   children: ReactNode;
   className?: string;
   reaction?: Reaction;
+  count?: number;
 };
 
 const NUMBER_OF_EMOJIS = 20;
@@ -24,7 +24,12 @@ const PERCENTAGE_START_RANGE = -300; // start position range above the content i
 /**
  * Creates an effect of several emojis trickling down the screen
  */
-export function EmojiRain({ children, className, reaction }: EmojiRainProps) {
+export function EmojiRain({
+  children,
+  className,
+  reaction,
+  count = NUMBER_OF_EMOJIS,
+}: EmojiRainProps) {
   const [emojis, setEmojis] = useState<Emoji[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -34,14 +39,14 @@ export function EmojiRain({ children, className, reaction }: EmojiRainProps) {
     const containerWidth = containerRef.current.offsetWidth;
 
     setEmojis(
-      Array.from({ length: NUMBER_OF_EMOJIS }, () => ({
+      Array.from({ length: count }, () => ({
         xPos: Math.random() * (containerWidth - EMOJI_MAX_WIDTH),
         yPos: Math.random() * PERCENTAGE_START_RANGE,
         id: crypto.randomUUID(),
         emoji: reaction.emoji,
       })),
     );
-  }, [reaction]);
+  }, [reaction, count]);
 
   return (
     <div
