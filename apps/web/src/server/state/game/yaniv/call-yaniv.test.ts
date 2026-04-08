@@ -27,6 +27,7 @@ const { callYaniv } = await import('./call-yaniv');
 const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;
 const USER_2 = 'user-2' as UserId;
+const USER_3 = 'user-3' as UserId;
 
 // USER_1 hand sums to 5 (ACE=1, FOUR=4), USER_2 hand sums to 10 (FOUR=4, SIX=6)
 const makeState = (overrides: Partial<State> = {}): State => ({
@@ -268,6 +269,72 @@ describe('callYaniv', () => {
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(45);
     expect(savedState.currentPlayerId).toBe(USER_1);
+  });
+
+  test('preserves isYanivCalled flag of earlier callers when a second player calls Yaniv', async () => {
+    // USER_1 already called Yaniv; USER_2 now calls Yaniv; USER_3 has not yet had their turn
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({
+        currentPlayerId: USER_2,
+        players: [
+          {
+            id: USER_1,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.HEARTS, rank: Rank.ACE },
+              { suit: Suit.SPADES, rank: Rank.FOUR },
+            ],
+            name: 'Player 1' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: true,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+          {
+            id: USER_2,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.DIAMONDS, rank: Rank.TWO },
+              { suit: Suit.CLUBS, rank: Rank.THREE },
+            ],
+            name: 'Player 2' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+          {
+            id: USER_3,
+            cardCount: 2,
+            hand: [
+              { suit: Suit.SPADES, rank: Rank.TWO },
+              { suit: Suit.HEARTS, rank: Rank.SIX },
+            ],
+            name: 'Player 3' as PlayerName,
+            score: 0,
+            isFiftyScoreHalved: false,
+            isHundredScoreHalved: false,
+            isYanivCalled: false,
+            roundScore: { original: 0, adjusted: 0 },
+          },
+        ],
+      }),
+    );
+
+    await callYaniv(CODE, USER_2);
+
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    expect(savedState.players.find((p) => p.id === USER_1)?.isYanivCalled).toBe(
+      true,
+    );
+    expect(savedState.players.find((p) => p.id === USER_2)?.isYanivCalled).toBe(
+      true,
+    );
+    expect(savedState.players.find((p) => p.id === USER_3)?.isYanivCalled).toBe(
+      false,
+    );
   });
 
   test('advances to the next player', async () => {
