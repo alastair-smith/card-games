@@ -38,6 +38,12 @@ export function PageEmojiRain({
   const seenIds = useRef<Set<number>>(new Set());
 
   useEffect(() => {
+    // Prune seenIds for reactions no longer in the list so the set stays bounded
+    const currentIds = new Set(reactions.map((r) => r.id));
+    for (const id of seenIds.current) {
+      if (!currentIds.has(id)) seenIds.current.delete(id);
+    }
+
     if (!containerRef.current || reactions.length === 0) return;
 
     const containerWidth = containerRef.current.offsetWidth;

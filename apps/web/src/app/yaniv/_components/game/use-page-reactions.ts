@@ -67,7 +67,7 @@ export function usePageReactions(players: Player[]): PageReaction[] {
     );
 
     for (const reaction of newReactions) {
-      setReactions((previous) => [...previous, reaction]);
+      setReactions((current) => [...current, reaction]);
       const timeout = setTimeout(() => {
         setReactions((current) => current.filter((r) => r.id !== reaction.id));
         timeoutsRef.current.delete(reaction.id);

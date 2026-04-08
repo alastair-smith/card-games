@@ -73,7 +73,7 @@ describe('useYanivCalledToast', () => {
     rerender({ players: [alice, bob] }); // round resets
     rerender({ players: [{ ...alice, isYanivCalled: true }, bob] }); // calls again next round
 
-    expect(toast.info).callCount(2);
+    expect(toast.info).toHaveBeenCalledTimes(2);
     expect(toast.info).toHaveBeenCalledWith('Alice has called Yaniv!');
   });
 

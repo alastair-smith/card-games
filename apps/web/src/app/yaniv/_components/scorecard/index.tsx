@@ -33,6 +33,8 @@ export default function ScoreCard({
     >
       {reactionEmoji && (
         <div
+          // key changes on each new reaction, forcing React to remount the div
+          // and restart the CSS animation from the beginning
           key={reactionEmoji.id}
           className='absolute inset-0 flex items-center justify-center text-5xl animate-reaction-emoji pointer-events-none z-10'
         >
