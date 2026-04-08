@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
@@ -12,12 +11,12 @@ import {
   GameStep,
   GameViewStage,
   YANIV_CALL_THRESHOLD,
-  type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
 import { isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
+import { useCardSelection } from './use-card-selection';
 
 type Props = {
   code: GameCode;
@@ -44,10 +43,12 @@ export default function YanivGameController({
   gameState,
   reactions,
 }: Props) {
-  const [selectedCards, setSelectedCards] = useState<YanivPlayingCard[]>([]);
+  const { selectedCards, toggleCard, clearSelectedCards } = useCardSelection(
+    gameState.hand,
+  );
 
   const playCardsMutation = api.yaniv.playCards.useMutation({
-    onSuccess: () => setSelectedCards([]),
+    onSuccess: clearSelectedCards,
   });
   const pickupCardMutation = api.yaniv.pickupCard.useMutation();
   const callYanivMutation = api.yaniv.callYaniv.useMutation();
@@ -108,22 +109,6 @@ export default function YanivGameController({
   };
 
   const stage = deriveStage();
-
-  const handleCardToggle = (card: YanivPlayingCard) => {
-    setSelectedCards((prev) => {
-      const alreadySelected = prev.some(
-        (selected) =>
-          selected.rank === card.rank && selected.suit === card.suit,
-      );
-      if (alreadySelected) {
-        return prev.filter(
-          (selected) =>
-            selected.rank !== card.rank || selected.suit !== card.suit,
-        );
-      }
-      return [...prev, card];
-    });
-  };
 
   const handlePlayCards = () => {
     if (gameStep === GameStep.REDEAL) {
@@ -187,7 +172,7 @@ export default function YanivGameController({
       stage={stage}
       cards={hand}
       selectedCards={selectedCards}
-      onCardToggle={handleCardToggle}
+      onCardToggle={toggleCard}
       onPickupFromDeck={handlePickupFromDeck}
       onPickupFromDiscard={handlePickupFromDiscard}
       onEmojiClick={handleTriggerEmoji}
