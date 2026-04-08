@@ -45,7 +45,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
       ...state,
       players: state.players.map((player) => ({
         ...player,
-        isYanivCalled: player.id === userId,
+        isYanivCalled: player.id === userId ? true : player.isYanivCalled,
       })),
       playedCards: [],
       drawnCard: undefined,
