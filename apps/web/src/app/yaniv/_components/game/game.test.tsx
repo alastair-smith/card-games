@@ -11,12 +11,6 @@ vi.mock('~/components/layout/game-layout', () => ({
   ),
 }));
 
-vi.mock('~/components/emoji-rain/emoji-rain', () => ({
-  EmojiRain: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
-
 vi.mock('~/components/ui/playing-card', () => ({
   PLAYING_CARD_PROPORTIONS: 'w-[3.75em] h-[5.25em]',
   PlayingCard: ({ card }: { card: { suit: string; rank: string } }) => (
