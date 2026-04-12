@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { type ReactionEmoji, reactionEmojis } from '~/types/game';
-import { cn } from '~/utils/cn';
 
 const COOLDOWN_MS = 1000;
 
@@ -27,7 +26,7 @@ export function EmojiReactions({
   };
 
   return (
-    <ButtonGroup className={cn(className, isOnCooldown && 'opacity-50')}>
+    <ButtonGroup className={className}>
       {reactionEmojis.map((emoji) => (
         <Button
           key={emoji}
