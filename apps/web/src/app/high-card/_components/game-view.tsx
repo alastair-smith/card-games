@@ -3,7 +3,7 @@
 import { BrainIcon, CogIcon, DrumIcon, SmilePlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
+import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { HorizontalHand, VerticalHand } from '~/components/layout/hand';
@@ -32,6 +32,7 @@ import { GameType, type ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
 import { HowToContent } from './how-to';
+import { usePageReactions } from './use-page-reactions';
 
 export type HighCardGameProps = {
   className?: string;
@@ -57,6 +58,7 @@ export default function HighCardGameView({
   }, [state.winners, state.players]);
 
   const [showEmojiReactions, setShowEmojiReactions] = useState(false);
+  const pageReactions = usePageReactions(reactions);
 
   const [showWinnerDialog, setShowWinnerDialog] = useState(!!winners[0]);
   useEffect(() => {
@@ -90,20 +92,26 @@ export default function HighCardGameView({
 
   const PlayArea = (
     <PlayAreaRoot className='flex-1'>
-      {state.players.map((player) => (
-        <PlayAreaPlayerZone key={player.id}>
-          <EmojiRain
-            reaction={reactions[player.id]}
-            className='flex flex-col items-center gap-1 w-full'
-          >
+      {state.players.map((player) => {
+        const reaction = reactions[player.id];
+        return (
+          <PlayAreaPlayerZone key={player.id} className='relative'>
+            {reaction && (
+              <div
+                key={reaction.id}
+                className='absolute inset-0 flex items-center justify-center text-5xl animate-reaction-emoji pointer-events-none z-10'
+              >
+                {reaction.emoji}
+              </div>
+            )}
             <PlayingCard card={player.card} className='text-2xl' />
             <PlayAreaPlayerName>
               {player.name}
               {player.isUser && ' (You)'}
             </PlayAreaPlayerName>
-          </EmojiRain>
-        </PlayAreaPlayerZone>
-      ))}
+          </PlayAreaPlayerZone>
+        );
+      })}
     </PlayAreaRoot>
   );
 
@@ -201,7 +209,10 @@ export default function HighCardGameView({
           </DialogHeader>
         </DialogContent>
 
-        <div className='grow flex h-full flex-col'>
+        <PageEmojiRain
+          reactions={pageReactions}
+          className='grow flex h-full flex-col'
+        >
           <div className='relative flex-1 overflow-hidden' {...swipeHandlers}>
             {/* mobile and desktop game board */}
             <div
@@ -252,7 +263,7 @@ export default function HighCardGameView({
               <SmilePlusIcon />
             </Button>
           </div>
-        </div>
+        </PageEmojiRain>
 
         {/* desktop hand */}
         <div className='hidden lg:block pb-6'>

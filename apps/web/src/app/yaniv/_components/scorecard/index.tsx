@@ -10,6 +10,7 @@ type ScoreCardProps = {
   name: PlayerName;
   score: number;
   isYanivCalled: boolean;
+  reactionEmoji?: { emoji: string; id: number };
 };
 
 export default function ScoreCard({
@@ -20,15 +21,26 @@ export default function ScoreCard({
   name,
   score,
   isYanivCalled,
+  reactionEmoji,
 }: ScoreCardProps) {
   return (
     <div
       className={cn(
-        'bg-alt-background rounded border-white border flex flex-col',
+        'relative bg-alt-background rounded border-white border flex flex-col',
         isYanivCalled ? 'bg-black' : '',
         className,
       )}
     >
+      {reactionEmoji && (
+        <div
+          // key changes on each new reaction, forcing React to remount the div
+          // and restart the CSS animation from the beginning
+          key={reactionEmoji.id}
+          className='absolute inset-0 flex items-center justify-center text-5xl animate-reaction-emoji pointer-events-none z-10'
+        >
+          {reactionEmoji.emoji}
+        </div>
+      )}
       <div className='flex gap-1 justify-center'>
         <div className='flex flex-1 flex-col justify-center items-center bg-white/20 px-2 py-1'>
           {cardCount !== null && (

@@ -199,7 +199,7 @@ export const EndOfRound = () => (
   <Game {...defaultProps} stage={GameViewStage.END_OF_ROUND} />
 );
 
-export const emojiReaction = () => {
+export const EmojiReaction = () => {
   const [players, setPlayers] = useState(defaultProps.players);
 
   return (
@@ -221,6 +221,27 @@ export const emojiReaction = () => {
           ),
         );
       }}
+    />
+  );
+};
+
+export const CallYaniv = () => {
+  const [players, setPlayers] = useState(defaultProps.players);
+
+  const handleYaniv = () => {
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player, i) =>
+        i === 0 ? { ...player, isYanivCalled: true } : player,
+      ),
+    );
+  };
+
+  return (
+    <Game
+      {...defaultProps}
+      players={players}
+      stage={GameViewStage.END_TURN}
+      onYanivClick={handleYaniv}
     />
   );
 };

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EmojiRain } from '~/components/emoji-rain/emoji-rain';
+import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
@@ -11,6 +11,8 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
+import { usePageReactions } from './use-page-reactions';
+import { useYanivCalledToast } from './use-yaniv-called-toast';
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
@@ -65,6 +67,9 @@ export default function Game({
   canAutoPlay,
   onAutoPlayDrawnCard,
 }: GameProps) {
+  useYanivCalledToast(players);
+  const pageReactions = usePageReactions(players);
+
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
   }, [players, userId]);
@@ -111,54 +116,59 @@ export default function Game({
     <GameLayout
       actions={<HowToDialog />}
       gameType={GameType.YANIV}
-      className='flex flex-col h-dvh w-full overflow-hidden px-2 pb-2 gap-4'
+      className='h-dvh w-full overflow-hidden px-2 pb-2'
     >
-      <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-        {players.map(({ id, emojiReaction, ...player }) => (
-          <EmojiRain key={id} reaction={emojiReaction}>
-            <ScoreCard {...player} />
-          </EmojiRain>
-        ))}
-      </div>
+      <PageEmojiRain
+        reactions={pageReactions}
+        className='flex-1 flex flex-col gap-4'
+      >
+        <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+          {players.map(({ id, emojiReaction, ...player }) => (
+            <ScoreCard key={id} reactionEmoji={emojiReaction} {...player} />
+          ))}
+        </div>
 
-      <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
-        {stage === GameViewStage.END_OF_ROUND ||
-        stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
-          <RoundSummary players={roundSummary} />
-        ) : (
-          <PlayArea
-            playedCards={playedCards}
-            discardCard={discardCard}
-            isActive={stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn}
-            onDeckClick={onPickupFromDeck}
-            onDiscardClick={onPickupFromDiscard}
-            className='md:text-2xl sm:text-lg h-fit'
-            drawnCard={drawnCard}
-            canAutoPlay={canAutoPlay}
-            onAutoPlayDrawnCard={onAutoPlayDrawnCard}
-          />
-        )}
-      </div>
+        <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
+          {stage === GameViewStage.END_OF_ROUND ||
+          stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
+            <RoundSummary players={roundSummary} />
+          ) : (
+            <PlayArea
+              playedCards={playedCards}
+              discardCard={discardCard}
+              isActive={
+                stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn
+              }
+              onDeckClick={onPickupFromDeck}
+              onDiscardClick={onPickupFromDiscard}
+              className='md:text-2xl sm:text-lg h-fit'
+              drawnCard={drawnCard}
+              canAutoPlay={canAutoPlay}
+              onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+            />
+          )}
+        </div>
 
-      <Controls
-        onEmojiClick={onEmojiClick}
-        onEndTurnClick={onEndTurnClick}
-        onYanivClick={onYanivClick}
-        onPlayCards={onPlayCards}
-        playerTakingTurn={playerTakingTurn.name}
-        stage={stage}
-      />
+        <Controls
+          onEmojiClick={onEmojiClick}
+          onEndTurnClick={onEndTurnClick}
+          onYanivClick={onYanivClick}
+          onPlayCards={onPlayCards}
+          playerTakingTurn={playerTakingTurn.name}
+          stage={stage}
+        />
 
-      <Hand
-        className='md:text-2xl sm:text-lg'
-        cards={cardsWithSelection}
-        handTotal={handTotal}
-        isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}
-        isHundredScoreHalved={userPlayer.isHundredScoreHalved}
-        totalScore={userPlayer.score}
-        onCardClick={onCardToggle}
-        isActive={stage === GameViewStage.PICKING_CARDS && isUserTakingTurn}
-      />
+        <Hand
+          className='md:text-2xl sm:text-lg'
+          cards={cardsWithSelection}
+          handTotal={handTotal}
+          isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}
+          isHundredScoreHalved={userPlayer.isHundredScoreHalved}
+          totalScore={userPlayer.score}
+          onCardClick={onCardToggle}
+          isActive={stage === GameViewStage.PICKING_CARDS && isUserTakingTurn}
+        />
+      </PageEmojiRain>
     </GameLayout>
   );
 }
