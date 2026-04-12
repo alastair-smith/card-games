@@ -58,11 +58,16 @@ describe('usePageReactions', () => {
     });
 
     expect(result.current).toHaveLength(1);
-    expect(result.current).toContainEqual(expect.objectContaining({ emoji: thumbsUp }));
+    expect(result.current).toContainEqual(
+      expect.objectContaining({ emoji: thumbsUp }),
+    );
   });
 
   test('does not add a duplicate reaction when the same reaction ID persists', () => {
-    const withReaction = { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } };
+    const withReaction = {
+      ...alice,
+      emojiReaction: { emoji: thumbsUp, id: 1 },
+    };
     const { result, rerender } = renderHook(
       ({ players }) => usePageReactions(players),
       { initialProps: { players: [alice, bob] } },
@@ -99,7 +104,9 @@ describe('usePageReactions', () => {
     rerender({ players: [{ ...alice, isYanivCalled: true }, bob] });
 
     expect(result.current).toHaveLength(1);
-    expect(result.current).toContainEqual(expect.objectContaining({ emoji: '📢' }));
+    expect(result.current).toContainEqual(
+      expect.objectContaining({ emoji: '📢' }),
+    );
   });
 
   test('does not add a duplicate megaphone when Yaniv called flag remains true', () => {
