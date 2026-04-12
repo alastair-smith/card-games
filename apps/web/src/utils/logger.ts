@@ -1,3 +1,4 @@
+import { trace } from '@opentelemetry/api';
 import pino from 'pino';
 
 import { env } from '~/env';
@@ -28,6 +29,16 @@ const initLogger = () => {
     level,
     base,
     transport,
+    mixin() {
+      const span = trace.getActiveSpan();
+      if (!span) return {};
+      const context = span.spanContext();
+      return {
+        traceId: context.traceId,
+        spanId: context.spanId,
+        traceFlags: context.traceFlags,
+      };
+    },
   });
 };
 

@@ -18,6 +18,8 @@ export const env = createEnv({
     REDIS_CONNECTION_STRING: z.string(),
     ADMIN_USERNAME: z.string().optional(),
     ADMIN_PASSWORD: z.string().optional(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().default('http://localhost:4318'),
+    NEW_RELIC_LICENSE_KEY: z.string().optional(),
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -29,6 +31,8 @@ export const env = createEnv({
     REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
     ADMIN_USERNAME: process.env.ADMIN_USERNAME,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+    NEW_RELIC_LICENSE_KEY: process.env.NEW_RELIC_LICENSE_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

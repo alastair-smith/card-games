@@ -1,4 +1,5 @@
 import { EventEmitter } from 'node:events';
+import { context, SpanStatusCode, trace } from '@opentelemetry/api';
 import type { z } from 'zod';
 import type { GameState as HighCardGameState } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
@@ -6,6 +7,8 @@ import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 import type { GameState as YanivGameState } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
+
+const tracer = trace.getTracer('card-games-events');
 
 type Events = {
   [key: `lobby:${string}`]: [z.infer<typeof lobbySchema>];
@@ -56,7 +59,22 @@ class MonitoredEventEmitter<
     event: TEvent,
     ...args: TEvents[TEvent]
   ) {
-    return super.emit(event, ...args);
+    const parentSpanContext = trace.getSpanContext(context.active());
+    const links = parentSpanContext ? [{ context: parentSpanContext }] : [];
+
+    const span = tracer.startSpan(`event.emit.${event}`, { links });
+
+    try {
+      const result = super.emit(event, ...args);
+      span.setStatus({ code: SpanStatusCode.OK });
+      return result;
+    } catch (error) {
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      if (error instanceof Error) span.recordException(error);
+      throw error;
+    } finally {
+      span.end();
+    }
   }
 
   public getListenerCounts(): Record<string, number> {

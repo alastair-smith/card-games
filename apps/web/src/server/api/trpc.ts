@@ -7,10 +7,18 @@
  * need to use are documented accordingly near the end.
  */
 
+import { SpanStatusCode, trace } from '@opentelemetry/api';
+import {
+  SEMATTRS_RPC_METHOD,
+  SEMATTRS_RPC_SERVICE,
+  SEMATTRS_RPC_SYSTEM,
+} from '@opentelemetry/semantic-conventions';
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { getSession } from '~/server/auth';
+import { setGameAttributes } from '~/telemetry/attributes';
+import type { GameCode } from '~/types/game';
 
 /**
  * 1. CONTEXT
@@ -78,27 +86,59 @@ export const createCallerFactory = t.createCallerFactory;
  */
 export const createTRPCRouter = t.router;
 
-/**
- * Middleware for timing procedure execution and adding an artificial delay in development.
- *
- * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
- * network latency that would occur in production but not in local development.
- */
-const timingMiddleware = t.middleware(async ({ next, path }) => {
-  const start = Date.now();
+const tracer = trace.getTracer('card-games-trpc');
 
+/**
+ * Middleware that creates an OpenTelemetry span for each tRPC procedure call.
+ * Attaches game code and hashed player ID as span attributes when available.
+ * Replaces the old timingMiddleware — OTel records duration automatically.
+ */
+const tracingMiddleware = t.middleware(async ({ next, path, getRawInput }) => {
   if (t._config.isDev) {
-    // artificial delay in dev
+    // artificial delay in dev — simulates network latency
     const waitMs = Math.floor(Math.random() * 400) + 100;
     await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
 
-  const result = await next();
+  return tracer.startActiveSpan(`trpc.${path}`, async (span) => {
+    span.setAttributes({
+      [SEMATTRS_RPC_SYSTEM]: 'trpc',
+      [SEMATTRS_RPC_SERVICE]: 'card-games',
+      [SEMATTRS_RPC_METHOD]: path,
+    });
 
-  const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+    const rawInput = await getRawInput();
+    const input = rawInput as Record<string, unknown> | null | undefined;
+    const gameCode =
+      input && typeof input === 'object' && typeof input['code'] === 'string'
+        ? (input['code'] as GameCode)
+        : undefined;
 
-  return result;
+    if (gameCode) {
+      span.setAttribute('game.code', gameCode);
+    }
+
+    try {
+      const result = await next();
+
+      if (!result.ok) {
+        span.setStatus({
+          code: SpanStatusCode.ERROR,
+          message: result.error.message,
+        });
+        span.recordException(result.error);
+      }
+
+      return result;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      span.setStatus({ code: SpanStatusCode.ERROR, message });
+      if (error instanceof Error) span.recordException(error);
+      throw error;
+    } finally {
+      span.end();
+    }
+  });
 });
 
 /**
@@ -108,7 +148,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const publicProcedure = t.procedure.use(tracingMiddleware);
 
 /**
  * Protected (authenticated) procedure
@@ -119,12 +159,24 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(async ({ ctx: { authCookie }, next }) => {
+  .use(tracingMiddleware)
+  .use(async ({ ctx: { authCookie }, next, getRawInput }) => {
     const session = await getSession(authCookie);
 
     if (!session) {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Auth missing.' });
+    }
+
+    const rawInput = await getRawInput();
+    const input = rawInput as Record<string, unknown> | null | undefined;
+    const gameCode =
+      input && typeof input === 'object' && typeof input['code'] === 'string'
+        ? (input['code'] as GameCode)
+        : undefined;
+
+    const activeSpan = trace.getActiveSpan();
+    if (activeSpan && gameCode) {
+      await setGameAttributes(activeSpan, gameCode, session.userId);
     }
 
     return next({

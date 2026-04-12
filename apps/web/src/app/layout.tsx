@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import '~/styles/globals.css';
 import 'sonner/dist/styles.css'; // required as lib-injected styles are blocked by CSP
 import { Toaster } from '~/components/ui/toast';
+import { TelemetryProvider } from '~/telemetry/provider';
 import { TRPCReactProvider } from '~/trpc/react';
 
 export const viewport: Viewport = {
@@ -50,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang='en' className={`${GeistSans.variable}`}>
       <body className='bg-dark-green background-noise text-dark-text'>
+        <TelemetryProvider />
         <TRPCReactProvider>{children}</TRPCReactProvider>
         <Toaster />
       </body>
