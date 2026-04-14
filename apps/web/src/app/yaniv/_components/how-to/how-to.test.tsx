@@ -11,7 +11,7 @@ vi.mock('~/components/ui/playing-card', () => ({
 describe('HowTo', () => {
   test('renders the game description', () => {
     render(<HowTo />);
-    expect(screen.getByText(/Yaniv is a game/)).toBeInTheDocument();
+    expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
   });
 
   test('renders the Taking a turn section', () => {
@@ -31,19 +31,21 @@ describe('HowTo', () => {
 
   test('renders the card values table', () => {
     render(<HowTo />);
-    expect(screen.getByText('Card values in Yaniv')).toBeInTheDocument();
+    expect(screen.getByText('Card values')).toBeInTheDocument();
   });
 });
 
 describe('HowToDialog', () => {
-  test('renders a Help button as the trigger', () => {
+  test('renders a How to play button as the trigger', () => {
     render(<HowToDialog />);
-    expect(screen.getByRole('button', { name: 'Help' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'How to play' }),
+    ).toBeInTheDocument();
   });
 
-  test('shows the dialog content when Help is clicked', () => {
+  test('shows the dialog content when How to play is clicked', () => {
     render(<HowToDialog />);
-    fireEvent.click(screen.getByRole('button', { name: 'Help' }));
+    fireEvent.click(screen.getByRole('button', { name: 'How to play' }));
     expect(screen.getByText('How to play Yaniv')).toBeInTheDocument();
   });
 });

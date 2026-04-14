@@ -35,153 +35,17 @@ export function HowTo({ className }: { className?: string }) {
     >
       <section>
         <p>
-          Yaniv is a game of playing and drawing cards where the player with the
-          lowest score wins.
+          Yaniv is a card game where you want the lowest-value hand possible.
+          Each turn you discard cards and draw replacements — when your hand
+          totals 7 or less you can call &apos;Yaniv&apos; to end the round and
+          score zero.
         </p>
       </section>
 
       <section className='flex flex-col gap-1'>
-        <h3 className='text-base/relaxed font-semibold'>Taking a turn</h3>
-        <ul className='list-disc list-inside'>
-          <li>Play any card from your hand.</li>
-          <li>
-            After playing, pick up from the top of either the deck or discard
-            pile.
-          </li>
-          <li>
-            You can play multiple of the same rank card from your hand at once.
-            For example:{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.hearts,
-              )}
-            >
-              7
-              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
-            </span>
-            ,{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.clubs,
-              )}
-            >
-              7<ClubIcon fill='currentColor' size={12} aria-label='clubs' />
-            </span>
-            ,{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.diamonds,
-              )}
-            >
-              7
-              <DiamondIcon
-                fill='currentColor'
-                size={12}
-                aria-label='diamonds'
-              />
-            </span>
-            .
-          </li>
-          <li>
-            You can also play a straight flush of 3 cards or more. For example:{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.hearts,
-              )}
-            >
-              8
-              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
-            </span>
-            ,{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.hearts,
-              )}
-            >
-              9
-              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
-            </span>
-            ,{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.hearts,
-              )}
-            >
-              10
-              <HeartIcon fill='currentColor' size={12} aria-label='hearts' />
-            </span>
-            .
-          </li>
-          <li>
-            If you play the same rank card as the top of the discard then you
-            don't need to pickup. For example if the top of the discard pile is{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.diamonds,
-              )}
-            >
-              4
-              <DiamondIcon
-                fill='currentColor'
-                size={12}
-                aria-label='diamonds'
-              />
-            </span>{' '}
-            and you have a{' '}
-            <span
-              className={cn(
-                'inline-flex items-center gap-0.5 font-bold',
-                suitColorClass.clubs,
-              )}
-            >
-              4<ClubIcon fill='currentColor' size={12} aria-label='clubs' />
-            </span>{' '}
-            in your hand then you can play it without picking up a card.
-          </li>
-        </ul>
-      </section>
-
-      <section className='flex flex-col gap-1'>
-        <h3 className='text-base/relaxed font-semibold'>Calling Yaniv</h3>
-        <p>
-          At the end of your turn if your hand total is 7 or less then you can
-          call 'Yaniv' to signal the end of the round.
-        </p>
-        <p>
-          Every other player will then get a final turn, they may also call
-          'Yaniv' at the end of their turns if their hand totals are 7 or less.
-        </p>
-      </section>
-
-      <section className='flex flex-col gap-1'>
-        <h3 className='text-base/relaxed font-semibold'>Scoring</h3>
-        <p>
-          Players' hand scores are the sum of their card values. This is added
-          to their total score.
-        </p>
-        <p>
-          If a player called 'Yaniv' then they get a score of 0. If any other
-          players also call 'Yaniv' then only the player with the lowest hand
-          score gets 0, the rest get 25.
-        </p>
-        <p>
-          The first time a player's total score reaches exactly 50 points it is
-          halved to 25. The same happens at 100.
-        </p>
-        <p>
-          The game ends when any player reaches a score of 200 or more. Then the
-          player with the lowest score wins!
-        </p>
-
+        <h3 className='text-base/relaxed font-semibold'>Card values</h3>
         <Table rootClassName='overflow-x-clip'>
-          <TableCaption>Card values in Yaniv</TableCaption>
+          <TableCaption>Points per card</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Card</TableHead>
@@ -284,6 +148,172 @@ export function HowTo({ className }: { className?: string }) {
           </TableBody>
         </Table>
       </section>
+
+      <section className='flex flex-col gap-1'>
+        <h3 className='text-base/relaxed font-semibold'>Taking a turn</h3>
+        <ol className='list-decimal list-inside flex flex-col gap-1'>
+          <li>
+            <span className='font-medium'>
+              Play one or more cards from your hand.
+            </span>
+            <ul className='list-disc list-inside ml-4 mt-0.5 flex flex-col gap-0.5'>
+              <li>
+                Play multiple cards of the same number at once. For example:{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.hearts,
+                  )}
+                >
+                  7
+                  <HeartIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='hearts'
+                  />
+                </span>
+                ,{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.clubs,
+                  )}
+                >
+                  7
+                  <ClubIcon fill='currentColor' size={12} aria-label='clubs' />
+                </span>
+                ,{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.diamonds,
+                  )}
+                >
+                  7
+                  <DiamondIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='diamonds'
+                  />
+                </span>
+                .
+              </li>
+              <li>
+                Play a straight flush of 3 or more consecutive cards. For
+                example:{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.hearts,
+                  )}
+                >
+                  8
+                  <HeartIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='hearts'
+                  />
+                </span>
+                ,{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.hearts,
+                  )}
+                >
+                  9
+                  <HeartIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='hearts'
+                  />
+                </span>
+                ,{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.hearts,
+                  )}
+                >
+                  10
+                  <HeartIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='hearts'
+                  />
+                </span>
+                .
+              </li>
+            </ul>
+          </li>
+          <li>
+            <span className='font-medium'>
+              Draw a card from the deck or discard pile.
+            </span>
+            <ul className='list-disc list-inside ml-4 mt-0.5'>
+              <li>
+                If you play a card matching the number of the top discard, you
+                may skip drawing entirely. For example, if the top discard is{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.diamonds,
+                  )}
+                >
+                  4
+                  <DiamondIcon
+                    fill='currentColor'
+                    size={12}
+                    aria-label='diamonds'
+                  />
+                </span>{' '}
+                and you play a{' '}
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-0.5 font-bold',
+                    suitColorClass.clubs,
+                  )}
+                >
+                  4
+                  <ClubIcon fill='currentColor' size={12} aria-label='clubs' />
+                </span>
+                , your turn ends immediately.
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
+      <section className='flex flex-col gap-1'>
+        <h3 className='text-base/relaxed font-semibold'>Calling Yaniv</h3>
+        <p>
+          At the end of your turn, if your hand totals 7 or less, you can call
+          &apos;Yaniv&apos; to end the round. Every other player then gets one
+          final turn and may also call &apos;Yaniv&apos; if their hand is 7 or
+          less — only the caller with the lowest hand scores zero.
+        </p>
+      </section>
+
+      <section className='flex flex-col gap-1'>
+        <h3 className='text-base/relaxed font-semibold'>Scoring</h3>
+        <ul className='list-disc list-inside flex flex-col gap-1'>
+          <li>
+            Each player scores the total value of cards left in their hand.
+          </li>
+          <li>
+            The Yaniv caller scores 0. Other players who also called Yaniv score
+            25 instead.
+          </li>
+          <li>
+            If your total hits exactly 50 it drops to 25; the same happens at
+            exactly 100.
+          </li>
+          <li>
+            The game ends when any player reaches 200 or more — lowest total
+            wins.
+          </li>
+        </ul>
+      </section>
     </div>
   );
 }
@@ -293,7 +323,7 @@ export function HowToDialog() {
     <Dialog>
       <DialogTrigger asChild>
         <Button size='sm' variant='secondary'>
-          Help
+          How to play
         </Button>
       </DialogTrigger>
       <DialogContent
