@@ -5,7 +5,8 @@ import YanivClient from './client';
 
 export const metadata: Metadata = {
   title: 'Yaniv',
-  description: 'Join a game of Yaniv! Win hands of 7 points or under and call Yaniv!',
+  description:
+    'Join a game of Yaniv! Win hands of 7 points or under and call Yaniv!',
 };
 
 export default async function YanivPage({
