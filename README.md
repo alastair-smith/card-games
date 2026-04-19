@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="#about">About</a>
-  | <a href="#getting-started"">Getting Started</a>
+  | <a href="#getting-started">Getting Started</a>
   | <a href="#contributing">Contributing</a>
 </p>
 
@@ -85,7 +85,7 @@ Exact versions are specified in the [tool-versions](./.tool-versions) file. Tool
 | `docker build -t card-games .`        | Make a production docker build |
 | `pnpm test`                           | Run unit tests                 |
 | `pnpm test:integration`               | Run integration tests          |
-| `pnpm --flilter @repo/web test:e2e`   | Run E2E tests (headless)       |
+| `pnpm --filter @repo/web test:e2e`    | Run E2E tests (headless)       |
 | `pnpm --filter @repo/web test:e2e:ui` | Run E2E tests (With UI)        |
 | `pnpm typecheck`                      | Verify types                   |
 | `pnpm format:check`                   | Verify formatting              |
