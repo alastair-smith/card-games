@@ -5,8 +5,7 @@ import YanivClient from './client';
 
 export const metadata: Metadata = {
   title: 'Yaniv',
-  description:
-    'Join a game of Yaniv! Yaniv is a fast-paced card game for 2-5 players where the goal is to be the first to get rid of your cards.',
+  description: 'Join a game of Yaniv! Win hands of 7 points or under and call Yaniv!',
 };
 
 export default async function YanivPage({
