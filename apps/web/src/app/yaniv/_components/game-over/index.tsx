@@ -14,8 +14,9 @@ import {
 } from '~/components/ui/table';
 import { toast } from '~/components/ui/toast';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameType, gameURL } from '~/types/game';
+import { GameType } from '~/types/game';
 import { HowToDialog } from '../how-to';
+import { buildShareData, performShare } from './share';
 
 type GameOverProps = {
   players: {
@@ -33,43 +34,16 @@ export default function GameOver({ players, userId }: GameOverProps) {
   const userWins = winners.some((player) => player.id === userId);
   const [isCelebrating, setIsCelebrating] = useState(false);
 
-  const handleShare = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShare = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-
-    const share = async () => {
-      const shareData = {
-        title: userWins
-          ? 'I just won a game of Yaniv!'
-          : 'I just played a game of Yaniv!',
-        text: players
-          .map(
-            ({ name, score, isWinner }) =>
-              `${score.toString().padStart(3, '0')} ${name}${isWinner ? ' 🏆' : ''}`,
-          )
-          .join('\n'),
-        url: `https://${window.location.host}${gameURL[GameType.YANIV]}`,
-      };
-      if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-          return;
-        } catch {
-          toast.error('Failed to share the game summary. Please try again.');
-        }
-      } else {
-        try {
-          // Fallback for browsers that do not support the Web Share API
-          await navigator.clipboard.writeText(
-            `${shareData.title}\n\n${shareData.text}\n\nPlay at ${shareData.url}`,
-          );
-          toast.success('Game summary copied to clipboard!');
-        } catch {
-          toast.error('Failed to copy the game summary. Please try again.');
-        }
-      }
-    };
-
-    share();
+    const shareData = buildShareData(players, userId, window.location.host);
+    try {
+      const result = await performShare(shareData);
+      if (result === 'copied')
+        toast.success('Game summary copied to clipboard!');
+    } catch {
+      toast.error('Failed to share the game summary. Please try again.');
+    }
   };
 
   return (

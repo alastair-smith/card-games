@@ -1,7 +1,25 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { toast } from '~/components/ui/toast';
 import type { PlayerName, UserId } from '~/types/entities';
 import GameOver from '.';
+import { buildShareData, performShare } from './share';
+
+vi.mock('~/components/ui/toast', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+vi.mock('./share', () => ({
+  buildShareData: vi.fn().mockReturnValue({
+    title: 'I just played a game of Yaniv!',
+    text: '020 Alice',
+    url: 'https://example.com/yaniv',
+  }),
+  performShare: vi.fn().mockResolvedValue('shared'),
+}));
 
 vi.mock('~/components/layout/game-layout', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
@@ -86,6 +104,57 @@ describe('GameOver', () => {
       expect(
         screen.getByText(/Alice & Bob win with a score of 20!/),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('share button', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.mocked(performShare).mockResolvedValue('shared');
+    });
+
+    test('calls performShare with data from buildShareData when share is clicked', async () => {
+      render(<GameOver players={players} userId={'2' as UserId} />);
+      fireEvent.click(screen.getByRole('button', { name: /share/i }));
+      expect(buildShareData).toHaveBeenCalledWith(
+        players,
+        '2' as UserId,
+        expect.any(String),
+      );
+      expect(performShare).toHaveBeenCalledWith(
+        expect.objectContaining({ title: 'I just played a game of Yaniv!' }),
+      );
+    });
+
+    test('shows clipboard toast when performShare resolves as copied', async () => {
+      vi.mocked(performShare).mockResolvedValue('copied');
+      render(<GameOver players={players} userId={'2' as UserId} />);
+      fireEvent.click(screen.getByRole('button', { name: /share/i }));
+      await vi.waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith(
+          'Game summary copied to clipboard!',
+        );
+      });
+    });
+
+    test('does not show clipboard toast when performShare resolves as shared', async () => {
+      vi.mocked(performShare).mockResolvedValue('shared');
+      render(<GameOver players={players} userId={'2' as UserId} />);
+      fireEvent.click(screen.getByRole('button', { name: /share/i }));
+      await vi.waitFor(() => {
+        expect(toast.success).not.toHaveBeenCalled();
+      });
+    });
+
+    test('shows error toast when performShare rejects', async () => {
+      vi.mocked(performShare).mockRejectedValue(new Error('denied'));
+      render(<GameOver players={players} userId={'2' as UserId} />);
+      fireEvent.click(screen.getByRole('button', { name: /share/i }));
+      await vi.waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(
+          'Failed to share the game summary. Please try again.',
+        );
+      });
     });
   });
 
