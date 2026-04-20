@@ -70,13 +70,11 @@ jobs:
         run: pnpm build
         env:
           SKIP_ENV_VALIDATION: "true"
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v7
+      - name: Cache build output
+        uses: actions/cache/save@v5
         with:
-          name: build-output
+          key: next-build-${{ github.sha }}
           path: apps/web/.next
-          include-hidden-files: true
-          retention-days: 1
 
   test-e2e:
     name: E2E Tests (${{ matrix.project }})
@@ -112,11 +110,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      - name: Download build artifact
-        uses: actions/download-artifact@v8
+      - name: Restore build output
+        uses: actions/cache/restore@v5
         with:
-          name: build-output
+          key: next-build-${{ github.sha }}
           path: apps/web/.next
+          fail-on-cache-miss: true
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install --with-deps ${{ matrix.browser }}
       - name: Run E2E tests
@@ -130,8 +129,8 @@ jobs:
           if-no-files-found: ignore
           retention-days: 1
 
-  docker-build:
-    name: Docker Build
+  docker-smoke:
+    name: Docker Smoke Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -139,32 +138,6 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t card-games:ci .
-
-      - name: Export image
-        run: docker save card-games:ci | gzip > card-games.tar.gz
-
-      - name: Upload image artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: docker-image
-          path: card-games.tar.gz
-          retention-days: 1
-
-  docker-smoke:
-    name: Docker Smoke Test
-    needs: docker-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Download image artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: docker-image
-
-      - name: Load Docker image
-        run: docker load < card-games.tar.gz
 
       - name: Start services
         run: docker compose -f docker-compose.test.yml up -d
