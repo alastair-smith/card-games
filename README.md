@@ -79,17 +79,18 @@ Exact versions are specified in the [tool-versions](./.tool-versions) file. Tool
 
 ### Other Scripts
 
-| Command                               | Description                    |
-|:--------------------------------------|:-------------------------------|
-| `pnpm build`                          | Make a production build        |
-| `docker build -t card-games .`        | Make a production docker build |
-| `pnpm test`                           | Run unit tests                 |
-| `pnpm test:integration`               | Run integration tests          |
-| `pnpm --filter @repo/web test:e2e`    | Run E2E tests (headless)       |
-| `pnpm --filter @repo/web test:e2e:ui` | Run E2E tests (With UI)        |
-| `pnpm typecheck`                      | Verify types                   |
-| `pnpm format:check`                   | Verify formatting              |
-| `pnpm format:fix`                     | Fix formatting issues          |
+| Command                               | Description                                          |
+|:--------------------------------------|:-----------------------------------------------------|
+| `pnpm build`                          | Make a production build                              |
+| `pnpm start`                          | Start the production server (requires a `.env` file) |
+| `docker build -t card-games .`        | Make a production docker build                       |
+| `pnpm test`                           | Run unit tests                                       |
+| `pnpm test:integration`               | Run integration tests                                |
+| `pnpm --filter @repo/web test:e2e`    | Run E2E tests (headless)                             |
+| `pnpm --filter @repo/web test:e2e:ui` | Run E2E tests (With UI)                              |
+| `pnpm typecheck`                      | Verify types                                         |
+| `pnpm format:check`                   | Verify formatting                                    |
+| `pnpm format:fix`                     | Fix formatting issues                                |
 
 ## Contributing
 
