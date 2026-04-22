@@ -39,7 +39,7 @@ const config = {
       },
     ],
   },
-  output: 'standalone',
+  output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   poweredByHeader: false,
   serverExternalPackages: ['sequelize', 'pino', 'pino-pretty'],
 };
