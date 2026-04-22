@@ -89,10 +89,10 @@
 
   @keyframes celebration-rain {
     0% {
-      transform: translateY(0);
+      top: -3rem;
     }
     100% {
-      transform: translateY(calc(100dvh + 4rem));
+      top: calc(100% + 3rem);
     }
   }
 
