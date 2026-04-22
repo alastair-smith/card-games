@@ -277,7 +277,11 @@ export function HowTo({ className }: { className?: string }) {
                   4
                   <ClubIcon fill='currentColor' size={12} aria-label='clubs' />
                 </span>
-                , your turn ends immediately.
+                , you may end your turn immediately.
+              </li>
+              <li>
+                If you draw a card that matches the number of the last card you
+                played, you can instantly play the card.
               </li>
             </ul>
           </li>
@@ -288,9 +292,9 @@ export function HowTo({ className }: { className?: string }) {
         <h3 className='text-base/relaxed font-semibold'>Calling Yaniv</h3>
         <p>
           At the end of your turn, if your hand totals 7 or less, you can call
-          &apos;Yaniv&apos; to end the round. Every other player then gets one
-          final turn and may also call &apos;Yaniv&apos; if their hand is 7 or
-          less — only the caller with the lowest hand scores zero.
+          &apos;Yaniv&apos; to signal the end the round. Every other player then
+          gets one final turn and may also call &apos;Yaniv&apos; if their hand
+          is 7 or less.
         </p>
       </section>
 
@@ -301,16 +305,16 @@ export function HowTo({ className }: { className?: string }) {
             Each player scores the total value of cards left in their hand.
           </li>
           <li>
-            The Yaniv caller scores 0. Other players who also called Yaniv score
-            25 instead.
+            The Yaniv caller with the lowest value scores 0. Other players who
+            also called Yaniv score 25 instead.
           </li>
           <li>
             If your total hits exactly 50 it drops to 25; the same happens at
             exactly 100.
           </li>
           <li>
-            The game ends when any player reaches 200 or more — lowest total
-            wins.
+            The game ends when any player reaches 200 or more. And the player
+            with the lowest total score wins.
           </li>
         </ul>
       </section>
