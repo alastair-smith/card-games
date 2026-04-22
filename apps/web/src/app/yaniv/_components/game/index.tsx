@@ -120,7 +120,7 @@ export default function Game({
     >
       <PageEmojiRain
         reactions={pageReactions}
-        className='flex-1 flex flex-col gap-4'
+        className='flex-1 flex flex-col justify-center gap-4'
       >
         <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
           {players.map(({ id, emojiReaction, ...player }) => (
