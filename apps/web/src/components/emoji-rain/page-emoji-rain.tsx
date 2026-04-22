@@ -80,7 +80,7 @@ export function PageEmojiRain({
   return (
     <div
       ref={containerRef}
-      className={cn('relative overflow-x-clip overflow-y-clip', className)}
+      className={cn('relative overflow-x-clip', className)}
     >
       {children}
       {particles.map((particle) => (
