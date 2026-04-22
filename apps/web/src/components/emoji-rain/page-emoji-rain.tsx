@@ -86,7 +86,7 @@ export function PageEmojiRain({
       {particles.map((particle) => (
         <div
           key={particle.id}
-          className='absolute text-3xl animate-celebration-rain z-50 pointer-events-none'
+          className='fixed text-3xl animate-celebration-rain z-50 pointer-events-none'
           style={{
             left: `${particle.xPos}px`,
             top: '-3rem',
