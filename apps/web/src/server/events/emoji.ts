@@ -1,5 +1,5 @@
 import type { UserId } from '~/types/entities';
-import type { GameCode, ReactionEmoji } from '~/types/game';
+import type { GameCode, ReactionEmoji, SystemEmoji } from '~/types/game';
 import emitter from './emitter';
 
 export const getEmojiChannel = (code: GameCode): `emoji:${GameCode}` =>
@@ -7,7 +7,11 @@ export const getEmojiChannel = (code: GameCode): `emoji:${GameCode}` =>
 
 export const publishEmoji = (
   code: GameCode,
-  payload: { emoji: ReactionEmoji; targetPlayerId: UserId; id: number },
+  payload: {
+    emoji: ReactionEmoji | SystemEmoji;
+    targetPlayerId: UserId;
+    id: number;
+  },
 ) => {
   emitter.emit(getEmojiChannel(code), payload);
 };

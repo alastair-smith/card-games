@@ -19,6 +19,7 @@ import {
   gameCodeSchema,
   type Player,
   type ReactionEmoji,
+  type SystemEmoji,
 } from '~/types/game';
 import { GameStage, gameStateSchema } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
@@ -43,7 +44,11 @@ type StateSubscription =
     }
   | {
       update: GameUpdate.EMOJI_REACTION;
-      payload: { emoji: ReactionEmoji; targetPlayerId: UserId; id: number };
+      payload: {
+        emoji: ReactionEmoji | SystemEmoji;
+        targetPlayerId: UserId;
+        id: number;
+      };
     };
 
 export const yanivStateSubscription = protectedProcedure
@@ -153,7 +158,7 @@ export const yanivStateSubscription = protectedProcedure
     }
 
     function emojiHandler(payload: {
-      emoji: ReactionEmoji;
+      emoji: ReactionEmoji | SystemEmoji;
       targetPlayerId: UserId;
       id: number;
     }) {

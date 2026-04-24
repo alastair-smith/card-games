@@ -15,6 +15,7 @@ import {
   gameCodeSchema,
   type Player,
   type ReactionEmoji,
+  type SystemEmoji,
 } from '~/types/game';
 import { GameStage, type GameState } from '~/types/games/high-card';
 import { logger } from '~/utils/logger';
@@ -55,7 +56,11 @@ type StateSubscription =
     }
   | {
       update: GameUpdate.EMOJI_REACTION;
-      payload: { emoji: ReactionEmoji; targetPlayerId: UserId; id: number };
+      payload: {
+        emoji: ReactionEmoji | SystemEmoji;
+        targetPlayerId: UserId;
+        id: number;
+      };
     };
 
 export const state = protectedProcedure
@@ -174,7 +179,7 @@ export const state = protectedProcedure
     }
 
     function emojiHandler(payload: {
-      emoji: ReactionEmoji;
+      emoji: ReactionEmoji | SystemEmoji;
       targetPlayerId: UserId;
       id: number;
     }) {

@@ -15,6 +15,7 @@ import {
   GameUpdate,
   type Player,
   type ReactionEmoji,
+  type SystemEmoji,
 } from '~/types/game';
 import Loading from './loading';
 
@@ -25,7 +26,7 @@ export default function YanivClient({ code }: { code: GameCode }) {
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [gameState, setGameState] = useState<ClientGameState | null>(null);
   const [reactions, setReactions] = useState<
-    Record<UserId, { emoji: ReactionEmoji; id: number }>
+    Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: number }>
   >({});
 
   api.yaniv.state.useSubscription(

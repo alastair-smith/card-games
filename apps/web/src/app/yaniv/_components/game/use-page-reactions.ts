@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { UserId } from '~/types/entities';
-import type { ReactionEmoji } from '~/types/game';
+import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 
 type Player = {
   id: UserId;
   isYanivCalled: boolean;
-  emojiReaction?: { emoji: ReactionEmoji; id: number };
+  emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: number };
 };
 
 type PageReaction = { emoji: string; id: number };

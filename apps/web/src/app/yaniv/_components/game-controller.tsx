@@ -4,7 +4,7 @@ import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
-import type { GameCode, ReactionEmoji } from '~/types/game';
+import type { GameCode, ReactionEmoji, SystemEmoji } from '~/types/game';
 import {
   GameStage,
   type GameState,
@@ -21,7 +21,7 @@ import { useCardSelection } from './use-card-selection';
 type Props = {
   code: GameCode;
   gameState: ClientGameState;
-  reactions: Record<UserId, { emoji: ReactionEmoji; id: number }>;
+  reactions: Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: number }>;
 };
 
 // ClientGameState uses Omit<GameState, 'hands'> which flattens the discriminated

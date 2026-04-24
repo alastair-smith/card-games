@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameType, type ReactionEmoji } from '~/types/game';
+import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import { GameViewStage, type YanivPlayingCard } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
@@ -36,7 +36,7 @@ type BaseGameProps = {
     score: number;
     roundScore: { original: number; adjusted: number };
     isYanivCalled: boolean;
-    emojiReaction?: { emoji: ReactionEmoji; id: number };
+    emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: number };
     isPlayersTurn?: boolean;
   }[];
   userId: UserId;
