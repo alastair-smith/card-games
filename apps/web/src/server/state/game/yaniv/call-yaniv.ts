@@ -1,5 +1,6 @@
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
+import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -23,6 +24,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
     throw new Error('Hand value is too high to call Yaniv');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);
+  publishEmoji(code, { emoji: '📢', targetPlayerId: userId, id: Date.now() });
 
   const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;

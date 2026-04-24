@@ -4,7 +4,6 @@ import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 
 type Player = {
   id: UserId;
-  isYanivCalled: boolean;
   emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: number };
 };
 
@@ -16,7 +15,6 @@ export function usePageReactions(players: Player[]): PageReaction[] {
   const [reactions, setReactions] = useState<PageReaction[]>([]);
   const isFirstRender = useRef(true);
   const seenReactionIds = useRef<Map<UserId, number>>(new Map());
-  const previousYanivCalledRef = useRef<Map<UserId, boolean>>(new Map());
   const timeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
     new Map(),
   );
@@ -32,9 +30,6 @@ export function usePageReactions(players: Player[]): PageReaction[] {
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      previousYanivCalledRef.current = new Map(
-        players.map((player) => [player.id, player.isYanivCalled]),
-      );
       for (const player of players) {
         if (player.emojiReaction) {
           seenReactionIds.current.set(player.id, player.emojiReaction.id);
@@ -54,17 +49,6 @@ export function usePageReactions(players: Player[]): PageReaction[] {
         }
       }
     }
-
-    const previous = previousYanivCalledRef.current;
-    for (const player of players) {
-      const wasCalled = previous.get(player.id) ?? false;
-      if (!wasCalled && player.isYanivCalled) {
-        newReactions.push({ emoji: '📢', id: Date.now() });
-      }
-    }
-    previousYanivCalledRef.current = new Map(
-      players.map((player) => [player.id, player.isYanivCalled]),
-    );
 
     for (const reaction of newReactions) {
       setReactions((current) => [...current, reaction]);
