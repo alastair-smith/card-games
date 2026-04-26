@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
@@ -11,6 +11,7 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
+import { useDrawnCardVisibility } from './use-drawn-card-visibility';
 import { usePageReactions } from './use-page-reactions';
 import { useYanivCalledToast } from './use-yaniv-called-toast';
 
@@ -70,8 +71,9 @@ export default function Game({
   useYanivCalledToast(players);
   const pageReactions = usePageReactions(players);
 
-  const [dismissedCard, setDismissedCard] = useState<YanivPlayingCard | null>(
-    null,
+  const { visibleCards, onOverlayDismissed } = useDrawnCardVisibility(
+    drawnCard,
+    cards,
   );
 
   const userPlayer = useMemo(() => {
@@ -92,29 +94,16 @@ export default function Game({
 
   const isUserTakingTurn = userPlayer.id === playerTakingTurn.id;
 
-  const cardsWithSelection = useMemo(() => {
-    const isDismissed =
-      dismissedCard?.rank === drawnCard?.rank &&
-      dismissedCard?.suit === drawnCard?.suit;
-    return (
-      cards
-        // hide card just drawn
-        .filter(
-          (card) =>
-            !drawnCard ||
-            isDismissed ||
-            !(card.rank === drawnCard.rank && card.suit === drawnCard.suit),
-        )
-        // track which are selected
-        .map((card) => ({
-          ...card,
-          selected: selectedCards?.some(
-            (selected) =>
-              selected.rank === card.rank && selected.suit === card.suit,
-          ),
-        }))
-    );
-  }, [cards, drawnCard, dismissedCard, selectedCards]);
+  const cardsWithSelection = useMemo(
+    () =>
+      visibleCards.map((card) => ({
+        ...card,
+        selected: selectedCards?.some(
+          (s) => s.rank === card.rank && s.suit === card.suit,
+        ),
+      })),
+    [visibleCards, selectedCards],
+  );
 
   const roundSummary = useMemo(
     () =>
@@ -128,7 +117,7 @@ export default function Game({
     stage === GameViewStage.END_OF_ROUND ||
     stage === GameViewStage.WAITING_FOR_NEW_ROUND
       ? userPlayer.roundScore.original
-      : sumYanivHand(cardsWithSelection);
+      : sumYanivHand(visibleCards);
 
   return (
     <GameLayout
@@ -163,7 +152,7 @@ export default function Game({
               drawnCard={drawnCard}
               canAutoPlay={canAutoPlay}
               onAutoPlayDrawnCard={onAutoPlayDrawnCard}
-              onDrawnCardDismissed={() => setDismissedCard(drawnCard ?? null)}
+              onDrawnCardDismissed={onOverlayDismissed}
             />
           )}
         </div>
