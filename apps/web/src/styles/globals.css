@@ -4,6 +4,7 @@
 
 @theme {
   /* base colors */
+  --color-true-white: hsl(0, 100%, 100%);
   --color-white: hsl(290 25% 95%);
   --color-slate: hsl(210 33% 18%);
   --color-dark-green: hsl(157 96% 10%);
