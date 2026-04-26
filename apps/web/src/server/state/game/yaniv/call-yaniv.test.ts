@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
+import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
@@ -15,6 +16,9 @@ vi.mock('~/server/data/yaniv', () => ({
 }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: vi.fn(),
+}));
+vi.mock('~/server/events/emoji', () => ({
+  publishEmoji: vi.fn(),
 }));
 vi.mock('~/server/data/discard', () => ({
   yanivDiscard: {
@@ -75,6 +79,7 @@ describe('callYaniv', () => {
     vi.mocked(getYanivState).mockResolvedValue(makeState());
     vi.mocked(setYanivState).mockResolvedValue(makeState());
     vi.mocked(publishYanivState).mockResolvedValue(undefined);
+    vi.mocked(publishEmoji).mockReturnValue(undefined);
     vi.mocked(yanivDiscard.pushDiscard).mockResolvedValue(undefined);
   });
 
@@ -423,5 +428,16 @@ describe('callYaniv', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
     const publishedState = vi.mocked(publishYanivState).mock.calls[0]?.[1];
     expect(savedState).toEqual(publishedState);
+  });
+
+  test('publishes a megaphone emoji reaction targeting the player who called Yaniv', async () => {
+    await callYaniv(CODE, USER_1);
+
+    expect(vi.mocked(publishEmoji)).toHaveBeenCalledOnce();
+    expect(vi.mocked(publishEmoji)).toHaveBeenCalledWith(CODE, {
+      emoji: '📢',
+      targetPlayerId: USER_1,
+      id: expect.any(String),
+    });
   });
 });

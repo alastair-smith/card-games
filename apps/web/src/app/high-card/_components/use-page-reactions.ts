@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 
-type PageReaction = { emoji: string; id: number };
+type PageReaction = { emoji: string; id: EmojiReactionId };
 
 const REACTION_EXPIRY_MS = 5000;
 
 export function usePageReactions(
-  reactions: Record<UserId, { emoji: string; id: number }>,
+  reactions: Record<UserId, { emoji: string; id: EmojiReactionId }>,
 ): PageReaction[] {
   const [pageReactions, setPageReactions] = useState<PageReaction[]>([]);
   const isFirstRender = useRef(true);
-  const seenReactionIds = useRef<Map<UserId, number>>(new Map());
-  const timeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
-    new Map(),
-  );
+  const seenReactionIds = useRef<Map<UserId, EmojiReactionId>>(new Map());
+  const timeoutsRef = useRef<
+    Map<EmojiReactionId, ReturnType<typeof setTimeout>>
+  >(new Map());
 
   useEffect(() => {
     return () => {
@@ -28,7 +28,7 @@ export function usePageReactions(
       isFirstRender.current = false;
       for (const [userId, reaction] of Object.entries(reactions) as [
         UserId,
-        { emoji: string; id: number },
+        { emoji: string; id: EmojiReactionId },
       ][]) {
         seenReactionIds.current.set(userId, reaction.id);
       }
@@ -37,7 +37,7 @@ export function usePageReactions(
 
     for (const [userId, reaction] of Object.entries(reactions) as [
       UserId,
-      { emoji: string; id: number },
+      { emoji: string; id: EmojiReactionId },
     ][]) {
       const lastSeenId = seenReactionIds.current.get(userId);
       if (lastSeenId !== reaction.id) {

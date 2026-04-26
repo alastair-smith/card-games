@@ -1,17 +1,19 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji } from '~/types/game';
 import { usePageReactions } from './use-page-reactions';
 
 type TestPlayer = {
   id: UserId;
-  isYanivCalled: boolean;
-  emojiReaction?: { emoji: ReactionEmoji; id: number };
+  emojiReaction?: { emoji: ReactionEmoji; id: EmojiReactionId };
 };
 
-const alice: TestPlayer = { id: '1' as UserId, isYanivCalled: false };
-const bob: TestPlayer = { id: '2' as UserId, isYanivCalled: false };
+const id1 = 'aaaaaaaa-0000-0000-0000-000000000001' as EmojiReactionId;
+const id2 = 'aaaaaaaa-0000-0000-0000-000000000002' as EmojiReactionId;
+
+const alice: TestPlayer = { id: '1' as UserId };
+const bob: TestPlayer = { id: '2' as UserId };
 
 const thumbsUp = '👍' as ReactionEmoji;
 const heart = '❤️' as ReactionEmoji;
@@ -33,16 +35,9 @@ describe('usePageReactions', () => {
   test('does not add a reaction on initial render when a player already has one', () => {
     const { result } = renderHook(() =>
       usePageReactions([
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
         bob,
       ]),
-    );
-    expect(result.current).toEqual([]);
-  });
-
-  test('does not add a megaphone reaction on initial render when Yaniv is already called', () => {
-    const { result } = renderHook(() =>
-      usePageReactions([{ ...alice, isYanivCalled: true }, bob]),
     );
     expect(result.current).toEqual([]);
   });
@@ -54,7 +49,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
 
     expect(result.current).toHaveLength(1);
@@ -66,7 +61,7 @@ describe('usePageReactions', () => {
   test('does not add a duplicate reaction when the same reaction ID persists', () => {
     const withReaction = {
       ...alice,
-      emojiReaction: { emoji: thumbsUp, id: 1 },
+      emojiReaction: { emoji: thumbsUp, id: id1 },
     };
     const { result, rerender } = renderHook(
       ({ players }) => usePageReactions(players),
@@ -86,40 +81,13 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: heart, id: 2 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: heart, id: id2 } }, bob],
     });
 
     expect(result.current).toHaveLength(2);
-  });
-
-  test('adds a megaphone reaction when a player calls Yaniv', () => {
-    const { result, rerender } = renderHook(
-      ({ players }) => usePageReactions(players),
-      { initialProps: { players: [alice, bob] } },
-    );
-
-    rerender({ players: [{ ...alice, isYanivCalled: true }, bob] });
-
-    expect(result.current).toHaveLength(1);
-    expect(result.current).toContainEqual(
-      expect.objectContaining({ emoji: '📢' }),
-    );
-  });
-
-  test('does not add a duplicate megaphone when Yaniv called flag remains true', () => {
-    const aliceCalledYaniv = { ...alice, isYanivCalled: true };
-    const { result, rerender } = renderHook(
-      ({ players }) => usePageReactions(players),
-      { initialProps: { players: [alice, bob] } },
-    );
-
-    rerender({ players: [aliceCalledYaniv, bob] });
-    rerender({ players: [aliceCalledYaniv, bob] });
-
-    expect(result.current).toHaveLength(1);
   });
 
   test('adds reactions for multiple players sending emojis at the same time', () => {
@@ -130,29 +98,12 @@ describe('usePageReactions', () => {
 
     rerender({
       players: [
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
-        { ...bob, emojiReaction: { emoji: heart, id: 2 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
+        { ...bob, emojiReaction: { emoji: heart, id: id2 } },
       ],
     });
 
     expect(result.current).toHaveLength(2);
-  });
-
-  test('adds megaphone reactions when multiple players call Yaniv at the same time', () => {
-    const { result, rerender } = renderHook(
-      ({ players }) => usePageReactions(players),
-      { initialProps: { players: [alice, bob] } },
-    );
-
-    rerender({
-      players: [
-        { ...alice, isYanivCalled: true },
-        { ...bob, isYanivCalled: true },
-      ],
-    });
-
-    expect(result.current).toHaveLength(2);
-    expect(result.current.every((r) => r.emoji === '📢')).toBe(true);
   });
 
   test('reactions expire after 5 seconds', () => {
@@ -162,7 +113,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     expect(result.current).toHaveLength(1);
 
@@ -181,8 +132,8 @@ describe('usePageReactions', () => {
 
     rerender({
       players: [
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
-        { ...bob, emojiReaction: { emoji: heart, id: 2 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
+        { ...bob, emojiReaction: { emoji: heart, id: id2 } },
       ],
     });
     expect(result.current).toHaveLength(2);
@@ -202,7 +153,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     unmount();
 

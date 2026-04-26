@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
+import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
@@ -21,6 +22,9 @@ vi.mock('~/server/data/yaniv', () => ({
 }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: vi.fn(),
+}));
+vi.mock('~/server/events/emoji', () => ({
+  publishEmoji: vi.fn(),
 }));
 vi.mock('~/server/data/discard', () => ({
   yanivDiscard: {
@@ -92,6 +96,7 @@ describe('playCards', () => {
     vi.mocked(getYanivState).mockResolvedValue(makeState());
     vi.mocked(setYanivState).mockResolvedValue(makeState());
     vi.mocked(publishYanivState).mockResolvedValue(undefined);
+    vi.mocked(publishEmoji).mockReturnValue(undefined);
     vi.mocked(yanivDiscard.peekDiscard).mockResolvedValue(TOP_DISCARD);
     vi.mocked(yanivDiscard.pushDiscard).mockResolvedValue(undefined);
     vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay([CARD_1]));
@@ -229,6 +234,12 @@ describe('playCards', () => {
     );
   });
 
+  test('does not publish an emoji on a normal card play', async () => {
+    await playCards(CODE, USER_1, [CARD_1]);
+
+    expect(vi.mocked(publishEmoji)).not.toHaveBeenCalled();
+  });
+
   describe('playing back drawn card during PROCEED step', () => {
     const PREVIOUSLY_PLAYED: YanivPlayingCard = {
       suit: Suit.DIAMONDS,
@@ -340,6 +351,17 @@ describe('playCards', () => {
 
       expect(vi.mocked(setYanivState)).toHaveBeenCalledOnce();
       expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
+    });
+
+    test('publishes an emoji reaction targeting the player who played the free card', async () => {
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(publishEmoji)).toHaveBeenCalledOnce();
+      expect(vi.mocked(publishEmoji)).toHaveBeenCalledWith(CODE, {
+        emoji: '🍀',
+        targetPlayerId: USER_1,
+        id: expect.any(String),
+      });
     });
 
     describe('with a straight flush of three cards on the pile', () => {

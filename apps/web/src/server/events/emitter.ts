@@ -2,8 +2,8 @@ import { EventEmitter } from 'node:events';
 import type { z } from 'zod';
 import type { GameState as HighCardGameState } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
-import type { UserId } from '~/types/entities';
-import type { ReactionEmoji } from '~/types/game';
+import type { EmojiReactionId, UserId } from '~/types/entities';
+import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 import type { GameState as YanivGameState } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
 
@@ -12,7 +12,11 @@ type Events = {
   [key: `high-card:${string}`]: [HighCardGameState];
   [key: `yaniv:${string}`]: [YanivGameState];
   [key: `emoji:${string}`]: [
-    { emoji: ReactionEmoji; targetPlayerId: UserId; id: number },
+    {
+      emoji: ReactionEmoji | SystemEmoji;
+      targetPlayerId: UserId;
+      id: EmojiReactionId;
+    },
   ];
 };
 

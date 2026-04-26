@@ -8,13 +8,14 @@ import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getGameState } from '~/server/state/game/high-card/get-game-state';
 import { joinGame } from '~/server/state/game/high-card/join-game';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   type GameCode,
   GameUpdate,
   gameCodeSchema,
   type Player,
   type ReactionEmoji,
+  type SystemEmoji,
 } from '~/types/game';
 import { GameStage, type GameState } from '~/types/games/high-card';
 import { logger } from '~/utils/logger';
@@ -55,7 +56,11 @@ type StateSubscription =
     }
   | {
       update: GameUpdate.EMOJI_REACTION;
-      payload: { emoji: ReactionEmoji; targetPlayerId: UserId; id: number };
+      payload: {
+        emoji: ReactionEmoji | SystemEmoji;
+        targetPlayerId: UserId;
+        id: EmojiReactionId;
+      };
     };
 
 export const state = protectedProcedure
@@ -174,9 +179,9 @@ export const state = protectedProcedure
     }
 
     function emojiHandler(payload: {
-      emoji: ReactionEmoji;
+      emoji: ReactionEmoji | SystemEmoji;
       targetPlayerId: UserId;
-      id: number;
+      id: EmojiReactionId;
     }) {
       messageQueue.push({
         update: GameUpdate.EMOJI_REACTION,

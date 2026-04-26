@@ -1,7 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { TRPCError } from '@trpc/server';
 import { getLobby } from '~/server/data/lobby';
 import { publishEmoji } from '~/server/events/emoji';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji } from '~/types/game';
 
 export const triggerEmojiState = async (
@@ -21,6 +22,6 @@ export const triggerEmojiState = async (
   publishEmoji(code, {
     emoji,
     targetPlayerId: userId,
-    id: Date.now(),
+    id: randomUUID() as EmojiReactionId,
   });
 };

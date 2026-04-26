@@ -2,6 +2,7 @@ import { action } from '@ladle/react';
 import { useState } from 'react';
 import { Rank, Suit } from '~/types/cards';
 import {
+  type EmojiReactionId,
   MAX_NAME_LENGTH,
   type PlayerName,
   type UserId,
@@ -214,7 +215,7 @@ export const EmojiReaction = () => {
                   ...player,
                   emojiReaction: {
                     emoji: emoji,
-                    id: Date.now(),
+                    id: crypto.randomUUID() as EmojiReactionId,
                   },
                 }
               : player,

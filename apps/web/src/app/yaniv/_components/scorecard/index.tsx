@@ -1,5 +1,5 @@
 import { CircleIcon, MegaphoneIcon } from 'lucide-react';
-import type { PlayerName } from '~/types/entities';
+import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
 type ScoreCardProps = {
@@ -10,7 +10,7 @@ type ScoreCardProps = {
   name: PlayerName;
   score: number;
   isYanivCalled: boolean;
-  reactionEmoji?: { emoji: string; id: number };
+  reactionEmoji?: { emoji: string; id: EmojiReactionId };
 };
 
 export default function ScoreCard({

@@ -19,3 +19,5 @@ export const playerNameSchema = z
   .max(MAX_NAME_LENGTH, `Should have up to ${MAX_NAME_LENGTH} characters`)
   .transform((value) => value as PlayerName)
   .describe('The name of the player');
+
+export type EmojiReactionId = Branded<string, 'EmojiReactionId'>;

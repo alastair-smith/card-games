@@ -27,7 +27,7 @@ import { PlayingCard } from '~/components/ui/playing-card';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
@@ -40,7 +40,7 @@ export type HighCardGameProps = {
   pickupCard: () => void;
   onEmojiClick: (emoji: ReactionEmoji) => void;
   playerUserId?: UserId;
-  reactions: Record<UserId, { emoji: ReactionEmoji; id: number }>;
+  reactions: Record<UserId, { emoji: ReactionEmoji; id: EmojiReactionId }>;
 };
 
 export default function HighCardGameView({
