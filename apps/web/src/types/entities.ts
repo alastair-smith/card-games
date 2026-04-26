@@ -21,7 +21,3 @@ export const playerNameSchema = z
   .describe('The name of the player');
 
 export type EmojiReactionId = Branded<string, 'EmojiReactionId'>;
-
-export const emojiReactionIdSchema = z
-  .uuid()
-  .transform((value) => value as EmojiReactionId);
