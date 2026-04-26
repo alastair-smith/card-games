@@ -72,7 +72,7 @@ export default function Game({
 
   const [isDrawnCardDismissed, setIsDrawnCardDismissed] = useState(false);
   useEffect(() => {
-    setIsDrawnCardDismissed(false);
+    if (drawnCard) setIsDrawnCardDismissed(false);
   }, [drawnCard]);
 
   const userPlayer = useMemo(() => {
