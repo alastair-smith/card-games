@@ -21,6 +21,7 @@ type PlayAreaProps = {
   drawnCard?: YanivPlayingCard;
   canAutoPlay?: boolean;
   onAutoPlayDrawnCard?: () => void;
+  onDrawnCardDismissed?: () => void;
 };
 
 export default function PlayArea({
@@ -33,6 +34,7 @@ export default function PlayArea({
   drawnCard,
   canAutoPlay,
   onAutoPlayDrawnCard,
+  onDrawnCardDismissed,
 }: PlayAreaProps) {
   const [displayedCard, setDisplayedCard] = useState<YanivPlayingCard | null>(
     null,
@@ -74,6 +76,7 @@ export default function PlayArea({
         setDismissed(true);
         setDisplayedCard(null);
         setExitClassName('');
+        onDrawnCardDismissed?.();
       }, 600);
     }
   };

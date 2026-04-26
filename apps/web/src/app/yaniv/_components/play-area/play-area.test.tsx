@@ -266,6 +266,37 @@ describe('PlayArea', () => {
       vi.useRealTimers();
     });
 
+    test('calls the dismissed handler when the drawn card is dismissed', async () => {
+      vi.useFakeTimers();
+      const onDrawnCardDismissed = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+          canAutoPlay={false}
+          onDrawnCardDismissed={onDrawnCardDismissed}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      );
+
+      expect(onDrawnCardDismissed).not.toHaveBeenCalled();
+
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(onDrawnCardDismissed).toHaveBeenCalledOnce();
+      vi.useRealTimers();
+    });
+
     test('highlights the top card when it can be insta played', () => {
       render(
         <PlayArea

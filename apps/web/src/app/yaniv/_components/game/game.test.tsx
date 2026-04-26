@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
@@ -14,14 +14,31 @@ vi.mock('~/components/layout/game-layout', () => ({
 vi.mock('~/components/ui/playing-card', () => ({
   PLAYING_CARD_PROPORTIONS: 'w-[3.75em] h-[5.25em]',
   PlayingCard: ({ card }: { card: { suit: string; rank: string } }) => (
-    <div data-suit={card.suit} data-rank={card.rank}>
-      {card.rank}
-    </div>
+    <div data-testid={`card-${card.suit}-${card.rank}`}>{card.rank}</div>
   ),
 }));
 
 vi.mock('~/components/ui/playing-card-stacks', () => ({
-  PlayingCardDeck: () => <div data-testid='deck'>Deck</div>,
+  PlayingCardDeck: ({
+    drawnCardDisplay,
+    onDrawnCardClick,
+  }: {
+    drawnCardDisplay?: { suit: string; rank: string } | null;
+    onDrawnCardClick?: () => void;
+  }) => (
+    <div data-testid='deck'>
+      {drawnCardDisplay && (
+        <button
+          data-testid={`drawn-card-${drawnCardDisplay.suit}-${drawnCardDisplay.rank}`}
+          onClick={onDrawnCardClick}
+          type='button'
+        >
+          {drawnCardDisplay.rank}
+        </button>
+      )}
+      Deck
+    </div>
+  ),
   PlayingCardDiscardPile: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
@@ -98,5 +115,62 @@ describe('Game', () => {
   test('shows the round summary when waiting for new round', () => {
     render(<Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />);
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
+  });
+
+  describe('drawn card visibility', () => {
+    const drawnCard = { suit: Suit.CLUBS, rank: Rank.ACE };
+    const cards = [
+      { suit: Suit.CLUBS, rank: Rank.ACE },
+      { suit: Suit.HEARTS, rank: Rank.FIVE },
+    ];
+
+    test('hides the drawn card from the hand while it is displayed on the deck', () => {
+      render(<Game {...baseProps} cards={cards} drawnCard={drawnCard} />);
+      expect(
+        screen.queryByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByTestId(`card-${Suit.HEARTS}-${Rank.FIVE}`),
+      ).toBeInTheDocument();
+    });
+
+    test('shows all hand cards when there is no drawn card', () => {
+      render(<Game {...baseProps} cards={cards} />);
+      expect(
+        screen.getByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId(`card-${Suit.HEARTS}-${Rank.FIVE}`),
+      ).toBeInTheDocument();
+    });
+
+    test('shows the drawn card in the hand after the overlay is dismissed', async () => {
+      vi.useFakeTimers();
+      render(
+        <Game
+          {...baseProps}
+          cards={cards}
+          drawnCard={drawnCard}
+          canAutoPlay={false}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(
+        screen.getByTestId(`card-${Suit.CLUBS}-${Rank.ACE}`),
+      ).toBeInTheDocument();
+      vi.useRealTimers();
+    });
   });
 });
