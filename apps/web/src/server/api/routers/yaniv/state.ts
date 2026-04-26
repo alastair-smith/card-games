@@ -13,7 +13,7 @@ import {
   toClientGameState,
 } from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   GameUpdate,
   gameCodeSchema,
@@ -47,7 +47,7 @@ type StateSubscription =
       payload: {
         emoji: ReactionEmoji | SystemEmoji;
         targetPlayerId: UserId;
-        id: number;
+        id: EmojiReactionId;
       };
     };
 
@@ -160,7 +160,7 @@ export const yanivStateSubscription = protectedProcedure
     function emojiHandler(payload: {
       emoji: ReactionEmoji | SystemEmoji;
       targetPlayerId: UserId;
-      id: number;
+      id: EmojiReactionId;
     }) {
       messageQueue.push({
         update: GameUpdate.EMOJI_REACTION,

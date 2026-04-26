@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 
 type Player = {
   id: UserId;
-  emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: number };
+  emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId };
 };
 
-type PageReaction = { emoji: string; id: number };
+type PageReaction = { emoji: string; id: EmojiReactionId };
 
 const REACTION_EXPIRY_MS = 5000;
 
 export function usePageReactions(players: Player[]): PageReaction[] {
   const [reactions, setReactions] = useState<PageReaction[]>([]);
   const isFirstRender = useRef(true);
-  const seenReactionIds = useRef<Map<UserId, number>>(new Map());
-  const timeoutsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+  const seenReactionIds = useRef<Map<UserId, EmojiReactionId>>(new Map());
+  const timeoutsRef = useRef<Map<EmojiReactionId, ReturnType<typeof setTimeout>>>(
     new Map(),
   );
 

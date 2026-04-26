@@ -1,13 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji } from '~/types/game';
 import { usePageReactions } from './use-page-reactions';
 
 type TestPlayer = {
   id: UserId;
-  emojiReaction?: { emoji: ReactionEmoji; id: number };
+  emojiReaction?: { emoji: ReactionEmoji; id: EmojiReactionId };
 };
+
+const id1 = 'aaaaaaaa-0000-0000-0000-000000000001' as EmojiReactionId;
+const id2 = 'aaaaaaaa-0000-0000-0000-000000000002' as EmojiReactionId;
 
 const alice: TestPlayer = { id: '1' as UserId };
 const bob: TestPlayer = { id: '2' as UserId };
@@ -32,7 +35,7 @@ describe('usePageReactions', () => {
   test('does not add a reaction on initial render when a player already has one', () => {
     const { result } = renderHook(() =>
       usePageReactions([
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
         bob,
       ]),
     );
@@ -46,7 +49,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
 
     expect(result.current).toHaveLength(1);
@@ -58,7 +61,7 @@ describe('usePageReactions', () => {
   test('does not add a duplicate reaction when the same reaction ID persists', () => {
     const withReaction = {
       ...alice,
-      emojiReaction: { emoji: thumbsUp, id: 1 },
+      emojiReaction: { emoji: thumbsUp, id: id1 },
     };
     const { result, rerender } = renderHook(
       ({ players }) => usePageReactions(players),
@@ -78,10 +81,10 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: heart, id: 2 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: heart, id: id2 } }, bob],
     });
 
     expect(result.current).toHaveLength(2);
@@ -95,8 +98,8 @@ describe('usePageReactions', () => {
 
     rerender({
       players: [
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
-        { ...bob, emojiReaction: { emoji: heart, id: 2 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
+        { ...bob, emojiReaction: { emoji: heart, id: id2 } },
       ],
     });
 
@@ -110,7 +113,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     expect(result.current).toHaveLength(1);
 
@@ -129,8 +132,8 @@ describe('usePageReactions', () => {
 
     rerender({
       players: [
-        { ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } },
-        { ...bob, emojiReaction: { emoji: heart, id: 2 } },
+        { ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } },
+        { ...bob, emojiReaction: { emoji: heart, id: id2 } },
       ],
     });
     expect(result.current).toHaveLength(2);
@@ -150,7 +153,7 @@ describe('usePageReactions', () => {
     );
 
     rerender({
-      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: 1 } }, bob],
+      players: [{ ...alice, emojiReaction: { emoji: thumbsUp, id: id1 } }, bob],
     });
     unmount();
 

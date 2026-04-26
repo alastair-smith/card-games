@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Lobby from '~/app/high-card/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   type GameCode,
   GameStatus,
@@ -25,7 +25,7 @@ export default function HighCard({ code }: { code: GameCode }) {
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [state, setState] = useState<GameState | null>(null);
   const [reactions, setReactions] = useState<
-    Record<UserId, { emoji: ReactionEmoji; id: number }>
+    Record<UserId, { emoji: ReactionEmoji; id: EmojiReactionId }>
   >({});
 
   api.highCard.state.useSubscription(

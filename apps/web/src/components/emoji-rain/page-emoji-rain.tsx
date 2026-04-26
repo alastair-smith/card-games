@@ -9,7 +9,7 @@ type Particle = {
   duration: number;
 };
 
-type Reaction = { emoji: string; id: number };
+type Reaction = { emoji: string; id: string };
 
 type PageEmojiRainProps = {
   children: ReactNode;
@@ -35,7 +35,7 @@ export function PageEmojiRain({
 }: PageEmojiRainProps) {
   const [particles, setParticles] = useState<Particle[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const seenIds = useRef<Set<number>>(new Set());
+  const seenIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     // Prune seenIds for reactions no longer in the list so the set stays bounded

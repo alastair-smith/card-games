@@ -1,7 +1,7 @@
 'use client';
 
 import { api } from '~/trpc/react';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import HighCardGameView from './game-view';
@@ -13,7 +13,7 @@ export default function HighCardGameController({
 }: {
   code: GameCode;
   state: GameState;
-  reactions: Record<UserId, { emoji: ReactionEmoji; id: number }>;
+  reactions: Record<UserId, { emoji: ReactionEmoji; id: EmojiReactionId }>;
 }) {
   const pickupCardMutation = api.highCard.pickupCard.useMutation();
   const triggerEmojiMutation = api.highCard.triggerEmoji.useMutation();

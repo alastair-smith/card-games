@@ -1,8 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   GameStage,
@@ -119,7 +120,11 @@ export const playCards = async (
     : await playCardsOnTurn(code, state, userId, currentPlayer.hand, cards);
 
   if (isPlayingDrawnCard) {
-    publishEmoji(code, { emoji: '🍀', targetPlayerId: userId, id: Date.now() });
+    publishEmoji(code, {
+      emoji: '🍀',
+      targetPlayerId: userId,
+      id: randomUUID() as EmojiReactionId,
+    });
   }
 
   await setYanivState({ code }, newState);

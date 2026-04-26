@@ -360,7 +360,7 @@ describe('playCards', () => {
       expect(vi.mocked(publishEmoji)).toHaveBeenCalledWith(CODE, {
         emoji: '🍀',
         targetPlayerId: USER_1,
-        id: expect.any(Number),
+        id: expect.any(String),
       });
     });
 

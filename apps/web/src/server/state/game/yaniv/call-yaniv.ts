@@ -1,8 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
-import type { UserId } from '~/types/entities';
+import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep, YANIV_CALL_THRESHOLD } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
@@ -24,7 +25,11 @@ export const callYaniv = async (code: GameCode, userId: UserId) => {
     throw new Error('Hand value is too high to call Yaniv');
 
   await yanivDiscard.pushDiscard(code, state.playedCards);
-  publishEmoji(code, { emoji: '📢', targetPlayerId: userId, id: Date.now() });
+  publishEmoji(code, {
+    emoji: '📢',
+    targetPlayerId: userId,
+    id: randomUUID() as EmojiReactionId,
+  });
 
   const currentIndex = state.players.findIndex(({ id }) => id === userId);
   const nextIndex = (currentIndex + 1) % state.players.length;
