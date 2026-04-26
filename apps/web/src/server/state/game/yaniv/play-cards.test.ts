@@ -234,7 +234,7 @@ describe('playCards', () => {
     );
   });
 
-  test('does not publish a clover emoji on a normal card play', async () => {
+  test('does not publish an emoji on a normal card play', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 
     expect(vi.mocked(publishEmoji)).not.toHaveBeenCalled();
@@ -353,7 +353,7 @@ describe('playCards', () => {
       expect(vi.mocked(publishYanivState)).toHaveBeenCalledOnce();
     });
 
-    test('publishes a clover emoji reaction targeting the player who played the free card', async () => {
+    test('publishes an emoji reaction targeting the player who played the free card', async () => {
       await playCards(CODE, USER_1, [CARD_1]);
 
       expect(vi.mocked(publishEmoji)).toHaveBeenCalledOnce();
