@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
@@ -70,10 +70,9 @@ export default function Game({
   useYanivCalledToast(players);
   const pageReactions = usePageReactions(players);
 
-  const [isDrawnCardDismissed, setIsDrawnCardDismissed] = useState(false);
-  useEffect(() => {
-    if (drawnCard) setIsDrawnCardDismissed(false);
-  }, [drawnCard]);
+  const [dismissedCard, setDismissedCard] = useState<YanivPlayingCard | null>(
+    null,
+  );
 
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
@@ -93,22 +92,29 @@ export default function Game({
 
   const isUserTakingTurn = userPlayer.id === playerTakingTurn.id;
 
-  const visibleCards = useMemo(() => {
-    if (!drawnCard || isDrawnCardDismissed) return cards;
-    return cards.filter(
-      (card) => !(card.rank === drawnCard.rank && card.suit === drawnCard.suit),
-    );
-  }, [cards, drawnCard, isDrawnCardDismissed]);
-
   const cardsWithSelection = useMemo(() => {
-    return visibleCards.map((card) => ({
-      ...card,
-      selected: selectedCards?.some(
-        (selected) =>
-          selected.rank === card.rank && selected.suit === card.suit,
-      ),
-    }));
-  }, [visibleCards, selectedCards]);
+    const isDismissed =
+      dismissedCard?.rank === drawnCard?.rank &&
+      dismissedCard?.suit === drawnCard?.suit;
+    return (
+      cards
+        // hide card just drawn
+        .filter(
+          (card) =>
+            !drawnCard ||
+            isDismissed ||
+            !(card.rank === drawnCard.rank && card.suit === drawnCard.suit),
+        )
+        // track which are selected
+        .map((card) => ({
+          ...card,
+          selected: selectedCards?.some(
+            (selected) =>
+              selected.rank === card.rank && selected.suit === card.suit,
+          ),
+        }))
+    );
+  }, [cards, drawnCard, dismissedCard, selectedCards]);
 
   const roundSummary = useMemo(
     () =>
@@ -122,7 +128,7 @@ export default function Game({
     stage === GameViewStage.END_OF_ROUND ||
     stage === GameViewStage.WAITING_FOR_NEW_ROUND
       ? userPlayer.roundScore.original
-      : sumYanivHand(visibleCards);
+      : sumYanivHand(cardsWithSelection);
 
   return (
     <GameLayout
@@ -157,7 +163,7 @@ export default function Game({
               drawnCard={drawnCard}
               canAutoPlay={canAutoPlay}
               onAutoPlayDrawnCard={onAutoPlayDrawnCard}
-              onDrawnCardDismissed={() => setIsDrawnCardDismissed(true)}
+              onDrawnCardDismissed={() => setDismissedCard(drawnCard ?? null)}
             />
           )}
         </div>
