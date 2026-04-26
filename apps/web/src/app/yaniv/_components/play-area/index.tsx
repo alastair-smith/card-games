@@ -99,6 +99,7 @@ export default function PlayArea({
           onDrawnCardClick={handleDrawnCardClick}
           drawnCardClassName={exitClassName}
           ariaLabel='Draw from deck'
+          topCardHighlighted={canAutoPlay}
         />
         <PlayingCardDiscardPile>
           {discardCard && (
