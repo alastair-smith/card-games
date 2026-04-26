@@ -21,7 +21,10 @@ import { useCardSelection } from './use-card-selection';
 type Props = {
   code: GameCode;
   gameState: ClientGameState;
-  reactions: Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }>;
+  reactions: Record<
+    UserId,
+    { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }
+  >;
 };
 
 // ClientGameState uses Omit<GameState, 'hands'> which flattens the discriminated

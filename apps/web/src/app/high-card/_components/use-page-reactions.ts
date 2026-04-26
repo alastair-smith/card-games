@@ -11,9 +11,9 @@ export function usePageReactions(
   const [pageReactions, setPageReactions] = useState<PageReaction[]>([]);
   const isFirstRender = useRef(true);
   const seenReactionIds = useRef<Map<UserId, EmojiReactionId>>(new Map());
-  const timeoutsRef = useRef<Map<EmojiReactionId, ReturnType<typeof setTimeout>>>(
-    new Map(),
-  );
+  const timeoutsRef = useRef<
+    Map<EmojiReactionId, ReturnType<typeof setTimeout>>
+  >(new Map());
 
   useEffect(() => {
     return () => {
