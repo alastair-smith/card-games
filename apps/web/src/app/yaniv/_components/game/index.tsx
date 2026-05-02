@@ -99,7 +99,7 @@ export default function Game({
       visibleCards.map((card) => ({
         ...card,
         selected: selectedCards?.some(
-          (s) => s.rank === card.rank && s.suit === card.suit,
+          ({ suit, rank }) => rank === card.rank && suit === card.suit,
         ),
       })),
     [visibleCards, selectedCards],
