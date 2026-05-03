@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
-import { JOKER_RANK, RANK_FULL_NAME, Rank } from '../src/types/cards';
+import { JOKER_RANK, RANK_DISPLAY, RANK_FULL_NAME, Rank, Suit } from '../src/types/cards';
 import {
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
@@ -11,6 +11,20 @@ import { pickWorstMove } from '../src/utils/yaniv/pick-worst-move';
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+const SUIT_EMOJI: Record<string, string> = {
+  [Suit.SPADES]: '♠️',
+  [Suit.HEARTS]: '♥️',
+  [Suit.DIAMONDS]: '♦️',
+  [Suit.CLUBS]: '♣️',
+};
+
+function formatCard(card: YanivPlayingCard): string {
+  const suitEmoji = SUIT_EMOJI[card.suit] ?? card.suit;
+  const rankStr =
+    RANK_DISPLAY[card.rank as keyof typeof RANK_DISPLAY] ?? String(card.rank);
+  return `${suitEmoji}${rankStr}`;
+}
 
 /** Reverse lookup from RANK_FULL_NAME value (e.g. "A", "K", "7") back to the rank. */
 const DISPLAY_TO_RANK = Object.fromEntries(
@@ -55,13 +69,24 @@ async function getHandTotal(page: Page): Promise<number> {
   return Number(text?.trim() ?? '0');
 }
 
+async function getErrorToastMessage(page: Page): Promise<string | null> {
+  try {
+    const toast = page.locator('[data-sonner-toast][data-type="error"]');
+    if (!(await toast.isVisible())) return null;
+    const content = await toast.locator('[data-content]').textContent();
+    return content?.trim() || '(error toast with no message)';
+  } catch {
+    return null;
+  }
+}
+
 /** Collects a diagnostic snapshot of the game state visible to a single player. */
 async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
   const lines: string[] = [`  ${label}:`];
 
   // Hand cards
   const hand = await getHandCards(page);
-  const handStr = hand.map((card) => `${card.suit}-${card.rank}`).join(', ');
+  const handStr = hand.map(formatCard).join(', ');
   lines.push(`    Hand: [${handStr}]`);
 
   // Hand total
@@ -71,14 +96,14 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
   // Discard card
   try {
     const discard = await getDiscardCard(page);
-    lines.push(`    Top discard: ${discard.suit}-${discard.rank}`);
+    lines.push(`    Top discard: ${formatCard(discard)}`);
   } catch {
     lines.push('    Top discard: (none)');
   }
 
   // Whose turn (from "is thinking" or controls)
   const thinkingEl = page.getByText('is thinking');
-  if (await thinkingEl.isVisible().catch(() => false)) {
+  if (await thinkingEl.isVisible()) {
     const text = await thinkingEl.textContent();
     lines.push(`    Waiting for: ${text?.trim()}`);
   } else {
@@ -99,8 +124,7 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
     const visible = await page
       .getByRole('button', { name })
       .or(page.getByRole('link', { name }))
-      .isVisible()
-      .catch(() => false);
+      .isVisible();
     if (visible) visibleButtons.push(name);
   }
   lines.push(`    Visible buttons: [${visibleButtons.join(', ')}]`);
@@ -113,6 +137,9 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
       `    Scoreboard: ${scoreTexts.map((text) => text.trim()).join(' | ')}`,
     );
   }
+
+  const errorToast = await getErrorToastMessage(page);
+  if (errorToast) lines.push(`    !! Error toast: ${errorToast}`);
 
   return lines.join('\n');
 }
@@ -163,16 +190,8 @@ const shouldPickupWorst: PickupStrategy = (card) =>
 
 /** Returns true if this page is waiting for another player (i.e. it's not our turn). */
 async function isWaitingForOtherPlayer(page: Page): Promise<boolean> {
-  const thinkingVisible = await page
-    .getByText('is thinking')
-    .isVisible()
-    .catch(() => false);
-  if (thinkingVisible) return true;
-  const dealingVisible = await page
-    .getByText('to deal')
-    .isVisible()
-    .catch(() => false);
-  return dealingVisible;
+  if (await page.getByText('is thinking').isVisible()) return true;
+  return page.getByText('to deal').isVisible();
 }
 
 /** Attempts to perform one full turn for the given page.
@@ -309,6 +328,12 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
     { page: p3, movePicker: pickWorstMove, pickupStrategy: shouldPickupWorst },
   ];
 
+  const playerLabels = [
+    { page: p1, label: 'Player 1 (optimal)' },
+    { page: p2, label: 'Player 2 (worst)' },
+    { page: p3, label: 'Player 3 (worst)' },
+  ];
+
   // Listen for game over on any page — resolves as soon as one page shows it
   const gameOverLink = { name: 'Pick Another Game' } as const;
   const gameOverPromise = Promise.race(
@@ -328,14 +353,7 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
             if (await tryTakeTurn(page, movePicker, pickupStrategy))
               return 'turnTaken' as const;
           } catch (error) {
-            const snapshot = await getGameSnapshot(
-              [
-                { page: p1, label: 'Player 1 (optimal)' },
-                { page: p2, label: 'Player 2 (worst)' },
-                { page: p3, label: 'Player 3 (worst)' },
-              ],
-              i,
-            );
+            const snapshot = await getGameSnapshot(playerLabels, i);
             throw new Error(
               `Turn failed at iteration ${i}: ${error instanceof Error ? error.message : error}\n\n${snapshot}`,
             );
@@ -344,6 +362,16 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
         return 'noAction' as const;
       })(),
     ]);
+
+    for (const { page, label } of playerLabels) {
+      const toastMsg = await getErrorToastMessage(page);
+      if (toastMsg) {
+        const snapshot = await getGameSnapshot(playerLabels, i);
+        throw new Error(
+          `Error toast on ${label} at iteration ${i}: "${toastMsg}"\n\n${snapshot}`,
+        );
+      }
+    }
 
     if (result === 'gameOver') {
       for (const { page } of players) {
@@ -355,14 +383,7 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
     }
   }
 
-  const snapshot = await getGameSnapshot(
-    [
-      { page: p1, label: 'Player 1 (optimal)' },
-      { page: p2, label: 'Player 2 (worst)' },
-      { page: p3, label: 'Player 3 (worst)' },
-    ],
-    MAX_ITERATIONS,
-  );
+  const snapshot = await getGameSnapshot(playerLabels, MAX_ITERATIONS);
   throw new Error(
     `Game did not finish within ${MAX_ITERATIONS} iterations — possible deadlock\n\n${snapshot}`,
   );
