@@ -71,10 +71,8 @@ export default function Game({
   useYanivCalledToast(players);
   const pageReactions = usePageReactions(players);
 
-  const { visibleCards, onOverlayDismissed } = useDrawnCardVisibility(
-    drawnCard,
-    cards,
-  );
+  const { isShownInOverlay, onOverlayDismissed } =
+    useDrawnCardVisibility(drawnCard);
 
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
@@ -96,13 +94,17 @@ export default function Game({
 
   const cardsWithSelection = useMemo(
     () =>
-      visibleCards.map((card) => ({
+      cards.map((card) => ({
         ...card,
         selected: selectedCards?.some(
           ({ suit, rank }) => rank === card.rank && suit === card.suit,
         ),
+        hidden:
+          isShownInOverlay &&
+          drawnCard?.rank === card.rank &&
+          drawnCard?.suit === card.suit,
       })),
-    [visibleCards, selectedCards],
+    [cards, selectedCards, drawnCard, isShownInOverlay],
   );
 
   const roundSummary = useMemo(
@@ -117,7 +119,7 @@ export default function Game({
     stage === GameViewStage.END_OF_ROUND ||
     stage === GameViewStage.WAITING_FOR_NEW_ROUND
       ? userPlayer.roundScore.original
-      : sumYanivHand(visibleCards);
+      : sumYanivHand(cards);
 
   return (
     <GameLayout

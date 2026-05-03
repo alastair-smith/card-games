@@ -5,39 +5,32 @@ import { useDrawnCardVisibility } from './use-drawn-card-visibility';
 
 const drawnCard = { suit: Suit.CLUBS, rank: Rank.ACE };
 const otherCard = { suit: Suit.HEARTS, rank: Rank.FIVE };
-const cards = [drawnCard, otherCard];
 
 describe('useDrawnCardVisibility', () => {
-  test('returns all cards when there is no drawn card', () => {
-    const { result } = renderHook(() =>
-      useDrawnCardVisibility(undefined, cards),
-    );
-    expect(result.current.visibleCards).toEqual(cards);
+  test('is not shown in overlay when there is no drawn card', () => {
+    const { result } = renderHook(() => useDrawnCardVisibility(undefined));
+    expect(result.current.isShownInOverlay).toBe(false);
   });
 
-  test('hides the drawn card from visible cards while it is in the overlay', () => {
-    const { result } = renderHook(() =>
-      useDrawnCardVisibility(drawnCard, cards),
-    );
-    expect(result.current.visibleCards).toEqual([otherCard]);
+  test('is shown in overlay while the drawn card has not been dismissed', () => {
+    const { result } = renderHook(() => useDrawnCardVisibility(drawnCard));
+    expect(result.current.isShownInOverlay).toBe(true);
   });
 
-  test('restores the drawn card to visible cards after the overlay is dismissed', () => {
-    const { result } = renderHook(() =>
-      useDrawnCardVisibility(drawnCard, cards),
-    );
+  test('is no longer shown in overlay after the overlay is dismissed', () => {
+    const { result } = renderHook(() => useDrawnCardVisibility(drawnCard));
     act(() => result.current.onOverlayDismissed());
-    expect(result.current.visibleCards).toEqual(cards);
+    expect(result.current.isShownInOverlay).toBe(false);
   });
 
-  test('hides the new drawn card again when a new drawn card arrives after dismissal', () => {
+  test('is shown in overlay again when a new drawn card arrives after dismissal', () => {
     const { result, rerender } = renderHook(
-      ({ drawn }) => useDrawnCardVisibility(drawn, cards),
+      ({ drawn }) => useDrawnCardVisibility(drawn),
       { initialProps: { drawn: drawnCard } },
     );
     act(() => result.current.onOverlayDismissed());
 
     rerender({ drawn: otherCard });
-    expect(result.current.visibleCards).toEqual([drawnCard]);
+    expect(result.current.isShownInOverlay).toBe(true);
   });
 });

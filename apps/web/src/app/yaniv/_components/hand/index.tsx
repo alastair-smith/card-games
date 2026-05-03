@@ -8,7 +8,7 @@ import { sortYanivHand } from '~/utils/yaniv/sort';
 
 type HandProps = {
   className?: string;
-  cards: (YanivPlayingCard & { selected?: boolean })[];
+  cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
   handTotal: number;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
@@ -34,7 +34,7 @@ export default function Hand({
         ? { target: 100, away: 100 - totalScore }
         : { target: 200, away: 200 - totalScore };
 
-  const sortedCards = sortYanivHand(cards);
+  const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
@@ -54,7 +54,7 @@ export default function Hand({
             />
           </li>
         ))}
-        {Array.from({ length: HAND_SIZE - cards.length }).map((_, index) => (
+        {Array.from({ length: HAND_SIZE - sortedCards.length }).map((_, index) => (
           <li
             // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
             key={`placeholder-${index}`}

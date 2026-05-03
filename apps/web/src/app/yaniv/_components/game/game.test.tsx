@@ -144,6 +144,11 @@ describe('Game', () => {
       ).toBeInTheDocument();
     });
 
+    test('includes the drawn card value in the hand total while it is displayed on the deck', () => {
+      render(<Game {...baseProps} cards={cards} drawnCard={drawnCard} />);
+      expect(screen.getByLabelText('Hand total')).toHaveTextContent('6');
+    });
+
     test('shows the drawn card in the hand after the overlay is dismissed', async () => {
       vi.useFakeTimers();
       render(
