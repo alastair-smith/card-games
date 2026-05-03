@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  type YanivPlayingCard,
-  yanivPlayingCardSchema,
-} from '~/types/games/yaniv';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 
 export function useCardSelection(hand: YanivPlayingCard[]) {
   const [selectedCards, setSelectedCards] = useState<YanivPlayingCard[]>([]);
@@ -29,7 +26,10 @@ export function useCardSelection(hand: YanivPlayingCard[]) {
             selected.rank !== card.rank || selected.suit !== card.suit,
         );
       }
-      return [...prev, yanivPlayingCardSchema.parse(card)];
+      return [
+        ...prev,
+        { suit: card.suit, rank: card.rank } as YanivPlayingCard,
+      ];
     });
   };
 
