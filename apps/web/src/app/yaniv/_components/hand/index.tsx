@@ -54,14 +54,16 @@ export default function Hand({
             />
           </li>
         ))}
-        {Array.from({ length: HAND_SIZE - sortedCards.length }).map((_, index) => (
-          <li
-            // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
-            key={`placeholder-${index}`}
-            className={cn(PLAYING_CARD_PROPORTIONS, 'invisible')}
-            aria-hidden='true'
-          />
-        ))}
+        {Array.from({ length: HAND_SIZE - sortedCards.length }).map(
+          (_, index) => (
+            <li
+              // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
+              key={`placeholder-${index}`}
+              className={cn(PLAYING_CARD_PROPORTIONS, 'invisible')}
+              aria-hidden='true'
+            />
+          ),
+        )}
       </ol>
 
       <div className='flex flex-col bg-alt-background rounded p-2 h-fit'>
