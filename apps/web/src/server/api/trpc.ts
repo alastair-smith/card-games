@@ -17,7 +17,7 @@ import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { getSession } from '~/server/auth';
 import { setGameAttributes } from '~/telemetry/attributes';
-import { type GameCode, gameCodeSchema } from '~/types/game';
+import { gameCodeSchema } from '~/types/game';
 
 /**
  * 1. CONTEXT

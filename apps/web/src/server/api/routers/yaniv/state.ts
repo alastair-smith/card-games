@@ -14,12 +14,12 @@ import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getYanivChannel } from '~/server/events/yaniv';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
-import { setGameAttributes } from '~/telemetry/attributes';
 import {
   getGameState,
   toClientGameState,
 } from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
+import { setGameAttributes } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   GameUpdate,
@@ -208,9 +208,16 @@ export const yanivStateSubscription = protectedProcedure
           if (queued) {
             const { data, emitContext } = queued;
             const deliverParentCtx = emitContext
-              ? trace.setSpan(otelContext.active(), trace.wrapSpanContext(emitContext))
+              ? trace.setSpan(
+                  otelContext.active(),
+                  trace.wrapSpanContext(emitContext),
+                )
               : otelContext.active();
-            const deliverSpan = tracer.startSpan('subscription.deliver', {}, deliverParentCtx);
+            const deliverSpan = tracer.startSpan(
+              'subscription.deliver',
+              {},
+              deliverParentCtx,
+            );
             await setGameAttributes(deliverSpan, code, userId);
             const carrier: Record<string, string> = {};
             propagation.inject(
