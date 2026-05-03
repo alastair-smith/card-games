@@ -9,16 +9,15 @@
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import {
-  SEMATTRS_RPC_METHOD,
-  SEMATTRS_RPC_SERVICE,
-  SEMATTRS_RPC_SYSTEM,
-} from '@opentelemetry/semantic-conventions';
+  ATTR_RPC_METHOD,
+  ATTR_RPC_SYSTEM_NAME,
+} from '@opentelemetry/semantic-conventions/incubating';
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { getSession } from '~/server/auth';
 import { setGameAttributes } from '~/telemetry/attributes';
-import type { GameCode } from '~/types/game';
+import { type GameCode, gameCodeSchema } from '~/types/game';
 
 /**
  * 1. CONTEXT
@@ -102,16 +101,15 @@ const tracingMiddleware = t.middleware(async ({ next, path, getRawInput }) => {
 
   return tracer.startActiveSpan(`trpc.${path}`, async (span) => {
     span.setAttributes({
-      [SEMATTRS_RPC_SYSTEM]: 'trpc',
-      [SEMATTRS_RPC_SERVICE]: 'card-games',
-      [SEMATTRS_RPC_METHOD]: path,
+      [ATTR_RPC_SYSTEM_NAME]: 'trpc',
+      [ATTR_RPC_METHOD]: path,
     });
 
     const rawInput = await getRawInput();
     const input = rawInput as Record<string, unknown> | null | undefined;
     const gameCode =
-      input && typeof input === 'object' && typeof input['code'] === 'string'
-        ? (input['code'] as GameCode)
+      input && typeof input === 'object' && typeof input.code === 'string'
+        ? gameCodeSchema.safeParse(input.code).data
         : undefined;
 
     if (gameCode) {
@@ -170,8 +168,8 @@ export const protectedProcedure = t.procedure
     const rawInput = await getRawInput();
     const input = rawInput as Record<string, unknown> | null | undefined;
     const gameCode =
-      input && typeof input === 'object' && typeof input['code'] === 'string'
-        ? (input['code'] as GameCode)
+      input && typeof input === 'object' && typeof input.code === 'string'
+        ? gameCodeSchema.safeParse(input.code).data
         : undefined;
 
     const activeSpan = trace.getActiveSpan();

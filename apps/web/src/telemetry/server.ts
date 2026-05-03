@@ -6,8 +6,9 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
-  SEMRESATTRS_DEPLOYMENT_ENVIRONMENT,
 } from '@opentelemetry/semantic-conventions';
+import { ATTR_DEPLOYMENT_ENVIRONMENT_NAME } from '@opentelemetry/semantic-conventions/incubating';
+import { env } from '~/env';
 
 const endpoint =
   process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318';
@@ -26,8 +27,8 @@ const exporter = new OTLPTraceExporter({
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'card-games',
-    [ATTR_SERVICE_VERSION]: process.env.GIT_COMMIT_HASH ?? 'unknown',
-    [SEMRESATTRS_DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV ?? 'development',
+    [ATTR_SERVICE_VERSION]: env.GIT_COMMIT_HASH,
+    [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: env.NODE_ENV,
   }),
   traceExporter: exporter,
   instrumentations: [new HttpInstrumentation(), new IORedisInstrumentation()],
