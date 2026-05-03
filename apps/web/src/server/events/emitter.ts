@@ -3,6 +3,7 @@ import { context, SpanStatusCode, trace } from '@opentelemetry/api';
 import type { z } from 'zod';
 import type { GameState as HighCardGameState } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
+import { GAME_CODE_ATTR } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 import type { GameState as YanivGameState } from '~/types/games/yaniv';
@@ -62,8 +63,11 @@ class MonitoredEventEmitter<
     const parentSpanContext = trace.getSpanContext(context.active());
     const links = parentSpanContext ? [{ context: parentSpanContext }] : [];
 
-    return tracer.startActiveSpan(`event.emit.${event}`, { links }, (span) => {
+    const [prefix, code] = event.split(':');
+    const spanName = `event.emit.${prefix}:[code]`;
+    return tracer.startActiveSpan(spanName, { links }, (span) => {
       try {
+        if (code) span.setAttribute(GAME_CODE_ATTR, code);
         const result = super.emit(event, ...args);
         span.setStatus({ code: SpanStatusCode.OK });
         return result;
