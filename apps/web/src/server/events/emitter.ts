@@ -62,19 +62,19 @@ class MonitoredEventEmitter<
     const parentSpanContext = trace.getSpanContext(context.active());
     const links = parentSpanContext ? [{ context: parentSpanContext }] : [];
 
-    const span = tracer.startSpan(`event.emit.${event}`, { links });
-
-    try {
-      const result = super.emit(event, ...args);
-      span.setStatus({ code: SpanStatusCode.OK });
-      return result;
-    } catch (error) {
-      span.setStatus({ code: SpanStatusCode.ERROR });
-      if (error instanceof Error) span.recordException(error);
-      throw error;
-    } finally {
-      span.end();
-    }
+    return tracer.startActiveSpan(`event.emit.${event}`, { links }, (span) => {
+      try {
+        const result = super.emit(event, ...args);
+        span.setStatus({ code: SpanStatusCode.OK });
+        return result;
+      } catch (error) {
+        span.setStatus({ code: SpanStatusCode.ERROR });
+        if (error instanceof Error) span.recordException(error);
+        throw error;
+      } finally {
+        span.end();
+      }
+    });
   }
 
   public getListenerCounts(): Record<string, number> {
