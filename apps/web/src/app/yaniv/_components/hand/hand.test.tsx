@@ -110,6 +110,21 @@ describe('Hand', () => {
       expect(buttons[2]?.getAttribute('data-rank')).toBe(String(Rank.ACE));
     });
 
+    test('does not render a hidden card in the hand', () => {
+      const cardsWithHidden = [
+        // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
+        { ...cards[0]!, hidden: true },
+        // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
+        { ...cards[1]! },
+        // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
+        { ...cards[2]! },
+      ];
+      render(<Hand {...defaultProps} cards={cardsWithHidden} />);
+      const hand = screen.getByRole('list', { name: 'Your hand' });
+      const buttons = within(hand).getAllByRole('button');
+      expect(buttons).toHaveLength(2);
+    });
+
     test('passes highlighted state to selected cards', () => {
       const cardsWithSelection = [
         // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present

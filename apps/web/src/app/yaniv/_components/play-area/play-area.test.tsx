@@ -29,12 +29,14 @@ vi.mock('~/components/ui/playing-card-stacks', () => ({
     onClick,
     drawnCardDisplay,
     onDrawnCardClick,
+    topCardHighlighted,
   }: {
     onClick?: () => void;
     drawnCardDisplay?: { suit: string; rank: string } | null;
     onDrawnCardClick?: () => void;
+    topCardHighlighted?: boolean;
   }) => (
-    <div data-testid='deck'>
+    <div data-testid='deck' data-highlighted={topCardHighlighted}>
       <button data-testid='deck-click' onClick={onClick} type='button'>
         Deck
       </button>
@@ -262,6 +264,65 @@ describe('PlayArea', () => {
         screen.queryByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
       ).not.toBeInTheDocument();
       vi.useRealTimers();
+    });
+
+    test('calls the dismissed handler when the drawn card is dismissed', async () => {
+      vi.useFakeTimers();
+      const onDrawnCardDismissed = vi.fn();
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          drawnCard={drawnCard}
+          canAutoPlay={false}
+          onDrawnCardDismissed={onDrawnCardDismissed}
+        />,
+      );
+
+      await act(async () => {
+        vi.advanceTimersByTime(50);
+      });
+
+      fireEvent.click(
+        screen.getByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      );
+
+      expect(onDrawnCardDismissed).not.toHaveBeenCalled();
+
+      await act(async () => {
+        vi.advanceTimersByTime(600);
+      });
+
+      expect(onDrawnCardDismissed).toHaveBeenCalledOnce();
+      vi.useRealTimers();
+    });
+
+    test('highlights the top card when it can be insta played', () => {
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          canAutoPlay={true}
+        />,
+      );
+      expect(screen.getByTestId('deck')).toHaveAttribute(
+        'data-highlighted',
+        'true',
+      );
+    });
+
+    test('does not highlight top card when it cannot be insta played', () => {
+      render(
+        <PlayArea
+          discardCard={discardCard}
+          playedCards={playedCards}
+          canAutoPlay={false}
+        />,
+      );
+      expect(screen.getByTestId('deck')).not.toHaveAttribute(
+        'data-highlighted',
+        'true',
+      );
     });
   });
 });

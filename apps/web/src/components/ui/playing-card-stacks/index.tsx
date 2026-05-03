@@ -14,6 +14,7 @@ type PlayingCardDeckProps = {
   onDrawnCardClick?: () => void;
   drawnCardClassName?: string;
   ariaLabel?: string;
+  topCardHighlighted?: boolean;
 };
 
 export function PlayingCardDeck({
@@ -23,6 +24,7 @@ export function PlayingCardDeck({
   onDrawnCardClick,
   drawnCardClassName,
   ariaLabel,
+  topCardHighlighted,
 }: PlayingCardDeckProps) {
   const showDrawnCard = drawnCardDisplay !== undefined;
   return (
@@ -39,6 +41,7 @@ export function PlayingCardDeck({
             border
             onClick={showDrawnCard ? undefined : onClick}
             ariaLabel={ariaLabel}
+            highlighted={topCardHighlighted}
           />
           {showDrawnCard && (
             <div className={cn('absolute inset-0', drawnCardClassName)}>
@@ -47,6 +50,7 @@ export function PlayingCardDeck({
                 cardClassName='border-[0.056em] border-border/50'
                 border
                 onClick={onDrawnCardClick}
+                highlighted={topCardHighlighted}
               />
             </div>
           )}

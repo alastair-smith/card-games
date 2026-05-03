@@ -11,6 +11,7 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { RoundSummary } from '../round-summary';
 import ScoreCard from '../scorecard';
+import { useDrawnCardVisibility } from './use-drawn-card-visibility';
 import { usePageReactions } from './use-page-reactions';
 import { useYanivCalledToast } from './use-yaniv-called-toast';
 
@@ -70,6 +71,9 @@ export default function Game({
   useYanivCalledToast(players);
   const pageReactions = usePageReactions(players);
 
+  const { isShownInOverlay, onOverlayDismissed } =
+    useDrawnCardVisibility(drawnCard);
+
   const userPlayer = useMemo(() => {
     return players.find((player) => player.id === userId);
   }, [players, userId]);
@@ -88,15 +92,20 @@ export default function Game({
 
   const isUserTakingTurn = userPlayer.id === playerTakingTurn.id;
 
-  const cardsWithSelection = useMemo(() => {
-    return cards.map((card) => ({
-      ...card,
-      selected: selectedCards?.some(
-        (selected) =>
-          selected.rank === card.rank && selected.suit === card.suit,
-      ),
-    }));
-  }, [cards, selectedCards]);
+  const cardsWithSelection = useMemo(
+    () =>
+      cards.map((card) => ({
+        ...card,
+        selected: selectedCards?.some(
+          ({ suit, rank }) => rank === card.rank && suit === card.suit,
+        ),
+        hidden:
+          isShownInOverlay &&
+          drawnCard?.rank === card.rank &&
+          drawnCard?.suit === card.suit,
+      })),
+    [cards, selectedCards, drawnCard, isShownInOverlay],
+  );
 
   const roundSummary = useMemo(
     () =>
@@ -145,6 +154,7 @@ export default function Game({
               drawnCard={drawnCard}
               canAutoPlay={canAutoPlay}
               onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+              onDrawnCardDismissed={onOverlayDismissed}
             />
           )}
         </div>

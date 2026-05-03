@@ -246,3 +246,26 @@ export const CallYaniv = () => {
     />
   );
 };
+
+export const InstaPlayCard = () => {
+  return (
+    <Game
+      {...defaultProps}
+      stage={GameViewStage.END_TURN}
+      drawnCard={{ suit: Suit.SPADES, rank: Rank.ACE }}
+      onAutoPlayDrawnCard={() => {}}
+      canAutoPlay
+    />
+  );
+};
+export const NotInstaPlayCard = () => {
+  return (
+    <Game
+      {...defaultProps}
+      stage={GameViewStage.END_TURN}
+      drawnCard={{ suit: Suit.SPADES, rank: Rank.ACE }}
+      onAutoPlayDrawnCard={() => {}}
+      canAutoPlay={false}
+    />
+  );
+};
