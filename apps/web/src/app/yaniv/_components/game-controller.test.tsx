@@ -187,6 +187,35 @@ describe('YanivGameController', () => {
       expect(mutate).not.toHaveBeenCalled();
     });
 
+    test('sends only suit and rank in the mutation payload', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            hand: [{ suit: Suit.HEARTS, rank: Rank.THREE }],
+            topDiscardCard: null,
+          })}
+        />,
+      );
+
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() =>
+        toggle({
+          suit: Suit.HEARTS,
+          rank: Rank.THREE,
+          selected: false,
+          hidden: false,
+        }),
+      );
+
+      fireEvent.click(screen.getByTestId('play-cards'));
+
+      expect(mutate).toHaveBeenCalledWith({
+        code: CODE,
+        cards: [{ suit: Suit.HEARTS, rank: Rank.THREE }],
+      });
+    });
+
     test('shows a toast for an invalid card combination', () => {
       render(
         <YanivGameController

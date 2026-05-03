@@ -39,6 +39,21 @@ describe('useCardSelection', () => {
     expect(result.current.selectedCards).toEqual([]);
   });
 
+  test('strips UI-only fields from a toggled card', () => {
+    const { result } = renderHook(() =>
+      useCardSelection([KING_OF_HEARTS, THREE_OF_SPADES]),
+    );
+
+    const augmented = {
+      ...KING_OF_HEARTS,
+      selected: true,
+      hidden: false,
+    } as unknown as YanivPlayingCard;
+    act(() => result.current.toggleCard(augmented));
+
+    expect(result.current.selectedCards).toEqual([KING_OF_HEARTS]);
+  });
+
   test('allows selecting multiple cards', () => {
     const { result } = renderHook(() =>
       useCardSelection([KING_OF_HEARTS, THREE_OF_SPADES]),
