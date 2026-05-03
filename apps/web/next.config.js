@@ -45,6 +45,7 @@ const config = {
     'sequelize',
     'pino',
     'pino-pretty',
+    'ioredis',
     '@opentelemetry/api',
     '@opentelemetry/sdk-node',
     '@opentelemetry/sdk-trace-node',
