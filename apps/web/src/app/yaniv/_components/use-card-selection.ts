@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { JOKER_RANK } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 
 export function useCardSelection(hand: YanivPlayingCard[]) {
@@ -26,10 +27,11 @@ export function useCardSelection(hand: YanivPlayingCard[]) {
             selected.rank !== card.rank || selected.suit !== card.suit,
         );
       }
-      return [
-        ...prev,
-        { suit: card.suit, rank: card.rank } as YanivPlayingCard,
-      ];
+      const newCard =
+        card.rank === JOKER_RANK
+          ? { suit: card.suit, rank: card.rank }
+          : { suit: card.suit, rank: card.rank };
+      return [...prev, newCard];
     });
   };
 
