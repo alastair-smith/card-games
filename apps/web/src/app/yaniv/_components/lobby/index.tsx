@@ -49,7 +49,7 @@ export default function Lobby({
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
       updatePlayerMutation.mutate(
-        { field: 'name', code, value: name },
+        { field: 'name', code, playerName: name },
         {
           onError: (error) => {
             setUser((prev) => ({ ...prev, nameError: error.message }));
@@ -63,7 +63,7 @@ export default function Lobby({
   const debouncedUpdatePlayerReady = useCallback(
     debounce((isReady: boolean) => {
       updatePlayerMutation.mutate(
-        { field: 'isReady', code, value: isReady },
+        { field: 'isReady', code, isReady },
         {
           onError: () => {
             setUser((prev) => ({ ...prev, isReady: !isReady }));

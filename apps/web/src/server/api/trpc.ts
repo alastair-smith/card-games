@@ -16,7 +16,7 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { getSession } from '~/server/auth';
-import { setGameAttributes } from '~/telemetry/attributes';
+import { setGameAttributes, setInputAttributes } from '~/telemetry/attributes';
 import { gameCodeSchema } from '~/types/game';
 
 /**
@@ -112,8 +112,12 @@ const tracingMiddleware = t.middleware(async ({ next, path, getRawInput }) => {
         ? gameCodeSchema.safeParse(input.code).data
         : undefined;
 
-    if (gameCode) {
-      span.setAttribute('game.code', gameCode);
+    if (input && typeof input === 'object') {
+      await setInputAttributes(
+        span,
+        input as Record<string, unknown>,
+        gameCode,
+      );
     }
 
     try {

@@ -10,15 +10,29 @@ export const updatePlayer = protectedProcedure
       z.object({
         code: gameCodeSchema,
         field: z.literal('name'),
-        value: playerNameSchema,
+        playerName: playerNameSchema,
       }),
       z.object({
         code: gameCodeSchema,
         field: z.literal('isReady'),
-        value: z.boolean(),
+        isReady: z.boolean(),
       }),
     ]),
   )
   .mutation(async ({ input, ctx: { userId } }) => {
-    await updatePlayerState({ userId, ...input });
+    if (input.field === 'name') {
+      await updatePlayerState({
+        code: input.code,
+        userId,
+        field: 'name',
+        value: input.playerName,
+      });
+    } else {
+      await updatePlayerState({
+        code: input.code,
+        userId,
+        field: 'isReady',
+        value: input.isReady,
+      });
+    }
   });
