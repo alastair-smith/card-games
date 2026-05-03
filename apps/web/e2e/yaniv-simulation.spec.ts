@@ -1,5 +1,11 @@
 import { expect, type Page, test } from '@playwright/test';
-import { JOKER_RANK, RANK_DISPLAY, RANK_FULL_NAME, Rank, Suit } from '../src/types/cards';
+import {
+  JOKER_RANK,
+  RANK_DISPLAY,
+  RANK_FULL_NAME,
+  Rank,
+  Suit,
+} from '../src/types/cards';
 import {
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
