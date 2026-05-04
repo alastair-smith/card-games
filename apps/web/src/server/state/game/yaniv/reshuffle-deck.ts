@@ -9,7 +9,8 @@ const tracer = trace.getTracer('card-games');
 export const reshuffleDeck = async (code: GameCode): Promise<void> => {
   await tracer.startActiveSpan('yaniv.deck-reshuffle', async (span) => {
     try {
-      const [topCard, ...cardsToShuffle] = await yanivDiscard.drainDiscard(code);
+      const [topCard, ...cardsToShuffle] =
+        await yanivDiscard.drainDiscard(code);
       await yanivDeck.createDeck(code, shuffle(cardsToShuffle));
       if (topCard) await yanivDiscard.pushDiscard(code, topCard);
     } catch (error) {

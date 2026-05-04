@@ -98,7 +98,8 @@ const playDrawnCard = (
       const remainingHand = removeFromHand(hand, cards);
 
       const topPlayedCard = state.playedCards[state.playedCards.length - 1];
-      if (!topPlayedCard) throw new Error('No played cards to validate against');
+      if (!topPlayedCard)
+        throw new Error('No played cards to validate against');
       const playResult = isValidYanivPlay(cards, topPlayedCard);
       if (!playResult.isValid) throw new Error('Invalid card combination');
 

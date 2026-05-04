@@ -16,8 +16,10 @@ vi.mock('@opentelemetry/api', () => ({
   SpanStatusCode: { ERROR: 2 },
   trace: {
     getTracer: () => ({
-      startActiveSpan: (_name: string, fn: (span: typeof mockSpan) => Promise<void>) =>
-        fn(mockSpan),
+      startActiveSpan: (
+        _name: string,
+        fn: (span: typeof mockSpan) => Promise<void>,
+      ) => fn(mockSpan),
     }),
   },
 }));
@@ -50,7 +52,11 @@ const CARD_B: YanivPlayingCard = { suit: Suit.DIAMONDS, rank: Rank.THREE };
 describe('reshuffleDeck', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(yanivDiscard.drainDiscard).mockResolvedValue([TOP_CARD, CARD_A, CARD_B]);
+    vi.mocked(yanivDiscard.drainDiscard).mockResolvedValue([
+      TOP_CARD,
+      CARD_A,
+      CARD_B,
+    ]);
     vi.mocked(yanivDeck.createDeck).mockResolvedValue(undefined);
     vi.mocked(yanivDiscard.pushDiscard).mockResolvedValue(undefined);
   });
@@ -66,14 +72,20 @@ describe('reshuffleDeck', () => {
     await reshuffleDeck(CODE);
 
     expect(vi.mocked(yanivDeck.createDeck)).toHaveBeenCalledOnce();
-    expect(vi.mocked(yanivDeck.createDeck)).toHaveBeenCalledWith(CODE, [CARD_A, CARD_B]);
+    expect(vi.mocked(yanivDeck.createDeck)).toHaveBeenCalledWith(CODE, [
+      CARD_A,
+      CARD_B,
+    ]);
   });
 
   test('restores the top card to the discard pile', async () => {
     await reshuffleDeck(CODE);
 
     expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledOnce();
-    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(CODE, TOP_CARD);
+    expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(
+      CODE,
+      TOP_CARD,
+    );
   });
 
   test('does not restore to discard pile when discard was empty', async () => {
@@ -92,7 +104,9 @@ describe('reshuffleDeck', () => {
     });
 
     test('ends the span when an error is thrown', async () => {
-      vi.mocked(yanivDiscard.drainDiscard).mockRejectedValue(new Error('Redis error'));
+      vi.mocked(yanivDiscard.drainDiscard).mockRejectedValue(
+        new Error('Redis error'),
+      );
 
       await expect(reshuffleDeck(CODE)).rejects.toThrow();
 
@@ -100,11 +114,15 @@ describe('reshuffleDeck', () => {
     });
 
     test('marks the span as an error when an error is thrown', async () => {
-      vi.mocked(yanivDiscard.drainDiscard).mockRejectedValue(new Error('Redis error'));
+      vi.mocked(yanivDiscard.drainDiscard).mockRejectedValue(
+        new Error('Redis error'),
+      );
 
       await expect(reshuffleDeck(CODE)).rejects.toThrow();
 
-      expect(mockSpan.setStatus).toHaveBeenCalledWith({ code: SpanStatusCode.ERROR });
+      expect(mockSpan.setStatus).toHaveBeenCalledWith({
+        code: SpanStatusCode.ERROR,
+      });
     });
 
     test('records the exception on the span when an error is thrown', async () => {
