@@ -23,14 +23,11 @@
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.1",
-    "@opentelemetry/context-zone": "^2.6.1",
     "@opentelemetry/exporter-trace-otlp-http": "^0.214.0",
-    "@opentelemetry/instrumentation-fetch": "^0.214.0",
     "@opentelemetry/instrumentation-http": "^0.214.0",
     "@opentelemetry/instrumentation-ioredis": "^0.62.0",
     "@opentelemetry/resources": "^2.6.1",
     "@opentelemetry/sdk-node": "^0.214.0",
-    "@opentelemetry/sdk-trace-web": "^2.6.1",
     "@opentelemetry/semantic-conventions": "^1.40.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "next": "^16.2.2",
@@ -39,6 +36,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@opentelemetry/context-zone": "^2.6.1",
+    "@opentelemetry/instrumentation-fetch": "^0.214.0",
+    "@opentelemetry/sdk-trace-web": "^2.6.1",
     "@hookform/resolvers": "^5.2.2",
     "@ladle/react": "^5.1.1",
     "@playwright/test": "^1.59.1",
