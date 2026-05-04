@@ -3,7 +3,6 @@ import { PageHeader, PageRoot } from '~/components/layout/page';
 import { About } from './_components/about';
 import { JoinGame } from './_components/join-game';
 import { NewGame } from './_components/new-game';
-import { TelemetryToggle } from './_components/telemetry-toggle';
 
 export default async function Home() {
   await connection();
@@ -19,8 +18,6 @@ export default async function Home() {
         </div>
 
         <NewGame />
-
-        <TelemetryToggle />
       </main>
     </PageRoot>
   );

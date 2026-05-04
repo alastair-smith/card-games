@@ -18,14 +18,14 @@ export function TelemetryToggle() {
   }
 
   return (
-    <div className='flex items-center gap-3 text-sm text-dark-text/60'>
+    <div className='flex items-center gap-3 text-sm text-light-text'>
       <Switch
         id='telemetry-toggle'
         checked={isEnabled}
         onCheckedChange={handleCheckedChange}
       />
       <label htmlFor='telemetry-toggle' className='cursor-pointer select-none'>
-        Share usage data to help improve this app
+        Share anonymised usage to help improve this app
       </label>
     </div>
   );
