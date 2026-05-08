@@ -6,7 +6,11 @@ import {
   BatchSpanProcessor,
   WebTracerProvider,
 } from '@opentelemetry/sdk-trace-web';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
+import { env } from '~/env';
 import {
   ATTR_BROWSER_BRANDS,
   ATTR_BROWSER_PLATFORM,
@@ -62,6 +66,7 @@ export function initClientTelemetry() {
   const provider = new WebTracerProvider({
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: 'card-games-web',
+      [ATTR_SERVICE_VERSION]: env.NEXT_PUBLIC_GIT_COMMIT_HASH,
       [ATTR_BROWSER_BRANDS]: getBrowserBrands(),
       [ATTR_BROWSER_PLATFORM]: getBrowserPlatform(),
       'device.screen.width': window.screen.width,

@@ -27,7 +27,7 @@ const exporter = new OTLPTraceExporter({
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: 'card-games',
-    [ATTR_SERVICE_VERSION]: env.GIT_COMMIT_HASH,
+    [ATTR_SERVICE_VERSION]: env.NEXT_PUBLIC_GIT_COMMIT_HASH,
     [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: env.NODE_ENV,
   }),
   traceExporter: exporter,

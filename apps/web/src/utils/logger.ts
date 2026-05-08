@@ -7,7 +7,7 @@ const initLogger = () => {
   const base = {
     service: 'card-games',
     env: env.NODE_ENV,
-    version: env.GIT_COMMIT_HASH,
+    version: env.NEXT_PUBLIC_GIT_COMMIT_HASH,
   };
 
   const level = env.LOG_LEVEL;
