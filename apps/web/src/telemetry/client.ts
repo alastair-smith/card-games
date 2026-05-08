@@ -10,11 +10,11 @@ import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
-import { env } from '~/env';
 import {
   ATTR_BROWSER_BRANDS,
   ATTR_BROWSER_PLATFORM,
 } from '@opentelemetry/semantic-conventions/incubating';
+import { env } from '~/env';
 
 /** Chrome only */
 type NavigatorUaData = {
