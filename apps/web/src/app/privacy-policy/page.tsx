@@ -42,7 +42,7 @@ export default async function PrivacyPolicy() {
           </CardHeader>
 
           <CardContent className='flex flex-col gap-3'>
-            <h3 className='font-semibold text-base mt-2 mb-2'>
+            <h3 className='font-semibold text-base mt-2 mb-2' id='about'>
               About this policy
             </h3>
             <p className='text-sm'>
@@ -60,7 +60,60 @@ export default async function PrivacyPolicy() {
               .
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>Cookies</h3>
+            <nav aria-label='Contents'>
+              <h3 className='font-semibold text-base mt-6 mb-2'>Contents</h3>
+              <ol className='text-sm list-decimal pl-5 space-y-1'>
+                <li>
+                  <a href='#about' className={linkClassName}>
+                    About this policy
+                  </a>
+                </li>
+                <li>
+                  <a href='#cookies' className={linkClassName}>
+                    Cookies
+                  </a>
+                </li>
+                <li>
+                  <a href='#game-session-data' className={linkClassName}>
+                    Game session data
+                  </a>
+                </li>
+                <li>
+                  <a href='#analytics' className={linkClassName}>
+                    Analytics (optional)
+                  </a>
+                </li>
+                <li>
+                  <a href='#legal-basis' className={linkClassName}>
+                    Legal basis for processing
+                  </a>
+                </li>
+                <li>
+                  <a href='#data-retention' className={linkClassName}>
+                    Data retention
+                  </a>
+                </li>
+                <li>
+                  <a href='#your-rights' className={linkClassName}>
+                    Your rights
+                  </a>
+                </li>
+                <li>
+                  <a href='#changes' className={linkClassName}>
+                    Changes to this policy
+                  </a>
+                </li>
+                <li>
+                  <a href='#contact' className={linkClassName}>
+                    Contact and complaints
+                  </a>
+                </li>
+              </ol>
+            </nav>
+
+            <h3 className='font-semibold text-base mt-6 mb-2' id='cookies'>
+              Cookies
+            </h3>
             <p className='text-sm'>
               This site uses one cookie, which is strictly necessary for the
               service to function.
@@ -90,7 +143,10 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3
+              className='font-semibold text-base mt-6 mb-2'
+              id='game-session-data'
+            >
               Game session data
             </h3>
             <p className='text-sm'>
@@ -99,7 +155,7 @@ export default async function PrivacyPolicy() {
               automatically and permanently deleted after 24 hours.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3 className='font-semibold text-base mt-6 mb-2' id='analytics'>
               Analytics (optional)
             </h3>
             <p className='text-sm'>
@@ -244,7 +300,7 @@ export default async function PrivacyPolicy() {
               directly identifiable information.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3 className='font-semibold text-base mt-6 mb-2' id='legal-basis'>
               Legal basis for processing
             </h3>
             <Table>
@@ -281,7 +337,10 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3
+              className='font-semibold text-base mt-6 mb-2'
+              id='data-retention'
+            >
               Data retention
             </h3>
             <Table>
@@ -313,7 +372,9 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>Your rights</h3>
+            <h3 className='font-semibold text-base mt-6 mb-2' id='your-rights'>
+              Your rights
+            </h3>
             <p className='text-sm'>Under the UK GDPR you have the right to:</p>
             <ul className='text-sm list-disc pl-5 space-y-1'>
               <li>Access the personal data held about you</li>
@@ -337,7 +398,7 @@ export default async function PrivacyPolicy() {
               .
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3 className='font-semibold text-base mt-6 mb-2' id='changes'>
               Changes to this policy
             </h3>
             <p className='text-sm'>
@@ -346,7 +407,7 @@ export default async function PrivacyPolicy() {
               the most recent version.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2'>
+            <h3 className='font-semibold text-base mt-6 mb-2' id='contact'>
               Contact and complaints
             </h3>
             <p className='text-sm'>
