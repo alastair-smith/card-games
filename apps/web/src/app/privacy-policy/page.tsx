@@ -33,7 +33,7 @@ export default async function PrivacyPolicy() {
         ]}
       />
 
-      <main className='flex-1 w-full flex flex-col justify-start items-center'>
+      <main className='flex-1 w-full flex flex-col justify-start items-center pb-6'>
         <Card>
           <CardHeader>
             <CardTitle>Privacy Policy</CardTitle>

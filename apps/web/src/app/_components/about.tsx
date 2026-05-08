@@ -1,9 +1,4 @@
-import {
-  DatabaseIcon,
-  LockIcon,
-  MessageCircleQuestionMarkIcon,
-  UserLockIcon,
-} from 'lucide-react';
+import { MessageCircleQuestionMarkIcon, UserLockIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
 import {
