@@ -12,6 +12,7 @@ import YanivGameController from '~/app/yaniv/_components/game-controller';
 import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
+import { setGameAttributes } from '~/telemetry/attributes';
 import { api } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
@@ -39,7 +40,13 @@ function remoteContextFromTraceparent(traceparent: string | undefined) {
   });
 }
 
-export default function YanivClient({ code }: { code: GameCode }) {
+export default function YanivClient({
+  code,
+  userId,
+}: {
+  code: GameCode;
+  userId?: UserId;
+}) {
   const router = useRouter();
 
   const [status, setStatus] = useState<GameStatus>(GameStatus.LOADING);
@@ -55,14 +62,16 @@ export default function YanivClient({ code }: { code: GameCode }) {
       onStarted: () => {
         console.log(`Subscription to game ${code} started`);
       },
-      onData: (newGameState) => {
+      onData: async (newGameState) => {
         const remoteCtx = remoteContextFromTraceparent(newGameState._trace);
-        clientTracer.startActiveSpan(
+        await clientTracer.startActiveSpan(
           'subscription.receive',
           {},
           remoteCtx,
-          (span) => {
+          async (span) => {
             try {
+              await setGameAttributes(span, code, userId);
+
               switch (newGameState.update) {
                 case GameUpdate.KICKED:
                   setStatus(GameStatus.FINISHED);
