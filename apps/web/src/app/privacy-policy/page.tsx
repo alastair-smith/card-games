@@ -2,12 +2,14 @@ import { connection } from 'next/server';
 import { TelemetryToggle } from '~/app/_components/telemetry-toggle';
 import { PageHeader, PageRoot } from '~/components/layout/page';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+  Article,
+  ArticleContent,
+  ArticleContents,
+  ArticleHeader,
+  ArticleHeading,
+  ArticleSubtitle,
+  ArticleTitle,
+} from '~/components/ui/article';
 import {
   Table,
   TableBody,
@@ -35,16 +37,14 @@ export default async function PrivacyPolicy() {
       />
 
       <main className='flex-1 w-full flex flex-col justify-start items-center pb-6'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Privacy Policy</CardTitle>
-            <CardDescription>Last updated: 4 May 2026</CardDescription>
-          </CardHeader>
+        <Article>
+          <ArticleHeader>
+            <ArticleTitle>Privacy Policy</ArticleTitle>
+            <ArticleSubtitle>Last updated: 4 May 2026</ArticleSubtitle>
+          </ArticleHeader>
 
-          <CardContent className='flex flex-col gap-3'>
-            <h3 className='font-semibold text-base mt-2 mb-2' id='about'>
-              About this policy
-            </h3>
+          <ArticleContent>
+            <ArticleHeading id='about'>About this policy</ArticleHeading>
             <p className='text-sm'>
               PlayCards.Games is operated by an individual, not a company. As
               the data controller under the UK General Data Protection
@@ -60,60 +60,9 @@ export default async function PrivacyPolicy() {
               .
             </p>
 
-            <nav aria-label='Contents'>
-              <h3 className='font-semibold text-base mt-6 mb-2'>Contents</h3>
-              <ol className='text-sm list-decimal pl-5 space-y-1'>
-                <li>
-                  <a href='#about' className={linkClassName}>
-                    About this policy
-                  </a>
-                </li>
-                <li>
-                  <a href='#cookies' className={linkClassName}>
-                    Cookies
-                  </a>
-                </li>
-                <li>
-                  <a href='#game-session-data' className={linkClassName}>
-                    Game session data
-                  </a>
-                </li>
-                <li>
-                  <a href='#analytics' className={linkClassName}>
-                    Analytics (optional)
-                  </a>
-                </li>
-                <li>
-                  <a href='#legal-basis' className={linkClassName}>
-                    Legal basis for processing
-                  </a>
-                </li>
-                <li>
-                  <a href='#data-retention' className={linkClassName}>
-                    Data retention
-                  </a>
-                </li>
-                <li>
-                  <a href='#your-rights' className={linkClassName}>
-                    Your rights
-                  </a>
-                </li>
-                <li>
-                  <a href='#changes' className={linkClassName}>
-                    Changes to this policy
-                  </a>
-                </li>
-                <li>
-                  <a href='#contact' className={linkClassName}>
-                    Contact and complaints
-                  </a>
-                </li>
-              </ol>
-            </nav>
+            <ArticleContents />
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='cookies'>
-              Cookies
-            </h3>
+            <ArticleHeading id='cookies'>Cookies</ArticleHeading>
             <p className='text-sm'>
               This site uses one cookie, which is strictly necessary for the
               service to function.
@@ -143,21 +92,16 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3
-              className='font-semibold text-base mt-6 mb-2'
-              id='game-session-data'
-            >
+            <ArticleHeading id='game-session-data'>
               Game session data
-            </h3>
+            </ArticleHeading>
             <p className='text-sm'>
               When you join a game, your chosen player name and an identifier
               are stored temporarily to enable gameplay. This data is
               automatically and permanently deleted after 24 hours.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='analytics'>
-              Analytics (optional)
-            </h3>
+            <ArticleHeading id='analytics'>Analytics (optional)</ArticleHeading>
             <p className='text-sm'>
               You can opt in to sharing anonymised usage data to help improve
               the app. Use the toggle below, or find it on the home page under
@@ -300,9 +244,9 @@ export default async function PrivacyPolicy() {
               directly identifiable information.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='legal-basis'>
+            <ArticleHeading id='legal-basis'>
               Legal basis for processing
-            </h3>
+            </ArticleHeading>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -337,12 +281,7 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3
-              className='font-semibold text-base mt-6 mb-2'
-              id='data-retention'
-            >
-              Data retention
-            </h3>
+            <ArticleHeading id='data-retention'>Data retention</ArticleHeading>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -372,9 +311,7 @@ export default async function PrivacyPolicy() {
               </TableBody>
             </Table>
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='your-rights'>
-              Your rights
-            </h3>
+            <ArticleHeading id='your-rights'>Your rights</ArticleHeading>
             <p className='text-sm'>Under the UK GDPR you have the right to:</p>
             <ul className='text-sm list-disc pl-5 space-y-1'>
               <li>Access the personal data held about you</li>
@@ -398,18 +335,14 @@ export default async function PrivacyPolicy() {
               .
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='changes'>
-              Changes to this policy
-            </h3>
+            <ArticleHeading id='changes'>Changes to this policy</ArticleHeading>
             <p className='text-sm'>
               This policy may be updated from time to time; the &ldquo;last
               updated&rdquo; date at the top of this page will always reflect
               the most recent version.
             </p>
 
-            <h3 className='font-semibold text-base mt-6 mb-2' id='contact'>
-              Contact and complaints
-            </h3>
+            <ArticleHeading id='contact'>Contact and complaints</ArticleHeading>
             <p className='text-sm'>
               For any questions or concerns about how your data is handled,
               contact{' '}
@@ -437,8 +370,8 @@ export default async function PrivacyPolicy() {
               </li>
               <li>Phone: 0303 123 1113</li>
             </ul>
-          </CardContent>
-        </Card>
+          </ArticleContent>
+        </Article>
       </main>
     </PageRoot>
   );
