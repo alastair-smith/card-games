@@ -1,4 +1,5 @@
 import { connection } from 'next/server';
+import { TelemetryToggle } from '~/app/_components/telemetry-toggle';
 import { PageHeader, PageRoot } from '~/components/layout/page';
 import {
   Card,
@@ -80,8 +81,8 @@ export default async function PrivacyPolicy() {
                   </TableCell>
                   <TableCell>
                     Identifies your browser session so you can join and play
-                    games. Contains an anonymised identifier only — no personal
-                    information is stored inside this cookie.
+                    games. Contains a randomly generated identifier only — no
+                    personal information is stored inside this cookie.
                   </TableCell>
                   <TableCell>Strictly necessary</TableCell>
                   <TableCell>7 days</TableCell>
@@ -93,8 +94,8 @@ export default async function PrivacyPolicy() {
               Game session data
             </h3>
             <p className='text-sm'>
-              When you join a game, your chosen player name and an anonymised
-              identifier are stored temporarily to enable gameplay. This data is
+              When you join a game, your chosen player name and an identifier
+              are stored temporarily to enable gameplay. This data is
               automatically and permanently deleted after 24 hours.
             </p>
 
@@ -103,20 +104,119 @@ export default async function PrivacyPolicy() {
             </h3>
             <p className='text-sm'>
               You can opt in to sharing anonymised usage data to help improve
-              the app. The toggle appears on the home page under &ldquo;About
-              this app&rdquo;. If you opt in:
+              the app. Use the toggle below, or find it on the home page under
+              &ldquo;About this app&rdquo;.
+            </p>
+            <TelemetryToggle />
+            <p className='text-sm'>
+              If you opt in then the following fields may be sent for each
+              action you take:
+            </p>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Field</TableHead>
+                  <TableHead>What it contains</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    <code>http.request.method</code>
+                  </TableCell>
+                  <TableCell>HTTP method (e.g. GET, POST)</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>http.response.status_code</code>
+                  </TableCell>
+                  <TableCell>
+                    HTTP response status code (e.g. 200, 500)
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>url.full</code>
+                  </TableCell>
+                  <TableCell>
+                    The API endpoint URL. Any identifiers in the URL — including
+                    player names and session IDs — are hashed using a per-game
+                    key before being sent. The hash is different for every game,
+                    so it cannot be used to link your activity across games or
+                    to identify you.
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>server.address</code>, <code>server.port</code>
+                  </TableCell>
+                  <TableCell>
+                    Hostname and port of the server being called
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>browser.brands</code>
+                  </TableCell>
+                  <TableCell>
+                    Browser name and major version only (e.g. Firefox 150)
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>browser.platform</code>
+                  </TableCell>
+                  <TableCell>Operating system (e.g. Linux, Windows)</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>browser.viewport.height</code>,{' '}
+                    <code>browser.viewport.width</code>
+                  </TableCell>
+                  <TableCell>Browser window size in pixels</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>device.screen.height</code>,{' '}
+                    <code>device.screen.width</code>
+                  </TableCell>
+                  <TableCell>Screen resolution in pixels</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>service.version</code>
+                  </TableCell>
+                  <TableCell>App version</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>game.code</code>
+                  </TableCell>
+                  <TableCell>
+                    The short code used to join the game (e.g. DB3EHI)
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <code>game.player.id</code>
+                  </TableCell>
+                  <TableCell>
+                    A hashed identifier for your player session. It is derived
+                    using a per-game key so it cannot be used to identify you or
+                    link your activity across games.
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <p className='text-sm'>
+              These fields have been chosen carefully to capture only what is
+              needed to understand usage and diagnose errors. In particular,
+              only the major browser version is recorded (not the full version
+              string), and no precise location or hardware identifiers are
+              collected, in order to minimise the risk of users being
+              fingerprinted.
             </p>
             <ul className='text-sm list-disc pl-5 space-y-1'>
-              <li>
-                Your browser sends trace data about the pages you visit and
-                actions you take (such as joining or playing a game).
-              </li>
-              <li>
-                Any identifiers — including your player name and session ID —
-                are hashed using a per-game key before being sent. The hash is
-                different for every game, so it cannot be used to link your
-                activity across games or to identify you.
-              </li>
               <li>
                 This data is processed by <strong>New Relic, Inc.</strong> and
                 stored in their EU data centre in Frankfurt, Germany. See the{' '}
@@ -131,8 +231,8 @@ export default async function PrivacyPolicy() {
                 for details on how they handle data as a processor.
               </li>
               <li>
-                You can withdraw consent at any time by toggling the setting off
-                on the home page.
+                You can withdraw consent at any time using the toggle above or
+                the one on the home page.
               </li>
             </ul>
             <p className='text-sm'>
@@ -222,13 +322,13 @@ export default async function PrivacyPolicy() {
               <li>Restrict or object to processing</li>
               <li>Data portability</li>
               <li>
-                Withdraw consent for analytics at any time (via the home page
-                toggle)
+                Withdraw consent for analytics at any time (via the toggle above
+                or on the home page)
               </li>
             </ul>
             <p className='text-sm'>
               Because game session data is deleted within 24 hours and the auth
-              cookie contains only an anonymised identifier, there is limited
+              cookie contains only a pseudonymised identifier, there is limited
               persistent personal data held about you. To exercise any of your
               rights, contact{' '}
               <a href={`mailto:${CONTACT_EMAIL}`} className={linkClassName}>
