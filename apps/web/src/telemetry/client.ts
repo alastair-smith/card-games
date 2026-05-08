@@ -12,9 +12,9 @@ import {
   ATTR_BROWSER_PLATFORM,
 } from '@opentelemetry/semantic-conventions/incubating';
 
-type UaDataBrand = { brand: string; version: string };
+/** Chrome only */
 type NavigatorUaData = {
-  brands?: UaDataBrand[];
+  brands?: { brand: string; version: string }[];
   platform?: string;
 };
 
@@ -24,11 +24,34 @@ function getBrowserBrands(): string[] | undefined {
   const brands = (navigator as NavigatorWithUaData).userAgentData?.brands?.map(
     ({ brand, version }) => `${brand} ${version}`,
   );
-  return brands?.length ? brands : undefined;
+  if (brands?.length) return brands;
+
+  const ua = navigator.userAgent;
+  const match =
+    ua.match(/Firefox\/(\d+)/) ??
+    ua.match(/Edg\/(\d+)/) ??
+    ua.match(/Chrome\/(\d+)/) ??
+    (ua.includes('Safari/') ? ua.match(/Version\/(\d+)/) : null);
+  if (!match) return undefined;
+
+  if (ua.includes('Firefox/')) return [`Firefox ${match[1]}`];
+  if (ua.includes('Edg/')) return [`Edge ${match[1]}`];
+  if (ua.includes('Chrome/')) return [`Chrome ${match[1]}`];
+  return [`Safari ${match[1]}`];
 }
 
 function getBrowserPlatform(): string | undefined {
-  return (navigator as NavigatorWithUaData).userAgentData?.platform;
+  if ((navigator as NavigatorWithUaData).userAgentData?.platform) {
+    return (navigator as NavigatorWithUaData).userAgentData?.platform;
+  }
+
+  const ua = navigator.userAgent;
+  if (ua.includes('iPhone') || ua.includes('iPad')) return 'iOS';
+  if (ua.includes('Android')) return 'Android';
+  if (ua.includes('Windows')) return 'Windows';
+  if (ua.includes('Mac OS X')) return 'macOS';
+  if (ua.includes('Linux')) return 'Linux';
+  return undefined;
 }
 
 export function initClientTelemetry() {
@@ -55,5 +78,6 @@ export function initClientTelemetry() {
 
   new FetchInstrumentation({
     propagateTraceHeaderCorsUrls: [window.location.origin],
+    semconvStabilityOptIn: 'http',
   }).enable();
 }
