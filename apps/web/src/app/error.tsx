@@ -5,6 +5,7 @@ import {
   MessageCircleQuestionMarkIcon,
   RefreshCwIcon,
 } from 'lucide-react';
+import { useEffect } from 'react';
 import { CurrentUrlLink } from '~/components/current-url';
 import { Button } from '~/components/ui/button';
 import {
@@ -14,9 +15,18 @@ import {
   CardHeader,
 } from '~/components/ui/card';
 import { PlayingCard } from '~/components/ui/playing-card';
+import { recordClientError } from '~/telemetry/errors';
 import { Suit, ZERO_RANK } from '~/types/cards';
 
-export default function ErrorPage() {
+export default function ErrorPage({
+  error,
+}: {
+  error: Error & { digest?: string };
+}) {
+  useEffect(() => {
+    recordClientError(error, 'error.boundary');
+  }, [error]);
+
   return (
     <div className='flex min-h-dvh justify-center text-dark-text pt-[5vh]'>
       <div className='flex h-full w-full max-w-xl flex-col items-center justify-center gap-6 p-4'>

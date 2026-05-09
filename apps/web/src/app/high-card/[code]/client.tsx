@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Lobby from '~/app/high-card/_components/lobby';
 import { toast } from '~/components/ui/toast';
+import { recordClientError } from '~/telemetry/errors';
 import { api } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
@@ -94,6 +95,7 @@ export default function HighCard({ code }: { code: GameCode }) {
         }
       },
       onError: (error) => {
+        recordClientError(error, 'subscription.error');
         console.error(error);
       },
     },

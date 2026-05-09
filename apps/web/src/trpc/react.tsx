@@ -2,6 +2,7 @@
 
 import { type QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  httpLink,
   loggerLink,
   splitLink,
   unstable_httpBatchStreamLink,
@@ -11,8 +12,8 @@ import { createTRPCReact } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { useState } from 'react';
 import SuperJSON from 'superjson';
-
 import type { AppRouter } from '~/server/api/root';
+import { mutationFetch, otelLink } from './otel-link';
 
 import { createQueryClient } from './query-client';
 
@@ -49,6 +50,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const [trpcClient] = useState(() =>
     api.createClient({
       links: [
+        otelLink(),
         loggerLink({
           enabled: (op) =>
             process.env.NODE_ENV === 'development' ||
@@ -60,14 +62,27 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             transformer: SuperJSON,
             url: `${getBaseUrl()}/api/trpc`,
           }),
-          false: unstable_httpBatchStreamLink({
-            transformer: SuperJSON,
-            url: `${getBaseUrl()}/api/trpc`,
-            headers: () => {
-              const headers = new Headers();
-              headers.set('x-trpc-source', 'nextjs-react');
-              return headers;
-            },
+          false: splitLink({
+            condition: (op) => op.type === 'mutation',
+            true: httpLink({
+              transformer: SuperJSON,
+              url: `${getBaseUrl()}/api/trpc`,
+              fetch: mutationFetch,
+              headers: () => {
+                const headers = new Headers();
+                headers.set('x-trpc-source', 'nextjs-react');
+                return headers;
+              },
+            }),
+            false: unstable_httpBatchStreamLink({
+              transformer: SuperJSON,
+              url: `${getBaseUrl()}/api/trpc`,
+              headers: () => {
+                const headers = new Headers();
+                headers.set('x-trpc-source', 'nextjs-react');
+                return headers;
+              },
+            }),
           }),
         }),
       ],

@@ -15,6 +15,7 @@ import {
   ATTR_BROWSER_PLATFORM,
 } from '@opentelemetry/semantic-conventions/incubating';
 import { env } from '~/env';
+import { recordClientError } from './errors';
 
 /** Chrome only */
 type NavigatorUaData = {
@@ -85,4 +86,14 @@ export function initClientTelemetry() {
     propagateTraceHeaderCorsUrls: [window.location.origin],
     semconvStabilityOptIn: 'http',
   }).enable();
+
+  window.addEventListener('error', ({ error }) => {
+    if (error instanceof Error) {
+      recordClientError(error, 'global.error');
+    }
+  });
+
+  window.addEventListener('unhandledrejection', ({ reason }) => {
+    recordClientError(reason, 'global.unhandledRejection');
+  });
 }

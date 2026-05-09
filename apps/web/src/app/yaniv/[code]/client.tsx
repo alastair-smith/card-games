@@ -13,6 +13,7 @@ import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
+import { recordClientError } from '~/telemetry/errors';
 import { api } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
@@ -138,6 +139,7 @@ export default function YanivClient({
         );
       },
       onError: (error) => {
+        recordClientError(error, 'subscription.error');
         console.error(error);
       },
     },
