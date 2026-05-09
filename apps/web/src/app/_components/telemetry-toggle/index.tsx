@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { Switch } from '~/components/ui/switch';
 import { getTelemetryConsent, setTelemetryConsent } from '~/telemetry/consent';
+import { cn } from '~/utils/cn';
 
-export function TelemetryToggle() {
+export function TelemetryToggle({ className }: { className?: string }) {
   const [isEnabled, setIsEnabled] = useState(false);
 
   useEffect(() => {
@@ -18,7 +19,12 @@ export function TelemetryToggle() {
   }
 
   return (
-    <div className='flex items-center gap-3 text-sm text-light-text'>
+    <div
+      className={cn(
+        'flex items-center gap-3 text-sm text-light-text',
+        className,
+      )}
+    >
       <Switch
         id='telemetry-toggle'
         checked={isEnabled}

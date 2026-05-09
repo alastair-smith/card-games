@@ -26,11 +26,10 @@ export function About({ className }: { className?: string }) {
             their own device.
           </p>
         </div>
-        <hr />
-        <TelemetryToggle />
       </CardContent>
 
-      <CardFooter className='gap-3 justify-end'>
+      <CardFooter className='gap-3 justify-end flex-wrap'>
+        <TelemetryToggle className='mr-auto' />
         <Button asChild variant='secondary'>
           <Link href='/privacy-policy'>
             <UserLockIcon /> Privacy Policy
