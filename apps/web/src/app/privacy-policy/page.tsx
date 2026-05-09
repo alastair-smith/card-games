@@ -9,6 +9,7 @@ import {
   ArticleSubtitle,
   ArticleTitle,
 } from '~/components/ui/article';
+import { Link } from '~/components/ui/link';
 import {
   Table,
   TableBody,
@@ -40,9 +41,6 @@ function DottedCode({ name }: { name: string }) {
   );
 }
 
-const linkClassName =
-  'cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded';
-
 export default async function PrivacyPolicy() {
   await connection();
 
@@ -73,10 +71,7 @@ export default async function PrivacyPolicy() {
             </p>
             <p className='text-sm'>
               For any questions about this policy, contact{' '}
-              <a href={`mailto:${CONTACT_EMAIL}`} className={linkClassName}>
-                {CONTACT_EMAIL}
-              </a>
-              .
+              <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
             </p>
 
             <ArticleHeading id='analytics'>Analytics (optional)</ArticleHeading>
@@ -92,14 +87,13 @@ export default async function PrivacyPolicy() {
               and view this information. It is not shared with any other
               parties. It is stored in their EU data centre in Frankfurt,
               Germany. See the{' '}
-              <a
+              <Link
                 href='https://newrelic.com/termsandconditions/services-notices'
-                className={linkClassName}
                 target='_blank'
                 rel='noopener noreferrer'
               >
                 New Relic Services Privacy Notice
-              </a>{' '}
+              </Link>{' '}
               for details on how they handle data as a processor.
             </p>
             <p className='text-sm'>
@@ -351,10 +345,7 @@ export default async function PrivacyPolicy() {
               cookie contains only a pseudonymised identifier, there is limited
               persistent personal data held about you. To exercise any of your
               rights, contact{' '}
-              <a href={`mailto:${CONTACT_EMAIL}`} className={linkClassName}>
-                {CONTACT_EMAIL}
-              </a>
-              .
+              <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
             </p>
 
             <ArticleHeading id='changes'>Changes to this policy</ArticleHeading>
@@ -368,10 +359,7 @@ export default async function PrivacyPolicy() {
             <p className='text-sm'>
               For any questions or concerns about how your data is handled,
               contact{' '}
-              <a href={`mailto:${CONTACT_EMAIL}`} className={linkClassName}>
-                {CONTACT_EMAIL}
-              </a>
-              .
+              <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
             </p>
             <p className='text-sm'>
               If you are unhappy with how your data has been handled, you have
@@ -381,14 +369,13 @@ export default async function PrivacyPolicy() {
             <ul className='text-sm list-disc pl-5 space-y-1'>
               <li>
                 Website:{' '}
-                <a
+                <Link
                   href='https://ico.org.uk'
-                  className={linkClassName}
                   target='_blank'
                   rel='noopener noreferrer'
                 >
                   ico.org.uk
-                </a>
+                </Link>
               </li>
               <li>Phone: 0303 123 1113</li>
             </ul>

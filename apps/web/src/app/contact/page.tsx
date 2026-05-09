@@ -7,6 +7,7 @@ import {
   CardFooter,
   CardHeader,
 } from '~/components/ui/card';
+import { Link } from '~/components/ui/link';
 import { CopyToClipboard } from './_components/copy-to-clipboard';
 
 const CONTACT_EMAIL = 'contact@playcards.games';
@@ -33,13 +34,7 @@ export default async function Contact() {
             </CardDescription>
             <p>
               The best way to get in touch is via email:{' '}
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className='cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded'
-              >
-                {CONTACT_EMAIL}
-              </a>
-              .
+              <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
             </p>
             <p>
               If you are reporting an issue it would be really helpful if you

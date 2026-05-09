@@ -1,5 +1,6 @@
 import { LinkIcon } from 'lucide-react';
 import * as React from 'react';
+import { Link } from '~/components/ui/link';
 import { cn } from '~/utils/cn';
 
 type HeadingEntry = { id: string; text: string };
@@ -22,9 +23,6 @@ function extractHeadings(children: React.ReactNode): HeadingEntry[] {
   traverse(children);
   return headings;
 }
-
-const linkClassName =
-  'cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded';
 
 function injectContents(children: React.ReactNode): React.ReactNode {
   let injected = false;
@@ -173,9 +171,7 @@ const ArticleContents = React.forwardRef<HTMLElement, ArticleContentsProps>(
         <ol className='text-sm list-decimal pl-5 space-y-1'>
           {headings.map(({ id, text }) => (
             <li key={id}>
-              <a href={`#${id}`} className={linkClassName}>
-                {text}
-              </a>
+              <Link href={`#${id}`}>{text}</Link>
             </li>
           ))}
         </ol>
