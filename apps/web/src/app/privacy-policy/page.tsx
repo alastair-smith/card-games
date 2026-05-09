@@ -139,16 +139,16 @@ export default async function PrivacyPolicy() {
                     <code>url.full</code>
                   </TableCell>
                   <TableCell>
-                    The API endpoint URL. Any identifiers in the URL — including
-                    player names and session IDs — are hashed using a per-game
-                    key before being sent. The hash is different for every game,
-                    so it cannot be used to link your activity across games or
-                    to identify you.
+                    The API endpoint URL. This does not include identifying
+                    fields like player names or IDs.
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>server.address</code>, <code>server.port</code>
+                    <div className='flex flex-col'>
+                      <code>server.address</code>
+                      <code>server.port</code>
+                    </div>
                   </TableCell>
                   <TableCell>
                     Hostname and port of the server being called
@@ -170,15 +170,19 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>browser.viewport.height</code>,{' '}
-                    <code>browser.viewport.width</code>
+                    <div className='flex flex-col'>
+                      <code>browser.viewport.height</code>
+                      <code>browser.viewport.width</code>
+                    </div>
                   </TableCell>
                   <TableCell>Browser window size in pixels</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>device.screen.height</code>,{' '}
-                    <code>device.screen.width</code>
+                    <div className='flex flex-col'>
+                      <code>device.screen.height</code>
+                      <code>device.screen.width</code>
+                    </div>
                   </TableCell>
                   <TableCell>Screen resolution in pixels</TableCell>
                 </TableRow>
@@ -201,25 +205,27 @@ export default async function PrivacyPolicy() {
                     <code>game.player.id</code>
                   </TableCell>
                   <TableCell>
-                    A hashed identifier for your player session. It is derived
-                    using a per-game key so it cannot be used to identify you or
-                    link your activity across games.
+                    A hash of the identifier for your player session. It is
+                    derived using a per-game key so it cannot be used to
+                    identify you or link your activity across games.
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
             <p className='text-sm'>
               These fields have been chosen carefully to capture only what is
-              needed to understand usage and diagnose errors. In particular,
-              only the major browser version is recorded (not the full version
-              string), and no precise location or hardware identifiers are
-              collected, in order to minimise the risk of users being
-              fingerprinted.
+              needed to diagnose errors and for building aggregations to
+              understand common user devices. In particular, only the major
+              browser version is recorded (not the full version string), and no
+              precise location or hardware identifiers are collected, in order
+              to minimise the risk of users being fingerprinted.
             </p>
             <ul className='text-sm list-disc pl-5 space-y-1'>
               <li>
-                This data is processed by <strong>New Relic, Inc.</strong> and
-                stored in their EU data centre in Frankfurt, Germany. See the{' '}
+                This data is processed by <strong>New Relic, Inc.</strong> who
+                provide a platform to store and view this information. It is not
+                shared with any other parties. It is stored in their EU data
+                centre in Frankfurt, Germany. See the{' '}
                 <a
                   href='https://newrelic.com/termsandconditions/services-notices'
                   className={linkClassName}
@@ -231,17 +237,17 @@ export default async function PrivacyPolicy() {
                 for details on how they handle data as a processor.
               </li>
               <li>
-                You can withdraw consent at any time using the toggle above or
-                the one on the home page.
+                You can withdraw consent from sending this telemetry information
+                from your browser at any time using the toggle above or the one
+                on the home page.
               </li>
             </ul>
             <p className='text-sm'>
-              The toggle above controls what your browser sends. Separately, our
-              servers generate their own anonymised technical traces as a normal
-              part of running the service — for example, to detect errors. These
-              are produced on the server when it processes your game activity,
-              not in your browser, and do not contain your player name or any
-              directly identifiable information.
+              Separately, our servers generate their own anonymised technical
+              traces as a normal part of running the service. These are produced
+              on the server when it processes your game activity, not in your
+              browser, and do not contain your player name or any directly
+              identifiable information.
             </p>
 
             <ArticleHeading id='legal-basis'>

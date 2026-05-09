@@ -60,7 +60,10 @@ function Article({
 
   return (
     <div
-      className={cn('bg-card-background text-light-text rounded-lg', className)}
+      className={cn(
+        'bg-card-background text-light-text rounded-lg py-10 px-5',
+        className,
+      )}
       {...props}
     >
       {injectHeadings(children, headings)}
