@@ -88,7 +88,7 @@ export default async function PrivacyPolicy() {
               the app. Use the toggle below, or find it on the home page under
               &ldquo;About this app&rdquo;.
             </p>
-            <TelemetryToggle />
+            <TelemetryToggle className='py-2' />
             <p className='text-sm'>
               If you opt in, usage data is processed by{' '}
               <strong>New Relic, Inc.</strong> who provide a platform to store
@@ -219,8 +219,8 @@ export default async function PrivacyPolicy() {
             </p>
             <p className='text-sm'>
               You can withdraw consent from sending this telemetry information
-              from your browser at any time using the toggle above or the one
-              on the home page.
+              from your browser at any time using the toggle above or the one on
+              the home page.
             </p>
             <p className='text-sm'>
               Separately, our servers generate their own anonymised technical
