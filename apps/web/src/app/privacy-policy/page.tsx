@@ -26,7 +26,12 @@ function DottedCode({ name }: { name: string }) {
   return (
     <code>
       {parts.map((part, index) => (
-        <span key={index}>
+        <span
+          key={`${part}-${
+            // biome-ignore lint/suspicious/noArrayIndexKey: could have duplicate parts
+            index
+          }`}
+        >
           {index > 0 && '.'}
           <wbr />
           {part}
