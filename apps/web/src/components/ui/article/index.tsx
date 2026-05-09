@@ -26,6 +26,29 @@ function extractHeadings(children: React.ReactNode): HeadingEntry[] {
 const linkClassName =
   'cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded';
 
+function injectContents(children: React.ReactNode): React.ReactNode {
+  let injected = false;
+  return React.Children.map(children, (child) => {
+    if (injected || !React.isValidElement(child)) return child;
+    if (child.type === ArticleContent) {
+      injected = true;
+      const nested = (child.props as { children?: React.ReactNode }).children;
+      return React.cloneElement(
+        child as React.ReactElement<{ children: React.ReactNode }>,
+        {
+          children: (
+            <>
+              <ArticleContents />
+              {nested}
+            </>
+          ),
+        },
+      );
+    }
+    return child;
+  });
+}
+
 function injectHeadings(
   children: React.ReactNode,
   headings: HeadingEntry[],
@@ -51,12 +74,22 @@ function injectHeadings(
   });
 }
 
+interface ArticleProps extends React.HTMLAttributes<HTMLDivElement> {
+  includeContents?: boolean;
+}
+
 function Article({
   className,
   children,
+  includeContents,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const headings = extractHeadings(children);
+}: ArticleProps) {
+  const extracted = extractHeadings(children);
+  const headings: HeadingEntry[] =
+    includeContents && extracted.length > 0
+      ? [{ id: 'contents', text: 'Contents' }, ...extracted]
+      : extracted;
+  const withContents = includeContents ? injectContents(children) : children;
 
   return (
     <div
@@ -66,7 +99,7 @@ function Article({
       )}
       {...props}
     >
-      {injectHeadings(children, headings)}
+      {injectHeadings(withContents, headings)}
     </div>
   );
 }
@@ -136,7 +169,7 @@ const ArticleContents = React.forwardRef<HTMLElement, ArticleContentsProps>(
         className={cn('flex flex-col', className)}
         {...props}
       >
-        <p className='font-semibold text-base mt-6 mb-2'>Contents</p>
+        <ArticleHeading id='contents'>Contents</ArticleHeading>
         <ol className='text-sm list-decimal pl-5 space-y-1'>
           {headings.map(({ id, text }) => (
             <li key={id}>
@@ -163,20 +196,18 @@ const ArticleHeading = React.forwardRef<
   <h3
     ref={ref}
     id={id}
-    className={cn(
-      'group relative font-semibold text-base mt-6 mb-2',
-      className,
-    )}
+    className={cn('font-semibold text-base mt-6 mb-2', className)}
     {...props}
   >
     <a
       href={`#${id}`}
-      aria-label='Link to this section'
-      className='absolute right-full pr-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-light-text-disabled hover:text-light-text'
+      className='group relative inline-block -ml-5 pl-5 text-inherit no-underline hover:underline focus-visible:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded'
     >
-      <LinkIcon size={14} />
-    </a>
-    <a href={`#${id}`} className='text-inherit no-underline hover:no-underline'>
+      <LinkIcon
+        size={14}
+        aria-hidden
+        className='absolute left-0 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity text-light-text-disabled'
+      />
       {children}
     </a>
   </h3>
@@ -186,7 +217,6 @@ ArticleHeading.displayName = 'ArticleHeading';
 export {
   Article,
   ArticleContent,
-  ArticleContents,
   ArticleHeader,
   ArticleHeading,
   ArticleSubtitle,

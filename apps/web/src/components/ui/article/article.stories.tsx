@@ -11,7 +11,6 @@ import {
 import {
   Article,
   ArticleContent,
-  ArticleContents,
   ArticleHeader,
   ArticleHeading,
   ArticleSubtitle,
@@ -103,13 +102,12 @@ Docs.storyName = 'Docs';
 
 export const WithTableOfContents = () => (
   <div className='max-w-2xl'>
-    <Article>
+    <Article includeContents>
       <ArticleHeader>
         <ArticleTitle>Example Article</ArticleTitle>
         <ArticleSubtitle>Last updated: 9 May 2026</ArticleSubtitle>
       </ArticleHeader>
       <ArticleContent>
-        <ArticleContents />
         <ArticleHeading id='introduction'>Introduction</ArticleHeading>
         <p className='text-sm'>
           This is the introduction section. Hover over the heading above to see

@@ -4,7 +4,6 @@ import { PageHeader, PageRoot } from '~/components/layout/page';
 import {
   Article,
   ArticleContent,
-  ArticleContents,
   ArticleHeader,
   ArticleHeading,
   ArticleSubtitle,
@@ -57,7 +56,7 @@ export default async function PrivacyPolicy() {
       />
 
       <main className='flex-1 w-full flex flex-col justify-start items-center pb-6 sm:px-6'>
-        <Article>
+        <Article includeContents>
           <ArticleHeader>
             <ArticleTitle>Privacy Policy</ArticleTitle>
             <ArticleSubtitle>Last updated: 4 May 2026</ArticleSubtitle>
@@ -80,13 +79,11 @@ export default async function PrivacyPolicy() {
               .
             </p>
 
-            <ArticleContents />
-
             <ArticleHeading id='analytics'>Analytics (optional)</ArticleHeading>
             <p className='text-sm'>
               You can opt in to sharing anonymised usage data to help improve
               the app. Use the toggle below, or find it on the home page under
-              &ldquo;About this app&rdquo;.
+              &ldquo;About&rdquo;.
             </p>
             <TelemetryToggle className='py-2' />
             <p className='text-sm'>
