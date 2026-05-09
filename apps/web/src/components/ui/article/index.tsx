@@ -61,7 +61,7 @@ function Article({
   return (
     <div
       className={cn(
-        'bg-card-background text-light-text rounded-lg py-10 px-5',
+        'bg-card-background text-light-text rounded-lg py-10 sm:px-5 w-full max-w-5xl',
         className,
       )}
       {...props}

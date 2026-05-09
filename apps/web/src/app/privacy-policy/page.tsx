@@ -21,6 +21,21 @@ import {
 
 const CONTACT_EMAIL = 'contact@playcards.games';
 
+function DottedCode({ name }: { name: string }) {
+  const parts = name.split('.');
+  return (
+    <code>
+      {parts.map((part, index) => (
+        <span key={index}>
+          {index > 0 && '.'}
+          <wbr />
+          {part}
+        </span>
+      ))}
+    </code>
+  );
+}
+
 const linkClassName =
   'cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded';
 
@@ -36,7 +51,7 @@ export default async function PrivacyPolicy() {
         ]}
       />
 
-      <main className='flex-1 w-full flex flex-col justify-start items-center pb-6'>
+      <main className='flex-1 w-full flex flex-col justify-start items-center pb-6 sm:px-6'>
         <Article>
           <ArticleHeader>
             <ArticleTitle>Privacy Policy</ArticleTitle>
@@ -67,7 +82,7 @@ export default async function PrivacyPolicy() {
               This site uses one cookie, which is strictly necessary for the
               service to function.
             </p>
-            <Table>
+            <Table className='sm:[&_td:first-child]:whitespace-nowrap'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -112,7 +127,7 @@ export default async function PrivacyPolicy() {
               If you opt in then the following fields may be sent for each
               action you take:
             </p>
-            <Table>
+            <Table className='sm:[&_td:first-child]:whitespace-nowrap'>
               <TableHeader>
                 <TableRow>
                   <TableHead>Field</TableHead>
@@ -122,13 +137,13 @@ export default async function PrivacyPolicy() {
               <TableBody>
                 <TableRow>
                   <TableCell>
-                    <code>http.request.method</code>
+                    <DottedCode name='http.request.method' />
                   </TableCell>
                   <TableCell>HTTP method (e.g. GET, POST)</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>http.response.status_code</code>
+                    <DottedCode name='http.response.status_code' />
                   </TableCell>
                   <TableCell>
                     HTTP response status code (e.g. 200, 500)
@@ -136,7 +151,7 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>url.full</code>
+                    <DottedCode name='url.full' />
                   </TableCell>
                   <TableCell>
                     The API endpoint URL. This does not include identifying
@@ -145,9 +160,9 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <div className='flex flex-col'>
-                      <code>server.address</code>
-                      <code>server.port</code>
+                    <div className='flex flex-col gap-1 sm:gap-0'>
+                      <DottedCode name='server.address' />
+                      <DottedCode name='server.port' />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -156,7 +171,7 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>browser.brands</code>
+                    <DottedCode name='browser.brands' />
                   </TableCell>
                   <TableCell>
                     Browser name and major version only (e.g. Firefox 150)
@@ -164,37 +179,37 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>browser.platform</code>
+                    <DottedCode name='browser.platform' />
                   </TableCell>
                   <TableCell>Operating system (e.g. Linux, Windows)</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <div className='flex flex-col'>
-                      <code>browser.viewport.height</code>
-                      <code>browser.viewport.width</code>
+                    <div className='flex flex-col gap-1 sm:gap-0'>
+                      <DottedCode name='browser.viewport.height' />
+                      <DottedCode name='browser.viewport.width' />
                     </div>
                   </TableCell>
                   <TableCell>Browser window size in pixels</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <div className='flex flex-col'>
-                      <code>device.screen.height</code>
-                      <code>device.screen.width</code>
+                    <div className='flex flex-col gap-1 sm:gap-0'>
+                      <DottedCode name='device.screen.height' />
+                      <DottedCode name='device.screen.width' />
                     </div>
                   </TableCell>
                   <TableCell>Screen resolution in pixels</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>service.version</code>
+                    <DottedCode name='service.version' />
                   </TableCell>
                   <TableCell>App version</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>game.code</code>
+                    <DottedCode name='game.code' />
                   </TableCell>
                   <TableCell>
                     The short code used to join the game (e.g. DB3EHI)
@@ -202,7 +217,7 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>
-                    <code>game.player.id</code>
+                    <DottedCode name='game.player.id' />
                   </TableCell>
                   <TableCell>
                     A hash of the identifier for your player session. It is
