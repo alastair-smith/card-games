@@ -13,7 +13,7 @@ export const HAND_SIZE = 7;
 export const MINIMUM_RUN_SIZE = 3;
 export const YANIV_CALL_THRESHOLD = 7;
 export const YANIV_CALLER_PENALTY = 25;
-export const GAME_OVER_SCORE = 200;
+export const GAME_OVER_SCORE = 100;
 
 export const yanivPlayingCardSchema = z.union([
   jokerSchema,

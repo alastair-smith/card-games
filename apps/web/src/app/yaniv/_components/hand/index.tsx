@@ -32,7 +32,7 @@ export default function Hand({
       ? { target: 50, away: 50 - totalScore }
       : !isHundredScoreHalved && totalScore < 100
         ? { target: 100, away: 100 - totalScore }
-        : { target: 200, away: 200 - totalScore };
+        : { target: 100, away: 100 - totalScore };
 
   const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 

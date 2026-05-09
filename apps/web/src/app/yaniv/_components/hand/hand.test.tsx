@@ -67,18 +67,18 @@ describe('Hand', () => {
       expect(screen.getByText('100.')).toBeInTheDocument();
     });
 
-    test('targets 200 when both milestones have been halved', () => {
+    test('targets 100 when both milestones have been halved', () => {
       render(
         <Hand
           {...defaultProps}
           isFiftyScoreHalved={true}
           isHundredScoreHalved={true}
-          totalScore={150}
+          totalScore={60}
         />,
       );
-      // away = 200 - 150 = 50
-      expect(screen.getByText('50')).toBeInTheDocument();
-      expect(screen.getByText('200.')).toBeInTheDocument();
+      // away = 100 - 60 = 40
+      expect(screen.getByText('40')).toBeInTheDocument();
+      expect(screen.getByText('100.')).toBeInTheDocument();
     });
   });
 

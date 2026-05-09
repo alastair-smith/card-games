@@ -313,7 +313,7 @@ export function HowTo({ className }: { className?: string }) {
             exactly 100.
           </li>
           <li>
-            The game ends when any player reaches 200 or more. And the player
+            The game ends when any player reaches 100 or more. And the player
             with the lowest total score wins.
           </li>
         </ul>

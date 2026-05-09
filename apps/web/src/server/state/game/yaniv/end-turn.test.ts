@@ -526,7 +526,7 @@ describe('endTurn', () => {
     });
 
     describe('game over', () => {
-      test('transitions to FINISHED stage when any player exceeds 200 points', async () => {
+      test('transitions to FINISHED stage when any player exceeds 100 points', async () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
@@ -546,7 +546,7 @@ describe('endTurn', () => {
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
-                score: 195,
+                score: 95,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
@@ -583,7 +583,7 @@ describe('endTurn', () => {
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
-                score: 195,
+                score: 95,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
@@ -607,7 +607,7 @@ describe('endTurn', () => {
         const USER_3 = 'user-3' as UserId;
         // USER_1 called Yaniv (score=10, only caller) → gets +0, final score 10
         // USER_3 (score=5, hand=5) → +5, final score 10. Both tie.
-        // USER_2 (score=195, hand=10) → +10, final score 205 (>200 → game over)
+        // USER_2 (score=95, hand=10) → +10, final score 105 (>100 → game over)
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             currentPlayerId: USER_3,
@@ -634,7 +634,7 @@ describe('endTurn', () => {
                   { suit: Suit.CLUBS, rank: Rank.SIX },
                 ],
                 name: 'Player 2' as PlayerName,
-                score: 195,
+                score: 95,
                 isFiftyScoreHalved: false,
                 isHundredScoreHalved: false,
                 isYanivCalled: false,
