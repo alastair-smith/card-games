@@ -82,45 +82,6 @@ export default async function PrivacyPolicy() {
 
             <ArticleContents />
 
-            <ArticleHeading id='cookies'>Cookies</ArticleHeading>
-            <p className='text-sm'>
-              This site uses one cookie, which is strictly necessary for the
-              service to function.
-            </p>
-            <Table className='sm:[&_td:first-child]:whitespace-nowrap'>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Purpose</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Duration</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    <code>__host-auth</code>
-                  </TableCell>
-                  <TableCell>
-                    Identifies your browser session so you can join and play
-                    games. Contains a randomly generated identifier only — no
-                    personal information is stored inside this cookie.
-                  </TableCell>
-                  <TableCell>Strictly necessary</TableCell>
-                  <TableCell>7 days</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-
-            <ArticleHeading id='game-session-data'>
-              Game session data
-            </ArticleHeading>
-            <p className='text-sm'>
-              When you join a game, your chosen player name and an identifier
-              are stored temporarily to enable gameplay. This data is
-              automatically and permanently deleted after 24 hours.
-            </p>
-
             <ArticleHeading id='analytics'>Analytics (optional)</ArticleHeading>
             <p className='text-sm'>
               You can opt in to sharing anonymised usage data to help improve
@@ -128,6 +89,22 @@ export default async function PrivacyPolicy() {
               &ldquo;About this app&rdquo;.
             </p>
             <TelemetryToggle />
+            <p className='text-sm'>
+              If you opt in, usage data is processed by{' '}
+              <strong>New Relic, Inc.</strong> who provide a platform to store
+              and view this information. It is not shared with any other
+              parties. It is stored in their EU data centre in Frankfurt,
+              Germany. See the{' '}
+              <a
+                href='https://newrelic.com/termsandconditions/services-notices'
+                className={linkClassName}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                New Relic Services Privacy Notice
+              </a>{' '}
+              for details on how they handle data as a processor.
+            </p>
             <p className='text-sm'>
               If you opt in then the following fields may be sent for each
               action you take:
@@ -240,34 +217,56 @@ export default async function PrivacyPolicy() {
               precise location or hardware identifiers are collected, in order
               to minimise the risk of users being fingerprinted.
             </p>
-            <ul className='text-sm list-disc pl-5 space-y-1'>
-              <li>
-                This data is processed by <strong>New Relic, Inc.</strong> who
-                provide a platform to store and view this information. It is not
-                shared with any other parties. It is stored in their EU data
-                centre in Frankfurt, Germany. See the{' '}
-                <a
-                  href='https://newrelic.com/termsandconditions/services-notices'
-                  className={linkClassName}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  New Relic Services Privacy Notice
-                </a>{' '}
-                for details on how they handle data as a processor.
-              </li>
-              <li>
-                You can withdraw consent from sending this telemetry information
-                from your browser at any time using the toggle above or the one
-                on the home page.
-              </li>
-            </ul>
+            <p className='text-sm'>
+              You can withdraw consent from sending this telemetry information
+              from your browser at any time using the toggle above or the one
+              on the home page.
+            </p>
             <p className='text-sm'>
               Separately, our servers generate their own anonymised technical
               traces as a normal part of running the service. These are produced
               on the server when it processes your game activity, not in your
               browser, and do not contain your player name or any directly
               identifiable information.
+            </p>
+
+            <ArticleHeading id='cookies'>Cookies</ArticleHeading>
+            <p className='text-sm'>
+              This site uses one cookie, which is strictly necessary for the
+              service to function.
+            </p>
+            <Table className='sm:[&_td:first-child]:whitespace-nowrap'>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Purpose</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Duration</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    <code>__host-auth</code>
+                  </TableCell>
+                  <TableCell>
+                    Identifies your browser session so you can join and play
+                    games. Contains a randomly generated identifier only — no
+                    personal information is stored inside this cookie.
+                  </TableCell>
+                  <TableCell>Strictly necessary</TableCell>
+                  <TableCell>7 days</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+
+            <ArticleHeading id='game-session-data'>
+              Game session data
+            </ArticleHeading>
+            <p className='text-sm'>
+              When you join a game, your chosen player name and an identifier
+              are stored temporarily to enable gameplay. This data is
+              automatically and permanently deleted after 24 hours.
             </p>
 
             <ArticleHeading id='legal-basis'>
