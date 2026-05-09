@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Skeleton } from '~/components/ui/skeleton';
 import { Switch } from '~/components/ui/switch';
 import { getTelemetryConsent, setTelemetryConsent } from '~/telemetry/consent';
 import { cn } from '~/utils/cn';
 
 export function TelemetryToggle({ className }: { className?: string }) {
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState<boolean | null>(null);
 
   useEffect(() => {
     setIsEnabled(getTelemetryConsent());
@@ -14,7 +15,6 @@ export function TelemetryToggle({ className }: { className?: string }) {
 
   function handleCheckedChange(checked: boolean) {
     setTelemetryConsent(checked);
-    setIsEnabled(checked);
     window.location.reload();
   }
 
@@ -25,11 +25,15 @@ export function TelemetryToggle({ className }: { className?: string }) {
         className,
       )}
     >
-      <Switch
-        id='telemetry-toggle'
-        checked={isEnabled}
-        onCheckedChange={handleCheckedChange}
-      />
+      {isEnabled === null ? (
+        <Skeleton className='h-6 w-11 shrink-0 rounded-full' />
+      ) : (
+        <Switch
+          id='telemetry-toggle'
+          checked={isEnabled}
+          onCheckedChange={handleCheckedChange}
+        />
+      )}
       <label htmlFor='telemetry-toggle' className='cursor-pointer select-none'>
         Share anonymised usage to help improve this app
       </label>
