@@ -11,18 +11,33 @@ import { observable } from '@trpc/server/observable';
 // Zone.js does not intercept native async/await microtasks (V8), so
 // context.with() in the link's subscribe callback does not survive the
 // `await opts.headers()` inside tRPC's fetchHTTPResponse before fetch()
-// is called. We store the mutation context here and apply it explicitly at
-// the fetch call site via mutationFetch, which is passed as httpLink's fetch
-// option. This is safe because JS is single-threaded and mutations are
-// unbatched (one fetch per mutation).
-let pendingMutationContext: Context | null = null;
+// is called. We store pending mutation contexts here and apply them at the
+// fetch call site via mutationFetch, passed as httpLink's fetch option.
+//
+// A per-path FIFO queue is used rather than a single global so that mutations
+// to different procedures never interfere. Concurrent mutations to the *same*
+// procedure are handled in FIFO order, which is correct as long as their
+// fetch() calls fire in dispatch order (guaranteed when opts.headers() is
+// synchronous, which is the default).
+const pendingMutationContexts = new Map<string, Context[]>();
 
 export function mutationFetch(
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<Response> {
-  if (pendingMutationContext) {
-    return context.with(pendingMutationContext, () => fetch(input, init));
+  const href =
+    input instanceof URL
+      ? input.href
+      : typeof input === 'string'
+        ? input
+        : input.url;
+  const trpcPath = href.split('/api/trpc/')[1]?.split('?')[0];
+  const queue = trpcPath ? pendingMutationContexts.get(trpcPath) : undefined;
+  const ctx = queue?.shift();
+  if (queue?.length === 0 && trpcPath) pendingMutationContexts.delete(trpcPath);
+
+  if (ctx) {
+    return context.with(ctx, () => fetch(input, init));
   }
   return fetch(input, init);
 }
@@ -44,9 +59,24 @@ export function otelLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
             },
           });
 
+        let mutationCtx: Context | null = null;
         if (op.type === 'mutation') {
-          pendingMutationContext = trace.setSpan(context.active(), span);
+          mutationCtx = trace.setSpan(context.active(), span);
+          const queue = pendingMutationContexts.get(op.path) ?? [];
+          queue.push(mutationCtx);
+          pendingMutationContexts.set(op.path, queue);
         }
+
+        const cleanupMutationCtx = () => {
+          if (!mutationCtx) return;
+          // Remove this context if mutationFetch didn't consume it (e.g. the
+          // request was aborted before fetch() fired).
+          const queue = pendingMutationContexts.get(op.path);
+          if (!queue) return;
+          const idx = queue.indexOf(mutationCtx);
+          if (idx !== -1) queue.splice(idx, 1);
+          if (queue.length === 0) pendingMutationContexts.delete(op.path);
+        };
 
         return context.with(trace.setSpan(context.active(), span), () =>
           next(op).subscribe({
@@ -54,7 +84,7 @@ export function otelLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
               observer.next(value);
             },
             error(err) {
-              if (op.type === 'mutation') pendingMutationContext = null;
+              cleanupMutationCtx();
               const error = err instanceof Error ? err : new Error(String(err));
               span.recordException(error);
               span.setStatus({
@@ -65,7 +95,7 @@ export function otelLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
               observer.error(err);
             },
             complete() {
-              if (op.type === 'mutation') pendingMutationContext = null;
+              cleanupMutationCtx();
               span.end();
               observer.complete();
             },
