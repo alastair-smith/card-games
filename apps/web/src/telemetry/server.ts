@@ -10,9 +10,8 @@ import {
 import { ATTR_DEPLOYMENT_ENVIRONMENT_NAME } from '@opentelemetry/semantic-conventions/incubating';
 import { env } from '~/env';
 
-const endpoint =
-  process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318';
-const newRelicLicenseKey = process.env.NEW_RELIC_LICENSE_KEY;
+const endpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT;
+const newRelicLicenseKey = env.NEW_RELIC_LICENSE_KEY;
 
 const exporterHeaders: Record<string, string> = {};
 if (newRelicLicenseKey) {
