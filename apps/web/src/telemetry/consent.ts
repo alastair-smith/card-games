@@ -1,4 +1,4 @@
-const TELEMETRY_CONSENT_KEY = 'telemetry-opt-in';
+const TELEMETRY_CONSENT_KEY = 'telemetry-opt-in-v1';
 
 export function getTelemetryConsent(): boolean {
   if (typeof window === 'undefined') return false;

@@ -7,7 +7,10 @@ export const GAME_PLAYER_ID_ATTR = 'game.player.id';
 
 export const SENSITIVE_INPUT_FIELDS = new Set(['playerId', 'playerName']);
 
-async function hmacSha256Hex(value: string, key: string): Promise<string> {
+async function truncatedHmacSha256Hex(
+  value: string,
+  key: string,
+): Promise<string> {
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(key),
@@ -32,7 +35,7 @@ export async function hashField(
   value: string,
   gameCode: GameCode,
 ): Promise<string> {
-  return hmacSha256Hex(value, gameCode);
+  return truncatedHmacSha256Hex(value, gameCode);
 }
 
 export async function setGameAttributes(

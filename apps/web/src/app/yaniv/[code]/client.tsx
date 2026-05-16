@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  context as otelContext,
-  type TraceFlags,
-  trace,
-} from '@opentelemetry/api';
+import { context as otelContext, propagation, trace } from '@opentelemetry/api';
 import { skipToken } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -30,15 +26,7 @@ const clientTracer = trace.getTracer('card-games-web');
 
 function remoteContextFromTraceparent(traceparent: string | undefined) {
   if (!traceparent) return otelContext.active();
-  const [version, traceId, spanId, flags] = traceparent.split('-');
-  if (version !== '00' || !traceId || !spanId || !flags)
-    return otelContext.active();
-  return trace.setSpanContext(otelContext.active(), {
-    traceId,
-    spanId,
-    traceFlags: parseInt(flags, 16) as TraceFlags,
-    isRemote: true,
-  });
+  return propagation.extract(otelContext.active(), { traceparent });
 }
 
 export default function YanivClient({

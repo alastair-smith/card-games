@@ -12,7 +12,7 @@ import { observable } from '@trpc/server/observable';
 // context.with() in the link's subscribe callback does not survive the
 // `await opts.headers()` inside tRPC's fetchHTTPResponse before fetch()
 // is called. We store pending mutation contexts here and apply them at the
-// fetch call site via mutationFetch, passed as httpLink's fetch option.
+// fetch call site via createMutationFetch, passed as httpLink's fetch option.
 //
 // A per-path FIFO queue is used rather than a single global so that mutations
 // to different procedures never interfere. Concurrent mutations to the *same*
@@ -21,25 +21,30 @@ import { observable } from '@trpc/server/observable';
 // synchronous, which is the default).
 const pendingMutationContexts = new Map<string, Context[]>();
 
-export function mutationFetch(
-  input: RequestInfo | URL,
-  init?: RequestInit,
-): Promise<Response> {
-  const href =
-    input instanceof URL
-      ? input.href
-      : typeof input === 'string'
-        ? input
-        : input.url;
-  const trpcPath = href.split('/api/trpc/')[1]?.split('?')[0];
-  const queue = trpcPath ? pendingMutationContexts.get(trpcPath) : undefined;
-  const ctx = queue?.shift();
-  if (queue?.length === 0 && trpcPath) pendingMutationContexts.delete(trpcPath);
+export function createMutationFetch(
+  trpcUrl: string,
+): (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> {
+  const trpcPathPrefix = `${new URL(trpcUrl).pathname}/`;
+  return (input, init) => {
+    const href =
+      input instanceof URL
+        ? input.href
+        : typeof input === 'string'
+          ? input
+          : input.url;
+    const procedurePath = href.split(trpcPathPrefix)[1]?.split('?')[0];
+    const queue = procedurePath
+      ? pendingMutationContexts.get(procedurePath)
+      : undefined;
+    const ctx = queue?.shift();
+    if (queue?.length === 0 && procedurePath)
+      pendingMutationContexts.delete(procedurePath);
 
-  if (ctx) {
-    return context.with(ctx, () => fetch(input, init));
-  }
-  return fetch(input, init);
+    if (ctx) {
+      return context.with(ctx, () => fetch(input, init));
+    }
+    return fetch(input, init);
+  };
 }
 
 export function otelLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
@@ -69,7 +74,7 @@ export function otelLink<TRouter extends AnyRouter>(): TRPCLink<TRouter> {
 
         const cleanupMutationCtx = () => {
           if (!mutationCtx) return;
-          // Remove this context if mutationFetch didn't consume it (e.g. the
+          // Remove this context if the custom fetch didn't consume it (e.g. the
           // request was aborted before fetch() fired).
           const queue = pendingMutationContexts.get(op.path);
           if (!queue) return;

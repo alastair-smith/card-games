@@ -218,18 +218,21 @@ export const yanivStateSubscription = protectedProcedure
               {},
               deliverParentCtx,
             );
-            await setGameAttributes(deliverSpan, code, userId);
-            const carrier: Record<string, string> = {};
-            propagation.inject(
-              trace.setSpan(otelContext.active(), deliverSpan),
-              carrier,
-            );
+            try {
+              await setGameAttributes(deliverSpan, code, userId);
+              const carrier: Record<string, string> = {};
+              propagation.inject(
+                trace.setSpan(otelContext.active(), deliverSpan),
+                carrier,
+              );
 
-            yield {
-              ...data,
-              _trace: carrier.traceparent,
-            } as StateSubscription;
-            deliverSpan.end();
+              yield {
+                ...data,
+                _trace: carrier.traceparent,
+              } as StateSubscription;
+            } finally {
+              deliverSpan.end();
+            }
 
             if (data.update === GameUpdate.FINISHED) {
               return;
