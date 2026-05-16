@@ -25,7 +25,7 @@ async function hmacSha256Hex(value: string, key: string): Promise<string> {
   return Array.from(new Uint8Array(signature))
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('')
-    .slice(0, 16);
+    .slice(0, 32);
 }
 
 export async function hashField(

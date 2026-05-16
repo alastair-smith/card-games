@@ -35,9 +35,9 @@ describe('SENSITIVE_INPUT_FIELDS', () => {
 });
 
 describe('hashField', () => {
-  test('returns a 16-character hex string', async () => {
+  test('returns a 32-character hex string', async () => {
     const result = await hashField('some-value', GAME_CODE);
-    expect(result).toHaveLength(16);
+    expect(result).toHaveLength(32);
     expect(result).toMatch(/^[0-9a-f]+$/);
   });
 
