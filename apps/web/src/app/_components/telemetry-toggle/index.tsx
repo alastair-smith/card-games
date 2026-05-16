@@ -15,6 +15,8 @@ export function TelemetryToggle({ className }: { className?: string }) {
 
   function handleCheckedChange(isEnabled: boolean) {
     setTelemetryConsent(isEnabled);
+    // OTel providers can't be de-registered once initialised, so a full reload
+    // is the only clean way to apply or remove client-side telemetry.
     window.location.reload();
   }
 
