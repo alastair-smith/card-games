@@ -5,8 +5,8 @@ export function getTelemetryConsent(): boolean {
   return localStorage.getItem(TELEMETRY_CONSENT_KEY) === 'true';
 }
 
-export function setTelemetryConsent(value: boolean): void {
-  if (value) {
+export function setTelemetryConsent(isEnabled: boolean): void {
+  if (isEnabled) {
     localStorage.setItem(TELEMETRY_CONSENT_KEY, 'true');
   } else {
     localStorage.removeItem(TELEMETRY_CONSENT_KEY);

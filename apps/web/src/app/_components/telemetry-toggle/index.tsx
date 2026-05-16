@@ -13,8 +13,8 @@ export function TelemetryToggle({ className }: { className?: string }) {
     setIsEnabled(getTelemetryConsent());
   }, []);
 
-  function handleCheckedChange(checked: boolean) {
-    setTelemetryConsent(checked);
+  function handleCheckedChange(isEnabled: boolean) {
+    setTelemetryConsent(isEnabled);
     window.location.reload();
   }
 
