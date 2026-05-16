@@ -11,11 +11,13 @@ import { ATTR_DEPLOYMENT_ENVIRONMENT_NAME } from '@opentelemetry/semantic-conven
 import { env } from '~/env';
 
 const endpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT;
-const newRelicLicenseKey = env.NEW_RELIC_LICENSE_KEY;
+const otlpUrl = new URL(endpoint);
+const otlpHostname = otlpUrl.hostname;
+const otlpPort = otlpUrl.port || (otlpUrl.protocol === 'https:' ? '443' : '80');
 
 const exporterHeaders: Record<string, string> = {};
-if (newRelicLicenseKey) {
-  exporterHeaders['api-key'] = newRelicLicenseKey;
+if (env.NEW_RELIC_LICENSE_KEY) {
+  exporterHeaders['api-key'] = env.NEW_RELIC_LICENSE_KEY;
 }
 
 const exporter = new OTLPTraceExporter({
@@ -30,7 +32,13 @@ const sdk = new NodeSDK({
     [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: env.NODE_ENV,
   }),
   traceExporter: exporter,
-  instrumentations: [new HttpInstrumentation(), new IORedisInstrumentation()],
+  instrumentations: [
+    new HttpInstrumentation({
+      ignoreOutgoingRequestHook: (req) =>
+        req.hostname === otlpHostname && String(req.port ?? '') === otlpPort,
+    }),
+    new IORedisInstrumentation(),
+  ],
 });
 
 sdk.start();
