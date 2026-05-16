@@ -1,5 +1,6 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./telemetry/server');
+    const { startTelemetry } = await import('./telemetry/server');
+    startTelemetry();
   }
 }

@@ -20,7 +20,7 @@ export const env = createEnv({
     REDIS_CONNECTION_STRING: z.string(),
     ADMIN_USERNAME: z.string().optional(),
     ADMIN_PASSWORD: z.string().optional(),
-    OTEL_EXPORTER_OTLP_ENDPOINT: z.string(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
     NEW_RELIC_LICENSE_KEY: z.string().optional(),
   },
   runtimeEnv: {

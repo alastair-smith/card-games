@@ -2,6 +2,10 @@ import type { NextRequest } from 'next/server';
 import { env } from '~/env';
 
 export async function POST(req: NextRequest) {
+  if (!env.OTEL_EXPORTER_OTLP_ENDPOINT) {
+    return new Response(null, { status: 204 });
+  }
+
   const endpoint = `${env.OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces`;
 
   const headers: Record<string, string> = {
