@@ -46,4 +46,8 @@ export function startTelemetry() {
   });
 
   sdk.start();
+
+  const shutdown = () => sdk.shutdown();
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
 }
