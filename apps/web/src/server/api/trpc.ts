@@ -169,6 +169,10 @@ export const protectedProcedure = t.procedure
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Auth missing.' });
     }
 
+    // Game code is re-parsed here (also done in tracingMiddleware) because
+    // session.userId is only available after auth, so setGameAttributes —
+    // which hashes the user ID with the game code — must run in this
+    // middleware rather than being folded into the tracing middleware above.
     const rawInput = await getRawInput();
     const input = rawInput as Record<string, unknown> | null | undefined;
     const gameCode =
