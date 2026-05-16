@@ -84,9 +84,9 @@ export default async function PrivacyPolicy() {
             <p className='text-sm'>
               If you opt in, usage data is processed by{' '}
               <strong>New Relic, Inc.</strong> who provide a platform to store
-              and view this information. It is not shared with any other
-              parties. It is stored in their EU data centre in Frankfurt,
-              Germany. See the{' '}
+              this information and display it to this website's maintainers. It
+              is not shared with any other parties. It is stored in their EU
+              data centre in Frankfurt, Germany. See the{' '}
               <Link
                 href='https://newrelic.com/termsandconditions/services-notices'
                 target='_blank'
