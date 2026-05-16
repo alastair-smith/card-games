@@ -1,8 +1,19 @@
 import type { NextRequest } from 'next/server';
 import { env } from '~/env';
+import { createCircuitBreaker } from '~/utils/circuit-breaker';
+
+const circuit = createCircuitBreaker({
+  name: 'Telemetry',
+  failureThreshold: 5,
+  resetTimeoutMs: 60_000,
+});
 
 export async function POST(req: NextRequest) {
   if (!env.OTEL_EXPORTER_OTLP_ENDPOINT) {
+    return new Response(null, { status: 204 });
+  }
+
+  if (circuit.isOpen()) {
     return new Response(null, { status: 204 });
   }
 
@@ -18,11 +29,22 @@ export async function POST(req: NextRequest) {
 
   const body = await req.arrayBuffer();
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers,
-    body,
-  });
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body,
+    });
 
-  return new Response(null, { status: response.status });
+    if (response.ok) {
+      circuit.onSuccess();
+    } else {
+      circuit.onFailure();
+    }
+
+    return new Response(null, { status: response.status });
+  } catch {
+    circuit.onFailure();
+    return new Response(null, { status: 204 });
+  }
 }
