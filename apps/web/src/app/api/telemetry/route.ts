@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { env } from '~/env';
+import { AUTH_COOKIE_NAME, getSession } from '~/server/auth';
 import { createCircuitBreaker } from '~/utils/circuit-breaker';
 
 const circuit = createCircuitBreaker({
@@ -9,6 +10,12 @@ const circuit = createCircuitBreaker({
 });
 
 export async function POST(req: NextRequest) {
+  const authToken = req.cookies.get(AUTH_COOKIE_NAME)?.value;
+  const session = await getSession(authToken);
+  if (!session) {
+    return new Response(null, { status: 401 });
+  }
+
   if (!env.OTEL_EXPORTER_OTLP_ENDPOINT) {
     return new Response(null, { status: 204 });
   }
