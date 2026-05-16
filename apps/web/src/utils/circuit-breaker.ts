@@ -58,7 +58,9 @@ export function createCircuitBreaker({
       } else if (state === 'half-open') {
         state = 'open';
         openedAt = Date.now();
-        logger.error(`${name} circuit breaker re-opened — service still unhealthy`);
+        logger.error(
+          `${name} circuit breaker re-opened — service still unhealthy`,
+        );
       }
     },
   };
