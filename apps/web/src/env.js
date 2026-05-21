@@ -2,9 +2,11 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 export const env = createEnv({
+  client: {
+    NEXT_PUBLIC_GIT_COMMIT_HASH: z.string().default('unknown'),
+  },
   server: {
     AUTH_SECRET: z.string().min(32),
-    GIT_COMMIT_HASH: z.string().default('unknown'),
     LOG_LEVEL: z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
       .default('info'),
@@ -18,10 +20,12 @@ export const env = createEnv({
     REDIS_CONNECTION_STRING: z.string(),
     ADMIN_USERNAME: z.string().optional(),
     ADMIN_PASSWORD: z.string().optional(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional(),
+    NEW_RELIC_LICENSE_KEY: z.string().optional(),
   },
   runtimeEnv: {
+    NEXT_PUBLIC_GIT_COMMIT_HASH: process.env.NEXT_PUBLIC_GIT_COMMIT_HASH,
     AUTH_SECRET: process.env.AUTH_SECRET,
-    GIT_COMMIT_HASH: process.env.GIT_COMMIT_HASH,
     // non-undefined value requried at build time
     LOG_LEVEL: process.env.LOG_LEVEL ?? 'info',
     NODE_ENV: process.env.NODE_ENV,
@@ -29,6 +33,8 @@ export const env = createEnv({
     REDIS_CONNECTION_STRING: process.env.REDIS_CONNECTION_STRING,
     ADMIN_USERNAME: process.env.ADMIN_USERNAME,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    OTEL_EXPORTER_OTLP_ENDPOINT: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+    NEW_RELIC_LICENSE_KEY: process.env.NEW_RELIC_LICENSE_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

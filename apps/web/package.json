@@ -11,8 +11,10 @@
     "preview": "next build && next start",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit",
+    "typecheck:llm": "tsc --noEmit --pretty false",
     "typecheck:watch": "tsc --noEmit --watch",
     "test": "vitest run",
+    "test:llm": "vitest run --reporter=json | jq -r '.testResults[].assertionResults[] | select(.status==\"failed\") | \"TEST: \" + (.ancestorTitles | join(\" > \")) + \" > \" + .title + \"\\nERROR: \" + (.failureMessages[0] | split(\"\\n\") | .[0:2] | join(\"\\n\"))'",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:start-server": "node src/server.js",
@@ -20,6 +22,13 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.214.0",
+    "@opentelemetry/instrumentation-http": "^0.214.0",
+    "@opentelemetry/instrumentation-ioredis": "^0.62.0",
+    "@opentelemetry/resources": "^2.6.1",
+    "@opentelemetry/sdk-node": "^0.214.0",
+    "@opentelemetry/semantic-conventions": "^1.40.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "next": "^16.2.2",
     "react": "^19.2.4",
@@ -27,6 +36,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@opentelemetry/context-zone": "^2.6.1",
+    "@opentelemetry/instrumentation-fetch": "^0.214.0",
+    "@opentelemetry/sdk-trace-web": "^2.6.1",
     "@hookform/resolvers": "^5.2.2",
     "@ladle/react": "^5.1.1",
     "@playwright/test": "^1.59.1",

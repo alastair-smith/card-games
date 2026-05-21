@@ -9,14 +9,12 @@ import {
   GameStep,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
-import { shuffle } from '~/utils/cards';
+import { reshuffleDeck } from './reshuffle-deck';
 
 const drawFromDeck = async (code: GameCode): Promise<YanivPlayingCard> => {
   const deckSize = await yanivDeck.getDeckSize(code);
   if (deckSize === 0) {
-    const [topCard, ...cardsToShuffle] = await yanivDiscard.drainDiscard(code);
-    await yanivDeck.createDeck(code, shuffle(cardsToShuffle));
-    if (topCard) await yanivDiscard.pushDiscard(code, topCard);
+    await reshuffleDeck(code);
   }
   const card = await yanivDeck.drawCard(code);
   if (!card) throw new Error('Deck is empty');

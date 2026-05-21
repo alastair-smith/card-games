@@ -26,21 +26,19 @@ vi.mock('~/server/data/deck', () => ({
   yanivDeck: {
     getDeckSize: vi.fn(),
     drawCard: vi.fn(),
-    createDeck: vi.fn(),
   },
 }));
 vi.mock('~/server/data/discard', () => ({
   yanivDiscard: {
-    drainDiscard: vi.fn(),
     popDiscard: vi.fn(),
-    pushDiscard: vi.fn(),
   },
 }));
-vi.mock('~/utils/cards', () => ({
-  shuffle: vi.fn((x) => x),
+vi.mock('./reshuffle-deck', () => ({
+  reshuffleDeck: vi.fn(),
 }));
 
 const { pickupCard } = await import('./pickup-card');
+const { reshuffleDeck } = await import('./reshuffle-deck');
 
 const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;
@@ -93,10 +91,8 @@ describe('pickupCard', () => {
     vi.mocked(publishYanivState).mockResolvedValue(undefined);
     vi.mocked(yanivDeck.getDeckSize).mockResolvedValue(10);
     vi.mocked(yanivDeck.drawCard).mockResolvedValue(DRAWN_CARD);
-    vi.mocked(yanivDeck.createDeck).mockResolvedValue(undefined);
-    vi.mocked(yanivDiscard.drainDiscard).mockResolvedValue([]);
     vi.mocked(yanivDiscard.popDiscard).mockResolvedValue(DRAWN_CARD);
-    vi.mocked(yanivDiscard.pushDiscard).mockResolvedValue(undefined);
+    vi.mocked(reshuffleDeck).mockResolvedValue(undefined);
   });
 
   test('throws when game not found', async () => {
@@ -131,9 +127,8 @@ describe('pickupCard', () => {
     );
   });
 
-  test('throws when deck is empty after reshuffle fails', async () => {
+  test('throws when deck is empty after reshuffle', async () => {
     vi.mocked(yanivDeck.getDeckSize).mockResolvedValue(0);
-    vi.mocked(yanivDiscard.drainDiscard).mockResolvedValue([DRAWN_CARD]);
     vi.mocked(yanivDeck.drawCard).mockResolvedValue(null);
 
     await expect(pickupCard(CODE, USER_1, 'deck')).rejects.toThrow(
@@ -210,50 +205,19 @@ describe('pickupCard', () => {
       );
     });
 
-    describe('reshuffle', () => {
-      const TOP_CARD: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.ACE };
-      const CARD_A: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.TWO };
-      const CARD_B: YanivPlayingCard = {
-        suit: Suit.DIAMONDS,
-        rank: Rank.THREE,
-      };
+    test('reshuffles the deck when deck is empty', async () => {
+      vi.mocked(yanivDeck.getDeckSize).mockResolvedValue(0);
 
-      beforeEach(() => {
-        vi.mocked(yanivDeck.getDeckSize).mockResolvedValue(0);
-        vi.mocked(yanivDiscard.drainDiscard).mockResolvedValue([
-          TOP_CARD,
-          CARD_A,
-          CARD_B,
-        ]);
-        vi.mocked(yanivDeck.drawCard).mockResolvedValue(DRAWN_CARD);
-      });
+      await pickupCard(CODE, USER_1, 'deck');
 
-      test('drains the discard pile when deck is empty', async () => {
-        await pickupCard(CODE, USER_1, 'deck');
+      expect(vi.mocked(reshuffleDeck)).toHaveBeenCalledOnce();
+      expect(vi.mocked(reshuffleDeck)).toHaveBeenCalledWith(CODE);
+    });
 
-        expect(vi.mocked(yanivDiscard.drainDiscard)).toHaveBeenCalledOnce();
-        expect(vi.mocked(yanivDiscard.drainDiscard)).toHaveBeenCalledWith(CODE);
-      });
+    test('does not reshuffle when deck has cards', async () => {
+      await pickupCard(CODE, USER_1, 'deck');
 
-      test('creates new deck with shuffled cards excluding top card', async () => {
-        await pickupCard(CODE, USER_1, 'deck');
-
-        expect(vi.mocked(yanivDeck.createDeck)).toHaveBeenCalledOnce();
-        expect(vi.mocked(yanivDeck.createDeck)).toHaveBeenCalledWith(CODE, [
-          CARD_A,
-          CARD_B,
-        ]);
-      });
-
-      test('restores top card to discard pile', async () => {
-        await pickupCard(CODE, USER_1, 'deck');
-
-        expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledOnce();
-        expect(vi.mocked(yanivDiscard.pushDiscard)).toHaveBeenCalledWith(
-          CODE,
-          TOP_CARD,
-        );
-      });
+      expect(vi.mocked(reshuffleDeck)).not.toHaveBeenCalled();
     });
   });
 

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { connection } from 'next/server';
+import { AUTH_COOKIE_NAME, getSession } from '~/server/auth';
 import { gameCodeSchema } from '~/types/game';
 import YanivClient from './client';
 
@@ -26,5 +28,8 @@ export default async function YanivPage({
     });
   }
 
-  return <YanivClient code={code} />;
+  const authCookie = (await cookies()).get(AUTH_COOKIE_NAME)?.value;
+  const session = await getSession(authCookie);
+
+  return <YanivClient code={code} userId={session?.userId} />;
 }

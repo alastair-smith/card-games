@@ -1,3 +1,9 @@
+import {
+  context as otelContext,
+  propagation,
+  type SpanContext,
+  trace,
+} from '@opentelemetry/api';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
@@ -13,6 +19,7 @@ import {
   toClientGameState,
 } from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
+import { setGameAttributes } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   GameUpdate,
@@ -26,7 +33,9 @@ import { logger } from '~/utils/logger';
 
 const TICK_RATE_MS = 100;
 
-type StateSubscription =
+const tracer = trace.getTracer('card-games-subscriptions');
+
+type StateSubscriptionData =
   | {
       update:
         | GameUpdate.KICKED
@@ -50,6 +59,13 @@ type StateSubscription =
         id: EmojiReactionId;
       };
     };
+
+type StateSubscription = StateSubscriptionData & { _trace?: string };
+
+type QueuedMessage = {
+  data: StateSubscriptionData;
+  emitContext: SpanContext | undefined;
+};
 
 export const yanivStateSubscription = protectedProcedure
   .input(
@@ -109,14 +125,18 @@ export const yanivStateSubscription = protectedProcedure
       }
     }
 
-    const messageQueue: StateSubscription[] = [];
+    const messageQueue: QueuedMessage[] = [];
 
     function lobbyHandler(message: unknown) {
+      const emitContext = trace.getSpanContext(otelContext.active());
       const messageData = lobbySchema.safeParse(message);
 
       if (messageData.success) {
         if (!messageData.data.players.some((player) => player.id === userId)) {
-          messageQueue.push({ update: GameUpdate.KICKED });
+          messageQueue.push({
+            data: { update: GameUpdate.KICKED },
+            emitContext,
+          });
           return;
         }
 
@@ -125,7 +145,10 @@ export const yanivStateSubscription = protectedProcedure
           isHost: player.id === messageData.data.host,
           isUser: player.id === userId,
         }));
-        messageQueue.push({ update: GameUpdate.LOBBY_UPDATE, players });
+        messageQueue.push({
+          data: { update: GameUpdate.LOBBY_UPDATE, players },
+          emitContext,
+        });
       } else {
         logger.error(
           new Error('Invalid message format for Yaniv lobby', {
@@ -136,6 +159,7 @@ export const yanivStateSubscription = protectedProcedure
     }
 
     function gameHandler(message: unknown) {
+      const emitContext = trace.getSpanContext(otelContext.active());
       const messageData = gameStateSchema.safeParse(message);
 
       if (messageData.success) {
@@ -147,7 +171,7 @@ export const yanivStateSubscription = protectedProcedure
           state.gameStage === GameStage.FINISHED
             ? GameUpdate.FINISHED
             : GameUpdate.GAME_STATE_UPDATE;
-        messageQueue.push({ update, state });
+        messageQueue.push({ data: { update, state }, emitContext });
       } else {
         logger.error(
           new Error('Invalid message format for Yaniv game', {
@@ -162,9 +186,10 @@ export const yanivStateSubscription = protectedProcedure
       targetPlayerId: UserId;
       id: EmojiReactionId;
     }) {
+      const emitContext = trace.getSpanContext(otelContext.active());
       messageQueue.push({
-        update: GameUpdate.EMOJI_REACTION,
-        payload,
+        data: { update: GameUpdate.EMOJI_REACTION, payload },
+        emitContext,
       });
     }
 
@@ -179,11 +204,37 @@ export const yanivStateSubscription = protectedProcedure
     try {
       while (!signal?.aborted) {
         if (messageQueue.length > 0) {
-          const message = messageQueue.shift();
-          if (message) {
-            yield message;
+          const queued = messageQueue.shift();
+          if (queued) {
+            const { data, emitContext } = queued;
+            const deliverParentCtx = emitContext
+              ? trace.setSpan(
+                  otelContext.active(),
+                  trace.wrapSpanContext(emitContext),
+                )
+              : otelContext.active();
+            const deliverSpan = tracer.startSpan(
+              'subscription.deliver',
+              {},
+              deliverParentCtx,
+            );
+            try {
+              await setGameAttributes(deliverSpan, code, userId);
+              const carrier: Record<string, string> = {};
+              propagation.inject(
+                trace.setSpan(otelContext.active(), deliverSpan),
+                carrier,
+              );
 
-            if (message.update === GameUpdate.FINISHED) {
+              yield {
+                ...data,
+                _trace: carrier.traceparent,
+              } as StateSubscription;
+            } finally {
+              deliverSpan.end();
+            }
+
+            if (data.update === GameUpdate.FINISHED) {
               return;
             }
           }

@@ -6,6 +6,7 @@ import {
   CardDescription,
   CardHeader,
 } from '~/components/ui/card';
+import { Link } from '~/components/ui/link';
 
 const SECURITY_EMAIL = 'security@playcards.games';
 
@@ -32,13 +33,7 @@ export default async function SecurityPolicy() {
             <p>
               If you believe you have found a security vulnerability, please
               report it to us via email:{' '}
-              <a
-                href={`mailto:${SECURITY_EMAIL}`}
-                className='cursor-pointer underline ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 rounded'
-              >
-                {SECURITY_EMAIL}
-              </a>
-              .
+              <Link href={`mailto:${SECURITY_EMAIL}`}>{SECURITY_EMAIL}</Link>.
             </p>
             <p>
               Please include a description of the vulnerability along with steps

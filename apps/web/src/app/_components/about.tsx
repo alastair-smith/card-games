@@ -1,4 +1,4 @@
-import { MessageCircleQuestionMarkIcon } from 'lucide-react';
+import { MessageCircleQuestionMarkIcon, UserLockIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
 import {
@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { cn } from '~/utils/cn';
+import { TelemetryToggle } from './telemetry-toggle';
 
 export function About({ className }: { className?: string }) {
   return (
@@ -17,15 +18,23 @@ export function About({ className }: { className?: string }) {
         <CardTitle>About</CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-2'>
-        <p>Play multiplayer card games online with friends.</p>
+        <div className='flex flex-col gap-2'>
+          <p>Play multiplayer card games online with friends.</p>
 
-        <p>
-          Start a game and share the lobby link to invite them to join from
-          their own device.
-        </p>
+          <p>
+            Start a game and share the lobby link to invite them to join from
+            their own device.
+          </p>
+        </div>
       </CardContent>
 
-      <CardFooter className='gap-3 justify-end'>
+      <CardFooter className='gap-3 justify-end flex-wrap'>
+        <TelemetryToggle className='mr-auto' />
+        <Button asChild variant='secondary'>
+          <Link href='/privacy-policy'>
+            <UserLockIcon /> Privacy Policy
+          </Link>
+        </Button>
         <Button asChild variant='secondary'>
           <Link href='/contact'>
             <MessageCircleQuestionMarkIcon /> Contact Us
