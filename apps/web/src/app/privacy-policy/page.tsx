@@ -316,13 +316,11 @@ export default async function PrivacyPolicy() {
                 </TableRow>
                 <TableRow>
                   <TableCell>Analytics traces (if opted in)</TableCell>
-                  <TableCell>
-                    Subject to New Relic&rsquo;s retention policy
-                  </TableCell>
+                  <TableCell>8 days</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Server-side technical traces</TableCell>
-                  <TableCell>As configured by the site operator</TableCell>
+                  <TableCell>8 days</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
