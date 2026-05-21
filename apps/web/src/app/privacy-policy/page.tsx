@@ -63,10 +63,9 @@ export default async function PrivacyPolicy() {
           <ArticleContent>
             <ArticleHeading id='about'>About this policy</ArticleHeading>
             <p className='text-sm'>
-              PlayCards.Games is operated by an individual, not a company. As
-              the data controller under the UK General Data Protection
-              Regulation (UK GDPR) and the Data Protection Act 2018, I am
-              committed to handling your personal data responsibly and
+              This site is operated under the UK General Data Protection
+              Regulation (UK GDPR) and the Data Protection Act 2018, with a
+              commitment to handling your personal data responsibly and
               transparently.
             </p>
             <p className='text-sm'>
