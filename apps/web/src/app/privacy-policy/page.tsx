@@ -217,7 +217,8 @@ export default async function PrivacyPolicy() {
               traces as a normal part of running the service. These are produced
               on the server when it processes your game activity, not in your
               browser, and do not contain your player name or any directly
-              identifiable information.
+              identifiable information. These traces are necessary for operating
+              the service and cannot be opted out of.
             </p>
 
             <ArticleHeading id='cookies'>Cookies</ArticleHeading>
