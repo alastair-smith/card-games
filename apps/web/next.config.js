@@ -53,6 +53,9 @@ const config = {
     '@opentelemetry/instrumentation-ioredis',
     '@opentelemetry/instrumentation-http',
     '@opentelemetry/resources',
+    '@opentelemetry/sdk-logs',
+    '@opentelemetry/exporter-logs-otlp-http',
+    '@opentelemetry/instrumentation-pino',
   ],
 };
 
