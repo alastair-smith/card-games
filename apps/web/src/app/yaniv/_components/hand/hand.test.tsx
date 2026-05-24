@@ -67,17 +67,21 @@ describe('Hand', () => {
       expect(screen.getByText('100.')).toBeInTheDocument();
     });
 
-    test('targets 100 when both milestones have been halved', () => {
+    test('still targets 100 when both milestones have been halved', () => {
       render(
-        <Hand
-          {...defaultProps}
-          isFiftyScoreHalved={true}
-          isHundredScoreHalved={true}
-          totalScore={60}
-        />,
+        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={60} />,
       );
       // away = 100 - 60 = 40
       expect(screen.getByText('40')).toBeInTheDocument();
+      expect(screen.getByText('100.')).toBeInTheDocument();
+    });
+
+    test('shows how much beyond the max has passed', () => {
+      render(
+        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={120} />,
+      );
+      // beyond = 120 - 100
+      expect(screen.getByText('20')).toBeInTheDocument();
       expect(screen.getByText('100.')).toBeInTheDocument();
     });
   });

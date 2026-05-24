@@ -11,7 +11,6 @@ type HandProps = {
   cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
   handTotal: number;
   isFiftyScoreHalved: boolean;
-  isHundredScoreHalved: boolean;
   totalScore: number;
   onCardClick?: (card: YanivPlayingCard & { selected?: boolean }) => void;
   isActive?: boolean;
@@ -22,7 +21,6 @@ export default function Hand({
   cards,
   handTotal,
   isFiftyScoreHalved,
-  isHundredScoreHalved,
   totalScore,
   onCardClick,
   isActive,
@@ -30,9 +28,7 @@ export default function Hand({
   const scoreNote =
     !isFiftyScoreHalved && totalScore < 50
       ? { target: 50, away: 50 - totalScore }
-      : !isHundredScoreHalved && totalScore < 100
-        ? { target: 100, away: 100 - totalScore }
-        : { target: 100, away: 100 - totalScore };
+      : { target: 100, away: 100 - totalScore };
 
   const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 
@@ -78,7 +74,8 @@ export default function Hand({
         </div>
         <div className='text-sm'>
           Your total score is{' '}
-          <span className='font-semibold'>{scoreNote.away}</span> away from{' '}
+          <span className='font-semibold'>{Math.abs(scoreNote.away)}</span>{' '}
+          {scoreNote.away >= 0 ? 'away from ' : 'beyond '}
           <span className='font-semibold'>{scoreNote.target}.</span>
         </div>
       </div>

@@ -173,7 +173,6 @@ export default function Game({
           cards={cardsWithSelection}
           handTotal={handTotal}
           isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}
-          isHundredScoreHalved={userPlayer.isHundredScoreHalved}
           totalScore={userPlayer.score}
           onCardClick={onCardToggle}
           isActive={stage === GameViewStage.PICKING_CARDS && isUserTakingTurn}
