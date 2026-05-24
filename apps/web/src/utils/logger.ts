@@ -1,4 +1,3 @@
-import { trace } from '@opentelemetry/api';
 import pino from 'pino';
 
 import { env } from '~/env';
@@ -20,26 +19,12 @@ const initLogger = () => {
             colorize: true,
             translateTime: 'HH:MM:ss Z',
             ignore: `pid,hostname,${Object.keys(base).join(',')}`,
-            sync: true, // Use sync mode in development
+            sync: true,
           },
         }
       : undefined;
 
-  return pino({
-    level,
-    base,
-    transport,
-    mixin() {
-      const span = trace.getActiveSpan();
-      if (!span) return {};
-      const context = span.spanContext();
-      return {
-        traceId: context.traceId,
-        spanId: context.spanId,
-        traceFlags: context.traceFlags,
-      };
-    },
-  });
+  return pino({ level, base, transport });
 };
 
 export const logger = initLogger();
