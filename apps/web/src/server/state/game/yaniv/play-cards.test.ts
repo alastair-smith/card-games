@@ -84,9 +84,11 @@ const makeState = (overrides: Partial<State> = {}): State => ({
 const makeValidPlay = (
   orderedCards: YanivPlayingCard[],
   isPickupRequired = true,
+  isPickupDeckOnly?: boolean,
 ) => ({
   isValid: true,
   isPickupRequired,
+  isPickupDeckOnly,
   orderedCards,
 });
 
@@ -217,6 +219,29 @@ describe('playCards', () => {
     expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
       gameStep: GameStep.PROCEED,
     });
+  });
+
+  test('sets deck-only pickup restriction when validation signals it', async () => {
+    vi.mocked(isValidYanivPlay).mockReturnValue(
+      makeValidPlay([CARD_1], true, true),
+    );
+
+    await playCards(CODE, USER_1, [CARD_1]);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      deckOnlyPickup: true,
+    });
+  });
+
+  test('does not set deck-only pickup restriction for normal plays', async () => {
+    vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay([CARD_1], true));
+
+    await playCards(CODE, USER_1, [CARD_1]);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
+      'deckOnlyPickup',
+      undefined,
+    );
   });
 
   test('persists and publishes the updated state', async () => {

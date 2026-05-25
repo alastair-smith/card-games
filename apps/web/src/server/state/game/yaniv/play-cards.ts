@@ -66,6 +66,7 @@ const playCardsOnTurn = async (
         ...state,
         players: updatePlayerHand(state, userId, remainingHand),
         playedCards: playResult.orderedCards,
+        deckOnlyPickup: playResult.isPickupDeckOnly,
         gameStep: playResult.isPickupRequired
           ? GameStep.PICKUP_CARD
           : GameStep.PROCEED,

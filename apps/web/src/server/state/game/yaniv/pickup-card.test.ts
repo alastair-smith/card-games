@@ -144,7 +144,23 @@ describe('pickupCard', () => {
     );
   });
 
-  describe('deck source', () => {
+  test('throws when attempting to pick up from discard after a run extension', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({ deckOnlyPickup: true }),
+    );
+
+    await expect(pickupCard(CODE, USER_1, 'discard')).rejects.toThrow(
+      'Cannot pick up from the discard after playing a run extension',
+    );
+  });
+
+  test('allows discard pickup after a standalone run (no run extension played)', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(makeState({ deckOnlyPickup: false }));
+
+    await expect(pickupCard(CODE, USER_1, 'discard')).resolves.not.toThrow();
+  });
+
+  describe('deck source (allowed even after a run extension)', () => {
     test('adds drawn card to hand', async () => {
       await pickupCard(CODE, USER_1, 'deck');
 
@@ -218,6 +234,19 @@ describe('pickupCard', () => {
       await pickupCard(CODE, USER_1, 'deck');
 
       expect(vi.mocked(reshuffleDeck)).not.toHaveBeenCalled();
+    });
+
+    test('clears the deck-only pickup restriction', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({ deckOnlyPickup: true }),
+      );
+
+      await pickupCard(CODE, USER_1, 'deck');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toHaveProperty(
+        'deckOnlyPickup',
+        undefined,
+      );
     });
   });
 

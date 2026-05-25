@@ -20,6 +20,7 @@ type ClientInProgressGameState = {
   topDiscardCard?: YanivPlayingCard | null;
   currentPlayerId: UserId;
   drawnCard?: YanivPlayingCard;
+  deckOnlyPickup?: boolean;
   hand: YanivPlayingCard[];
   players: ClientPlayer[];
 };
@@ -65,12 +66,12 @@ export const toClientGameState = (
   }));
 
   if (rawState.gameStage === GameStage.IN_PROGRESS) {
-    const { drawnCard, ...rest } = rawState;
-    const visibleDrawnCard =
-      rawState.currentPlayerId === userId ? drawnCard : undefined;
+    const { drawnCard, deckOnlyPickup, ...rest } = rawState;
+    const isCurrentPlayer = rawState.currentPlayerId === userId;
     return {
       ...rest,
-      drawnCard: visibleDrawnCard,
+      drawnCard: isCurrentPlayer ? drawnCard : undefined,
+      deckOnlyPickup: isCurrentPlayer ? deckOnlyPickup : undefined,
       hand: requestingPlayer.hand,
       players,
     };
