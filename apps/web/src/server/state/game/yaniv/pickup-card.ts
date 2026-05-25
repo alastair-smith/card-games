@@ -42,7 +42,9 @@ export const pickupCard = async (
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
   if (state.deckOnlyPickup && source === 'discard')
-    throw new Error('Cannot pick up from the discard after playing a run extension');
+    throw new Error(
+      'Cannot pick up from the discard after playing a run extension',
+    );
 
   const currentPlayer = state.players.find((player) => player.id === userId);
   if (!currentPlayer) throw new Error('Player not found');

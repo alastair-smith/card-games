@@ -107,7 +107,12 @@ function isRunPlay(
     YANIV_RANK_POSITION[firstCard.rank] - 1
   ) {
     // topDiscard sits below the run — played cards stay in ascending order
-    return { isValid: true, isPickupRequired: true, isPickupDeckOnly: true, orderedCards };
+    return {
+      isValid: true,
+      isPickupRequired: true,
+      isPickupDeckOnly: true,
+      orderedCards,
+    };
   }
   if (
     YANIV_RANK_POSITION[topDiscard.rank] ===

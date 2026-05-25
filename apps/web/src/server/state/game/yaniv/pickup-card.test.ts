@@ -155,7 +155,9 @@ describe('pickupCard', () => {
   });
 
   test('allows discard pickup after a standalone run (no run extension played)', async () => {
-    vi.mocked(getYanivState).mockResolvedValue(makeState({ deckOnlyPickup: false }));
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({ deckOnlyPickup: false }),
+    );
 
     await expect(pickupCard(CODE, USER_1, 'discard')).resolves.not.toThrow();
   });
