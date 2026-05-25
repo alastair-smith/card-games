@@ -106,6 +106,7 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     topDiscardCard: yanivPlayingCardSchema.nullable().optional(),
     currentPlayerId: userIdSchema,
     drawnCard: yanivPlayingCardSchema.optional(),
+    deckOnlyPickup: z.boolean().optional(),
   }),
   z.object({
     gameStage: z.literal(GameStage.FINISHED),

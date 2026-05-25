@@ -41,6 +41,11 @@ export const pickupCard = async (
     throw new Error('Not the pickup card step');
   if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
+  if (state.deckOnlyPickup && source === 'discard')
+    throw new Error(
+      'Cannot pick up from the discard after playing a run extension',
+    );
+
   const currentPlayer = state.players.find((player) => player.id === userId);
   if (!currentPlayer) throw new Error('Player not found');
 
@@ -59,6 +64,7 @@ export const pickupCard = async (
     ...state,
     players: updatedPlayers,
     gameStep: GameStep.PROCEED,
+    deckOnlyPickup: undefined,
     ...(source === 'deck' ? { drawnCard } : { drawnCard: undefined }),
   };
 

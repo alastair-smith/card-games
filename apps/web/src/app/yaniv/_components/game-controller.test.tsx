@@ -47,6 +47,11 @@ vi.mock('./game', () => ({
           data-testid='end-turn'
           onClick={props.onEndTurnClick as () => void}
         />
+        <button
+          type='button'
+          data-testid='pickup-from-discard'
+          onClick={props.onPickupFromDiscard as () => void}
+        />
       </div>
     );
   },
@@ -82,6 +87,7 @@ function inProgressState(
     playedCards: { suit: Suit; rank: Rank }[];
     topDiscardCard: { suit: Suit; rank: Rank } | null;
     drawnCard: { suit: Suit; rank: Rank };
+    deckOnlyPickup: boolean;
   }> = {},
 ): ClientGameState {
   return {
@@ -242,6 +248,25 @@ describe('YanivGameController', () => {
       expect(toast.info).toHaveBeenCalledWith(
         "You can't play that combination of cards",
       );
+    });
+  });
+
+  describe('picking up a card', () => {
+    test('shows a toast and does not pick up when discard is clicked after a run extension', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            gameStep: GameStep.PICKUP_CARD,
+            deckOnlyPickup: true,
+          })}
+        />,
+      );
+      fireEvent.click(screen.getByTestId('pickup-from-discard'));
+      expect(toast.info).toHaveBeenCalledWith(
+        'The discard card is part of your run, you can only pick up from the deck',
+      );
+      expect(mutate).not.toHaveBeenCalled();
     });
   });
 

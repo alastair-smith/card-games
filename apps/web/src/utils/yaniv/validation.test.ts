@@ -441,7 +441,7 @@ describe('isValidYanivPlay', () => {
     });
   });
 
-  describe('run extension plays on top of discard (pickup required)', () => {
+  describe('run extension plays on top of discard (deck-only pickup)', () => {
     test('two cards extending a run above the top discard', () => {
       expect(
         isValidYanivPlay(
@@ -454,6 +454,7 @@ describe('isValidYanivPlay', () => {
       ).toEqual({
         isValid: true,
         isPickupRequired: true,
+        isPickupDeckOnly: true,
         orderedCards: [
           { suit: Suit.HEARTS, rank: Rank.SIX },
           { suit: Suit.HEARTS, rank: Rank.SEVEN },
@@ -473,6 +474,7 @@ describe('isValidYanivPlay', () => {
       ).toEqual({
         isValid: true,
         isPickupRequired: true,
+        isPickupDeckOnly: true,
         orderedCards: [
           { suit: Suit.HEARTS, rank: Rank.FOUR },
           { suit: Suit.HEARTS, rank: Rank.THREE },

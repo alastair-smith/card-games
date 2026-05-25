@@ -82,6 +82,7 @@ export default function YanivGameController({
     topDiscardCard,
     currentPlayerId,
     drawnCard,
+    deckOnlyPickup,
   } = gameState as InProgressClientGameState;
 
   const isMyTurn = currentPlayerId === userId;
@@ -163,6 +164,12 @@ export default function YanivGameController({
   };
 
   const handlePickupFromDiscard = () => {
+    if (deckOnlyPickup) {
+      toast.info(
+        'The discard card is part of your run, you can only pick up from the deck',
+      );
+      return;
+    }
     pickupCardMutation.mutate({ code, source: 'discard' });
   };
 
