@@ -50,6 +50,7 @@ const playCardsOnTurn = async (
   userId: UserId,
   hand: YanivPlayingCard[],
   cards: YanivPlayingCard[],
+  direction?: 'ascending' | 'descending',
 ): Promise<InProgressState> => {
   return tracer.startActiveSpan('yaniv.play-cards-on-turn', async (span) => {
     try {
@@ -57,7 +58,7 @@ const playCardsOnTurn = async (
 
       const topDiscard = await yanivDiscard.peekDiscard(code);
       if (!topDiscard) throw new Error('Discard pile is empty');
-      const playResult = isValidYanivPlay(cards, topDiscard);
+      const playResult = isValidYanivPlay(cards, topDiscard, direction);
       if (!playResult.isValid) throw new Error('Invalid card combination');
 
       span.setAttribute('yaniv.pickup_required', playResult.isPickupRequired);
@@ -125,6 +126,7 @@ export const playCards = async (
   code: GameCode,
   userId: UserId,
   cards: YanivPlayingCard[],
+  direction?: 'ascending' | 'descending',
 ) => {
   const state = await getYanivState({ code });
   if (!state) throw new Error('Game not found');
@@ -145,7 +147,7 @@ export const playCards = async (
 
   const newState = isPlayingDrawnCard
     ? playDrawnCard(state, userId, currentPlayer.hand, cards)
-    : await playCardsOnTurn(code, state, userId, currentPlayer.hand, cards);
+    : await playCardsOnTurn(code, state, userId, currentPlayer.hand, cards, direction);
 
   if (isPlayingDrawnCard) {
     publishEmoji(code, {

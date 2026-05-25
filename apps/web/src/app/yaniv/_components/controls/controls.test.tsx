@@ -65,6 +65,53 @@ describe('Controls', () => {
       fireEvent.click(screen.getByRole('button', { name: /play cards/i }));
       expect(onPlayCards).toHaveBeenCalledOnce();
     });
+
+    test('shows direction buttons instead of Play Cards when a run is selected', () => {
+      render(
+        <Controls
+          {...baseProps}
+          stage={GameViewStage.PICKING_CARDS}
+          isRunSelected
+        />,
+      );
+      expect(
+        screen.queryByRole('button', { name: /play cards/i }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /play ascending/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /play descending/i }),
+      ).toBeInTheDocument();
+    });
+
+    test('calls the ascending handler when play ascending is clicked', () => {
+      const onPlayAscending = vi.fn();
+      render(
+        <Controls
+          {...baseProps}
+          stage={GameViewStage.PICKING_CARDS}
+          isRunSelected
+          onPlayAscending={onPlayAscending}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /play ascending/i }));
+      expect(onPlayAscending).toHaveBeenCalledOnce();
+    });
+
+    test('calls the descending handler when play descending is clicked', () => {
+      const onPlayDescending = vi.fn();
+      render(
+        <Controls
+          {...baseProps}
+          stage={GameViewStage.PICKING_CARDS}
+          isRunSelected
+          onPlayDescending={onPlayDescending}
+        />,
+      );
+      fireEvent.click(screen.getByRole('button', { name: /play descending/i }));
+      expect(onPlayDescending).toHaveBeenCalledOnce();
+    });
   });
 
   describe('end of turn', () => {

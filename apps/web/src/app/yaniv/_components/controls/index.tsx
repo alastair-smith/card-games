@@ -1,5 +1,7 @@
 import {
+  ArrowDownCircleIcon,
   ArrowRightCircleIcon,
+  ArrowUpCircleIcon,
   BrainIcon,
   CircleCheckIcon,
   CogIcon,
@@ -18,6 +20,9 @@ type ControlsProps = {
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: () => void;
+  onPlayAscending?: () => void;
+  onPlayDescending?: () => void;
+  isRunSelected?: boolean;
   playerTakingTurn?: PlayerName;
   stage: GameViewStage;
 };
@@ -28,6 +33,9 @@ export default function Controls({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
+  onPlayAscending,
+  onPlayDescending,
+  isRunSelected,
   playerTakingTurn,
   stage,
 }: ControlsProps) {
@@ -54,12 +62,24 @@ export default function Controls({
         </div>
       )}
 
-      {stage === GameViewStage.PICKING_CARDS && (
-        <Button onClick={onPlayCards} className='-col-end-1'>
-          <CircleCheckIcon />
-          Play Cards
-        </Button>
-      )}
+      {stage === GameViewStage.PICKING_CARDS &&
+        (isRunSelected ? (
+          <>
+            <Button onClick={onPlayAscending}>
+              <ArrowUpCircleIcon />
+              Play ascending
+            </Button>
+            <Button onClick={onPlayDescending}>
+              <ArrowDownCircleIcon />
+              Play descending
+            </Button>
+          </>
+        ) : (
+          <Button onClick={onPlayCards} className='-col-end-1'>
+            <CircleCheckIcon />
+            Play Cards
+          </Button>
+        ))}
 
       {stage === GameViewStage.END_TURN && (
         <>

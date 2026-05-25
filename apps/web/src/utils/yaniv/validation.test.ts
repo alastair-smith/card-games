@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { JOKER_RANK, JokerSuit, Rank, Suit } from '~/types/cards';
-import { isValidYanivPlay } from './validation';
+import { isStandaloneRun, isValidYanivPlay } from './validation';
 
 // A discard card that won't interact with any standalone test hand.
 const neutralDiscard = { suit: Suit.CLUBS, rank: Rank.ACE };
@@ -441,6 +441,101 @@ describe('isValidYanivPlay', () => {
     });
   });
 
+  describe('standalone run direction', () => {
+    const cards = [
+      { suit: Suit.HEARTS, rank: Rank.THREE },
+      { suit: Suit.HEARTS, rank: Rank.FIVE },
+      { suit: Suit.HEARTS, rank: Rank.FOUR },
+    ];
+
+    test('orders run ascending by default', () => {
+      expect(isValidYanivPlay(cards, neutralDiscard)).toMatchObject({
+        isValid: true,
+        orderedCards: [
+          { suit: Suit.HEARTS, rank: Rank.THREE },
+          { suit: Suit.HEARTS, rank: Rank.FOUR },
+          { suit: Suit.HEARTS, rank: Rank.FIVE },
+        ],
+      });
+    });
+
+    test('orders run ascending when direction is ascending', () => {
+      expect(isValidYanivPlay(cards, neutralDiscard, 'ascending')).toMatchObject({
+        isValid: true,
+        orderedCards: [
+          { suit: Suit.HEARTS, rank: Rank.THREE },
+          { suit: Suit.HEARTS, rank: Rank.FOUR },
+          { suit: Suit.HEARTS, rank: Rank.FIVE },
+        ],
+      });
+    });
+
+    test('orders run descending when direction is descending', () => {
+      expect(isValidYanivPlay(cards, neutralDiscard, 'descending')).toMatchObject({
+        isValid: true,
+        orderedCards: [
+          { suit: Suit.HEARTS, rank: Rank.FIVE },
+          { suit: Suit.HEARTS, rank: Rank.FOUR },
+          { suit: Suit.HEARTS, rank: Rank.THREE },
+        ],
+      });
+    });
+  });
+
+  describe('standalone run played on top of matching discard rank (no pickup)', () => {
+    test('requires no pickup when the high end of the run matches the discard rank', () => {
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.THREE },
+            { suit: Suit.HEARTS, rank: Rank.FOUR },
+            { suit: Suit.HEARTS, rank: Rank.FIVE },
+          ],
+          { suit: Suit.CLUBS, rank: Rank.FIVE },
+        ),
+      ).toMatchObject({ isValid: true, isPickupRequired: false });
+    });
+
+    test('requires no pickup when the low end of the run matches the discard rank', () => {
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.THREE },
+            { suit: Suit.HEARTS, rank: Rank.FOUR },
+            { suit: Suit.HEARTS, rank: Rank.FIVE },
+          ],
+          { suit: Suit.CLUBS, rank: Rank.THREE },
+        ),
+      ).toMatchObject({ isValid: true, isPickupRequired: false });
+    });
+
+    test('requires pickup when the matching rank is internal to the run', () => {
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.THREE },
+            { suit: Suit.HEARTS, rank: Rank.FOUR },
+            { suit: Suit.HEARTS, rank: Rank.FIVE },
+          ],
+          { suit: Suit.CLUBS, rank: Rank.FOUR },
+        ),
+      ).toMatchObject({ isValid: true, isPickupRequired: true });
+    });
+
+    test('suit of the discard does not affect the matching rule', () => {
+      expect(
+        isValidYanivPlay(
+          [
+            { suit: Suit.HEARTS, rank: Rank.THREE },
+            { suit: Suit.HEARTS, rank: Rank.FOUR },
+            { suit: Suit.HEARTS, rank: Rank.FIVE },
+          ],
+          { suit: Suit.SPADES, rank: Rank.FIVE },
+        ),
+      ).toMatchObject({ isValid: true, isPickupRequired: false });
+    });
+  });
+
   describe('run extension plays on top of discard (deck-only pickup)', () => {
     test('two cards extending a run above the top discard', () => {
       expect(
@@ -559,5 +654,67 @@ describe('isValidYanivPlay', () => {
         ),
       ).toEqual({ isValid: false });
     });
+  });
+});
+
+describe('isStandaloneRun', () => {
+  test('returns true for 3 consecutive same-suit cards', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.HEARTS, rank: Rank.THREE },
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ]),
+    ).toBe(true);
+  });
+
+  test('returns true for a longer run', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.SPADES, rank: Rank.SEVEN },
+        { suit: Suit.SPADES, rank: Rank.EIGHT },
+        { suit: Suit.SPADES, rank: Rank.NINE },
+        { suit: Suit.SPADES, rank: Rank.TEN },
+      ]),
+    ).toBe(true);
+  });
+
+  test('returns true for a run with a joker filling an internal gap', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.CLUBS, rank: Rank.SIX },
+        { suit: JokerSuit.RED, rank: JOKER_RANK },
+        { suit: Suit.CLUBS, rank: Rank.EIGHT },
+      ]),
+    ).toBe(true);
+  });
+
+  test('returns false for only 2 cards', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.HEARTS, rank: Rank.THREE },
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+      ]),
+    ).toBe(false);
+  });
+
+  test('returns false for mixed suits', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.HEARTS, rank: Rank.THREE },
+        { suit: Suit.SPADES, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ]),
+    ).toBe(false);
+  });
+
+  test('returns false for non-consecutive cards', () => {
+    expect(
+      isStandaloneRun([
+        { suit: Suit.HEARTS, rank: Rank.THREE },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+        { suit: Suit.HEARTS, rank: Rank.SEVEN },
+      ]),
+    ).toBe(false);
   });
 });

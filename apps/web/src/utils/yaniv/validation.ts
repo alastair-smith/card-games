@@ -70,6 +70,17 @@ function buildOrderedRun(cards: YanivPlayingCard[]): YanivPlayingCard[] | null {
   return result;
 }
 
+/** Returns true if the cards form a valid standalone run (3+ same-suit consecutive cards, jokers may fill internal gaps). */
+export function isStandaloneRun(cards: YanivPlayingCard[]): boolean {
+  if (cards.length < MINIMUM_RUN_SIZE) return false;
+  const nonJokers = cards.filter(isStandardCard);
+  const firstNonJoker = nonJokers[0];
+  if (!firstNonJoker) return false;
+  if (!nonJokers.every(({ suit }) => suit === firstNonJoker.suit)) return false;
+  const ordered = buildOrderedRun(cards);
+  return ordered !== null && ordered.length >= MINIMUM_RUN_SIZE;
+}
+
 /**
  * Returns a valid play result if the cards form a run. Checks standalone runs
  * (3+ cards of the same suit) first, then run extensions (2+ cards that
@@ -78,6 +89,7 @@ function buildOrderedRun(cards: YanivPlayingCard[]): YanivPlayingCard[] | null {
 function isRunPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
+  direction?: 'ascending' | 'descending',
 ): PlayResult {
   const nonJokers = cards.filter(isStandardCard);
   const firstNonJoker = nonJokers[0];
@@ -91,7 +103,13 @@ function isRunPlay(
 
   // Standalone run: 3+ cards, same suit, consecutive
   if (orderedCards.length >= MINIMUM_RUN_SIZE) {
-    return { isValid: true, isPickupRequired: true, orderedCards };
+    const finalCards =
+      direction === 'descending' ? [...orderedCards].reverse() : orderedCards;
+    const firstCard = finalCards[0] as StandardPlayingCard;
+    const lastCard = finalCards[finalCards.length - 1] as StandardPlayingCard;
+    const isPickupRequired =
+      firstCard.rank !== topDiscard.rank && lastCard.rank !== topDiscard.rank;
+    return { isValid: true, isPickupRequired, orderedCards: finalCards };
   }
 
   // Run extension: topDiscard must be a standard card with same suit, adjacent to one end
@@ -133,6 +151,7 @@ function isRunPlay(
 export function isValidYanivPlay(
   cards: YanivPlayingCard[],
   topDiscard: YanivPlayingCard,
+  direction?: 'ascending' | 'descending',
 ): PlayResult {
   // no cards
   if (cards.length === 0) return { isValid: false };
@@ -154,5 +173,5 @@ export function isValidYanivPlay(
   }
 
   // run
-  return isRunPlay(cards, topDiscard);
+  return isRunPlay(cards, topDiscard, direction);
 }

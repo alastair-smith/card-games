@@ -14,7 +14,7 @@ import {
   YANIV_CALL_THRESHOLD,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
-import { isValidYanivPlay } from '~/utils/yaniv/validation';
+import { isStandaloneRun, isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
 import { useCardSelection } from './use-card-selection';
@@ -115,6 +115,8 @@ export default function YanivGameController({
 
   const stage = deriveStage();
 
+  const isSelectedCardsRun = isStandaloneRun(selectedCards);
+
   const handlePlayCards = () => {
     if (gameStep === GameStep.REDEAL) {
       startNewRoundMutation.mutate({ code });
@@ -138,6 +140,31 @@ export default function YanivGameController({
           ? { suit: card.suit, rank: card.rank }
           : { suit: card.suit, rank: card.rank },
       ),
+    });
+  };
+
+  const handlePlayCardsWithDirection = (
+    direction: 'ascending' | 'descending',
+  ) => {
+    if (selectedCards.length === 0) {
+      toast.info('Select at least one card to play');
+      return;
+    }
+    if (
+      topDiscardCard &&
+      !isValidYanivPlay(selectedCards, topDiscardCard, direction).isValid
+    ) {
+      toast.info("You can't play that combination of cards");
+      return;
+    }
+    playCardsMutation.mutate({
+      code,
+      cards: selectedCards.map((card) =>
+        card.rank === JOKER_RANK
+          ? { suit: card.suit, rank: card.rank }
+          : { suit: card.suit, rank: card.rank },
+      ),
+      direction,
     });
   };
 
@@ -197,6 +224,9 @@ export default function YanivGameController({
       onEndTurnClick={handleEndTurn}
       onYanivClick={handleCallYaniv}
       onPlayCards={handlePlayCards}
+      onPlayAscending={() => handlePlayCardsWithDirection('ascending')}
+      onPlayDescending={() => handlePlayCardsWithDirection('descending')}
+      isRunSelected={isSelectedCardsRun}
       players={players}
       userId={userId}
       playedCards={playedCards}
