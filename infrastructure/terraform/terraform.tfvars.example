@@ -21,6 +21,9 @@ oci_availability_domain = "iAkj:UK-LONDON-1-AD-1"
 # SSH public key — paste the full key string (not a file path)
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
 
+# Instance sizing — always-free tier total is 4 OCPU and 24 GB across all A1 instances.
+# 1 OCPU / 2 GB is sufficient for this stack; adjust to reserve capacity for other instances.
+
 # ---------------------------------------------------------------------------
 # Cloudflare — zone ID is on the domain's Overview page in the dashboard
 # API token needs Zone:DNS:Edit permission for playcards.games
