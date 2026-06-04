@@ -460,7 +460,9 @@ describe('isValidYanivPlay', () => {
     });
 
     test('orders run ascending when direction is ascending', () => {
-      expect(isValidYanivPlay(cards, neutralDiscard, 'ascending')).toMatchObject({
+      expect(
+        isValidYanivPlay(cards, neutralDiscard, 'ascending'),
+      ).toMatchObject({
         isValid: true,
         orderedCards: [
           { suit: Suit.HEARTS, rank: Rank.THREE },
@@ -471,7 +473,9 @@ describe('isValidYanivPlay', () => {
     });
 
     test('orders run descending when direction is descending', () => {
-      expect(isValidYanivPlay(cards, neutralDiscard, 'descending')).toMatchObject({
+      expect(
+        isValidYanivPlay(cards, neutralDiscard, 'descending'),
+      ).toMatchObject({
         isValid: true,
         orderedCards: [
           { suit: Suit.HEARTS, rank: Rank.FIVE },

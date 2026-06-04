@@ -284,10 +284,7 @@ describe('YanivGameController', () => {
 
     test('does not signal a run when selected cards are not a run', () => {
       render(
-        <YanivGameController
-          {...baseProps}
-          gameState={inProgressState()}
-        />,
+        <YanivGameController {...baseProps} gameState={inProgressState()} />,
       );
       const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
       act(() => toggle({ suit: Suit.HEARTS, rank: Rank.KING }));

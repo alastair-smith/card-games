@@ -147,7 +147,14 @@ export const playCards = async (
 
   const newState = isPlayingDrawnCard
     ? playDrawnCard(state, userId, currentPlayer.hand, cards)
-    : await playCardsOnTurn(code, state, userId, currentPlayer.hand, cards, direction);
+    : await playCardsOnTurn(
+        code,
+        state,
+        userId,
+        currentPlayer.hand,
+        cards,
+        direction,
+      );
 
   if (isPlayingDrawnCard) {
     publishEmoji(code, {
