@@ -1,0 +1,115 @@
+# Infrastructure
+
+Terraform config to provision the production environment on Oracle Cloud and Cloudflare. Runs locally — no CI required.
+
+## Prerequisites
+
+- [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.7
+- [OCI CLI](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm) (for initial key setup and AD lookup)
+- A Tailscale account
+- A Cloudflare account with `playcards.games` added as a zone
+
+## One-time credential setup
+
+### 1. OCI API keys
+
+```bash
+oci setup config
+```
+
+Follow the prompts. This creates `~/.oci/config` with your `tenancy_ocid`, `user_ocid`, `fingerprint`, and key file path — copy these into `terraform.tfvars`.
+
+To find your availability domain name:
+
+```bash
+oci iam availability-domain list --compartment-id <tenancy_ocid>
+```
+
+Copy the full `name` value from the output (e.g. `iAkj:UK-LONDON-1-AD-1`).
+
+### 2. SSH key
+
+Generate a dedicated key pair for server access:
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/card-games-prod
+```
+
+- Public key (`~/.ssh/card-games-prod.pub`) → `ssh_public_key` in `terraform.tfvars`
+- Private key (`~/.ssh/card-games-prod`) → GitHub secret `OCI_SSH_PRIVATE_KEY`
+
+### 3. Tailscale
+
+Two separate Tailscale credentials are needed:
+
+**Instance auth key** (used by cloud-init to join the server to your tailnet):
+
+Tailscale admin console → Settings → Keys → Generate auth key. Enable **Reusable**, add tag `tag:server`. Copy the key into `terraform.tfvars` as `tailscale_auth_key`.
+
+**GitHub Actions OAuth client** (allows the deploy runner to join your tailnet temporarily):
+
+Tailscale admin console → Settings → OAuth clients → Create client. Grant `auth_keys` write scope, set tag `tag:github-actions`. Copy the client ID and secret into GitHub secrets `TAILSCALE_OAUTH_CLIENT_ID` and `TAILSCALE_OAUTH_SECRET`.
+
+**ACL** — in the Tailscale admin console under Access Controls, allow the Actions runner to SSH to the server:
+
+```json
+{
+  "tagOwners": {
+    "tag:server":         ["your@email.com"],
+    "tag:github-actions": ["your@email.com"]
+  },
+  "acls": [
+    { "action": "accept", "src": ["tag:github-actions"], "dst": ["tag:server:22"] }
+  ]
+}
+```
+
+### 4. Cloudflare
+
+Create an API token with **Zone: DNS: Edit** permission scoped to `playcards.games`. The zone ID is on the domain's Overview page in the Cloudflare dashboard.
+
+## Provisioning
+
+```bash
+cd infrastructure/terraform
+
+cp terraform.tfvars.example terraform.tfvars
+# fill in all values
+
+terraform init
+terraform plan
+terraform apply
+```
+
+OCI A1.Flex always-free capacity is shared and can occasionally fail with *Out of host capacity*. If this happens, wait 5–30 minutes and retry, or try a different availability domain.
+
+## Post-apply steps
+
+Cloud-init takes 3–5 minutes to complete. The instance joins Tailscale automatically — once it appears in the [Tailscale admin console](https://login.tailscale.com/admin/machines), copy its Tailscale IP.
+
+Verify cloud-init finished:
+
+```bash
+ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip> cloud-init status
+```
+
+Then add the remaining GitHub Actions secrets (see [docs/deployment.md](../docs/deployment.md) for the full list).
+
+## Updating infrastructure
+
+Edit the relevant `.tf` files, then:
+
+```bash
+terraform plan   # review changes
+terraform apply
+```
+
+Terraform state is stored locally in `terraform.tfstate`. Keep this file — it is how Terraform tracks what it has created. Do not delete it.
+
+## Destroying
+
+```bash
+terraform destroy
+```
+
+This removes all OCI and Cloudflare resources. The Tailscale node will linger in the admin console until it expires or is manually removed.
