@@ -95,17 +95,9 @@ ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip> \
 
 ## Rollback
 
-Re-tag a previous image as `:latest` on DockerHub, then trigger a deploy. The short-SHA tags are kept permanently so any previous build can be redeployed.
+Use the **Rollback** workflow: Actions → Rollback → Run workflow → enter the short SHA to revert to.
 
-To redeploy a specific SHA directly on the instance:
-
-```bash
-ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip>
-cd /opt/card-games
-# edit .env: set IMAGE_TAG=<previous-sha>
-docker compose -f docker-compose.prod.yml pull
-docker compose -f docker-compose.prod.yml up -d
-```
+Short-SHA tags are kept permanently on DockerHub, so any previous build can be redeployed. Find the SHA from the git log or from a previous deploy run in the Actions tab.
 
 ## Accessing Redis for debugging
 

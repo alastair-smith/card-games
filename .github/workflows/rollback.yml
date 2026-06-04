@@ -1,0 +1,17 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Short commit SHA to roll back to (e.g. a1b2c3d) — must match a tag on DockerHub'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    name: Roll back to ${{ inputs.sha }}
+    uses: ./.github/workflows/_deploy-to-instance.yml
+    with:
+      image_tag: ${{ inputs.sha }}
+    secrets: inherit
