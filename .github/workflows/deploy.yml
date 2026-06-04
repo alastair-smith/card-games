@@ -1,0 +1,126 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/card-games
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_GIT_COMMIT_HASH=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to OCI
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TAILSCALE_OAUTH_SECRET }}
+          tags: tag:github-actions
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -H "${{ secrets.OCI_TAILSCALE_IP }}" >> ~/.ssh/known_hosts
+
+      - name: Write .env file
+        env:
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          cat > /tmp/deploy.env << EOF
+          AUTH_SECRET=${AUTH_SECRET}
+          REDIS_CONNECTION_STRING=redis://redis:6379
+          DOCKERHUB_IMAGE=${DOCKERHUB_USERNAME}/card-games
+          IMAGE_TAG=${IMAGE_TAG}
+          OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+          NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+          LOG_LEVEL=info
+          ADMIN_USERNAME=${ADMIN_USERNAME}
+          ADMIN_PASSWORD=${ADMIN_PASSWORD}
+          EOF
+
+      - name: Upload compose files and env to server
+        run: |
+          rsync -az \
+            docker-compose.prod.yml \
+            infrastructure/Caddyfile \
+            /tmp/deploy.env \
+            "ubuntu@${{ secrets.OCI_TAILSCALE_IP }}:/opt/card-games/"
+
+      - name: Deploy
+        run: |
+          ssh "ubuntu@${{ secrets.OCI_TAILSCALE_IP }}" bash << 'SSHEOF'
+            set -euo pipefail
+            cd /opt/card-games
+            mv deploy.env .env
+            chmod 600 .env
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          SSHEOF
+
+      - name: Verify health check
+        run: |
+          ssh "ubuntu@${{ secrets.OCI_TAILSCALE_IP }}" bash << 'SSHEOF'
+            for i in $(seq 1 20); do
+              if curl -sf http://localhost:3000/api/healthcheck > /dev/null; then
+                echo "Health check passed"
+                exit 0
+              fi
+              echo "Attempt $i/20 failed, waiting 5s..."
+              sleep 5
+            done
+            echo "Health check did not pass after 100s"
+            docker compose -f /opt/card-games/docker-compose.prod.yml logs --tail=50
+            exit 1
+          SSHEOF

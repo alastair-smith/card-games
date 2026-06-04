@@ -3,20 +3,30 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ${DOCKERHUB_IMAGE:-card-games}:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: production
       REDIS_CONNECTION_STRING: redis://redis:6379
       AUTH_SECRET: ${AUTH_SECRET}
-      NEXT_PUBLIC_GIT_COMMIT_HASH: ${NEXT_PUBLIC_GIT_COMMIT_HASH:-unknown}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     depends_on:
       redis:
         condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/api/healthcheck || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
+    command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - redis-data:/data
     healthcheck:

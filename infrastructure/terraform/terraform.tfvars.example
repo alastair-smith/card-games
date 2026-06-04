@@ -1,0 +1,37 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit it.
+
+# ---------------------------------------------------------------------------
+# OCI — copy values from ~/.oci/config (created by `oci setup config`)
+# ---------------------------------------------------------------------------
+oci_tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaaXXXXXX"
+oci_user_ocid        = "ocid1.user.oc1..aaaaaaaaXXXXXX"
+oci_fingerprint      = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+oci_private_key_path = "~/.oci/oci_api_key.pem"
+oci_region           = "uk-london-1"
+
+# oci_compartment_ocid — use the tenancy OCID for the root compartment
+oci_compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaaXXXXXX"
+
+# Find your availability domain:
+#   oci iam availability-domain list --compartment-id <tenancy_ocid>
+# Copy the full "name" value from the output.
+oci_availability_domain = "iAkj:UK-LONDON-1-AD-1"
+
+# SSH public key — paste the full key string (not a file path)
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
+
+# ---------------------------------------------------------------------------
+# Cloudflare — zone ID is on the domain's Overview page in the dashboard
+# API token needs Zone:DNS:Edit permission for playcards.games
+# ---------------------------------------------------------------------------
+cloudflare_api_token = "your-cloudflare-api-token-here"
+cloudflare_zone_id   = "your-zone-id-here"
+domain               = "playcards.games"
+
+# ---------------------------------------------------------------------------
+# Tailscale — reusable auth key with tag:server
+# Tailscale admin console → Settings → Keys → Generate auth key
+# Enable "Reusable", set tag to "tag:server"
+# ---------------------------------------------------------------------------
+tailscale_auth_key = "tskey-auth-XXXXXX"

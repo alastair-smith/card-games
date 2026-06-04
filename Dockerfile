@@ -35,6 +35,8 @@ COPY --from=deps /repo/apps/web/node_modules ./apps/web/node_modules
 COPY . .
 
 ENV SKIP_ENV_VALIDATION=true
+ARG NEXT_PUBLIC_GIT_COMMIT_HASH=unknown
+ENV NEXT_PUBLIC_GIT_COMMIT_HASH=$NEXT_PUBLIC_GIT_COMMIT_HASH
 RUN pnpm --filter @repo/web build
 
 # Extract production-only dependencies for the custom server
