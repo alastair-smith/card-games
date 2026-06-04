@@ -6,7 +6,7 @@ services:
     image: ${DOCKERHUB_IMAGE:-card-games}:${IMAGE_TAG:-latest}
     environment:
       NODE_ENV: production
-      REDIS_CONNECTION_STRING: redis://redis:6379
+      REDIS_CONNECTION_STRING: redis://:${REDIS_PASSWORD}@redis:6379
       AUTH_SECRET: ${AUTH_SECRET}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY:-}
@@ -26,7 +26,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: ['redis-server', '--appendonly', 'yes']
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', '${REDIS_PASSWORD}']
     volumes:
       - redis-data:/data
     healthcheck:

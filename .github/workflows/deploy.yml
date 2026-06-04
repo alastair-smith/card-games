@@ -77,10 +77,12 @@ jobs:
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
         run: |
           cat > /tmp/deploy.env << EOF
           AUTH_SECRET=${AUTH_SECRET}
-          REDIS_CONNECTION_STRING=redis://redis:6379
+          REDIS_PASSWORD=${REDIS_PASSWORD}
+          REDIS_CONNECTION_STRING=redis://:${REDIS_PASSWORD}@redis:6379
           DOCKERHUB_IMAGE=${DOCKERHUB_USERNAME}/card-games
           IMAGE_TAG=${IMAGE_TAG}
           OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
