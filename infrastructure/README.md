@@ -46,6 +46,8 @@ Two separate Tailscale credentials are needed:
 
 Tailscale admin console → Settings → Keys → Generate auth key. Enable **Reusable**, add tag `tag:server`. Copy the key into `terraform.tfvars` as `tailscale_auth_key`.
 
+The auth key is consumed once during cloud-init — the instance joins the tailnet and stays there via its node key indefinitely, regardless of whether the auth key itself later expires. You do not need to rotate it.
+
 **GitHub Actions OAuth client** (allows the deploy runner to join your tailnet temporarily):
 
 Tailscale admin console → Settings → OAuth clients → Create client. Grant `auth_keys` write scope, set tag `tag:github-actions`. Copy the client ID and secret into GitHub secrets `TAILSCALE_OAUTH_CLIENT_ID` and `TAILSCALE_OAUTH_SECRET`.
@@ -66,7 +68,13 @@ Tailscale admin console → Settings → OAuth clients → Create client. Grant 
 
 ### 4. Cloudflare
 
-Create an API token with **Zone: DNS: Edit** permission scoped to `playcards.games`. The zone ID is on the domain's Overview page in the Cloudflare dashboard.
+Create an API token scoped to `playcards.games` with the following permissions:
+
+- **Zone: DNS: Edit** — DNS records
+- **Zone: Zone Settings: Edit** — SSL mode (`full_strict`)
+- **Zone: Transform Rules: Edit** — www → apex redirect ruleset
+
+The zone ID is on the domain's Overview page in the Cloudflare dashboard.
 
 ## Provisioning
 

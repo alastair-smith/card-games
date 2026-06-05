@@ -1,4 +1,4 @@
+# domain is hardcoded — if var.domain changes in terraform/cloudflare.tf, update this too
 playcards.games {
-	tls internal
 	reverse_proxy app:3000
 }

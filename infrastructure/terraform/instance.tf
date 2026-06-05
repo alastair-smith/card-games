@@ -27,6 +27,7 @@ resource "oci_core_instance" "app" {
     subnet_id        = oci_core_subnet.public.id
     assign_public_ip = true
     display_name     = "card-games-vnic"
+    nsg_ids          = [oci_core_network_security_group.web.id]
   }
 
   metadata = {

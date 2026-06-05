@@ -3,25 +3,9 @@ resource "oci_core_security_list" "main" {
   vcn_id         = oci_core_vcn.main.id
   display_name   = "card-games-security-list"
 
-  ingress_security_rules {
-    protocol  = "6"
-    source    = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 80
-      max = 80
-    }
-  }
-
-  ingress_security_rules {
-    protocol  = "6"
-    source    = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 443
-      max = 443
-    }
-  }
+  # HTTP/HTTPS ingress is handled by the web NSG (Cloudflare IPs only).
+  # OCI evaluates security list rules and NSG rules with OR logic, so the
+  # security list must not have open ingress rules or they would bypass the NSG.
 
   egress_security_rules {
     protocol    = "all"

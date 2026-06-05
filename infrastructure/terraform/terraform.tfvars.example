@@ -26,7 +26,8 @@ ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
 
 # ---------------------------------------------------------------------------
 # Cloudflare — zone ID is on the domain's Overview page in the dashboard
-# API token needs Zone:DNS:Edit permission for playcards.games
+# API token needs these permissions scoped to playcards.games:
+#   Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Transform Rules:Edit
 # ---------------------------------------------------------------------------
 cloudflare_api_token = "your-cloudflare-api-token-here"
 cloudflare_zone_id   = "your-zone-id-here"

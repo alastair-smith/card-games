@@ -27,7 +27,7 @@ architecture-beta
     dockerhub:R --> L:oci
 ```
 
-Cloudflare terminates SSL for users and proxies traffic to Caddy on the OCI instance. Caddy reverse-proxies to the Next.js app using a `tls internal` self-signed cert (compatible with Cloudflare Full SSL mode). Redis is only reachable within the Docker network. SSH access is via Tailscale only — port 22 is not open to the internet.
+Cloudflare terminates SSL for users and proxies traffic to Caddy on the OCI instance. Caddy reverse-proxies to the Next.js app and obtains a Let's Encrypt certificate automatically via ACME HTTP-01 challenge through the Cloudflare proxy. Cloudflare is configured for Full (Strict) SSL, which validates the origin certificate. Redis is only reachable within the Docker network. SSH access is via Tailscale only — port 22 is not open to the internet.
 
 ## Deploy pipeline
 
@@ -47,7 +47,7 @@ The first build takes ~10–15 minutes due to QEMU emulation. Subsequent builds 
 2. Writes a `.env` file on the runner from GitHub secrets
 3. Rsyncs `docker-compose.prod.yml`, `infrastructure/Caddyfile`, and `.env` to `/opt/card-games/` on the instance
 4. SSHes in and runs `docker compose pull && docker compose up -d --remove-orphans`
-5. Polls `GET http://localhost:3000/api/healthcheck` for up to 100 seconds to confirm the new container is healthy
+5. Polls `GET http://localhost:3000/api/healthcheck` for up to 125 seconds to confirm the new container is healthy
 
 ## GitHub Actions secrets
 
