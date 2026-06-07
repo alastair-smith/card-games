@@ -27,18 +27,7 @@ oci iam availability-domain list --compartment-id <tenancy_ocid>
 
 Copy the full `name` value from the output (e.g. `iAkj:UK-LONDON-1-AD-1`).
 
-### 2. SSH key
-
-Generate a dedicated key pair for server access:
-
-```bash
-ssh-keygen -t ed25519 -f ~/.ssh/card-games-prod
-```
-
-- Public key (`~/.ssh/card-games-prod.pub`) → `ssh_public_key` in `terraform.tfvars`
-- Private key (`~/.ssh/card-games-prod`) → GitHub secret `OCI_SSH_PRIVATE_KEY`
-
-### 3. Tailscale
+### 2. Tailscale
 
 Two separate Tailscale credentials are needed:
 
@@ -66,7 +55,7 @@ Tailscale admin console → Settings → OAuth clients → Create client. Grant 
 }
 ```
 
-### 4. Cloudflare
+### 3. Cloudflare
 
 Create an API token scoped to `playcards.games` with the following permissions:
 
@@ -98,7 +87,7 @@ Cloud-init takes 3–5 minutes to complete. The instance joins Tailscale automat
 Verify cloud-init finished:
 
 ```bash
-ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip> cloud-init status
+ssh ubuntu@<tailscale-ip> cloud-init status
 ```
 
 Then add the remaining GitHub Actions secrets (see [docs/deployment.md](../docs/deployment.md) for the full list).

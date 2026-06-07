@@ -57,7 +57,6 @@ All secrets are set in the repository under Settings â†’ Secrets and Variables â
 |---|---|
 | `DOCKERHUB_USERNAME` | DockerHub username |
 | `DOCKERHUB_TOKEN` | DockerHub access token (not your password) |
-| `OCI_SSH_PRIVATE_KEY` | Private key matching `ssh_public_key` in Terraform tfvars |
 | `OCI_TAILSCALE_IP` | Instance's Tailscale IP (from Tailscale admin console after first `terraform apply`) |
 | `TAILSCALE_OAUTH_CLIENT_ID` | OAuth client ID for the GitHub Actions runner |
 | `TAILSCALE_OAUTH_SECRET` | OAuth client secret for the GitHub Actions runner |
@@ -89,7 +88,7 @@ curl -s https://playcards.games/api/healthcheck
 To inspect container state on the instance:
 
 ```bash
-ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip> \
+ssh ubuntu@<tailscale-ip> \
   "docker compose -f /opt/card-games/docker-compose.prod.yml ps"
 ```
 
@@ -104,7 +103,7 @@ Short-SHA tags are kept permanently on DockerHub, so any previous build can be r
 Redis is not exposed outside the Docker network. Access it via the running container:
 
 ```bash
-ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip>
+ssh ubuntu@<tailscale-ip>
 cd /opt/card-games
 REDIS_PASSWORD=$(grep REDIS_PASSWORD .env | cut -d= -f2-)
 docker compose -f docker-compose.prod.yml exec redis redis-cli -a $REDIS_PASSWORD

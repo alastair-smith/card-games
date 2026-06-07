@@ -30,7 +30,7 @@ usermod -aG docker ubuntu
 # Tailscale
 # ---------------------------------------------------------------------------
 curl -fsSL https://tailscale.com/install.sh | sh
-tailscale up --authkey="${tailscale_auth_key}" --advertise-tags=tag:server
+tailscale up --authkey="${tailscale_auth_key}" --advertise-tags=tag:server --ssh
 
 # ---------------------------------------------------------------------------
 # Automatic OS security updates

@@ -31,7 +31,6 @@ resource "oci_core_instance" "app" {
   }
 
   metadata = {
-    ssh_authorized_keys = var.ssh_public_key
     user_data = base64encode(templatefile("${path.module}/cloud-init.tpl.sh", {
       tailscale_auth_key = var.tailscale_auth_key
     }))
