@@ -22,7 +22,9 @@ oci_availability_domain = "iAkj:UK-LONDON-1-AD-1"
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... user@host"
 
 # Instance sizing — always-free tier total is 4 OCPU and 24 GB across all A1 instances.
-# 1 OCPU / 2 GB is sufficient for this stack; adjust to reserve capacity for other instances.
+# Defaults (2 OCPU / 4 GB) are set in variables.tf. Override here to reserve capacity for other instances:
+# instance_ocpus         = 1
+# instance_memory_in_gbs = 2
 
 # ---------------------------------------------------------------------------
 # Cloudflare — zone ID is on the domain's Overview page in the dashboard

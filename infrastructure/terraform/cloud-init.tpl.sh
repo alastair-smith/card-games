@@ -44,6 +44,7 @@ printf 'APT::Periodic::Update-Package-Lists "1";\nAPT::Periodic::Unattended-Upgr
 # ---------------------------------------------------------------------------
 ufw allow 80/tcp
 ufw allow 443/tcp
+ufw allow in on tailscale0
 ufw --force enable
 
 # ---------------------------------------------------------------------------

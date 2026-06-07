@@ -14,8 +14,8 @@ resource "oci_core_instance" "app" {
   shape               = "VM.Standard.A1.Flex"
 
   shape_config {
-    ocpus         = 2
-    memory_in_gbs = 4
+    ocpus         = var.instance_ocpus
+    memory_in_gbs = var.instance_memory_in_gbs
   }
 
   source_details {

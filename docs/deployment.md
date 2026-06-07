@@ -106,6 +106,6 @@ Redis is not exposed outside the Docker network. Access it via the running conta
 ```bash
 ssh -i ~/.ssh/card-games-prod ubuntu@<tailscale-ip>
 cd /opt/card-games
-REDIS_PASSWORD=$(grep REDIS_PASSWORD .env | cut -d= -f2)
+REDIS_PASSWORD=$(grep REDIS_PASSWORD .env | cut -d= -f2-)
 docker compose -f docker-compose.prod.yml exec redis redis-cli -a $REDIS_PASSWORD
 ```
