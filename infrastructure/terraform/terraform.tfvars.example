@@ -19,9 +19,9 @@ oci_compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaaXXXXXX"
 oci_availability_domain = "iAkj:UK-LONDON-1-AD-1"
 
 # Instance sizing — always-free tier total is 4 OCPU and 24 GB across all A1 instances.
-# Defaults (2 OCPU / 4 GB) are set in variables.tf. Override here to reserve capacity for other instances:
-# instance_ocpus         = 1
-# instance_memory_in_gbs = 2
+# Adjust to reserve capacity for other instances.
+instance_ocpus         = 2
+instance_memory_in_gbs = 4
 
 # ---------------------------------------------------------------------------
 # Cloudflare — zone ID is on the domain's Overview page in the dashboard

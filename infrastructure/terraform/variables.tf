@@ -65,13 +65,11 @@ variable "domain" {
 variable "instance_ocpus" {
   type        = number
   description = "Number of OCPUs for the compute instance"
-  default     = 2
 }
 
 variable "instance_memory_in_gbs" {
   type        = number
   description = "Memory in GB for the compute instance"
-  default     = 4
 }
 
 variable "tailscale_auth_key" {
