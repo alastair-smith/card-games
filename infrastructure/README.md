@@ -67,13 +67,41 @@ The zone ID is on the domain's Overview page in the Cloudflare dashboard.
 
 ## Provisioning
 
-```bash
-cd infrastructure/terraform
+### 1. Create the state bucket
 
+Terraform state is stored in OCI Object Storage. Create the bucket before running `terraform init` (it can't manage its own state bucket):
+
+```bash
+oci os bucket create \
+  --compartment-id <tenancy_ocid> \
+  --name card-games-terraform-state \
+  --versioning Enabled
+```
+
+Versioning is recommended so previous state files can be recovered if state becomes corrupted.
+
+### 2. Configure backend credentials
+
+```bash
+cp backend.hcl.example backend.hcl
+# fill in namespace, access_key, secret_key
+```
+
+Find your namespace:
+
+```bash
+oci os ns get
+```
+
+Generate a Customer Secret Key at OCI console → Identity → Users → your user → Customer Secret Keys → Generate Secret Key. Save the secret immediately — it is not shown again.
+
+### 3. Apply
+
+```bash
 cp terraform.tfvars.example terraform.tfvars
 # fill in all values
 
-terraform init
+terraform init -backend-config=backend.hcl
 terraform plan
 terraform apply
 ```
@@ -101,7 +129,7 @@ terraform plan   # review changes
 terraform apply
 ```
 
-Terraform state is stored locally in `terraform.tfstate`. Keep this file — it is how Terraform tracks what it has created. Do not delete it.
+Terraform state is stored remotely in the OCI Object Storage bucket.
 
 ## Destroying
 

@@ -1,0 +1,10 @@
+# Copy to backend.hcl and fill in values — backend.hcl is gitignored.
+#
+# namespace: tenancy object storage namespace — find it with:
+#   oci os ns get
+# access_key / secret_key: Customer Secret Key — generate at:
+#   OCI console → Identity → Users → your user → Customer Secret Keys → Generate Secret Key
+
+endpoint   = "https://<namespace>.compat.objectstorage.uk-london-1.oraclecloud.com"
+access_key = "<customer-secret-key-access-key>"
+secret_key = "<customer-secret-key-secret>"
