@@ -2,7 +2,7 @@ resource "cloudflare_record" "root" {
   zone_id = var.cloudflare_zone_id
   name    = "@"
   type    = "A"
-  value   = oci_core_instance.app.public_ip
+  content = oci_core_instance.app.public_ip
   proxied = true
   ttl     = 1
 }
@@ -11,7 +11,7 @@ resource "cloudflare_record" "www" {
   zone_id = var.cloudflare_zone_id
   name    = "www"
   type    = "CNAME"
-  value   = var.domain
+  content = var.domain
   proxied = true
   ttl     = 1
 }
