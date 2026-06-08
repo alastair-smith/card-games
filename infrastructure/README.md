@@ -80,11 +80,11 @@ oci os bucket create \
 
 Versioning is recommended so previous state files can be recovered if state becomes corrupted.
 
-### 2. Configure backend credentials
+### 2. Configure backend
 
 ```bash
 cp backend.hcl.example backend.hcl
-# fill in namespace, access_key, secret_key
+# fill in your namespace
 ```
 
 Find your namespace:
@@ -93,7 +93,7 @@ Find your namespace:
 oci os ns get
 ```
 
-Generate a Customer Secret Key at OCI console → Identity → Users → your user → Customer Secret Keys → Generate Secret Key. Save the secret immediately — it is not shown again.
+Authentication uses the same OCI API key configured in step 1 — no additional credentials needed.
 
 ### 3. Apply
 
