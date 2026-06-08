@@ -4,7 +4,7 @@ set -uo pipefail
 
 cd "$(dirname "$0")"
 
-compartment_ocid=$(awk -F'"' '/oci_compartment_ocid/{print $2}' terraform.tfvars)
+compartment_ocid=$(awk -F'"' '/^[[:space:]]*oci_compartment_ocid[[:space:]]*=/{print $2}' terraform.tfvars)
 if [[ -z "$compartment_ocid" ]]; then
   echo "Could not read oci_compartment_ocid from terraform.tfvars"
   exit 1
