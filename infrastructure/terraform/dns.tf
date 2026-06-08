@@ -42,6 +42,6 @@ resource "cloudflare_ruleset" "www_redirect" {
 resource "cloudflare_zone_settings_override" "main" {
   zone_id = var.cloudflare_zone_id
   settings {
-    ssl = "full_strict"
+    ssl = "strict"
   }
 }
