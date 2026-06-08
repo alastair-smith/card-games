@@ -60,8 +60,7 @@ Tailscale admin console → Settings → OAuth clients → Create client. Grant 
 Create an API token scoped to `playcards.games` with the following permissions:
 
 - **Zone: DNS: Edit** — DNS records
-- **Zone: Zone Settings: Edit** — SSL mode (`full_strict`)
-- **Zone: Transform Rules: Edit** — www → apex redirect ruleset
+- **Zone: Zone Settings: Edit** — SSL mode (`strict`)
 
 The zone ID is on the domain's Overview page in the Cloudflare dashboard.
 
