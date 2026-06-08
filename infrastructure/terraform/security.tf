@@ -25,7 +25,7 @@ resource "oci_core_network_security_group" "web" {
 resource "oci_core_network_security_group_security_rule" "cloudflare_ingress" {
   for_each = {
     for combo in setproduct(
-      tolist(data.cloudflare_ip_ranges.current.ipv4_cidr_blocks),
+      tolist(data.cloudflare_ip_ranges.current.ipv4_cidrs),
       [80, 443]
     ) : "${combo[0]}-${combo[1]}" => {
       cidr = combo[0]
