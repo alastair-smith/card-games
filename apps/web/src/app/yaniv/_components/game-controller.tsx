@@ -14,7 +14,7 @@ import {
   YANIV_CALL_THRESHOLD,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
-import { isStandaloneRun, isValidYanivPlay } from '~/utils/yaniv/validation';
+import { isRunShape, isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
 import { useCardSelection } from './use-card-selection';
@@ -115,7 +115,7 @@ export default function YanivGameController({
 
   const stage = deriveStage();
 
-  const isSelectedCardsRun = isStandaloneRun(selectedCards);
+  const isSelectedCardsRun = isRunShape(selectedCards);
 
   const handlePlayCards = (direction?: 'ascending' | 'descending') => {
     if (gameStep === GameStep.REDEAL) {
@@ -130,6 +130,19 @@ export default function YanivGameController({
       topDiscardCard &&
       !isValidYanivPlay(selectedCards, topDiscardCard, direction).isValid
     ) {
+      if (direction !== undefined) {
+        const otherDirection =
+          direction === 'ascending' ? 'descending' : 'ascending';
+        if (
+          isValidYanivPlay(selectedCards, topDiscardCard, otherDirection)
+            .isValid
+        ) {
+          toast.info(
+            'Run is only valid in the other direction as it depends on the discard card.',
+          );
+          return;
+        }
+      }
       toast.info("You can't play that combination of cards");
       return;
     }

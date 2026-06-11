@@ -91,6 +91,12 @@ export function isStandaloneRun(cards: YanivPlayingCard[]): boolean {
   return ordered !== null && ordered.length >= MINIMUM_RUN_SIZE;
 }
 
+/** Returns true if the cards form any same-suit consecutive sequence (2+), covering both standalone runs and potential run extensions. */
+export function isRunShape(cards: YanivPlayingCard[]): boolean {
+  if (cards.length < 2) return false;
+  return buildSameSuitRun(cards) !== null;
+}
+
 /**
  * Returns a valid play result if the cards form a run. Checks standalone runs
  * (3+ cards of the same suit) first, then run extensions (2+ cards that
@@ -127,7 +133,9 @@ function isRunPlay(
     YANIV_RANK_POSITION[topDiscard.rank] ===
     YANIV_RANK_POSITION[firstCard.rank] - 1
   ) {
-    // topDiscard sits below the run — played cards stay in ascending order
+    // topDiscard sits below the run — must play ascending
+    if (direction !== undefined && direction !== 'ascending')
+      return { isValid: false };
     return {
       isValid: true,
       isPickupRequired: true,
@@ -139,7 +147,9 @@ function isRunPlay(
     YANIV_RANK_POSITION[topDiscard.rank] ===
     YANIV_RANK_POSITION[lastCard.rank] + 1
   ) {
-    // topDiscard sits above the run — played cards returned in descending order
+    // topDiscard sits above the run — must play descending
+    if (direction !== undefined && direction !== 'descending')
+      return { isValid: false };
     return {
       isValid: true,
       isPickupRequired: true,

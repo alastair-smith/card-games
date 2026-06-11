@@ -282,6 +282,23 @@ describe('YanivGameController', () => {
       expect(capturedGameProps.isRunSelected).toBe(true);
     });
 
+    test('signals a run is selected when 2 cards form a run extension shape', () => {
+      const extensionHand = [
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ];
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ hand: extensionHand })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(extensionHand[0]));
+      act(() => toggle(extensionHand[1]));
+      expect(capturedGameProps.isRunSelected).toBe(true);
+    });
+
     test('does not signal a run when selected cards are not a run', () => {
       render(
         <YanivGameController {...baseProps} gameState={inProgressState()} />,
@@ -289,6 +306,31 @@ describe('YanivGameController', () => {
       const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
       act(() => toggle({ suit: Suit.HEARTS, rank: Rank.KING }));
       expect(capturedGameProps.isRunSelected).toBe(false);
+    });
+
+    test('shows other-direction toast when a run extension is played in the wrong direction', () => {
+      // discard is SIX of hearts — sits above FOUR+FIVE, so only descending is valid
+      const extensionHand = [
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ];
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            hand: extensionHand,
+            topDiscardCard: { suit: Suit.HEARTS, rank: Rank.SIX },
+          })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(extensionHand[0]));
+      act(() => toggle(extensionHand[1]));
+      fireEvent.click(screen.getByTestId('play-ascending'));
+      expect(toast.info).toHaveBeenCalledWith(
+        'Run is only valid in the other direction as it depends on the discard card.',
+      );
+      expect(mutate).not.toHaveBeenCalled();
     });
 
     test('calls the mutation with ascending direction when play ascending is clicked', () => {
