@@ -70,14 +70,24 @@ function buildOrderedRun(cards: YanivPlayingCard[]): YanivPlayingCard[] | null {
   return result;
 }
 
+/**
+ * Validates the same-suit constraint and returns ordered cards; null if cards
+ * are not all same-suited or don't form a consecutive sequence.
+ */
+function buildSameSuitRun(
+  cards: YanivPlayingCard[],
+): YanivPlayingCard[] | null {
+  const nonJokers = cards.filter(isStandardCard);
+  const firstNonJoker = nonJokers[0];
+  if (!firstNonJoker) return null;
+  if (!nonJokers.every(({ suit }) => suit === firstNonJoker.suit)) return null;
+  return buildOrderedRun(cards);
+}
+
 /** Returns true if the cards form a valid standalone run (3+ same-suit consecutive cards, jokers may fill internal gaps). */
 export function isStandaloneRun(cards: YanivPlayingCard[]): boolean {
   if (cards.length < MINIMUM_RUN_SIZE) return false;
-  const nonJokers = cards.filter(isStandardCard);
-  const firstNonJoker = nonJokers[0];
-  if (!firstNonJoker) return false;
-  if (!nonJokers.every(({ suit }) => suit === firstNonJoker.suit)) return false;
-  const ordered = buildOrderedRun(cards);
+  const ordered = buildSameSuitRun(cards);
   return ordered !== null && ordered.length >= MINIMUM_RUN_SIZE;
 }
 
@@ -91,14 +101,7 @@ function isRunPlay(
   topDiscard: YanivPlayingCard,
   direction?: 'ascending' | 'descending',
 ): PlayResult {
-  const nonJokers = cards.filter(isStandardCard);
-  const firstNonJoker = nonJokers[0];
-
-  if (!firstNonJoker) return { isValid: false };
-  if (!nonJokers.every(({ suit }) => suit === firstNonJoker.suit))
-    return { isValid: false };
-
-  const orderedCards = buildOrderedRun(cards);
+  const orderedCards = buildSameSuitRun(cards);
   if (!orderedCards) return { isValid: false };
 
   // Standalone run: 3+ cards, same suit, consecutive
@@ -113,12 +116,12 @@ function isRunPlay(
   }
 
   // Run extension: topDiscard must be a standard card with same suit, adjacent to one end
-  if (!isStandardCard(topDiscard) || topDiscard.suit !== firstNonJoker.suit)
-    return { isValid: false };
-
   // runs don't allow jokers at the ends
   const firstCard = orderedCards[0] as StandardPlayingCard;
   const lastCard = orderedCards[orderedCards.length - 1] as StandardPlayingCard;
+
+  if (!isStandardCard(topDiscard) || topDiscard.suit !== firstCard.suit)
+    return { isValid: false };
 
   if (
     YANIV_RANK_POSITION[topDiscard.rank] ===

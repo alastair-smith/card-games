@@ -117,35 +117,11 @@ export default function YanivGameController({
 
   const isSelectedCardsRun = isStandaloneRun(selectedCards);
 
-  const handlePlayCards = () => {
+  const handlePlayCards = (direction?: 'ascending' | 'descending') => {
     if (gameStep === GameStep.REDEAL) {
       startNewRoundMutation.mutate({ code });
       return;
     }
-    if (selectedCards.length === 0) {
-      toast.info('Select at least one card to play');
-      return;
-    }
-    if (
-      topDiscardCard &&
-      !isValidYanivPlay(selectedCards, topDiscardCard).isValid
-    ) {
-      toast.info("You can't play that combination of cards");
-      return;
-    }
-    playCardsMutation.mutate({
-      code,
-      cards: selectedCards.map((card) =>
-        card.rank === JOKER_RANK
-          ? { suit: card.suit, rank: card.rank }
-          : { suit: card.suit, rank: card.rank },
-      ),
-    });
-  };
-
-  const handlePlayCardsWithDirection = (
-    direction: 'ascending' | 'descending',
-  ) => {
     if (selectedCards.length === 0) {
       toast.info('Select at least one card to play');
       return;
@@ -223,9 +199,9 @@ export default function YanivGameController({
       onEmojiClick={handleTriggerEmoji}
       onEndTurnClick={handleEndTurn}
       onYanivClick={handleCallYaniv}
-      onPlayCards={handlePlayCards}
-      onPlayAscending={() => handlePlayCardsWithDirection('ascending')}
-      onPlayDescending={() => handlePlayCardsWithDirection('descending')}
+      onPlayCards={() => handlePlayCards()}
+      onPlayAscending={() => handlePlayCards('ascending')}
+      onPlayDescending={() => handlePlayCards('descending')}
       isRunSelected={isSelectedCardsRun}
       players={players}
       userId={userId}
