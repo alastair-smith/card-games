@@ -85,32 +85,32 @@ describe('Controls', () => {
       ).toBeInTheDocument();
     });
 
-    test('calls the ascending handler when play ascending is clicked', () => {
-      const onPlayAscending = vi.fn();
+    test('calls the play handler with ascending direction when play ascending is clicked', () => {
+      const onPlayCards = vi.fn();
       render(
         <Controls
           {...baseProps}
           stage={GameViewStage.PICKING_CARDS}
           isRunSelected
-          onPlayAscending={onPlayAscending}
+          onPlayCards={onPlayCards}
         />,
       );
       fireEvent.click(screen.getByRole('button', { name: /play ascending/i }));
-      expect(onPlayAscending).toHaveBeenCalledOnce();
+      expect(onPlayCards).toHaveBeenCalledWith('ascending');
     });
 
-    test('calls the descending handler when play descending is clicked', () => {
-      const onPlayDescending = vi.fn();
+    test('calls the play handler with descending direction when play descending is clicked', () => {
+      const onPlayCards = vi.fn();
       render(
         <Controls
           {...baseProps}
           stage={GameViewStage.PICKING_CARDS}
           isRunSelected
-          onPlayDescending={onPlayDescending}
+          onPlayCards={onPlayCards}
         />,
       );
       fireEvent.click(screen.getByRole('button', { name: /play descending/i }));
-      expect(onPlayDescending).toHaveBeenCalledOnce();
+      expect(onPlayCards).toHaveBeenCalledWith('descending');
     });
   });
 

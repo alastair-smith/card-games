@@ -212,9 +212,7 @@ export default function YanivGameController({
       onEmojiClick={handleTriggerEmoji}
       onEndTurnClick={handleEndTurn}
       onYanivClick={handleCallYaniv}
-      onPlayCards={() => handlePlayCards()}
-      onPlayAscending={() => handlePlayCards('ascending')}
-      onPlayDescending={() => handlePlayCards('descending')}
+      onPlayCards={handlePlayCards}
       isRunSelected={isSelectedCardsRun}
       players={players}
       userId={userId}

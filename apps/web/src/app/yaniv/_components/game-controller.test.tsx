@@ -35,7 +35,7 @@ vi.mock('./game', () => ({
         <button
           type='button'
           data-testid='play-cards'
-          onClick={props.onPlayCards as () => void}
+          onClick={() => (props.onPlayCards as () => void)()}
         />
         <button
           type='button'
@@ -55,12 +55,24 @@ vi.mock('./game', () => ({
         <button
           type='button'
           data-testid='play-ascending'
-          onClick={props.onPlayAscending as () => void}
+          onClick={() =>
+            (
+              props.onPlayCards as (
+                direction: 'ascending' | 'descending',
+              ) => void
+            )('ascending')
+          }
         />
         <button
           type='button'
           data-testid='play-descending'
-          onClick={props.onPlayDescending as () => void}
+          onClick={() =>
+            (
+              props.onPlayCards as (
+                direction: 'ascending' | 'descending',
+              ) => void
+            )('descending')
+          }
         />
       </div>
     );

@@ -19,9 +19,7 @@ type ControlsProps = {
   onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
-  onPlayCards: () => void;
-  onPlayAscending?: () => void;
-  onPlayDescending?: () => void;
+  onPlayCards: (direction?: 'ascending' | 'descending') => void;
   isRunSelected?: boolean;
   playerTakingTurn?: PlayerName;
   stage: GameViewStage;
@@ -33,8 +31,6 @@ export default function Controls({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
-  onPlayAscending,
-  onPlayDescending,
   isRunSelected,
   playerTakingTurn,
   stage,
@@ -65,17 +61,17 @@ export default function Controls({
       {stage === GameViewStage.PICKING_CARDS &&
         (isRunSelected ? (
           <>
-            <Button onClick={onPlayAscending}>
+            <Button onClick={() => onPlayCards('ascending')}>
               <ArrowUpCircleIcon />
               Play ascending
             </Button>
-            <Button onClick={onPlayDescending}>
+            <Button onClick={() => onPlayCards('descending')}>
               <ArrowDownCircleIcon />
               Play descending
             </Button>
           </>
         ) : (
-          <Button onClick={onPlayCards} className='-col-end-1'>
+          <Button onClick={() => onPlayCards()} className='-col-end-1'>
             <CircleCheckIcon />
             Play Cards
           </Button>
@@ -94,7 +90,7 @@ export default function Controls({
       )}
 
       {stage === GameViewStage.END_OF_ROUND && (
-        <Button onClick={onPlayCards} className='-col-end-1'>
+        <Button onClick={() => onPlayCards()} className='-col-end-1'>
           Start new round
           <ArrowRightCircleIcon />
         </Button>

@@ -24,9 +24,7 @@ type BaseGameProps = {
   onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
-  onPlayCards: () => void;
-  onPlayAscending?: () => void;
-  onPlayDescending?: () => void;
+  onPlayCards: (direction?: 'ascending' | 'descending') => void;
   isRunSelected?: boolean;
   drawnCard?: YanivPlayingCard;
   canAutoPlay?: boolean;
@@ -57,8 +55,6 @@ export default function Game({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
-  onPlayAscending,
-  onPlayDescending,
   isRunSelected,
   onCardToggle,
   onPickupFromDeck,
@@ -170,8 +166,6 @@ export default function Game({
           onEndTurnClick={onEndTurnClick}
           onYanivClick={onYanivClick}
           onPlayCards={onPlayCards}
-          onPlayAscending={onPlayAscending}
-          onPlayDescending={onPlayDescending}
           isRunSelected={isRunSelected}
           playerTakingTurn={playerTakingTurn.name}
           stage={stage}
