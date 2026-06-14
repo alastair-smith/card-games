@@ -32,6 +32,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
   const winners = players.filter((player) => player.isWinner);
   const winningScore = winners[0]?.score;
   const userWins = winners.some((player) => player.id === userId);
+  const sortedPlayers = [...players].sort((a, b) => a.score - b.score);
   const [isCelebrating, setIsCelebrating] = useState(false);
 
   const handleShare = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -89,7 +90,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
                 </TableHeader>
 
                 <TableBody>
-                  {players.map(({ id, name, score }) => (
+                  {sortedPlayers.map(({ id, name, score }) => (
                     <TableRow key={id}>
                       <TableCell>
                         {name}
