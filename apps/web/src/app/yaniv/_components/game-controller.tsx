@@ -148,11 +148,7 @@ export default function YanivGameController({
     }
     playCardsMutation.mutate({
       code,
-      cards: selectedCards.map((card) =>
-        card.rank === JOKER_RANK
-          ? { suit: card.suit, rank: card.rank }
-          : { suit: card.suit, rank: card.rank },
-      ),
+      cards: selectedCards,
       direction,
     });
   };
