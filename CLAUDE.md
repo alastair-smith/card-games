@@ -17,7 +17,7 @@ pnpm format:fix
 To fix a specific file only:
 
 ```bash
-pnpm format:fix --write path/to/file
+pnpm format:fix path/to/file
 ```
 
 ### Type checking
