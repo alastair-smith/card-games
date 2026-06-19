@@ -65,6 +65,18 @@ describe('HowTo', () => {
       screen.queryByRole('button', { name: 'Next' }),
     ).not.toBeInTheDocument();
   });
+
+  test('labels the current slide with its position for assistive technology', () => {
+    render(<HowTo />);
+    expect(
+      screen.getByRole('region', { name: 'Slide 1 of 5' }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    expect(
+      screen.getByRole('region', { name: 'Slide 2 of 5' }),
+    ).toBeInTheDocument();
+  });
 });
 
 describe('HowToDialog', () => {

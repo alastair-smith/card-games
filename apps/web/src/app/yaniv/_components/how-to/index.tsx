@@ -322,6 +322,34 @@ const SLIDE_COMPONENTS: Array<() => React.JSX.Element> = [
 
 const SLIDE_COUNT = SLIDE_COMPONENTS.length;
 
+function useSlideDeck() {
+  const [index, setIndex] = useState(0);
+
+  const goNext = () =>
+    setIndex((current) => Math.min(current + 1, SLIDE_COUNT - 1));
+
+  const goBack = () => setIndex((current) => Math.max(current - 1, 0));
+
+  const reset = () => setIndex(0);
+
+  return { index, goNext, goBack, reset };
+}
+
+function Slide({ index }: { index: number }) {
+  const SlideContent = SLIDE_COMPONENTS[index] ?? OverviewSlide;
+
+  return (
+    // Polite live region so screen readers announce the slide after paging.
+    <section
+      aria-roledescription='slide'
+      aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}
+      aria-live='polite'
+    >
+      <SlideContent />
+    </section>
+  );
+}
+
 function SlideNav({
   index,
   onBack,
@@ -362,29 +390,25 @@ function SlideNav({
 }
 
 export function HowTo({ className }: { className?: string }) {
-  const [index, setIndex] = useState(0);
-  const SlideContent = SLIDE_COMPONENTS[index] ?? OverviewSlide;
+  const { index, goNext, goBack } = useSlideDeck();
 
   return (
-    <div
+    <section
+      aria-roledescription='carousel'
+      aria-label='How to play Yaniv'
       className={cn('flex flex-col gap-4 items-start justify-start', className)}
     >
-      <SlideContent />
-      <SlideNav
-        index={index}
-        onBack={() => setIndex((i) => i - 1)}
-        onNext={() => setIndex((i) => i + 1)}
-      />
-    </div>
+      <Slide index={index} />
+      <SlideNav index={index} onBack={goBack} onNext={goNext} />
+    </section>
   );
 }
 
 export function HowToDialog() {
-  const [index, setIndex] = useState(0);
-  const SlideContent = SLIDE_COMPONENTS[index] ?? OverviewSlide;
+  const { index, goNext, goBack, reset } = useSlideDeck();
 
   return (
-    <Dialog onOpenChange={() => setIndex(0)}>
+    <Dialog onOpenChange={reset}>
       <DialogTrigger asChild>
         <Button size='sm' variant='secondary'>
           How to play
@@ -398,15 +422,19 @@ export function HowToDialog() {
           <DialogTitle>How to play Yaniv</DialogTitle>
         </DialogHeader>
 
-        <div className='overflow-y-auto min-h-0'>
-          <SlideContent />
-        </div>
+        <section
+          aria-roledescription='carousel'
+          aria-label='How to play Yaniv'
+          className='overflow-y-auto min-h-0'
+        >
+          <Slide index={index} />
+        </section>
 
         <DialogFooter>
           <SlideNav
             index={index}
-            onBack={() => setIndex((i) => i - 1)}
-            onNext={() => setIndex((i) => i + 1)}
+            onBack={goBack}
+            onNext={goNext}
             lastSlideAction={
               <DialogClose asChild>
                 <Button size='sm'>Close</Button>
