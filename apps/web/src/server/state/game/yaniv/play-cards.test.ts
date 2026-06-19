@@ -244,6 +244,16 @@ describe('playCards', () => {
     );
   });
 
+  test('passes direction to validation', async () => {
+    await playCards(CODE, USER_1, [CARD_1], 'descending');
+
+    expect(vi.mocked(isValidYanivPlay)).toHaveBeenCalledWith(
+      [CARD_1],
+      TOP_DISCARD,
+      'descending',
+    );
+  });
+
   test('persists and publishes the updated state', async () => {
     await playCards(CODE, USER_1, [CARD_1]);
 

@@ -35,7 +35,7 @@ vi.mock('./game', () => ({
         <button
           type='button'
           data-testid='play-cards'
-          onClick={props.onPlayCards as () => void}
+          onClick={() => (props.onPlayCards as () => void)()}
         />
         <button
           type='button'
@@ -51,6 +51,28 @@ vi.mock('./game', () => ({
           type='button'
           data-testid='pickup-from-discard'
           onClick={props.onPickupFromDiscard as () => void}
+        />
+        <button
+          type='button'
+          data-testid='play-ascending'
+          onClick={() =>
+            (
+              props.onPlayCards as (
+                direction: 'ascending' | 'descending',
+              ) => void
+            )('ascending')
+          }
+        />
+        <button
+          type='button'
+          data-testid='play-descending'
+          onClick={() =>
+            (
+              props.onPlayCards as (
+                direction: 'ascending' | 'descending',
+              ) => void
+            )('descending')
+          }
         />
       </div>
     );
@@ -248,6 +270,117 @@ describe('YanivGameController', () => {
       expect(toast.info).toHaveBeenCalledWith(
         "You can't play that combination of cards",
       );
+    });
+  });
+
+  describe('run direction', () => {
+    const runHand = [
+      { suit: Suit.HEARTS, rank: Rank.THREE },
+      { suit: Suit.HEARTS, rank: Rank.FOUR },
+      { suit: Suit.HEARTS, rank: Rank.FIVE },
+    ];
+
+    test('signals a run is selected when all selected cards form a standalone run', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ hand: runHand })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(runHand[0]));
+      act(() => toggle(runHand[1]));
+      act(() => toggle(runHand[2]));
+      expect(capturedGameProps.isRunSelected).toBe(true);
+    });
+
+    test('signals a run is selected when 2 cards form a run extension shape', () => {
+      const extensionHand = [
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ];
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ hand: extensionHand })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(extensionHand[0]));
+      act(() => toggle(extensionHand[1]));
+      expect(capturedGameProps.isRunSelected).toBe(true);
+    });
+
+    test('does not signal a run when selected cards are not a run', () => {
+      render(
+        <YanivGameController {...baseProps} gameState={inProgressState()} />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle({ suit: Suit.HEARTS, rank: Rank.KING }));
+      expect(capturedGameProps.isRunSelected).toBe(false);
+    });
+
+    test('shows other-direction toast when a run extension is played in the wrong direction', () => {
+      // discard is SIX of hearts — sits above FOUR+FIVE, so only descending is valid
+      const extensionHand = [
+        { suit: Suit.HEARTS, rank: Rank.FOUR },
+        { suit: Suit.HEARTS, rank: Rank.FIVE },
+      ];
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            hand: extensionHand,
+            topDiscardCard: { suit: Suit.HEARTS, rank: Rank.SIX },
+          })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(extensionHand[0]));
+      act(() => toggle(extensionHand[1]));
+      fireEvent.click(screen.getByTestId('play-ascending'));
+      expect(toast.info).toHaveBeenCalledWith(
+        'This run is only valid in the other direction due to depending on the discard card.',
+      );
+      expect(mutate).not.toHaveBeenCalled();
+    });
+
+    test('calls the mutation with ascending direction when play ascending is clicked', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ hand: runHand, topDiscardCard: null })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(runHand[0]));
+      act(() => toggle(runHand[1]));
+      act(() => toggle(runHand[2]));
+      fireEvent.click(screen.getByTestId('play-ascending'));
+      expect(mutate).toHaveBeenCalledWith({
+        code: CODE,
+        cards: runHand,
+        direction: 'ascending',
+      });
+    });
+
+    test('calls the mutation with descending direction when play descending is clicked', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ hand: runHand, topDiscardCard: null })}
+        />,
+      );
+      const toggle = capturedGameProps.onCardToggle as (card: unknown) => void;
+      act(() => toggle(runHand[0]));
+      act(() => toggle(runHand[1]));
+      act(() => toggle(runHand[2]));
+      fireEvent.click(screen.getByTestId('play-descending'));
+      expect(mutate).toHaveBeenCalledWith({
+        code: CODE,
+        cards: runHand,
+        direction: 'descending',
+      });
     });
   });
 

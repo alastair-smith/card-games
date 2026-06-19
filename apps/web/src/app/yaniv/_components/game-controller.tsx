@@ -14,7 +14,7 @@ import {
   YANIV_CALL_THRESHOLD,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
-import { isValidYanivPlay } from '~/utils/yaniv/validation';
+import { isRunShape, isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
 import { useCardSelection } from './use-card-selection';
@@ -115,7 +115,9 @@ export default function YanivGameController({
 
   const stage = deriveStage();
 
-  const handlePlayCards = () => {
+  const isSelectedCardsRun = isRunShape(selectedCards);
+
+  const handlePlayCards = (direction?: 'ascending' | 'descending') => {
     if (gameStep === GameStep.REDEAL) {
       startNewRoundMutation.mutate({ code });
       return;
@@ -126,18 +128,34 @@ export default function YanivGameController({
     }
     if (
       topDiscardCard &&
-      !isValidYanivPlay(selectedCards, topDiscardCard).isValid
+      !isValidYanivPlay(selectedCards, topDiscardCard, direction).isValid
     ) {
+      if (direction !== undefined) {
+        const otherDirection =
+          direction === 'ascending' ? 'descending' : 'ascending';
+        if (
+          isValidYanivPlay(selectedCards, topDiscardCard, otherDirection)
+            .isValid
+        ) {
+          toast.info(
+            'This run is only valid in the other direction due to depending on the discard card.',
+          );
+          return;
+        }
+      }
       toast.info("You can't play that combination of cards");
       return;
     }
     playCardsMutation.mutate({
       code,
+      // Strip UI-only fields (selected, hidden)
+      // ternary is to fix type issue around discriminated union
       cards: selectedCards.map((card) =>
         card.rank === JOKER_RANK
           ? { suit: card.suit, rank: card.rank }
           : { suit: card.suit, rank: card.rank },
       ),
+      ...(direction && { direction }),
     });
   };
 
@@ -197,6 +215,7 @@ export default function YanivGameController({
       onEndTurnClick={handleEndTurn}
       onYanivClick={handleCallYaniv}
       onPlayCards={handlePlayCards}
+      isRunSelected={isSelectedCardsRun}
       players={players}
       userId={userId}
       playedCards={playedCards}
