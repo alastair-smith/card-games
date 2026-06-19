@@ -1,44 +1,60 @@
-# Stack
+# Claude
+
+## Stack
+
 Next.js (App Router), tRPC, TypeScript, Redis (game state), Tailwind.
 Multiplayer card game — server actions transmit state to clients.
 
-# Commands
+## Commands
 
-## Formatting
+### Formatting
+
 Fix all lint and formatting issues (run from repo root):
-```
-pnpm run format:fix
+
+```bash
+pnpm format:fix
 ```
 To fix a specific file only:
-```
-pnpm exec biome check --write path/to/file
+
+```bash
+pnpm format:fix --write path/to/file
 ```
 
-## Type checking
+### Type checking
+
 Check types across all packages (run from repo root):
+
+```bash
+pnpm typecheck
 ```
-pnpm run typecheck
-```
+
 Or just the web app:
-```
+
+```bash
 pnpm --filter @repo/web typecheck
 ```
 
-## Tests
-Always run a specific test file first rather than the full suite — it's faster and produces less output:
-```
+### Tests
+
+Always run a specific unit test file first rather than the full suite — it's faster and produces less output:
+
+```bash
 pnpm --filter @repo/web test -- run src/path/to/file.test.tsx
 ```
+
 Use `--reporter=dot` when you only need a pass/fail summary:
-```
+
+```bash
 pnpm --filter @repo/web test -- run --reporter=dot src/path/to/file.test.tsx
 ```
+
 Run the full suite only when needed:
-```
+
+```bash
 pnpm test
 ```
 
-# Pull requests
+## Pull requests
 
 When raising a PR:
 - Use the `gh pr create` CLI tool to create the PR
@@ -52,46 +68,56 @@ When raising a PR:
   - 🐛 bug fix
 - Example: `🚀 Create Yaniv components`
 
-- If the PR was driven by a ticket file (e.g. `tickets/02-some-ticket.md`), delete that file as part of the same branch before raising the PR.
+## Code conventions
 
-# Code conventions
+### Imports
 
-## Imports
 Use the `~` alias for all imports from `src/`:
+
 ```ts
 import { Button } from '~/components/ui/button';
 import { cn } from '~/utils/cn';
 ```
 
-## Quotes
+### Quotes
+
 Single quotes throughout (enforced by Biome).
 
-## Classnames
+### Classnames
+
 Use `cn()` (clsx + tailwind-merge) for all `className` composition:
+
 ```ts
 import { cn } from '~/utils/cn';
 <div className={cn('base-class', condition && 'conditional-class', className)} />
 ```
 
-## Branded types
-Primitive IDs and constrained strings use branded types — don't use plain `string`:
+### Branded types
+
+Primitive IDs and constrained strings use branded types — avoid using plain `string`:
+
 ```ts
 // types defined in ~/types/entities.ts
 userId: UserId
 name: PlayerName
 code: GameCode
 ```
+
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
 
-## Types and schemas
+### Types and schemas
+
 New domain types should be paired with a Zod schema in the same file:
+
 ```ts
 export const fooSchema = z.object({ ... });
 export type Foo = z.infer<typeof fooSchema>;
 ```
 
-## Component prop naming
+### Component prop naming
+
 Action callbacks: prop is `on<Action>`, the handler passed in is `handle<Noun><Action>`:
+
 ```ts
 // prop definition
 onCardClick: (card: Card) => void
@@ -101,21 +127,24 @@ onCardClick: (card: Card) => void
 ```
 
 Boolean props: `is<Noun><State>`:
+
 ```ts
 isYanivCalled: boolean
 isHighlighted: boolean
 isFiftyScoreHalved: boolean
 ```
 
-## Component files
+### Component files
+
 Components live in kebab-case directories with an `index.tsx` entry point:
-```
+
+```bash
 components/my-component/index.tsx
 ```
 
-# Testing
+## Testing
 
-## Test naming
+### Test naming
 - Describe behavior in plain language — never reference prop or parameter names in test titles
 - ✓ "shows Yaniv called marquee when Yaniv has been called"
 - ✗ "shows marquee when isYanivCalled is true"
@@ -124,18 +153,18 @@ components/my-component/index.tsx
 - ✓ "calls the Yaniv handler when Yaniv is called"
 - ✗ "calls the Yaniv handler when Yaniv! is clicked"
 
-## Assertions
+### Assertions
 - Use `@testing-library/jest-dom` for DOM assertions — it's the RTL-recommended companion library
 - `toBeInTheDocument()` for presence, `not.toBeInTheDocument()` for absence
 - `toHaveBeenCalledOnce()` for callback assertions (Vitest spy matcher)
 - Prefer accessible queries (`getByRole`, `getByText`, `getByLabelText`) over `getByTestId` — test IDs are a last resort for when no semantic query applies
 
-## Structure
+### Structure
 - Group related tests in nested `describe` blocks by feature/stage, not by prop
 - Fresh `vi.fn()` instances per test when asserting a handler was called
 - Shared `vi.fn()` (e.g. `noop`) is fine for handlers that are not under test
 
-## Mocking
+### Mocking
 - Mock complex sub-components to test parent logic in isolation
 - Use `data-testid="card-{suit}-{rank}"` on mocked card components for reliable selection
 - Mock layout wrappers (e.g. `GameLayout`) with a simple children passthrough
