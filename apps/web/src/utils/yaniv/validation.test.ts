@@ -487,41 +487,48 @@ describe('isValidYanivPlay', () => {
   });
 
   describe('standalone run played on top of matching discard rank (no pickup)', () => {
-    test('requires no pickup when the high end of the run matches the discard rank', () => {
+    const run = [
+      { suit: Suit.HEARTS, rank: Rank.THREE },
+      { suit: Suit.HEARTS, rank: Rank.FOUR },
+      { suit: Suit.HEARTS, rank: Rank.FIVE },
+    ];
+
+    test('requires no pickup when the first card played ascending matches the discard rank', () => {
       expect(
         isValidYanivPlay(
-          [
-            { suit: Suit.HEARTS, rank: Rank.THREE },
-            { suit: Suit.HEARTS, rank: Rank.FOUR },
-            { suit: Suit.HEARTS, rank: Rank.FIVE },
-          ],
-          { suit: Suit.CLUBS, rank: Rank.FIVE },
+          run,
+          { suit: Suit.CLUBS, rank: Rank.THREE },
+          'ascending',
         ),
       ).toMatchObject({ isValid: true, isPickupRequired: false });
     });
 
-    test('requires no pickup when the low end of the run matches the discard rank', () => {
+    test('requires no pickup when the first card played descending matches the discard rank', () => {
       expect(
         isValidYanivPlay(
-          [
-            { suit: Suit.HEARTS, rank: Rank.THREE },
-            { suit: Suit.HEARTS, rank: Rank.FOUR },
-            { suit: Suit.HEARTS, rank: Rank.FIVE },
-          ],
-          { suit: Suit.CLUBS, rank: Rank.THREE },
+          run,
+          { suit: Suit.CLUBS, rank: Rank.FIVE },
+          'descending',
         ),
       ).toMatchObject({ isValid: true, isPickupRequired: false });
+    });
+
+    test('requires pickup when the matching rank is at the far end of the chosen direction', () => {
+      expect(
+        isValidYanivPlay(
+          run,
+          { suit: Suit.CLUBS, rank: Rank.FIVE },
+          'ascending',
+        ),
+      ).toMatchObject({ isValid: true, isPickupRequired: true });
     });
 
     test('requires pickup when the matching rank is internal to the run', () => {
       expect(
         isValidYanivPlay(
-          [
-            { suit: Suit.HEARTS, rank: Rank.THREE },
-            { suit: Suit.HEARTS, rank: Rank.FOUR },
-            { suit: Suit.HEARTS, rank: Rank.FIVE },
-          ],
+          run,
           { suit: Suit.CLUBS, rank: Rank.FOUR },
+          'ascending',
         ),
       ).toMatchObject({ isValid: true, isPickupRequired: true });
     });
@@ -529,12 +536,9 @@ describe('isValidYanivPlay', () => {
     test('suit of the discard does not affect the matching rule', () => {
       expect(
         isValidYanivPlay(
-          [
-            { suit: Suit.HEARTS, rank: Rank.THREE },
-            { suit: Suit.HEARTS, rank: Rank.FOUR },
-            { suit: Suit.HEARTS, rank: Rank.FIVE },
-          ],
-          { suit: Suit.SPADES, rank: Rank.FIVE },
+          run,
+          { suit: Suit.SPADES, rank: Rank.THREE },
+          'ascending',
         ),
       ).toMatchObject({ isValid: true, isPickupRequired: false });
     });
