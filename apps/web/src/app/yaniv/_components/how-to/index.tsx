@@ -333,18 +333,22 @@ function SlideNav({ lastSlideAction }: { lastSlideAction?: React.ReactNode }) {
   const isLast = selectedIndex === SLIDE_COUNT - 1;
 
   return (
-    <div className='flex items-center justify-between w-full'>
-      <div>
+    // Fixed thirds so the counter stays centred as the side buttons come and go.
+    <div className='grid grid-cols-3 items-center w-full'>
+      <div className='justify-self-start'>
         {canScrollPrev && (
           <Button variant='secondary' size='sm' onClick={scrollPrev}>
             <ArrowLeftIcon /> Previous
           </Button>
         )}
       </div>
-      <span aria-live='polite' className='text-sm text-muted-foreground'>
+      <span
+        aria-live='polite'
+        className='justify-self-center text-sm text-muted-foreground'
+      >
         {selectedIndex + 1} of {SLIDE_COUNT}
       </span>
-      <div>
+      <div className='justify-self-end'>
         {isLast ? (
           lastSlideAction
         ) : (
