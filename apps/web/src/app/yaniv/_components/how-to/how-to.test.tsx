@@ -22,32 +22,32 @@ describe('HowTo', () => {
   test('does not show Back button on the first slide', () => {
     render(<HowTo />);
     expect(
-      screen.queryByRole('button', { name: '← Back' }),
+      screen.queryByRole('button', { name: 'Back' }),
     ).not.toBeInTheDocument();
   });
 
   test('shows Next button on the first slide', () => {
     render(<HowTo />);
-    expect(screen.getByRole('button', { name: 'Next →' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
   });
 
   test('advances to second slide and updates counter when Next is clicked', () => {
     render(<HowTo />);
-    fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(screen.getByText('Card values')).toBeInTheDocument();
     expect(screen.getByText('2 of 5')).toBeInTheDocument();
   });
 
   test('shows Back button after advancing past the first slide', () => {
     render(<HowTo />);
-    fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
-    expect(screen.getByRole('button', { name: '← Back' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 
   test('returns to the first slide when Back is clicked', () => {
     render(<HowTo />);
-    fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
-    fireEvent.click(screen.getByRole('button', { name: '← Back' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
     expect(screen.getByText('1 of 5')).toBeInTheDocument();
   });
@@ -56,11 +56,11 @@ describe('HowTo', () => {
     render(<HowTo />);
     // Advance to the last slide (slide 5)
     for (let i = 0; i < 4; i++) {
-      fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
     expect(screen.getByText('Scoring')).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Next →' }),
+      screen.queryByRole('button', { name: 'Next' }),
     ).not.toBeInTheDocument();
   });
 });
@@ -84,10 +84,10 @@ describe('HowToDialog', () => {
     render(<HowToDialog />);
     fireEvent.click(screen.getByRole('button', { name: 'How to play' }));
     for (let i = 0; i < 4; i++) {
-      fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     }
     expect(
-      screen.queryByRole('button', { name: 'Next →' }),
+      screen.queryByRole('button', { name: 'Next' }),
     ).not.toBeInTheDocument();
     // The slide nav Close button appears alongside the dialog's built-in X close button
     expect(screen.getAllByRole('button', { name: 'Close' })).toHaveLength(2);

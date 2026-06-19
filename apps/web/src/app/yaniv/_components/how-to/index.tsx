@@ -1,6 +1,12 @@
 'use client';
 
-import { ClubIcon, DiamondIcon, HeartIcon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ClubIcon,
+  DiamondIcon,
+  HeartIcon,
+} from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
@@ -332,22 +338,22 @@ function SlideNav({
 
   return (
     <div className='flex items-center justify-between w-full'>
-      <div className='w-16'>
+      <div>
         {!isFirst && (
           <Button variant='secondary' size='sm' onClick={onBack}>
-            ← Back
+            <ArrowLeftIcon /> Back
           </Button>
         )}
       </div>
       <span className='text-sm text-muted-foreground'>
         {index + 1} of {SLIDE_COUNT}
       </span>
-      <div className='w-16 flex justify-end'>
+      <div>
         {isLast ? (
           lastSlideAction
         ) : (
           <Button variant='secondary' size='sm' onClick={onNext}>
-            Next →
+            Next <ArrowRightIcon />
           </Button>
         )}
       </div>
