@@ -8,13 +8,17 @@ import {
   HeartIcon,
 } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
 import { Button } from '~/components/ui/button';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  useCarousel,
+} from '~/components/ui/carousel';
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -322,65 +326,29 @@ const SLIDE_COMPONENTS: Array<() => React.JSX.Element> = [
 
 const SLIDE_COUNT = SLIDE_COMPONENTS.length;
 
-function useSlideDeck() {
-  const [index, setIndex] = useState(0);
+function SlideNav({ lastSlideAction }: { lastSlideAction?: React.ReactNode }) {
+  const { scrollPrev, scrollNext, canScrollPrev, selectedIndex } =
+    useCarousel();
 
-  const goNext = () =>
-    setIndex((current) => Math.min(current + 1, SLIDE_COUNT - 1));
-
-  const goBack = () => setIndex((current) => Math.max(current - 1, 0));
-
-  const reset = () => setIndex(0);
-
-  return { index, goNext, goBack, reset };
-}
-
-function Slide({ index }: { index: number }) {
-  const SlideContent = SLIDE_COMPONENTS[index] ?? OverviewSlide;
-
-  return (
-    // Polite live region so screen readers announce the slide after paging.
-    <section
-      aria-roledescription='slide'
-      aria-label={`Slide ${index + 1} of ${SLIDE_COUNT}`}
-      aria-live='polite'
-    >
-      <SlideContent />
-    </section>
-  );
-}
-
-function SlideNav({
-  index,
-  onBack,
-  onNext,
-  lastSlideAction,
-}: {
-  index: number;
-  onBack: () => void;
-  onNext: () => void;
-  lastSlideAction?: React.ReactNode;
-}) {
-  const isFirst = index === 0;
-  const isLast = index === SLIDE_COUNT - 1;
+  const isLast = selectedIndex === SLIDE_COUNT - 1;
 
   return (
     <div className='flex items-center justify-between w-full'>
       <div>
-        {!isFirst && (
-          <Button variant='secondary' size='sm' onClick={onBack}>
+        {canScrollPrev && (
+          <Button variant='secondary' size='sm' onClick={scrollPrev}>
             <ArrowLeftIcon /> Previous
           </Button>
         )}
       </div>
-      <span className='text-sm text-muted-foreground'>
-        {index + 1} of {SLIDE_COUNT}
+      <span aria-live='polite' className='text-sm text-muted-foreground'>
+        {selectedIndex + 1} of {SLIDE_COUNT}
       </span>
       <div>
         {isLast ? (
           lastSlideAction
         ) : (
-          <Button variant='secondary' size='sm' onClick={onNext}>
+          <Button variant='secondary' size='sm' onClick={scrollNext}>
             Next <ArrowRightIcon />
           </Button>
         )}
@@ -389,59 +357,63 @@ function SlideNav({
   );
 }
 
-export function HowTo({ className }: { className?: string }) {
-  const { index, goNext, goBack } = useSlideDeck();
-
+function SlideDeck({
+  className,
+  lastSlideAction,
+}: {
+  className?: string;
+  lastSlideAction?: React.ReactNode;
+}) {
   return (
-    <section
-      aria-roledescription='carousel'
+    <Carousel
       aria-label='How to play Yaniv'
-      className={cn('flex flex-col gap-4 items-start justify-start', className)}
+      className={cn('flex flex-col gap-4 w-full min-h-0', className)}
     >
-      <Slide index={index} />
-      <SlideNav index={index} onBack={goBack} onNext={goNext} />
-    </section>
+      <div className='flex-1 min-h-0 overflow-y-auto'>
+        <CarouselContent>
+          {SLIDE_COMPONENTS.map((SlideContent, index) => (
+            <CarouselItem
+              key={SlideContent.name}
+              aria-label={`${index + 1} of ${SLIDE_COUNT}`}
+            >
+              <SlideContent />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </div>
+      <SlideNav lastSlideAction={lastSlideAction} />
+    </Carousel>
   );
 }
 
-export function HowToDialog() {
-  const { index, goNext, goBack, reset } = useSlideDeck();
+export function HowTo({ className }: { className?: string }) {
+  return <SlideDeck className={className} />;
+}
 
+export function HowToDialog() {
   return (
-    <Dialog onOpenChange={reset}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button size='sm' variant='secondary'>
           How to play
         </Button>
       </DialogTrigger>
       <DialogContent
-        className='sm:max-w-4xl max-h-[90dvh] grid-rows-[auto_1fr_auto] overflow-hidden'
+        className='sm:max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden'
         aria-describedby={undefined}
       >
         <DialogHeader>
           <DialogTitle>How to play Yaniv</DialogTitle>
         </DialogHeader>
 
-        <section
-          aria-roledescription='carousel'
-          aria-label='How to play Yaniv'
-          className='overflow-y-auto min-h-0'
-        >
-          <Slide index={index} />
-        </section>
-
-        <DialogFooter>
-          <SlideNav
-            index={index}
-            onBack={goBack}
-            onNext={goNext}
-            lastSlideAction={
-              <DialogClose asChild>
-                <Button size='sm'>Close</Button>
-              </DialogClose>
-            }
-          />
-        </DialogFooter>
+        <SlideDeck
+          className='flex-1'
+          lastSlideAction={
+            <DialogClose asChild>
+              <Button size='sm'>Close</Button>
+            </DialogClose>
+          }
+        />
       </DialogContent>
     </Dialog>
   );

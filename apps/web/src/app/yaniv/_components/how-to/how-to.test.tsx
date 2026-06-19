@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ComponentProps, ReactNode } from 'react';
 import { describe, expect, test, vi } from 'vitest';
 import { HowTo, HowToDialog } from '.';
 
@@ -7,6 +8,62 @@ vi.mock('~/components/ui/playing-card', () => ({
     <span>{card.rank}</span>
   ),
 }));
+
+// Embla needs real layout, so stub the carousel with a context-backed fake that
+// advances the selected slide synchronously when scrollPrev/scrollNext is called.
+const SLIDE_TOTAL = 5;
+
+vi.mock('~/components/ui/carousel', async () => {
+  const { createContext, useContext, useState } = await import('react');
+
+  type CarouselContextValue = {
+    scrollPrev: () => void;
+    scrollNext: () => void;
+    canScrollPrev: boolean;
+    canScrollNext: boolean;
+    selectedIndex: number;
+    slideCount: number;
+  };
+
+  const Context = createContext<CarouselContextValue | null>(null);
+
+  function Carousel({ children, ...props }: ComponentProps<'section'>) {
+    const [index, setIndex] = useState(0);
+    const value: CarouselContextValue = {
+      selectedIndex: index,
+      slideCount: SLIDE_TOTAL,
+      canScrollPrev: index > 0,
+      canScrollNext: index < SLIDE_TOTAL - 1,
+      scrollPrev: () => setIndex((current) => Math.max(0, current - 1)),
+      scrollNext: () =>
+        setIndex((current) => Math.min(SLIDE_TOTAL - 1, current + 1)),
+    };
+
+    return (
+      // aria-label is forwarded via props, making this a labelled region.
+      <Context.Provider value={value}>
+        <section {...props}>{children}</section>
+      </Context.Provider>
+    );
+  }
+
+  return {
+    Carousel,
+    CarouselContent: ({ children }: { children: ReactNode }) => (
+      <div>{children}</div>
+    ),
+    CarouselItem: ({ children, ...props }: ComponentProps<'div'>) => (
+      <div {...props}>{children}</div>
+    ),
+    useCarousel: () => {
+      const context = useContext(Context);
+      if (!context) {
+        throw new Error('useCarousel must be used within a <Carousel />');
+      }
+      return context;
+    },
+  };
+});
 
 describe('HowTo', () => {
   test('shows overview content on the first slide', () => {
@@ -66,16 +123,19 @@ describe('HowTo', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('labels the current slide with its position for assistive technology', () => {
+  test('exposes the slides as a labelled carousel region', () => {
     render(<HowTo />);
     expect(
-      screen.getByRole('region', { name: 'Slide 1 of 5' }),
+      screen.getByRole('region', { name: 'How to play Yaniv' }),
     ).toBeInTheDocument();
+  });
+
+  test('announces the current slide position politely', () => {
+    render(<HowTo />);
+    expect(screen.getByText('1 of 5')).toHaveAttribute('aria-live', 'polite');
 
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    expect(
-      screen.getByRole('region', { name: 'Slide 2 of 5' }),
-    ).toBeInTheDocument();
+    expect(screen.getByText('2 of 5')).toHaveAttribute('aria-live', 'polite');
   });
 });
 
