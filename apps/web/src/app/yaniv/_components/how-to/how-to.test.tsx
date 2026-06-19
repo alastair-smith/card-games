@@ -19,10 +19,10 @@ describe('HowTo', () => {
     expect(screen.getByText('1 of 5')).toBeInTheDocument();
   });
 
-  test('does not show Back button on the first slide', () => {
+  test('does not show Previous button on the first slide', () => {
     render(<HowTo />);
     expect(
-      screen.queryByRole('button', { name: 'Back' }),
+      screen.queryByRole('button', { name: 'Previous' }),
     ).not.toBeInTheDocument();
   });
 
@@ -38,16 +38,18 @@ describe('HowTo', () => {
     expect(screen.getByText('2 of 5')).toBeInTheDocument();
   });
 
-  test('shows Back button after advancing past the first slide', () => {
+  test('shows Previous button after advancing past the first slide', () => {
     render(<HowTo />);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Previous' }),
+    ).toBeInTheDocument();
   });
 
-  test('returns to the first slide when Back is clicked', () => {
+  test('returns to the first slide when Previous is clicked', () => {
     render(<HowTo />);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Previous' }));
     expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
     expect(screen.getByText('1 of 5')).toBeInTheDocument();
   });

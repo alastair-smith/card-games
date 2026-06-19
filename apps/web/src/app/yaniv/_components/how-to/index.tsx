@@ -341,7 +341,7 @@ function SlideNav({
       <div>
         {!isFirst && (
           <Button variant='secondary' size='sm' onClick={onBack}>
-            <ArrowLeftIcon /> Back
+            <ArrowLeftIcon /> Previous
           </Button>
         )}
       </div>
