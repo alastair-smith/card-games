@@ -340,7 +340,7 @@ describe('YanivGameController', () => {
       act(() => toggle(extensionHand[1]));
       fireEvent.click(screen.getByTestId('play-ascending'));
       expect(toast.info).toHaveBeenCalledWith(
-        'Run is only valid in the other direction as it depends on the discard card.',
+        'This run is only valid in the other direction due to depending on the discard card.',
       );
       expect(mutate).not.toHaveBeenCalled();
     });

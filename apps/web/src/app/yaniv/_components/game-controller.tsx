@@ -138,7 +138,7 @@ export default function YanivGameController({
             .isValid
         ) {
           toast.info(
-            'Run is only valid in the other direction as it depends on the discard card.',
+            'This run is only valid in the other direction due to depending on the discard card.',
           );
           return;
         }
