@@ -42,8 +42,8 @@ function useCarousel() {
 }
 
 const Carousel = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CarouselProps
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement> & CarouselProps
 >(
   (
     {
@@ -85,7 +85,7 @@ const Carousel = React.forwardRef<
     }, [api]);
 
     const handleKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLDivElement>) => {
+      (event: React.KeyboardEvent<HTMLElement>) => {
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
           scrollPrev();
@@ -133,17 +133,16 @@ const Carousel = React.forwardRef<
           canScrollNext,
         }}
       >
-        {/* biome-ignore lint/a11y/useSemanticElements: role="region" is the WAI-ARIA carousel container pattern; a bare <section> is not a region without an accessible name */}
-        <div
+        <section
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn('relative', className)}
-          role='region'
+          aria-label='Carousel'
           aria-roledescription='carousel'
           {...props}
         >
           {children}
-        </div>
+        </section>
       </CarouselContext.Provider>
     );
   },
@@ -179,7 +178,7 @@ const CarouselItem = React.forwardRef<
   const { orientation } = useCarousel();
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: role="group" is the WAI-ARIA carousel slide pattern, not a <fieldset>
+    // biome-ignore lint/a11y/useSemanticElements: a carousel slide is a generic group with no semantic HTML equivalent; the WAI-ARIA carousel pattern specifies role="group" here, and the only group-role elements (fieldset/optgroup/address) all carry unwanted semantics
     <div
       ref={ref}
       role='group'
