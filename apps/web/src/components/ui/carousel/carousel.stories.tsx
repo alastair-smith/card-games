@@ -1,4 +1,16 @@
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader } from '~/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '~/components/ui/table';
 import { cn } from '~/utils/cn';
 import {
   Carousel,
@@ -6,7 +18,12 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  useCarousel,
 } from '.';
+
+export default {
+  title: 'Components / Carousel',
+};
 
 const SLIDES = [1, 2, 3, 4, 5];
 
@@ -32,6 +49,143 @@ function Slide({ label }: { label: string }) {
     </div>
   );
 }
+
+function Example({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className='flex flex-col gap-2'>
+      <h3 className='text-lg font-medium text-dark-text'>{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+export const Docs = () => (
+  <div className='flex flex-col gap-8 p-8'>
+    <Card className='max-w-2xl'>
+      <CardHeader className='text-2xl font-medium'>Carousel</CardHeader>
+      <CardContent className='flex flex-col gap-4'>
+        <p>
+          A slide / scroll container built on{' '}
+          <a
+            href='https://www.embla-carousel.com'
+            className='underline'
+            target='_blank'
+            rel='noreferrer'
+          >
+            Embla Carousel
+          </a>
+          . Compose it from the parts below and navigate with either the
+          built-in arrow buttons or your own controls via the{' '}
+          <code className='font-mono'>useCarousel</code> hook.
+        </p>
+
+        <Table className='w-full'>
+          <TableCaption>Parts</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Component</TableHead>
+              <TableHead>Description</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className='font-mono'>Carousel</TableCell>
+              <TableCell>
+                The root. Sets up Embla and the keyboard arrow navigation.
+                Accepts <code className='font-mono'>opts</code> (Embla options),{' '}
+                <code className='font-mono'>orientation</code>, and{' '}
+                <code className='font-mono'>setApi</code>.
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>CarouselContent</TableCell>
+              <TableCell>
+                The scrolling viewport that wraps the slides.
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>CarouselItem</TableCell>
+              <TableCell>
+                A single slide. Defaults to full width — set a{' '}
+                <code className='font-mono'>basis-*</code> class to show several
+                at once.
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>
+                CarouselPrevious / CarouselNext
+              </TableCell>
+              <TableCell>
+                Optional floating arrow buttons. Omit them and build your own
+                when you need labelled controls or a counter.
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+        <Table className='w-full'>
+          <TableCaption>
+            useCarousel() — call inside a Carousel to build custom controls
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Value</TableHead>
+              <TableHead>Description</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className='font-mono'>
+                scrollPrev / scrollNext
+              </TableCell>
+              <TableCell>Move to the previous / next slide.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>
+                canScrollPrev / canScrollNext
+              </TableCell>
+              <TableCell>
+                Whether there is a slide to move to — use to disable or hide
+                controls at the ends.
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>selectedIndex</TableCell>
+              <TableCell>The zero-based index of the current slide.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>slideCount</TableCell>
+              <TableCell>The total number of slides.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className='font-mono'>api</TableCell>
+              <TableCell>
+                The underlying Embla instance, for advanced use.
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+
+    <Example title='Horizontal — floating buttons'>
+      <Horizontal />
+    </Example>
+    <Example title='Multiple visible'>
+      <MultipleVisible />
+    </Example>
+    <Example title='Looping'>
+      <Looping />
+    </Example>
+    <Example title='Vertical'>
+      <Vertical />
+    </Example>
+    <Example title='Custom buttons via useCarousel'>
+      <CustomButtons />
+    </Example>
+  </div>
+);
+Docs.storyName = 'Docs';
 
 export function Horizontal() {
   return (
@@ -104,6 +258,60 @@ export function Looping() {
         </CarouselContent>
         <CarouselPrevious />
         <CarouselNext />
+      </Carousel>
+    </StoryFrame>
+  );
+}
+
+// Builds its own labelled controls and counter from the useCarousel hook
+// instead of the floating CarouselPrevious / CarouselNext buttons.
+function CustomNav() {
+  const {
+    scrollPrev,
+    scrollNext,
+    canScrollPrev,
+    canScrollNext,
+    selectedIndex,
+    slideCount,
+  } = useCarousel();
+
+  return (
+    <div className='mt-4 flex items-center justify-between gap-4'>
+      <Button
+        variant='secondary'
+        size='sm'
+        onClick={scrollPrev}
+        disabled={!canScrollPrev}
+      >
+        <ArrowLeftIcon /> Previous
+      </Button>
+      <span className='text-sm text-dark-text'>
+        {selectedIndex + 1} of {slideCount}
+      </span>
+      <Button
+        variant='secondary'
+        size='sm'
+        onClick={scrollNext}
+        disabled={!canScrollNext}
+      >
+        Next <ArrowRightIcon />
+      </Button>
+    </div>
+  );
+}
+
+export function CustomButtons() {
+  return (
+    <StoryFrame className='px-8'>
+      <Carousel className='w-full max-w-xs'>
+        <CarouselContent>
+          {SLIDES.map((slide) => (
+            <CarouselItem key={slide}>
+              <Slide label={String(slide)} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CustomNav />
       </Carousel>
     </StoryFrame>
   );
