@@ -3,7 +3,6 @@
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
-import { JOKER_RANK } from '~/types/cards';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji, SystemEmoji } from '~/types/game';
 import {
