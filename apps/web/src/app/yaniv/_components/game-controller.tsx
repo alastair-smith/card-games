@@ -3,6 +3,7 @@
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
 import { api } from '~/trpc/react';
+import { JOKER_RANK } from '~/types/cards';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji, SystemEmoji } from '~/types/game';
 import {
@@ -147,8 +148,14 @@ export default function YanivGameController({
     }
     playCardsMutation.mutate({
       code,
-      cards: selectedCards,
-      direction,
+      // Strip UI-only fields (selected, hidden)
+      // ternary is to fix type issue around discriminated union
+      cards: selectedCards.map((card) =>
+        card.rank === JOKER_RANK
+          ? { suit: card.suit, rank: card.rank }
+          : { suit: card.suit, rank: card.rank },
+      ),
+      ...(direction && { direction }),
     });
   };
 
