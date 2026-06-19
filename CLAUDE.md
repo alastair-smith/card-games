@@ -14,10 +14,23 @@ Fix all lint and formatting issues (run from repo root):
 ```bash
 pnpm format:fix
 ```
+
 To fix a specific file only:
 
 ```bash
 pnpm format:fix path/to/file
+```
+
+If you really need to run a check without autofix you can use:
+
+```bash
+pnpm format
+```
+
+Or for a specific file
+
+```bash
+pnpm format /path/to/file
 ```
 
 ### Type checking
