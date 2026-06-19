@@ -6,8 +6,12 @@ import { yanivPlayingCardSchema } from '~/types/games/yaniv';
 
 export const playCardsMutation = protectedProcedure
   .input(
-    z.object({ code: gameCodeSchema, cards: z.array(yanivPlayingCardSchema) }),
+    z.object({
+      code: gameCodeSchema,
+      cards: z.array(yanivPlayingCardSchema),
+      direction: z.enum(['ascending', 'descending']).optional(),
+    }),
   )
   .mutation(async ({ input, ctx: { userId } }) => {
-    await playCards(input.code, userId, input.cards);
+    await playCards(input.code, userId, input.cards, input.direction);
   });

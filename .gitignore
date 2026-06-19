@@ -44,3 +44,5 @@ yarn-error.log*
 
 .turbo
 dist
+
+.claude/settings.local.json
