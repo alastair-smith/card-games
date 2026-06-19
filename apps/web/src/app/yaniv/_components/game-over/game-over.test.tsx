@@ -176,5 +176,34 @@ describe('GameOver', () => {
       render(<GameOver players={players} userId={'2' as UserId} />);
       expect(screen.getByText('Bob (You)')).toBeInTheDocument();
     });
+
+    test('displays players in ascending score order regardless of input order', () => {
+      const unsortedPlayers = [
+        {
+          id: '3' as UserId,
+          name: 'Charlie' as PlayerName,
+          score: 40,
+          isWinner: false,
+        },
+        {
+          id: '2' as UserId,
+          name: 'Bob' as PlayerName,
+          score: 30,
+          isWinner: false,
+        },
+        {
+          id: '1' as UserId,
+          name: 'Alice' as PlayerName,
+          score: 20,
+          isWinner: true,
+        },
+      ];
+      render(<GameOver players={unsortedPlayers} userId={'2' as UserId} />);
+      const rows = screen.getAllByRole('row');
+      // rows[0] is the header; rows[1..3] are player rows
+      expect(rows[1]).toHaveTextContent('Alice');
+      expect(rows[2]).toHaveTextContent('Bob');
+      expect(rows[3]).toHaveTextContent('Charlie');
+    });
   });
 });
