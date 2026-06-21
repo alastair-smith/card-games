@@ -123,7 +123,7 @@ export default function YanivGameController({
       return;
     }
     if (selectedCards.length === 0) {
-      toast.info('Select at least one card to play');
+      toast.info('Select at least one card to play.');
       return;
     }
     if (
@@ -143,7 +143,7 @@ export default function YanivGameController({
           return;
         }
       }
-      toast.info("You can't play that combination of cards");
+      toast.info("You can't play that combination of cards.");
       return;
     }
     playCardsMutation.mutate({
@@ -161,7 +161,7 @@ export default function YanivGameController({
 
   const handleEndTurn = () => {
     if (hand.length === 0) {
-      toast.info('You must call Yaniv when you have no cards');
+      toast.info('You must call Yaniv when you have no cards.');
       return;
     }
     endTurnMutation.mutate({ code });
@@ -170,7 +170,7 @@ export default function YanivGameController({
   const handleCallYaniv = () => {
     if (!canCallYaniv) {
       toast.info(
-        `You need a hand total of ${YANIV_CALL_THRESHOLD} or less to call Yaniv`,
+        `You need a hand total of ${YANIV_CALL_THRESHOLD} or less to call Yaniv.`,
       );
       return;
     }
@@ -184,7 +184,7 @@ export default function YanivGameController({
   const handlePickupFromDiscard = () => {
     if (deckOnlyPickup) {
       toast.info(
-        'The discard card is part of your run, you can only pick up from the deck',
+        'The discard card is part of your run, you can only pick up from the deck.',
       );
       return;
     }
