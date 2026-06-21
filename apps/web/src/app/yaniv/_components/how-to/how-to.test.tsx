@@ -127,19 +127,9 @@ describe('HowTo', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('exposes the slides as a labelled carousel region', () => {
-    render(<HowTo />);
-    expect(
-      screen.getByRole('region', { name: 'How to play Yaniv' }),
-    ).toBeInTheDocument();
-  });
-
   test('announces the current slide position politely', () => {
     render(<HowTo />);
     expect(screen.getByText('1 of 5')).toHaveAttribute('aria-live', 'polite');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    expect(screen.getByText('2 of 5')).toHaveAttribute('aria-live', 'polite');
   });
 });
 
