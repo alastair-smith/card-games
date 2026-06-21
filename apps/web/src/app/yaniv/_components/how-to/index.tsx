@@ -6,6 +6,7 @@ import {
   ClubIcon,
   DiamondIcon,
   HeartIcon,
+  SpadeIcon,
 } from 'lucide-react';
 import type React from 'react';
 import { Button } from '~/components/ui/button';
@@ -163,8 +164,9 @@ function TakingATurnSlide() {
             Play one or more cards from your hand.
           </span>
           <ul className='list-disc list-inside ml-4 mt-0.5 flex flex-col gap-0.5'>
+            <li>Any single card.</li>
             <li>
-              Play multiple cards of the same number at once. For example:{' '}
+              Multiple cards of the same number. For example:{' '}
               <span
                 className={cn(
                   'inline-flex items-center gap-0.5 font-bold',
@@ -201,7 +203,7 @@ function TakingATurnSlide() {
               .
             </li>
             <li>
-              Play a straight flush of 3 or more consecutive cards. For example:{' '}
+              A run of 3 or more cards with matching suit. For example:{' '}
               <span
                 className={cn(
                   'inline-flex items-center gap-0.5 font-bold',
@@ -233,11 +235,77 @@ function TakingATurnSlide() {
               </span>
               .
             </li>
+            <li>
+              A run can be bridged by using jokers inside of it. But they can't
+              be used on the ends. For example:{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.clubs,
+                )}
+              >
+                4
+                <ClubIcon fill='currentColor' size={12} aria-label='clubs' />
+              </span>
+              ,{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.clubs,
+                )}
+              >
+                Joker
+              </span>
+              ,{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.clubs,
+                )}
+              >
+                6
+                <ClubIcon fill='currentColor' size={12} aria-label='clubs' />
+              </span>
+            </li>
+            <li>
+              A run of 2 cards can be played when extending from the discard
+              card. For example:{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.spades,
+                )}
+              >
+                3
+                <SpadeIcon fill='currentColor' size={12} aria-label='spades' />
+              </span>
+              ,{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.spades,
+                )}
+              >
+                2
+                <SpadeIcon fill='currentColor' size={12} aria-label='spades' />
+              </span>
+              when the discard card is{' '}
+              <span
+                className={cn(
+                  'inline-flex items-center gap-0.5 font-bold',
+                  suitColorClass.spades,
+                )}
+              >
+                A
+                <SpadeIcon fill='currentColor' size={12} aria-label='spades' />
+              </span>
+              .
+            </li>
           </ul>
         </li>
         <li>
           <span className='font-medium'>
-            Draw a card from the deck or discard pile.
+            Draw a card from either the top of the deck or discard pile.
           </span>
           <ul className='list-disc list-inside ml-4 mt-0.5'>
             <li>
@@ -318,8 +386,8 @@ function ScoringSlide() {
 
 const SLIDE_COMPONENTS: Array<() => React.JSX.Element> = [
   OverviewSlide,
-  CardValuesSlide,
   TakingATurnSlide,
+  CardValuesSlide,
   CallingYanivSlide,
   ScoringSlide,
 ];
