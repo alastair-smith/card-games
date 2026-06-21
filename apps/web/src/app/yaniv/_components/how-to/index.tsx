@@ -54,9 +54,9 @@ function OverviewSlide() {
       </p>
       <p>
         The moment your hand drops to 7 or less, you can call &apos;Yaniv&apos;
-        to signal the end the round and score zero for the round. But call too
-        soon and a rival with an even lower hand can steal the zero points bonus
-        and leave you with a penalty instead.
+        to signal the end of the round and score zero for the round. But call
+        too soon and a rival with an even lower hand can steal the zero points
+        bonus and leave you with a penalty instead.
       </p>
       <p>
         Once a player reaches a total score over 100 the game ends and the
@@ -364,8 +364,8 @@ function CallingYanivSlide() {
       <h3 className='text-base/relaxed font-semibold'>Calling Yaniv</h3>
       <p>
         At the end of your turn, if your hand totals 7 or less, you can call
-        &apos;Yaniv&apos; to signal the end the round. Every other player then
-        gets one final turn.
+        &apos;Yaniv&apos; to signal the end of the round. Every other player
+        then gets one final turn.
       </p>
       <p>
         Be careful calling &apos;Yaniv&apos; with a high hand total as you will
