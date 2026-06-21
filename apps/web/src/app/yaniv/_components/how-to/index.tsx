@@ -366,14 +366,17 @@ function ScoringSlide() {
     <section className='flex flex-col gap-1'>
       <h3 className='text-base/relaxed font-semibold'>Scoring</h3>
       <ul className='list-disc list-inside flex flex-col gap-1'>
-        <li>Each player scores the total value of cards left in their hand.</li>
+        <li>
+          At the end of each round each player scores the total value of cards
+          left in their hand.
+        </li>
         <li>
           The Yaniv caller with the lowest value scores 0. Other players who
           also called Yaniv score 25 instead.
         </li>
         <li>
-          If your total hits exactly 50 it drops to 25; the same happens at
-          exactly 100.
+          The first time your total score reaches exactly 50 it halves to 25.
+          The same happens for when you first get exactly 100.
         </li>
         <li>
           The game ends when any player reaches 100 or more. And the player with
