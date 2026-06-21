@@ -45,7 +45,7 @@ import { cn } from '~/utils/cn';
 
 function OverviewSlide() {
   return (
-    <section className='flex flex-col gap-1.5'>
+    <section className='flex flex-col gap-1'>
       <h3 className='text-base/relaxed font-semibold'>Summary</h3>
       <p>
         Yaniv is a fast card game where the smallest hand wins. Shed your cards,
@@ -365,8 +365,11 @@ function CallingYanivSlide() {
       <p>
         At the end of your turn, if your hand totals 7 or less, you can call
         &apos;Yaniv&apos; to signal the end the round. Every other player then
-        gets one final turn and may also call &apos;Yaniv&apos; if their hand is
-        7 or less.
+        gets one final turn.
+      </p>
+      <p>
+        Be careful calling &apos;Yaniv&apos; with a high hand total as you will
+        get penalised if someone else calls it with a lower total.
       </p>
     </section>
   );
