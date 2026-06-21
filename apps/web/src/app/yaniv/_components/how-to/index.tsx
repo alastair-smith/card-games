@@ -59,7 +59,7 @@ function CardValuesSlide() {
     <section className='flex flex-col gap-1'>
       <h3 className='text-base/relaxed font-semibold'>Card values</h3>
       <Table rootClassName='overflow-x-clip'>
-        <TableCaption>Points per card</TableCaption>
+        <TableCaption className='sr-only'>Points per card</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Card</TableHead>
