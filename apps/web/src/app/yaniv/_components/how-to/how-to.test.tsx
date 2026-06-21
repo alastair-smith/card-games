@@ -14,7 +14,9 @@ vi.mock('~/components/ui/playing-card', () => ({
 const SLIDE_TOTAL = 5;
 
 vi.mock('~/components/ui/carousel', async () => {
-  const { createContext, useContext, useState } = await import('react');
+  const { Children, createContext, useContext, useState } = await import(
+    'react'
+  );
 
   type CarouselContextValue = {
     scrollPrev: () => void;
@@ -26,6 +28,14 @@ vi.mock('~/components/ui/carousel', async () => {
   };
 
   const Context = createContext<CarouselContextValue | null>(null);
+
+  function useCarousel() {
+    const context = useContext(Context);
+    if (!context) {
+      throw new Error('useCarousel must be used within a <Carousel />');
+    }
+    return context;
+  }
 
   function Carousel({ children, ...props }: ComponentProps<'section'>) {
     const [index, setIndex] = useState(0);
@@ -47,21 +57,20 @@ vi.mock('~/components/ui/carousel', async () => {
     );
   }
 
+  // Render only the selected slide, mirroring what the user actually sees, so
+  // content assertions reflect the active slide rather than the whole deck.
+  function CarouselContent({ children }: { children: ReactNode }) {
+    const { selectedIndex } = useCarousel();
+    return <div>{Children.toArray(children)[selectedIndex]}</div>;
+  }
+
   return {
     Carousel,
-    CarouselContent: ({ children }: { children: ReactNode }) => (
-      <div>{children}</div>
-    ),
+    CarouselContent,
     CarouselItem: ({ children, ...props }: ComponentProps<'div'>) => (
       <div {...props}>{children}</div>
     ),
-    useCarousel: () => {
-      const context = useContext(Context);
-      if (!context) {
-        throw new Error('useCarousel must be used within a <Carousel />');
-      }
-      return context;
-    },
+    useCarousel,
   };
 });
 
@@ -91,7 +100,7 @@ describe('HowTo', () => {
   test('advances to second slide and updates counter when Next is clicked', () => {
     render(<HowTo />);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
-    expect(screen.getByText('Card values')).toBeInTheDocument();
+    expect(screen.getByText('Taking a turn')).toBeInTheDocument();
     expect(screen.getByText('2 of 5')).toBeInTheDocument();
   });
 
