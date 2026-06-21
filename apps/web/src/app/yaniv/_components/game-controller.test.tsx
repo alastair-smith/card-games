@@ -210,7 +210,7 @@ describe('YanivGameController', () => {
       );
       fireEvent.click(screen.getByTestId('play-cards'));
       expect(toast.info).toHaveBeenCalledWith(
-        'Select at least one card to play',
+        'Select at least one card to play.',
       );
       expect(mutate).not.toHaveBeenCalled();
     });
@@ -268,7 +268,7 @@ describe('YanivGameController', () => {
 
       fireEvent.click(screen.getByTestId('play-cards'));
       expect(toast.info).toHaveBeenCalledWith(
-        "You can't play that combination of cards",
+        "You can't play that combination of cards.",
       );
     });
   });
@@ -397,7 +397,7 @@ describe('YanivGameController', () => {
       );
       fireEvent.click(screen.getByTestId('pickup-from-discard'));
       expect(toast.info).toHaveBeenCalledWith(
-        'The discard card is part of your run, you can only pick up from the deck',
+        'The discard card is part of your run, you can only pick up from the deck.',
       );
       expect(mutate).not.toHaveBeenCalled();
     });
@@ -416,7 +416,7 @@ describe('YanivGameController', () => {
       );
       fireEvent.click(screen.getByTestId('end-turn'));
       expect(toast.info).toHaveBeenCalledWith(
-        'You must call Yaniv when you have no cards',
+        'You must call Yaniv when you have no cards.',
       );
       expect(mutate).not.toHaveBeenCalled();
     });
@@ -438,7 +438,7 @@ describe('YanivGameController', () => {
       );
       fireEvent.click(screen.getByTestId('yaniv'));
       expect(toast.info).toHaveBeenCalledWith(
-        'You need a hand total of 7 or less to call Yaniv',
+        'You need a hand total of 7 or less to call Yaniv.',
       );
       expect(mutate).not.toHaveBeenCalled();
     });

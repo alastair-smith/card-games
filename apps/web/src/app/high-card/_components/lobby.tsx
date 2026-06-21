@@ -32,7 +32,7 @@ export default function Lobby({
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
   const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
     onError: () => {
-      toast.error('Error kicking player');
+      toast.error('Error kicking player.');
     },
   });
   const makeHostMutation = api.lobby.makeHost.useMutation();
@@ -59,7 +59,7 @@ export default function Lobby({
         {
           onError: () => {
             setUser((prev) => ({ ...prev, isReady: !isReady }));
-            toast.error('Error updating ready status');
+            toast.error('Error updating ready status.');
           },
         },
       );
