@@ -45,11 +45,22 @@ import { cn } from '~/utils/cn';
 
 function OverviewSlide() {
   return (
-    <section>
+    <section className='flex flex-col gap-1.5'>
+      <h3 className='text-base/relaxed font-semibold'>Summary</h3>
       <p>
-        Yaniv is a card game where you want the lowest-value hand possible. Each
-        turn you discard cards and draw replacements — when your hand totals 7
-        or less you can call &apos;Yaniv&apos; to end the round and score zero.
+        Yaniv is a fast card game where the smallest hand wins. Shed your cards,
+        and draw carefully from the deck or discard pile to make your hand total
+        as small as possible.
+      </p>
+      <p>
+        The moment your hand drops to 7 or less, you can call &apos;Yaniv&apos;
+        to signal the end the round and score zero for the round. But call too
+        soon and a rival with an even lower hand can steal the zero points bonus
+        and leave you with a penalty instead.
+      </p>
+      <p>
+        Once a player reaches a total score over 100 the game ends and the
+        player with the lowest total score wins!
       </p>
     </section>
   );
