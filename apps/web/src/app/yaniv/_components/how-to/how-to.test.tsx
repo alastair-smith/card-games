@@ -68,7 +68,9 @@ vi.mock('~/components/ui/carousel', async () => {
 describe('HowTo', () => {
   test('shows overview content on the first slide', () => {
     render(<HowTo />);
-    expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Yaniv is a fast card game/),
+    ).toBeInTheDocument();
   });
 
   test('shows slide counter starting at 1 of 5', () => {
@@ -107,7 +109,9 @@ describe('HowTo', () => {
     render(<HowTo />);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(screen.getByRole('button', { name: 'Previous' }));
-    expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Yaniv is a fast card game/),
+    ).toBeInTheDocument();
     expect(screen.getByText('1 of 5')).toBeInTheDocument();
   });
 
@@ -151,7 +155,9 @@ describe('HowToDialog', () => {
     render(<HowToDialog />);
     fireEvent.click(screen.getByRole('button', { name: 'How to play' }));
     expect(screen.getByText('How to play Yaniv')).toBeInTheDocument();
-    expect(screen.getByText(/Yaniv is a card game/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Yaniv is a fast card game/),
+    ).toBeInTheDocument();
   });
 
   test('shows Close instead of Next on the last slide', () => {
