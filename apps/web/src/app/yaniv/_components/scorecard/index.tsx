@@ -1,4 +1,4 @@
-import { CircleIcon, MegaphoneIcon, SquarePlay } from 'lucide-react';
+import { CircleIcon, MegaphoneIcon, PlayIcon } from 'lucide-react';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
@@ -40,7 +40,7 @@ export default function ScoreCard({
       {isPlayersTurn && (
         <>
           <span className='sr-only'>It's {name}'s turn</span>
-          <SquarePlay
+          <PlayIcon
             size={20}
             strokeWidth={3}
             className='icon-outline-black absolute top-1 left-1 z-10'
