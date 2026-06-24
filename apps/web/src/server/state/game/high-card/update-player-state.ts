@@ -22,6 +22,15 @@ export const updatePlayerState = async ({
     throw new Error('player not in game');
   }
 
+  if (
+    field === 'color' &&
+    lobby.players.some(
+      (player) => player.id !== userId && player.color === value,
+    )
+  ) {
+    throw new Error('colour already taken');
+  }
+
   const updatedPlayers = lobby.players.map((player) =>
     player.id === userId ? { ...player, [field]: value } : player,
   );

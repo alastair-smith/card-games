@@ -79,11 +79,12 @@ export default function Lobby({
   );
 
   const debouncedUpdatePlayerColor = useCallback(
-    debounce((color: string) => {
+    debounce((color: string, previousColor: string) => {
       updatePlayerMutation.mutate(
         { field: 'color', code, color },
         {
           onError: () => {
+            setUser((prev) => ({ ...prev, color: previousColor }));
             toast.error('Error updating colour.');
           },
         },
@@ -98,8 +99,9 @@ export default function Lobby({
   };
 
   const handleColorChange = (color: string) => {
+    const previousColor = user.color;
     setUser((prev) => ({ ...prev, color }));
-    debouncedUpdatePlayerColor(color);
+    debouncedUpdatePlayerColor(color, previousColor);
   };
 
   const handleReadyChange = (isReady: boolean) => {

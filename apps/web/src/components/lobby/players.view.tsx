@@ -173,10 +173,12 @@ function ColourSwatch({
 function PlayerColour({
   color,
   isUser,
+  takenColors,
   handleColorChange,
 }: {
   color: string;
   isUser: boolean;
+  takenColors?: string[];
   handleColorChange?: (color: string) => void;
 }) {
   if (!isUser || !handleColorChange) {
@@ -203,6 +205,7 @@ function PlayerColour({
         <ColorPicker
           colors={PLAYER_COLORS}
           value={color}
+          disabledColors={takenColors}
           onColorSelect={handleColorChange}
         />
       </PopoverContent>
@@ -327,6 +330,9 @@ export default function Players({
                           : player.color
                       }
                       isUser={player.isUser}
+                      takenColors={players
+                        .filter((other) => other.id !== player.id)
+                        .map((other) => other.color)}
                       handleColorChange={handleColorChange}
                     />
                   </div>
@@ -412,6 +418,9 @@ export default function Players({
                         : player.color
                     }
                     isUser={player.isUser}
+                    takenColors={players
+                      .filter((other) => other.id !== player.id)
+                      .map((other) => other.color)}
                     handleColorChange={handleColorChange}
                   />
                 </TableCell>

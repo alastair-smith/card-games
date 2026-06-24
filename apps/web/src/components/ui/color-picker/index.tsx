@@ -6,6 +6,8 @@ type ColorPickerProps = {
   className?: string;
   colors: string[];
   value?: string;
+  /** Colours that cannot be selected (e.g. already taken by other players). */
+  disabledColors?: string[];
   onColorSelect: (color: string) => void;
 };
 
@@ -13,6 +15,7 @@ export function ColorPicker({
   className,
   colors,
   value,
+  disabledColors,
   onColorSelect,
 }: ColorPickerProps) {
   const groupName = useId();
@@ -31,6 +34,8 @@ export function ColorPicker({
       <legend className='sr-only'>Colour</legend>
       {colors.map((color, index) => {
         const isSelected = color === value;
+        const isDisabled =
+          !isSelected && (disabledColors?.includes(color) ?? false);
         // Focus the active swatch on mount (or the first when none is set) so
         // keyboard users land on a radio and can arrow between options.
         const shouldAutoFocus = value ? isSelected : index === 0;
@@ -38,13 +43,17 @@ export function ColorPicker({
         return (
           <label
             key={color}
-            className='relative flex aspect-square cursor-pointer'
+            className={cn(
+              'relative flex aspect-square',
+              isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
+            )}
           >
             <input
               type='radio'
               name={groupName}
               value={color}
               checked={isSelected}
+              disabled={isDisabled}
               aria-label={color}
               // biome-ignore lint/a11y/noAutofocus: focuses the active swatch when the picker opens
               autoFocus={shouldAutoFocus}
@@ -57,6 +66,7 @@ export function ColorPicker({
                 'flex flex-1 items-center justify-center rounded border border-border',
                 'peer-checked:ring-2 peer-checked:ring-ring',
                 'peer-focus-visible:ring-2 peer-focus-visible:ring-ring',
+                'peer-disabled:opacity-30',
               )}
             >
               {isSelected && (
