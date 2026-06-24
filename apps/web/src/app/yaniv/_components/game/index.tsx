@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import GameLayout from '~/components/layout/game-layout';
+import { ScreenEdgeHighlight } from '~/components/ui/screen-edge-highlight';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import { GameViewStage, type YanivPlayingCard } from '~/types/games/yaniv';
@@ -129,6 +130,12 @@ export default function Game({
       gameType={GameType.YANIV}
       className='h-dvh w-full overflow-hidden px-2 pb-2'
     >
+      {isUserTakingTurn && <ScreenEdgeHighlight />}
+
+      <div role='status' aria-live='polite' className='sr-only'>
+        {isUserTakingTurn ? "It's your turn" : ''}
+      </div>
+
       <PageEmojiRain
         reactions={pageReactions}
         className='flex-1 flex flex-col justify-center gap-4'

@@ -117,6 +117,21 @@ describe('Game', () => {
     expect(screen.getByText('Round Summary')).toBeInTheDocument();
   });
 
+  describe('turn announcement', () => {
+    test('announces your turn when it is the current user turn', () => {
+      render(<Game {...baseProps} />);
+      expect(screen.getByText("It's your turn")).toHaveAttribute(
+        'aria-live',
+        'polite',
+      );
+    });
+
+    test('says nothing when it is another player turn', () => {
+      render(<Game {...baseProps} userId={'2' as UserId} />);
+      expect(screen.queryByText("It's your turn")).not.toBeInTheDocument();
+    });
+  });
+
   describe('drawn card visibility', () => {
     const drawnCard = { suit: Suit.CLUBS, rank: Rank.ACE };
     const cards = [

@@ -61,4 +61,14 @@ describe('ScoreCard', () => {
     expect(screen.queryByText(/has called Yaniv!/)).not.toBeInTheDocument();
     expect(screen.getByText('Kevin')).toBeInTheDocument();
   });
+
+  test('announces whose turn it is when it is this player turn', () => {
+    render(<ScoreCard {...defaultProps} isPlayersTurn={true} />);
+    expect(screen.getByText("It's Kevin's turn")).toBeInTheDocument();
+  });
+
+  test('does not announce a turn when it is not this player turn', () => {
+    render(<ScoreCard {...defaultProps} isPlayersTurn={false} />);
+    expect(screen.queryByText(/turn/)).not.toBeInTheDocument();
+  });
 });
