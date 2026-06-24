@@ -63,6 +63,15 @@ export const NoCards = () => (
   />
 );
 
+export const CurrentTurn = () => (
+  <Scorecard
+    {...{
+      ...defaultProps,
+      isPlayersTurn: true,
+    }}
+  />
+);
+
 export const YanivCalled = () => (
   <Scorecard
     {...{

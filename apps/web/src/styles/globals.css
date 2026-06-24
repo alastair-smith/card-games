@@ -11,6 +11,7 @@
   --color-red: hsl(3 85% 57%);
   --color-lily-white: hsl(186, 71%, 94%);
   --color-yellow: hsl(49 90% 62%);
+  --color-blue: hsl(210 70% 60%);
 
   /* variant colors */
   --color-light-slate: hsl(from var(--color-slate) h s 40%);
@@ -18,6 +19,7 @@
   --color-grey-lily-white: hsl(from var(--color-lily-white) h 20% 30%);
   --color-dark-yellow: hsl(from var(--color-yellow) h s 50%);
   --color-dark-white: hsl(199 8% 75%);
+  --color-highlight: hsl(from var(--color-blue) h s l / 30%);
 
   /* background colors*/
   --color-main-background: var(--color-dark-green);
@@ -103,7 +105,7 @@
       box-shadow: inset 0 0 0 100vmax transparent;
     }
     50% {
-      box-shadow: inset 0 0 0 100vmax hsl(210 70% 60% / 30%);
+      box-shadow: inset 0 0 0 100vmax var(--color-highlight);
     }
   }
 

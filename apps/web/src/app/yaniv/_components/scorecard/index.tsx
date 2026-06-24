@@ -1,4 +1,4 @@
-import { CircleIcon, MegaphoneIcon } from 'lucide-react';
+import { CircleIcon, MegaphoneIcon, SquarePlay } from 'lucide-react';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
 
@@ -10,6 +10,7 @@ type ScoreCardProps = {
   name: PlayerName;
   score: number;
   isYanivCalled: boolean;
+  isPlayersTurn?: boolean;
   reactionEmoji?: { emoji: string; id: EmojiReactionId };
 };
 
@@ -21,6 +22,7 @@ export default function ScoreCard({
   name,
   score,
   isYanivCalled,
+  isPlayersTurn,
   reactionEmoji,
 }: ScoreCardProps) {
   return (
@@ -31,6 +33,16 @@ export default function ScoreCard({
         className,
       )}
     >
+      {isPlayersTurn && (
+        <>
+          <span className='sr-only'>It's {name}'s turn</span>
+          <SquarePlay
+            size={20}
+            className='absolute top-1 left-1 z-10'
+            aria-hidden='true'
+          />
+        </>
+      )}
       {reactionEmoji && (
         <div
           // key changes on each new reaction, forcing React to remount the div
