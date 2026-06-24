@@ -32,6 +32,7 @@ type BaseGameProps = {
   onAutoPlayDrawnCard?: () => void;
   players: {
     id: UserId;
+    color: string;
     cardCount: number;
     isFiftyScoreHalved: boolean;
     isHundredScoreHalved: boolean;

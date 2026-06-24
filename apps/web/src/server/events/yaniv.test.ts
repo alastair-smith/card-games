@@ -35,6 +35,7 @@ const makeInProgressState = () => ({
   players: [
     {
       id: USER_1,
+      color: 'hsl(210 70% 48%)',
       cardCount: 2,
       hand: [{ suit: Suit.CLUBS, rank: Rank.TWO }],
       name: 'Player 1' as PlayerName,
@@ -46,6 +47,7 @@ const makeInProgressState = () => ({
     },
     {
       id: USER_2,
+      color: 'hsl(210 70% 48%)',
       cardCount: 2,
       hand: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
       name: 'Player 2' as PlayerName,

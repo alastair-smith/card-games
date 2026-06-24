@@ -20,6 +20,7 @@ export const HighCardLobby = () => {
         {
           id: '1' as UserId,
           name: 'Frank' as PlayerName,
+          color: 'hsl(210 70% 48%)',
           isReady: false,
           isUser: true,
           isHost: true,

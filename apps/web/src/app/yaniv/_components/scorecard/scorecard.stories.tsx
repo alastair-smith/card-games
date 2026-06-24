@@ -7,6 +7,7 @@ export default {
 };
 
 const defaultProps: React.ComponentProps<typeof Scorecard> = {
+  color: 'hsl(210 70% 48%)',
   cardCount: 7,
   isFiftyScoreHalved: false,
   isHundredScoreHalved: false,

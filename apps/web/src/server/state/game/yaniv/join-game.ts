@@ -4,6 +4,7 @@ import type { UserId } from '~/types/entities';
 import { type GameCode, GameUpdate, type Player } from '~/types/game';
 import { MAX_PLAYERS } from '~/types/games/yaniv';
 import { generatePlayerName } from '~/utils/name-generator';
+import { getRandomPlayerColor } from '~/utils/player-color';
 
 const enrichPlayerData = (
   players: Lobby['players'],
@@ -57,7 +58,12 @@ export const joinGame = async ({
 
   const updatedPlayers = [
     ...lobby.players,
-    { id: userId, name: generatePlayerName(), isReady: false },
+    {
+      id: userId,
+      name: generatePlayerName(),
+      color: getRandomPlayerColor(lobby.players.map(({ color }) => color)),
+      isReady: false,
+    },
   ];
 
   const updatedLobby = await setLobby(

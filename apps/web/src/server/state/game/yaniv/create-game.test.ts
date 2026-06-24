@@ -61,7 +61,14 @@ describe('createGame', () => {
         code: CODE,
         type: GameType.YANIV,
         host: HOST,
-        players: [{ id: HOST, name: PLAYER_NAME, isReady: false }],
+        players: [
+          {
+            id: HOST,
+            name: PLAYER_NAME,
+            color: expect.any(String),
+            isReady: false,
+          },
+        ],
       },
     );
   });

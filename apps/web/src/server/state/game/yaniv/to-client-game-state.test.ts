@@ -27,6 +27,7 @@ const USER_2_CARDS: YanivPlayingCard[] = [
 const makePlayers = () => [
   {
     id: USER_1,
+    color: 'hsl(210 70% 48%)',
     cardCount: 2,
     hand: USER_1_CARDS,
     name: 'Player 1' as PlayerName,
@@ -38,6 +39,7 @@ const makePlayers = () => [
   },
   {
     id: USER_2,
+    color: 'hsl(210 70% 48%)',
     cardCount: 2,
     hand: USER_2_CARDS,
     name: 'Player 2' as PlayerName,

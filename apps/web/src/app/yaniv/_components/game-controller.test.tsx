@@ -88,6 +88,7 @@ const OPPONENT_ID = 'user-2' as UserId;
 const CODE = 'ABCD' as GameCode;
 
 const basePlayer = {
+  color: 'hsl(210 70% 48%)',
   cardCount: 5,
   isFiftyScoreHalved: false,
   isHundredScoreHalved: false,

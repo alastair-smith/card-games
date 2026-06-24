@@ -26,6 +26,7 @@ const USER_2 = 'user-2' as UserId;
 const makePlayers = () => [
   {
     id: USER_1,
+    color: 'hsl(210 70% 48%)',
     cardCount: 2,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.TWO },
@@ -40,6 +41,7 @@ const makePlayers = () => [
   },
   {
     id: USER_2,
+    color: 'hsl(210 70% 48%)',
     cardCount: 2,
     hand: [
       { suit: Suit.CLUBS, rank: Rank.FOUR },

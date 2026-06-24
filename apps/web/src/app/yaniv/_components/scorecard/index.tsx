@@ -4,7 +4,7 @@ import { cn } from '~/utils/cn';
 
 type ScoreCardProps = {
   className?: string;
-  color?: string;
+  color: string;
   cardCount: number | null;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
@@ -29,9 +29,10 @@ export default function ScoreCard({
 }: ScoreCardProps) {
   return (
     <div
-      style={color && !isYanivCalled ? { backgroundColor: color } : undefined}
+      style={isYanivCalled ? undefined : { backgroundColor: color }}
       className={cn(
         'relative bg-alt-background rounded border-white border flex flex-col',
+        'text-white font-extrabold text-outline-black',
         isYanivCalled ? 'bg-black' : '',
         className,
       )}
@@ -41,7 +42,8 @@ export default function ScoreCard({
           <span className='sr-only'>It's {name}'s turn</span>
           <SquarePlay
             size={20}
-            className='absolute top-1 left-1 z-10'
+            strokeWidth={3}
+            className='icon-outline-black absolute top-1 left-1 z-10'
             aria-hidden='true'
           />
         </>
@@ -79,6 +81,8 @@ export default function ScoreCard({
               <CircleIcon
                 fill={isFiftyScoreHalved ? 'white' : 'transparent'}
                 size={12}
+                strokeWidth={3}
+                className='icon-outline-black'
               />
               <div className='text-xs sm:text-sm'>
                 50
@@ -95,6 +99,8 @@ export default function ScoreCard({
               <CircleIcon
                 fill={isHundredScoreHalved ? 'white' : 'transparent'}
                 size={12}
+                strokeWidth={3}
+                className='icon-outline-black'
               />
               <div className='text-xs sm:text-sm'>
                 100

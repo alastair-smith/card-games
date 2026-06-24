@@ -71,6 +71,7 @@ export const gameUpdateSchema = z.enum(GameUpdate);
 export type Player = {
   id: UserId;
   name: PlayerName;
+  color: string;
   isReady: boolean;
   isUser: boolean;
   isHost: boolean;

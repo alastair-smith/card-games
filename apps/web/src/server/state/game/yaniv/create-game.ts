@@ -5,6 +5,7 @@ import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import { GameStage } from '~/types/games/yaniv';
 import { generatePlayerName } from '~/utils/name-generator';
+import { getRandomPlayerColor } from '~/utils/player-color';
 
 export const createGame = async ({ host }: { host: UserId }) => {
   const code = generateLobbyCode();
@@ -20,7 +21,14 @@ export const createGame = async ({ host }: { host: UserId }) => {
         code,
         type: GameType.YANIV,
         host,
-        players: [{ id: host, name: generatePlayerName(), isReady: false }],
+        players: [
+          {
+            id: host,
+            name: generatePlayerName(),
+            color: getRandomPlayerColor(),
+            isReady: false,
+          },
+        ],
       },
     ),
     setYanivState({ code }, { gameStage: GameStage.LOBBY }),
