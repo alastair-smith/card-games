@@ -183,10 +183,11 @@ function PlayerColour({
 }) {
   if (!isUser || !handleColorChange) {
     return (
-      <>
+      // Match the icon button's footprint so swatches line up with the picker.
+      <span className='flex h-10 w-10 items-center justify-center border-2 border-transparent'>
         <ColourSwatch color={color} />
         <span className='sr-only'>Player colour</span>
-      </>
+      </span>
     );
   }
 
