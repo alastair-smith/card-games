@@ -10,6 +10,7 @@ export const updatePlayerState = async ({
   value,
 }:
   | { code: GameCode; userId: UserId; field: 'name'; value: string }
+  | { code: GameCode; userId: UserId; field: 'color'; value: string }
   | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
   const lobby = await getLobby({ code });
 

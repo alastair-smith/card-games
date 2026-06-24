@@ -16,9 +16,11 @@ export type LobbyProps = {
     isReady: boolean;
     name: string;
     nameError: string;
+    color: string;
   };
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
+  handleColorChange: (color: string) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;

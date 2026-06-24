@@ -10,6 +10,7 @@ import LobbyView from './lobby.view';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_READY_UPDATE_DELAY_MS = 300;
+const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 
 export default function Lobby({
   code,
@@ -22,6 +23,7 @@ export default function Lobby({
     isReady: boolean;
     name: string;
     nameError: string;
+    color: string;
   }>(() => {
     const currentPlayer = players.find((player) => player.isUser);
 
@@ -33,6 +35,7 @@ export default function Lobby({
       isReady: currentPlayer.isReady,
       name: currentPlayer.name,
       nameError: '',
+      color: currentPlayer.color,
     };
   });
 
@@ -75,9 +78,28 @@ export default function Lobby({
     [],
   );
 
+  const debouncedUpdatePlayerColor = useCallback(
+    debounce((color: string) => {
+      updatePlayerMutation.mutate(
+        { field: 'color', code, color },
+        {
+          onError: () => {
+            toast.error('Error updating colour.');
+          },
+        },
+      );
+    }, PLAYER_COLOR_UPDATE_DELAY_MS),
+    [],
+  );
+
   const handleNameChange = (name: string) => {
     setUser((prev) => ({ ...prev, name, nameError: '' }));
     debouncedUpdatePlayerName(name);
+  };
+
+  const handleColorChange = (color: string) => {
+    setUser((prev) => ({ ...prev, color }));
+    debouncedUpdatePlayerColor(color);
   };
 
   const handleReadyChange = (isReady: boolean) => {
@@ -92,6 +114,7 @@ export default function Lobby({
       user={user}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
+      handleColorChange={handleColorChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

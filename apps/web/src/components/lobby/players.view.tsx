@@ -2,6 +2,8 @@ import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
+import { cn } from '~/utils/cn';
+import { PLAYER_COLORS } from '~/utils/player-color';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +17,7 @@ import {
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { ColorPicker } from '../ui/color-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Input } from '../ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Switch } from '../ui/switch';
 import {
   Table,
@@ -151,6 +155,61 @@ function PlayerDropdown({
   );
 }
 
+function ColourSwatch({
+  color,
+  className,
+}: {
+  color: string;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn('block size-6 rounded border border-border', className)}
+      style={{ backgroundColor: color }}
+    />
+  );
+}
+
+function PlayerColour({
+  color,
+  isUser,
+  handleColorChange,
+}: {
+  color: string;
+  isUser: boolean;
+  handleColorChange?: (color: string) => void;
+}) {
+  if (!isUser || !handleColorChange) {
+    return (
+      <>
+        <ColourSwatch color={color} />
+        <span className='sr-only'>Player colour</span>
+      </>
+    );
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant='secondary' size='icon' aria-label='Change your colour'>
+          <ColourSwatch color={color} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        // Let the picker focus its active swatch instead of the popover
+        // container, so arrow-key navigation between colours works immediately.
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
+        <ColorPicker
+          colors={PLAYER_COLORS}
+          value={color}
+          onColorSelect={handleColorChange}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function getButtonText({
   userIsHost,
   requiredPlayers,
@@ -183,9 +242,11 @@ export type PlayersProps = {
     isReady: boolean;
     name: string;
     nameError: string;
+    color?: string;
   };
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
+  handleColorChange?: (color: string) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -200,6 +261,7 @@ export default function Players({
   user,
   handleNameChange,
   handleReadyChange,
+  handleColorChange,
   handleStartGame,
   handleLeave,
   handleKick,
@@ -255,13 +317,27 @@ export default function Players({
                 </div>
               )}
               <div className='flex gap-2 items-center justify-between w-full'>
-                <div className='flex gap-2 items-center'>
-                  <span>Ready</span>
-                  <Switch
-                    disabled={!player.isUser}
-                    checked={player.isUser ? user.isReady : player.isReady}
-                    onCheckedChange={handleReadyChange}
-                  />
+                <div className='flex gap-4 items-center'>
+                  <div className='flex gap-2 items-center'>
+                    <span>Colour</span>
+                    <PlayerColour
+                      color={
+                        player.isUser
+                          ? (user.color ?? player.color)
+                          : player.color
+                      }
+                      isUser={player.isUser}
+                      handleColorChange={handleColorChange}
+                    />
+                  </div>
+                  <div className='flex gap-2 items-center'>
+                    <span>Ready</span>
+                    <Switch
+                      disabled={!player.isUser}
+                      checked={player.isUser ? user.isReady : player.isReady}
+                      onCheckedChange={handleReadyChange}
+                    />
+                  </div>
                 </div>
                 <PlayerDropdown
                   player={player}
@@ -298,6 +374,7 @@ export default function Players({
             <TableRow>
               <TableHead className='sr-only w-[1ch]'>Host</TableHead>
               <TableHead className='pl-7'>Name</TableHead>
+              <TableHead>Colour</TableHead>
               <TableHead>Ready</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -328,6 +405,17 @@ export default function Players({
                   )}
                 </TableCell>
                 <TableCell>
+                  <PlayerColour
+                    color={
+                      player.isUser
+                        ? (user.color ?? player.color)
+                        : player.color
+                    }
+                    isUser={player.isUser}
+                    handleColorChange={handleColorChange}
+                  />
+                </TableCell>
+                <TableCell>
                   <Switch
                     disabled={!player.isUser}
                     checked={player.isUser ? user.isReady : player.isReady}
@@ -349,7 +437,7 @@ export default function Players({
             {Array.from({ length: requiredPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
                     <span>Required Player</span>
@@ -361,7 +449,7 @@ export default function Players({
             {Array.from({ length: optionalPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4 opacity-50'>
                     <UserIcon size={22} />
                     <span>Optional Player</span>

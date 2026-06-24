@@ -3,6 +3,7 @@ import { protectedProcedure } from '~/server/api/trpc';
 import { updatePlayerState } from '~/server/state/game/high-card/update-player-state';
 import { playerNameSchema } from '~/types/entities';
 import { gameCodeSchema } from '~/types/game';
+import { playerColorSchema } from '~/utils/player-color';
 
 export const updatePlayer = protectedProcedure
   .input(
@@ -11,6 +12,11 @@ export const updatePlayer = protectedProcedure
         code: gameCodeSchema,
         field: z.literal('name'),
         playerName: playerNameSchema,
+      }),
+      z.object({
+        code: gameCodeSchema,
+        field: z.literal('color'),
+        color: playerColorSchema,
       }),
       z.object({
         code: gameCodeSchema,
@@ -26,6 +32,13 @@ export const updatePlayer = protectedProcedure
         userId,
         field: 'name',
         value: input.playerName,
+      });
+    } else if (input.field === 'color') {
+      await updatePlayerState({
+        code: input.code,
+        userId,
+        field: 'color',
+        value: input.color,
       });
     } else {
       await updatePlayerState({

@@ -9,6 +9,7 @@ import Players, { type PlayersProps } from './players.view';
 const handlers = {
   handleNameChange: action('handleNameChange'),
   handleReadyChange: action('handleReadyChange'),
+  handleColorChange: action('handleColorChange'),
   handleStartGame: action('handleStartGame'),
   handleKick: action('handleKick'),
   handleLeave: action('handleLeave'),
