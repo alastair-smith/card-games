@@ -45,50 +45,63 @@ const defaultProps = {
 describe('Hand', () => {
   describe('hand total', () => {
     test('shows the sum of card values', () => {
-      render(<Hand {...defaultProps} />);
+      render(<Hand color='hsl(210 70% 48%)' {...defaultProps} />);
       expect(screen.getByText('16')).toBeInTheDocument();
     });
   });
 
   describe('score note', () => {
     test('targets 50 when total score is below 50 and not yet halved', () => {
-      render(<Hand {...defaultProps} totalScore={30} />);
+      render(
+        <Hand color='hsl(210 70% 48%)' {...defaultProps} totalScore={30} />,
+      );
       // away = 50 - 30 = 20
-      expect(screen.getByText('20')).toBeInTheDocument();
-      expect(screen.getByText('50.')).toBeInTheDocument();
+      expect(screen.getByText(/20 away from 50\./)).toBeInTheDocument();
     });
 
     test('targets 100 when fifty has been halved and total score is below 100', () => {
       render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={60} />,
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          isFiftyScoreHalved={true}
+          totalScore={60}
+        />,
       );
       // away = 100 - 60 = 40
-      expect(screen.getByText('40')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
+      expect(screen.getByText(/40 away from 100\./)).toBeInTheDocument();
     });
 
     test('still targets 100 when both milestones have been halved', () => {
       render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={60} />,
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          isFiftyScoreHalved={true}
+          totalScore={60}
+        />,
       );
       // away = 100 - 60 = 40
-      expect(screen.getByText('40')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
+      expect(screen.getByText(/40 away from 100\./)).toBeInTheDocument();
     });
 
     test('shows how much beyond the max has passed', () => {
       render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={120} />,
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          isFiftyScoreHalved={true}
+          totalScore={120}
+        />,
       );
       // beyond = 120 - 100
-      expect(screen.getByText('20')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
+      expect(screen.getByText(/20 beyond 100\./)).toBeInTheDocument();
     });
   });
 
   describe('cards', () => {
     test('renders all cards in hand', () => {
-      render(<Hand {...defaultProps} />);
+      render(<Hand color='hsl(210 70% 48%)' {...defaultProps} />);
       const hand = screen.getByRole('list', { name: 'Your hand' });
       const buttons = within(hand).getAllByRole('button');
       expect(buttons).toHaveLength(3);
@@ -96,7 +109,13 @@ describe('Hand', () => {
 
     test('calls the card handler with the clicked card', () => {
       const onCardClick = vi.fn();
-      render(<Hand {...defaultProps} onCardClick={onCardClick} />);
+      render(
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          onCardClick={onCardClick}
+        />,
+      );
       fireEvent.click(
         screen.getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` }),
       );
@@ -104,7 +123,7 @@ describe('Hand', () => {
     });
 
     test('renders cards in sorted order with highest rank first', () => {
-      render(<Hand {...defaultProps} />);
+      render(<Hand color='hsl(210 70% 48%)' {...defaultProps} />);
       const hand = screen.getByRole('list', { name: 'Your hand' });
       const buttons = within(hand).getAllByRole('button');
       // defaultProps cards: ACE of CLUBS, FIVE of HEARTS, KING of SPADES
@@ -123,7 +142,13 @@ describe('Hand', () => {
         // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
         { ...cards[2]! },
       ];
-      render(<Hand {...defaultProps} cards={cardsWithHidden} />);
+      render(
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          cards={cardsWithHidden}
+        />,
+      );
       const hand = screen.getByRole('list', { name: 'Your hand' });
       const buttons = within(hand).getAllByRole('button');
       expect(buttons).toHaveLength(2);
@@ -138,7 +163,13 @@ describe('Hand', () => {
         // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
         { ...cards[2]!, selected: false },
       ];
-      render(<Hand {...defaultProps} cards={cardsWithSelection} />);
+      render(
+        <Hand
+          color='hsl(210 70% 48%)'
+          {...defaultProps}
+          cards={cardsWithSelection}
+        />,
+      );
       expect(
         screen
           .getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` })

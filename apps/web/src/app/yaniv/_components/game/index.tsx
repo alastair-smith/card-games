@@ -131,7 +131,7 @@ export default function Game({
       gameType={GameType.YANIV}
       className='h-dvh w-full overflow-hidden px-2 pb-2'
     >
-      {isUserTakingTurn && <ScreenEdgeHighlight />}
+      {isUserTakingTurn && <ScreenEdgeHighlight color={userPlayer.color} />}
 
       <div role='status' aria-live='polite' className='sr-only'>
         {isUserTakingTurn ? "It's your turn" : ''}
@@ -153,6 +153,7 @@ export default function Game({
             <RoundSummary players={roundSummary} />
           ) : (
             <PlayArea
+              color={userPlayer.color}
               playedCards={playedCards}
               discardCard={discardCard}
               isActive={
@@ -181,6 +182,7 @@ export default function Game({
 
         <Hand
           className='md:text-2xl sm:text-lg'
+          color={userPlayer.color}
           cards={cardsWithSelection}
           handTotal={handTotal}
           isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}

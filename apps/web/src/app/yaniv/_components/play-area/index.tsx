@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import { PlayingCard } from '~/components/ui/playing-card';
 import {
   PlayingCardDeck,
@@ -10,9 +10,11 @@ import {
 import type { PlayingCardValue } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
+import { playerColorHighlight } from '~/utils/player-color';
 
 type PlayAreaProps = {
   className?: string;
+  color: string;
   discardCard: PlayingCardValue | null;
   playedCards: PlayingCardValue[];
   onDiscardClick?: () => void;
@@ -26,6 +28,7 @@ type PlayAreaProps = {
 
 export default function PlayArea({
   className,
+  color,
   discardCard,
   playedCards,
   onDiscardClick,
@@ -91,6 +94,9 @@ export default function PlayArea({
       )}
     >
       <div
+        style={
+          { '--color-highlight': playerColorHighlight(color) } as CSSProperties
+        }
         className={cn(
           'flex gap-3 items-center rounded-lg p-2',
           isActive ? 'animate-pulse-bg' : '',

@@ -9,6 +9,13 @@ export const DEFAULT_PLAYER_COLOR = PLAYER_COLORS[0] ?? 'hsl(0 70% 50%)';
 export const playerColorSchema = z.string();
 
 /**
+ * A translucent tint of a player colour for highlighting interactive areas,
+ * matching the opacity of the default `--color-highlight` token.
+ */
+export const playerColorHighlight = (color: string): string =>
+  `color-mix(in srgb, ${color} 30%, transparent)`;
+
+/**
  * Pick a random player colour, preferring one not already taken in the lobby so
  * players are visually distinct. Falls back to the full palette once every colour
  * is in use.

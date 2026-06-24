@@ -7,6 +7,7 @@ export default {
 };
 
 const defaultProps: React.ComponentProps<typeof PlayArea> = {
+  color: 'hsl(210 70% 48%)',
   playedCards: [
     {
       suit: Suit.HEARTS,
