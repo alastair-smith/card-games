@@ -1,3 +1,4 @@
+import { CANDIDATE_PLAYER_COLORS } from '~/components/ui/color-picker/candidate-colors';
 import { MAX_NAME_LENGTH, type PlayerName } from '~/types/entities';
 import Scorecard from '.';
 
@@ -88,4 +89,15 @@ export const NullCards = () => (
       cardCount: null,
     }}
   />
+);
+
+export const ColorOptions = () => (
+  <div className='grid grid-cols-3 gap-4'>
+    {CANDIDATE_PLAYER_COLORS.map(({ name, value }) => (
+      <div key={name} className='flex flex-col gap-1'>
+        <span className='text-dark-text text-sm font-semibold'>{name}</span>
+        <Scorecard {...defaultProps} color={value} />
+      </div>
+    ))}
+  </div>
 );

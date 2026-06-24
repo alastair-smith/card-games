@@ -4,6 +4,7 @@ import { cn } from '~/utils/cn';
 
 type ScoreCardProps = {
   className?: string;
+  color?: string;
   cardCount: number | null;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
@@ -16,6 +17,7 @@ type ScoreCardProps = {
 
 export default function ScoreCard({
   className,
+  color,
   cardCount,
   isFiftyScoreHalved,
   isHundredScoreHalved,
@@ -27,6 +29,7 @@ export default function ScoreCard({
 }: ScoreCardProps) {
   return (
     <div
+      style={color && !isYanivCalled ? { backgroundColor: color } : undefined}
       className={cn(
         'relative bg-alt-background rounded border-white border flex flex-col',
         isYanivCalled ? 'bg-black' : '',
