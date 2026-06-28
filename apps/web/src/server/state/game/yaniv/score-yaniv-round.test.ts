@@ -34,7 +34,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -49,7 +49,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -83,7 +83,7 @@ describe('scoreYanivRound', () => {
       players: [
         {
           id: USER_1,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 2,
           hand: [
             { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -98,7 +98,7 @@ describe('scoreYanivRound', () => {
         },
         {
           id: USER_2,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 2,
           hand: [
             { suit: Suit.DIAMONDS, rank: Rank.THREE },
@@ -133,7 +133,7 @@ describe('scoreYanivRound', () => {
       players: [
         {
           id: USER_1,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 2,
           hand: [
             { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -148,7 +148,7 @@ describe('scoreYanivRound', () => {
         },
         {
           id: USER_2,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 2,
           hand: [
             { suit: Suit.DIAMONDS, rank: Rank.ACE },
@@ -198,7 +198,7 @@ describe('scoreYanivRound', () => {
       players: [
         {
           id: USER_1,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 1,
           hand: [{ suit: Suit.HEARTS, rank: Rank.ACE }],
           name: 'Player 1' as PlayerName,
@@ -210,7 +210,7 @@ describe('scoreYanivRound', () => {
         },
         {
           id: USER_2,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 1,
           hand: [{ suit: Suit.DIAMONDS, rank: Rank.ACE }],
           name: 'Player 2' as PlayerName,
@@ -222,7 +222,7 @@ describe('scoreYanivRound', () => {
         },
         {
           id: USER_3,
-          color: 'hsl(210 70% 48%)',
+          color: 'cyan',
           cardCount: 1,
           hand: [{ suit: Suit.CLUBS, rank: Rank.FIVE }],
           name: 'Player 3' as PlayerName,

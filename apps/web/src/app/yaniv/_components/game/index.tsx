@@ -5,6 +5,7 @@ import { ScreenEdgeHighlight } from '~/components/ui/screen-edge-highlight';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import { GameViewStage, type YanivPlayingCard } from '~/types/games/yaniv';
+import type { PlayerColor } from '~/utils/player-color';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
 import Hand from '../hand';
@@ -32,7 +33,7 @@ type BaseGameProps = {
   onAutoPlayDrawnCard?: () => void;
   players: {
     id: UserId;
-    color: string;
+    color: PlayerColor;
     cardCount: number;
     isFiftyScoreHalved: boolean;
     isHundredScoreHalved: boolean;

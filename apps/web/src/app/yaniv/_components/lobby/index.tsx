@@ -6,6 +6,7 @@ import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
+import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
@@ -23,7 +24,7 @@ export default function Lobby({
     isReady: boolean;
     name: string;
     nameError: string;
-    color: string;
+    color: PlayerColor;
   }>(() => {
     const currentPlayer = players.find((player) => player.isUser);
 
@@ -79,7 +80,7 @@ export default function Lobby({
   );
 
   const debouncedUpdatePlayerColor = useCallback(
-    debounce((color: string, previousColor: string) => {
+    debounce((color: PlayerColor, previousColor: PlayerColor) => {
       updatePlayerMutation.mutate(
         { field: 'color', code, color },
         {
@@ -99,9 +100,12 @@ export default function Lobby({
   };
 
   const handleColorChange = (color: string) => {
+    // The picker only ever offers palette colours; validate to satisfy the
+    // PlayerColor type (and guard against anything unexpected).
+    const nextColor = playerColorSchema.parse(color);
     const previousColor = user.color;
-    setUser((prev) => ({ ...prev, color }));
-    debouncedUpdatePlayerColor(color, previousColor);
+    setUser((prev) => ({ ...prev, color: nextColor }));
+    debouncedUpdatePlayerColor(nextColor, previousColor);
   };
 
   const handleReadyChange = (isReady: boolean) => {

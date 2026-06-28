@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { cn } from '~/utils/cn';
-import { playerColorHighlight } from '~/utils/player-color';
+import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 
 /**
  * A full-viewport frame that highlights the screen edges. Tinted with the
@@ -11,7 +11,7 @@ export function ScreenEdgeHighlight({
   color,
 }: {
   className?: string;
-  color?: string;
+  color?: PlayerColor;
 }) {
   return (
     <div

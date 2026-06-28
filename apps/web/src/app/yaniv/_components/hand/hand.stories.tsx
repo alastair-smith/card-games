@@ -9,7 +9,7 @@ export default {
 };
 
 const defaultProps: React.ComponentProps<typeof Hand> = {
-  color: 'hsl(210 70% 48%)',
+  color: 'cyan',
   cards: [
     {
       suit: Suit.CLUBS,

@@ -1,5 +1,5 @@
-import { CANDIDATE_PLAYER_COLORS } from '~/components/ui/color-picker/candidate-colors';
 import { MAX_NAME_LENGTH, type PlayerName } from '~/types/entities';
+import { PLAYER_COLOR_OPTIONS } from '~/utils/player-color';
 import Scorecard from '.';
 
 export default {
@@ -7,7 +7,7 @@ export default {
 };
 
 const defaultProps: React.ComponentProps<typeof Scorecard> = {
-  color: 'hsl(210 70% 48%)',
+  color: 'cyan',
   cardCount: 7,
   isFiftyScoreHalved: false,
   isHundredScoreHalved: false,
@@ -94,10 +94,10 @@ export const NullCards = () => (
 
 export const ColorOptions = () => (
   <div className='grid grid-cols-3 gap-4'>
-    {CANDIDATE_PLAYER_COLORS.map(({ name, value }) => (
-      <div key={name} className='flex flex-col gap-1'>
+    {PLAYER_COLOR_OPTIONS.map(({ key, name }) => (
+      <div key={key} className='flex flex-col gap-1'>
         <span className='text-dark-text text-sm font-semibold'>{name}</span>
-        <Scorecard {...defaultProps} color={value} />
+        <Scorecard {...defaultProps} color={key} />
       </div>
     ))}
   </div>

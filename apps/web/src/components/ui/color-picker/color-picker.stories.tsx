@@ -1,7 +1,7 @@
 import { action } from '@ladle/react';
 import { useState } from 'react';
+import { PLAYER_COLOR_OPTIONS } from '~/utils/player-color';
 import { ColorPicker } from '.';
-import { CANDIDATE_PLAYER_COLORS } from './candidate-colors';
 
 export default {
   title: 'Components / Color Picker',
@@ -9,14 +9,12 @@ export default {
 
 const onColorSelect = action('onColorSelect');
 
-const colorValues = CANDIDATE_PLAYER_COLORS.map(({ value }) => value);
-
 export const Default = () => {
   const [color, setColor] = useState<string>();
 
   return (
     <ColorPicker
-      colors={colorValues}
+      colors={PLAYER_COLOR_OPTIONS}
       value={color}
       onColorSelect={(selected) => {
         setColor(selected);
@@ -27,11 +25,13 @@ export const Default = () => {
 };
 
 export const PreSelected = () => {
-  const [color, setColor] = useState<string | undefined>(colorValues[3]);
+  const [color, setColor] = useState<string | undefined>(
+    PLAYER_COLOR_OPTIONS[3]?.key,
+  );
 
   return (
     <ColorPicker
-      colors={colorValues}
+      colors={PLAYER_COLOR_OPTIONS}
       value={color}
       onColorSelect={(selected) => {
         setColor(selected);

@@ -24,10 +24,10 @@ const USER_2_CARDS: YanivPlayingCard[] = [
   { suit: Suit.DIAMONDS, rank: Rank.FIVE },
 ];
 
-const makePlayers = () => [
+const makePlayers = (): InProgressState['players'] => [
   {
     id: USER_1,
-    color: 'hsl(210 70% 48%)',
+    color: 'cyan',
     cardCount: 2,
     hand: USER_1_CARDS,
     name: 'Player 1' as PlayerName,
@@ -39,7 +39,7 @@ const makePlayers = () => [
   },
   {
     id: USER_2,
-    color: 'hsl(210 70% 48%)',
+    color: 'cyan',
     cardCount: 2,
     hand: USER_2_CARDS,
     name: 'Player 2' as PlayerName,

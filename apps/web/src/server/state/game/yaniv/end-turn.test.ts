@@ -52,7 +52,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 3,
       hand: [
         { suit: Suit.HEARTS, rank: Rank.FIVE },
@@ -68,7 +68,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -96,7 +96,7 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -111,7 +111,7 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -171,7 +171,7 @@ describe('endTurn', () => {
         players: [
           {
             id: USER_1,
-            color: 'hsl(210 70% 48%)',
+            color: 'cyan',
             cardCount: 0,
             hand: [],
             name: 'Player 1' as PlayerName,
@@ -183,7 +183,7 @@ describe('endTurn', () => {
           },
           {
             id: USER_2,
-            color: 'hsl(210 70% 48%)',
+            color: 'cyan',
             cardCount: 2,
             hand: USER_2_HAND,
             name: 'Player 2' as PlayerName,
@@ -292,7 +292,7 @@ describe('endTurn', () => {
           players: [
             {
               id: USER_1,
-              color: 'hsl(210 70% 48%)',
+              color: 'cyan',
               cardCount: 2,
               hand: [
                 { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -307,7 +307,7 @@ describe('endTurn', () => {
             },
             {
               id: USER_2,
-              color: 'hsl(210 70% 48%)',
+              color: 'cyan',
               cardCount: 2,
               hand: [
                 { suit: Suit.DIAMONDS, rank: Rank.TWO },
@@ -338,7 +338,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -353,7 +353,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.DIAMONDS, rank: Rank.TWO },
@@ -385,7 +385,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
@@ -397,7 +397,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
@@ -426,7 +426,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
@@ -438,7 +438,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
@@ -465,7 +465,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -480,7 +480,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -548,7 +548,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
@@ -560,7 +560,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
@@ -587,7 +587,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_1_HAND,
                 name: 'Player 1' as PlayerName,
@@ -599,7 +599,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: USER_2_HAND,
                 name: 'Player 2' as PlayerName,
@@ -634,7 +634,7 @@ describe('endTurn', () => {
             players: [
               {
                 id: USER_1,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -649,7 +649,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_2,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -664,7 +664,7 @@ describe('endTurn', () => {
               },
               {
                 id: USER_3,
-                color: 'hsl(210 70% 48%)',
+                color: 'cyan',
                 cardCount: 2,
                 hand: [
                   { suit: Suit.HEARTS, rank: Rank.TWO },
@@ -698,7 +698,7 @@ describe('endTurn', () => {
           players: [
             {
               id: USER_1,
-              color: 'hsl(210 70% 48%)',
+              color: 'cyan',
               cardCount: 2,
               hand: [
                 { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -713,7 +713,7 @@ describe('endTurn', () => {
             },
             {
               id: USER_2,
-              color: 'hsl(210 70% 48%)',
+              color: 'cyan',
               cardCount: 2,
               hand: [
                 { suit: Suit.DIAMONDS, rank: Rank.FOUR },

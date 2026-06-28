@@ -5,12 +5,12 @@ import {
 } from '~/components/ui/playing-card';
 import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
-import { playerColorHighlight } from '~/utils/player-color';
+import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
 
 type HandProps = {
   className?: string;
-  color: string;
+  color: PlayerColor;
   cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
   handTotal: number;
   isFiftyScoreHalved: boolean;

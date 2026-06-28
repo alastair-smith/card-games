@@ -1,10 +1,11 @@
 import { CircleIcon, MegaphoneIcon, PlayIcon } from 'lucide-react';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
+import { type PlayerColor, playerColorValue } from '~/utils/player-color';
 
 type ScoreCardProps = {
   className?: string;
-  color: string;
+  color: PlayerColor;
   cardCount: number | null;
   isFiftyScoreHalved: boolean;
   isHundredScoreHalved: boolean;
@@ -29,7 +30,9 @@ export default function ScoreCard({
 }: ScoreCardProps) {
   return (
     <div
-      style={isYanivCalled ? undefined : { backgroundColor: color }}
+      style={
+        isYanivCalled ? undefined : { backgroundColor: playerColorValue(color) }
+      }
       className={cn(
         'relative bg-alt-background rounded border-white border flex flex-col',
         'text-white font-extrabold text-outline-black',

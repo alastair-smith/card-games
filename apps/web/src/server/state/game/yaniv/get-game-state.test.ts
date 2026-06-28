@@ -23,10 +23,10 @@ const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;
 const USER_2 = 'user-2' as UserId;
 
-const makePlayers = () => [
+const makePlayers = (): InProgressState['players'] => [
   {
     id: USER_1,
-    color: 'hsl(210 70% 48%)',
+    color: 'cyan',
     cardCount: 2,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.TWO },
@@ -41,7 +41,7 @@ const makePlayers = () => [
   },
   {
     id: USER_2,
-    color: 'hsl(210 70% 48%)',
+    color: 'cyan',
     cardCount: 2,
     hand: [
       { suit: Suit.CLUBS, rank: Rank.FOUR },

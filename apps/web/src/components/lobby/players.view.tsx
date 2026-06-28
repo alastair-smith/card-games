@@ -3,7 +3,11 @@ import { useMemo } from 'react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
 import { cn } from '~/utils/cn';
-import { PLAYER_COLORS } from '~/utils/player-color';
+import {
+  PLAYER_COLOR_OPTIONS,
+  type PlayerColor,
+  playerColorValue,
+} from '~/utils/player-color';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -159,13 +163,13 @@ function ColourSwatch({
   color,
   className,
 }: {
-  color: string;
+  color: PlayerColor;
   className?: string;
 }) {
   return (
     <span
       className={cn('block size-6 rounded border border-border', className)}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: playerColorValue(color) }}
     />
   );
 }
@@ -176,9 +180,9 @@ function PlayerColour({
   takenColors,
   handleColorChange,
 }: {
-  color: string;
+  color: PlayerColor;
   isUser: boolean;
-  takenColors?: string[];
+  takenColors?: PlayerColor[];
   handleColorChange?: (color: string) => void;
 }) {
   if (!isUser || !handleColorChange) {
@@ -204,7 +208,7 @@ function PlayerColour({
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <ColorPicker
-          colors={PLAYER_COLORS}
+          colors={PLAYER_COLOR_OPTIONS}
           value={color}
           disabledColors={takenColors}
           onColorSelect={handleColorChange}
@@ -246,7 +250,7 @@ export type PlayersProps = {
     isReady: boolean;
     name: string;
     nameError: string;
-    color?: string;
+    color?: PlayerColor;
   };
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;

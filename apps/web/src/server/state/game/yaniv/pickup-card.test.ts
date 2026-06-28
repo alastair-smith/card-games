@@ -55,7 +55,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [CARD_1, CARD_2],
       name: 'Player 1' as PlayerName,
@@ -67,7 +67,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
-      color: 'hsl(210 70% 48%)',
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -183,7 +183,7 @@ describe('pickupCard', () => {
         players: expect.arrayContaining([
           expect.objectContaining({
             id: USER_1,
-            color: 'hsl(210 70% 48%)',
+            color: 'cyan',
             cardCount: 3,
           }),
         ]),
@@ -277,7 +277,7 @@ describe('pickupCard', () => {
         players: expect.arrayContaining([
           expect.objectContaining({
             id: USER_1,
-            color: 'hsl(210 70% 48%)',
+            color: 'cyan',
             cardCount: 3,
           }),
         ]),

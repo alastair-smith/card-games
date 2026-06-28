@@ -10,11 +10,11 @@ import {
 import type { PlayingCardValue } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
-import { playerColorHighlight } from '~/utils/player-color';
+import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 
 type PlayAreaProps = {
   className?: string;
-  color: string;
+  color: PlayerColor;
   discardCard: PlayingCardValue | null;
   playedCards: PlayingCardValue[];
   onDiscardClick?: () => void;
