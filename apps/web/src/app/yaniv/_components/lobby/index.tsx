@@ -40,8 +40,7 @@ export default function Lobby({
     };
   });
 
-  // The colour the server has last confirmed, so a failed update reverts to the
-  // real persisted colour rather than an intermediate optimistic one.
+  // For reverting on server failure
   const confirmedColor = useRef(user.color);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
@@ -107,8 +106,6 @@ export default function Lobby({
   };
 
   const handleColorChange = (color: string) => {
-    // The picker only ever offers palette colours; validate to satisfy the
-    // PlayerColor type (and guard against anything unexpected).
     const nextColor = playerColorSchema.parse(color);
     setUser((prev) => ({ ...prev, color: nextColor }));
     debouncedUpdatePlayerColor(nextColor);
