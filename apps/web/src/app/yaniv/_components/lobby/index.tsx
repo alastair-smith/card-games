@@ -1,7 +1,7 @@
 'use client';
 
 import debounce from 'lodash/debounce';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
@@ -39,6 +39,10 @@ export default function Lobby({
       color: currentPlayer.color,
     };
   });
+
+  // The colour the server has last confirmed, so a failed update reverts to the
+  // real persisted colour rather than an intermediate optimistic one.
+  const confirmedColor = useRef(user.color);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
@@ -80,12 +84,15 @@ export default function Lobby({
   );
 
   const debouncedUpdatePlayerColor = useCallback(
-    debounce((color: PlayerColor, previousColor: PlayerColor) => {
+    debounce((color: PlayerColor) => {
       updatePlayerMutation.mutate(
         { field: 'color', code, color },
         {
+          onSuccess: () => {
+            confirmedColor.current = color;
+          },
           onError: () => {
-            setUser((prev) => ({ ...prev, color: previousColor }));
+            setUser((prev) => ({ ...prev, color: confirmedColor.current }));
             toast.error('Error updating colour.');
           },
         },
@@ -103,9 +110,8 @@ export default function Lobby({
     // The picker only ever offers palette colours; validate to satisfy the
     // PlayerColor type (and guard against anything unexpected).
     const nextColor = playerColorSchema.parse(color);
-    const previousColor = user.color;
     setUser((prev) => ({ ...prev, color: nextColor }));
-    debouncedUpdatePlayerColor(nextColor, previousColor);
+    debouncedUpdatePlayerColor(nextColor);
   };
 
   const handleReadyChange = (isReady: boolean) => {
