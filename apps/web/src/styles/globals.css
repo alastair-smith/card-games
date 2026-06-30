@@ -144,7 +144,7 @@
 
 /* custom classes */
 
-/* Black outline around text so white text stays legible on any player colour.
+/* Black outline around text so white text stays legible on any colour.
    paint-order draws the stroke behind the fill, keeping the glyphs crisp. */
 .text-outline-black {
   paint-order: stroke fill;

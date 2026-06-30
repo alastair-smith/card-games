@@ -1,11 +1,7 @@
 import { z } from 'zod';
 
 /**
- * The fixed palette of player colours, keyed by a stable identifier. The key is
- * what gets stored in game state and passed around; the CSS colour string is
- * looked up from here at render time. Each colour also carries a human-readable
- * name used for accessible labels. Saturated mid-to-deep tones spread across the
- * hue wheel, dark enough that the white scorecard text stays legible.
+ * Players can choose from these colours to change their colour preference.
  */
 export const PLAYER_COLORS = {
   red: { name: 'Red', value: 'hsl(0 70% 50%)' },
@@ -20,7 +16,10 @@ export const PLAYER_COLORS = {
   plum: { name: 'Plum', value: 'hsl(295 55% 50%)' },
   fuchsia: { name: 'Fuchsia', value: 'hsl(328 68% 48%)' },
   brown: { name: 'Brown', value: 'hsl(25 35% 42%)' },
-} as const;
+} as const satisfies Record<
+  string,
+  { name: string; value: `hsl(${number} ${number}% ${number}%)` }
+>;
 
 export type PlayerColor = keyof typeof PLAYER_COLORS;
 
