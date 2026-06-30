@@ -9,8 +9,12 @@ export default {
 
 const onColorSelect = action('onColorSelect');
 
+const FIRST_COLOR = PLAYER_COLOR_OPTIONS[0]?.key;
+
+// The picker is a swatch button showing the current colour; open it to reveal
+// the colour popover.
 export const Default = () => {
-  const [color, setColor] = useState<string>();
+  const [color, setColor] = useState<string | undefined>(FIRST_COLOR);
 
   return (
     <ColorPicker
@@ -24,15 +28,15 @@ export const Default = () => {
   );
 };
 
-export const PreSelected = () => {
-  const [color, setColor] = useState<string | undefined>(
-    PLAYER_COLOR_OPTIONS[3]?.key,
-  );
+// Colours taken by other players are shown disabled in the popover.
+export const WithTakenColours = () => {
+  const [color, setColor] = useState<string | undefined>(FIRST_COLOR);
 
   return (
     <ColorPicker
       colors={PLAYER_COLOR_OPTIONS}
       value={color}
+      disabledColors={['cyan', 'green', 'indigo']}
       onColorSelect={(selected) => {
         setColor(selected);
         onColorSelect(selected);

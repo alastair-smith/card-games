@@ -2,7 +2,6 @@ import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
-import { cn } from '~/utils/cn';
 import {
   PLAYER_COLOR_OPTIONS,
   type PlayerColor,
@@ -21,7 +20,7 @@ import {
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { ColorPicker } from '../ui/color-picker';
+import { ColorPicker, ColorSwatch } from '../ui/color-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Input } from '../ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Switch } from '../ui/switch';
 import {
   Table,
@@ -159,21 +157,6 @@ function PlayerDropdown({
   );
 }
 
-function ColourSwatch({
-  color,
-  className,
-}: {
-  color: PlayerColor;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn('block size-6 rounded border border-border', className)}
-      style={{ backgroundColor: playerColorValue(color) }}
-    />
-  );
-}
-
 function PlayerColour({
   color,
   isUser,
@@ -189,32 +172,20 @@ function PlayerColour({
     return (
       // Match the icon button's footprint so swatches line up with the picker.
       <span className='flex h-10 w-10 items-center justify-center border-2 border-transparent'>
-        <ColourSwatch color={color} />
+        <ColorSwatch color={playerColorValue(color)} />
         <span className='sr-only'>Player colour</span>
       </span>
     );
   }
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant='secondary' size='icon' aria-label='Change your colour'>
-          <ColourSwatch color={color} />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        // Let the picker focus its active swatch instead of the popover
-        // container, so arrow-key navigation between colours works immediately.
-        onOpenAutoFocus={(event) => event.preventDefault()}
-      >
-        <ColorPicker
-          colors={PLAYER_COLOR_OPTIONS}
-          value={color}
-          disabledColors={takenColors}
-          onColorSelect={handleColorChange}
-        />
-      </PopoverContent>
-    </Popover>
+    <ColorPicker
+      label='Change your colour'
+      colors={PLAYER_COLOR_OPTIONS}
+      value={color}
+      disabledColors={takenColors}
+      onColorSelect={handleColorChange}
+    />
   );
 }
 
