@@ -5,12 +5,9 @@ import {
 } from '~/components/ui/playing-card';
 import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
-import {
-  type PlayerColor,
-  playerColorHighlight,
-  playerColorValue,
-} from '~/utils/player-color';
+import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
+import HandTotal from '../hand-total';
 
 type HandProps = {
   className?: string;
@@ -33,11 +30,6 @@ export default function Hand({
   onCardClick,
   isActive,
 }: HandProps) {
-  const scoreNote =
-    !isFiftyScoreHalved && totalScore < 50
-      ? { target: 50, away: 50 - totalScore }
-      : { target: 100, away: 100 - totalScore };
-
   const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 
   return (
@@ -73,25 +65,12 @@ export default function Hand({
         )}
       </ol>
 
-      <div
-        style={{ backgroundColor: playerColorValue(color) }}
-        className='flex flex-col rounded p-2 h-fit text-white font-extrabold text-outline-black'
-      >
-        <div className='flex flex-col items-end'>
-          <div>Hand total:</div>
-          <output aria-label='Hand total' className='min-w-[2ch] text-2xl'>
-            {handTotal}
-          </output>
-        </div>
-        <div className='text-sm flex flex-col items-end'>
-          <span>Total score:</span>
-          <span>
-            {Math.abs(scoreNote.away)}
-            {scoreNote.away >= 0 ? ' away from ' : ' beyond '}
-            {scoreNote.target}.
-          </span>
-        </div>
-      </div>
+      <HandTotal
+        color={color}
+        handTotal={handTotal}
+        isFiftyScoreHalved={isFiftyScoreHalved}
+        totalScore={totalScore}
+      />
     </div>
   );
 }

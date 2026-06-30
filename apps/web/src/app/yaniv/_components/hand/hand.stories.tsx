@@ -2,7 +2,6 @@ import { action } from '@ladle/react';
 import { useState } from 'react';
 import { Rank, Suit } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { PLAYER_COLOR_OPTIONS } from '~/utils/player-color';
 import Hand from '.';
 
 export default {
@@ -71,14 +70,3 @@ export const FullHand = () => {
 
   return <Hand {...defaultProps} cards={cards} onCardClick={updateCard} />;
 };
-
-export const TotalInAllColours = () => (
-  <div className='grid grid-cols-2 gap-4'>
-    {PLAYER_COLOR_OPTIONS.map(({ key, name }) => (
-      <div key={key} className='flex flex-col gap-1'>
-        <span className='text-dark-text text-sm font-semibold'>{name}</span>
-        <Hand {...defaultProps} color={key} handTotal={37} totalScore={28} />
-      </div>
-    ))}
-  </div>
-);
