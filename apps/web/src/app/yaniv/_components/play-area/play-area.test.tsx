@@ -70,26 +70,46 @@ const playedCards = [
 
 describe('PlayArea', () => {
   test('always renders the deck', () => {
-    render(<PlayArea discardCard={discardCard} playedCards={playedCards} />);
+    render(
+      <PlayArea
+        color='cyan'
+        discardCard={discardCard}
+        playedCards={playedCards}
+      />,
+    );
     expect(screen.getByTestId('deck')).toBeInTheDocument();
   });
 
   test('renders the discard card when one is present', () => {
-    render(<PlayArea discardCard={discardCard} playedCards={playedCards} />);
+    render(
+      <PlayArea
+        color='cyan'
+        discardCard={discardCard}
+        playedCards={playedCards}
+      />,
+    );
     expect(
       screen.getByTestId(`card-${Suit.CLUBS}-${Rank.FOUR}`),
     ).toBeInTheDocument();
   });
 
   test('renders no discard card when the pile is empty', () => {
-    render(<PlayArea discardCard={null} playedCards={playedCards} />);
+    render(
+      <PlayArea color='cyan' discardCard={null} playedCards={playedCards} />,
+    );
     expect(
       screen.queryByTestId(`card-${Suit.CLUBS}-${Rank.FOUR}`),
     ).not.toBeInTheDocument();
   });
 
   test('renders all played cards', () => {
-    render(<PlayArea discardCard={discardCard} playedCards={playedCards} />);
+    render(
+      <PlayArea
+        color='cyan'
+        discardCard={discardCard}
+        playedCards={playedCards}
+      />,
+    );
     expect(
       screen.getByTestId(`card-${Suit.HEARTS}-${Rank.SEVEN}`),
     ).toBeInTheDocument();
@@ -99,7 +119,9 @@ describe('PlayArea', () => {
   });
 
   test('renders no played cards when none have been played', () => {
-    render(<PlayArea discardCard={discardCard} playedCards={[]} />);
+    render(
+      <PlayArea color='cyan' discardCard={discardCard} playedCards={[]} />,
+    );
     expect(
       screen.queryByTestId(`card-${Suit.HEARTS}-${Rank.SEVEN}`),
     ).not.toBeInTheDocument();
@@ -109,6 +131,7 @@ describe('PlayArea', () => {
     const onDeckClick = vi.fn();
     render(
       <PlayArea
+        color='cyan'
         discardCard={discardCard}
         playedCards={playedCards}
         onDeckClick={onDeckClick}
@@ -123,6 +146,7 @@ describe('PlayArea', () => {
     const onDiscardClick = vi.fn();
     render(
       <PlayArea
+        color='cyan'
         discardCard={discardCard}
         playedCards={playedCards}
         onDiscardClick={onDiscardClick}
@@ -138,6 +162,7 @@ describe('PlayArea', () => {
       const onDeckClick = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           onDeckClick={onDeckClick}
@@ -152,6 +177,7 @@ describe('PlayArea', () => {
       const onDiscardClick = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           onDiscardClick={onDiscardClick}
@@ -170,6 +196,7 @@ describe('PlayArea', () => {
       vi.useFakeTimers();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           drawnCard={drawnCard}
@@ -193,6 +220,7 @@ describe('PlayArea', () => {
       const onDeckClick = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           drawnCard={drawnCard}
@@ -214,6 +242,7 @@ describe('PlayArea', () => {
       const onAutoPlayDrawnCard = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           drawnCard={drawnCard}
@@ -238,6 +267,7 @@ describe('PlayArea', () => {
       const onAutoPlayDrawnCard = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           drawnCard={drawnCard}
@@ -271,6 +301,7 @@ describe('PlayArea', () => {
       const onDrawnCardDismissed = vi.fn();
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           drawnCard={drawnCard}
@@ -300,6 +331,7 @@ describe('PlayArea', () => {
     test('highlights the top card when it can be insta played', () => {
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           canAutoPlay={true}
@@ -314,6 +346,7 @@ describe('PlayArea', () => {
     test('does not highlight top card when it cannot be insta played', () => {
       render(
         <PlayArea
+          color='cyan'
           discardCard={discardCard}
           playedCards={playedCards}
           canAutoPlay={false}

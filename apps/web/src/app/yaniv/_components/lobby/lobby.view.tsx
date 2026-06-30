@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
+import type { PlayerColor } from '~/utils/player-color';
 
 export type LobbyProps = {
   code: GameCode;
@@ -16,9 +17,11 @@ export type LobbyProps = {
     isReady: boolean;
     name: string;
     nameError: string;
+    color: PlayerColor;
   };
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
+  handleColorChange: (color: string) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;

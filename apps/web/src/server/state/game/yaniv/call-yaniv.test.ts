@@ -41,6 +41,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -55,6 +56,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -117,6 +119,7 @@ describe('callYaniv', () => {
         players: [
           {
             id: USER_1,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.FIVE },
@@ -131,6 +134,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_2,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -191,6 +195,7 @@ describe('callYaniv', () => {
         players: [
           {
             id: USER_1,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -205,6 +210,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_2,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },
@@ -238,6 +244,7 @@ describe('callYaniv', () => {
         players: [
           {
             id: USER_1,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -252,6 +259,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_2,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },
@@ -284,6 +292,7 @@ describe('callYaniv', () => {
         players: [
           {
             id: USER_1,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -298,6 +307,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_2,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.TWO },
@@ -312,6 +322,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_3,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.SPADES, rank: Rank.TWO },
@@ -357,6 +368,7 @@ describe('callYaniv', () => {
         players: [
           {
             id: USER_1,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
@@ -371,6 +383,7 @@ describe('callYaniv', () => {
           },
           {
             id: USER_2,
+            color: 'cyan',
             cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },

@@ -73,6 +73,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
+      color: 'cyan',
       cardCount: 3,
       hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
       name: 'Player 1' as PlayerName,
@@ -84,6 +85,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
+      color: 'cyan',
       cardCount: 5,
       hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
       name: 'Player 2' as PlayerName,
@@ -167,8 +169,16 @@ describe('startNewRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
     expect(savedState).toMatchObject({
       players: expect.arrayContaining([
-        expect.objectContaining({ id: USER_1, cardCount: HAND_SIZE }),
-        expect.objectContaining({ id: USER_2, cardCount: HAND_SIZE }),
+        expect.objectContaining({
+          id: USER_1,
+          color: 'cyan',
+          cardCount: HAND_SIZE,
+        }),
+        expect.objectContaining({
+          id: USER_2,
+          color: 'cyan',
+          cardCount: HAND_SIZE,
+        }),
       ]),
     });
   });

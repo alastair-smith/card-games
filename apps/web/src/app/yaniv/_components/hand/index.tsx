@@ -1,13 +1,17 @@
+import type { CSSProperties } from 'react';
 import {
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
 import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
+import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
+import HandTotal from '../hand-total';
 
 type HandProps = {
   className?: string;
+  color: PlayerColor;
   cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
   handTotal: number;
   isFiftyScoreHalved: boolean;
@@ -18,6 +22,7 @@ type HandProps = {
 
 export default function Hand({
   className,
+  color,
   cards,
   handTotal,
   isFiftyScoreHalved,
@@ -25,17 +30,15 @@ export default function Hand({
   onCardClick,
   isActive,
 }: HandProps) {
-  const scoreNote =
-    !isFiftyScoreHalved && totalScore < 50
-      ? { target: 50, away: 50 - totalScore }
-      : { target: 100, away: 100 - totalScore };
-
   const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 
   return (
     <div className={cn('flex gap-2 justify-between items-start', className)}>
       <ol
         aria-label='Your hand'
+        style={
+          { '--color-highlight': playerColorHighlight(color) } as CSSProperties
+        }
         className={cn(
           'flex flex-row flex-wrap gap-2 rounded-lg p-2 list-none',
           isActive ? 'animate-pulse-bg' : '',
@@ -62,23 +65,12 @@ export default function Hand({
         )}
       </ol>
 
-      <div className='flex flex-col bg-alt-background rounded p-2 h-fit'>
-        <div className='flex flex-col items-center'>
-          <div>Hand total:</div>
-          <output
-            aria-label='Hand total'
-            className='min-w-[2ch] text-2xl font-semibold'
-          >
-            {handTotal}
-          </output>
-        </div>
-        <div className='text-sm'>
-          Your total score is{' '}
-          <span className='font-semibold'>{Math.abs(scoreNote.away)}</span>{' '}
-          {scoreNote.away >= 0 ? 'away from ' : 'beyond '}
-          <span className='font-semibold'>{scoreNote.target}.</span>
-        </div>
-      </div>
+      <HandTotal
+        color={color}
+        handTotal={handTotal}
+        isFiftyScoreHalved={isFiftyScoreHalved}
+        totalScore={totalScore}
+      />
     </div>
   );
 }

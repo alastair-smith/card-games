@@ -23,6 +23,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   players: [
     {
       id: '1' as UserId,
+      color: 'red',
       cardCount: 7,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
@@ -34,6 +35,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
     {
       id: '2' as UserId,
+      color: 'cyan',
       cardCount: 0,
       isFiftyScoreHalved: true,
       isHundredScoreHalved: false,
@@ -46,6 +48,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
     {
       id: '3' as UserId,
+      color: 'purple',
       cardCount: 0,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
@@ -56,6 +59,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
     {
       id: '4' as UserId,
+      color: 'green',
       cardCount: 0,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
@@ -66,6 +70,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
     {
       id: '5' as UserId,
+      color: 'indigo',
       cardCount: 0,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
@@ -76,6 +81,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
     },
     {
       id: '6' as UserId,
+      color: 'fuchsia',
       cardCount: 0,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,

@@ -63,6 +63,7 @@ const baseProps = {
   players: [
     {
       id: '1' as UserId,
+      color: 'red' as const,
       cardCount: 7,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
@@ -74,6 +75,7 @@ const baseProps = {
     },
     {
       id: '2' as UserId,
+      color: 'cyan' as const,
       cardCount: 5,
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,

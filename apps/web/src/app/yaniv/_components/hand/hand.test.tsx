@@ -35,57 +35,14 @@ const cards = [
 ];
 
 const defaultProps = {
+  color: 'cyan' as const,
   cards,
   handTotal: 16,
   isFiftyScoreHalved: false,
-  isHundredScoreHalved: false,
   totalScore: 0,
 };
 
 describe('Hand', () => {
-  describe('hand total', () => {
-    test('shows the sum of card values', () => {
-      render(<Hand {...defaultProps} />);
-      expect(screen.getByText('16')).toBeInTheDocument();
-    });
-  });
-
-  describe('score note', () => {
-    test('targets 50 when total score is below 50 and not yet halved', () => {
-      render(<Hand {...defaultProps} totalScore={30} />);
-      // away = 50 - 30 = 20
-      expect(screen.getByText('20')).toBeInTheDocument();
-      expect(screen.getByText('50.')).toBeInTheDocument();
-    });
-
-    test('targets 100 when fifty has been halved and total score is below 100', () => {
-      render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={60} />,
-      );
-      // away = 100 - 60 = 40
-      expect(screen.getByText('40')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
-    });
-
-    test('still targets 100 when both milestones have been halved', () => {
-      render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={60} />,
-      );
-      // away = 100 - 60 = 40
-      expect(screen.getByText('40')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
-    });
-
-    test('shows how much beyond the max has passed', () => {
-      render(
-        <Hand {...defaultProps} isFiftyScoreHalved={true} totalScore={120} />,
-      );
-      // beyond = 120 - 100
-      expect(screen.getByText('20')).toBeInTheDocument();
-      expect(screen.getByText('100.')).toBeInTheDocument();
-    });
-  });
-
   describe('cards', () => {
     test('renders all cards in hand', () => {
       render(<Hand {...defaultProps} />);

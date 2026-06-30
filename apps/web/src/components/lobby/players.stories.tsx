@@ -9,6 +9,7 @@ import Players, { type PlayersProps } from './players.view';
 const handlers = {
   handleNameChange: action('handleNameChange'),
   handleReadyChange: action('handleReadyChange'),
+  handleColorChange: action('handleColorChange'),
   handleStartGame: action('handleStartGame'),
   handleKick: action('handleKick'),
   handleLeave: action('handleLeave'),
@@ -21,6 +22,7 @@ export const MinPlayersNotMet = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: true,
         isHost: true,
@@ -43,6 +45,7 @@ export const MinPlayersMet = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: false,
         isHost: true,
@@ -50,6 +53,7 @@ export const MinPlayersMet = () => (
       {
         id: '2' as UserId,
         name: 'Roz' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: true,
         isHost: false,
@@ -72,6 +76,7 @@ export const MaxPlayers = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: false,
         isHost: true,
@@ -79,6 +84,7 @@ export const MaxPlayers = () => (
       {
         id: '2' as UserId,
         name: 'Roz' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: true,
         isHost: false,
@@ -86,6 +92,7 @@ export const MaxPlayers = () => (
       {
         id: '3' as UserId,
         name: 'Niles' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: false,
         isHost: false,
@@ -108,6 +115,7 @@ export const SomePlayersReady = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: true,
@@ -115,6 +123,7 @@ export const SomePlayersReady = () => (
       {
         id: '2' as UserId,
         name: 'Roz' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,
@@ -122,6 +131,7 @@ export const SomePlayersReady = () => (
       {
         id: '3' as UserId,
         name: 'Niles' as PlayerName,
+        color: 'cyan',
         isReady: false,
         isUser: false,
         isHost: false,
@@ -144,6 +154,7 @@ export const AllPlayersReadyIsHost = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: true,
@@ -151,6 +162,7 @@ export const AllPlayersReadyIsHost = () => (
       {
         id: '2' as UserId,
         name: 'Roz' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,
@@ -158,6 +170,7 @@ export const AllPlayersReadyIsHost = () => (
       {
         id: '3' as UserId,
         name: 'Niles' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,
@@ -180,6 +193,7 @@ export const AllPlayersReadyIsNotHost = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: true,
@@ -187,6 +201,7 @@ export const AllPlayersReadyIsNotHost = () => (
       {
         id: '2' as UserId,
         name: 'Roz' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: false,
@@ -194,6 +209,7 @@ export const AllPlayersReadyIsNotHost = () => (
       {
         id: '3' as UserId,
         name: 'Niles' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,
@@ -216,6 +232,7 @@ export const AllPlayersReadyButNotEnough = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: true,
@@ -238,6 +255,7 @@ export const NameError = () => (
       {
         id: '1' as UserId,
         name: 'Frank' as PlayerName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: true,
@@ -264,6 +282,7 @@ export const LongPlayerNames = () => (
       {
         id: '1' as UserId,
         name: longName,
+        color: 'cyan',
         isReady: true,
         isUser: true,
         isHost: true,
@@ -271,6 +290,7 @@ export const LongPlayerNames = () => (
       {
         id: '2' as UserId,
         name: longName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,
@@ -278,6 +298,7 @@ export const LongPlayerNames = () => (
       {
         id: '3' as UserId,
         name: longName,
+        color: 'cyan',
         isReady: true,
         isUser: false,
         isHost: false,

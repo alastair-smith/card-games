@@ -1,15 +1,17 @@
 'use client';
 
 import debounce from 'lodash/debounce';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
+import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_READY_UPDATE_DELAY_MS = 300;
+const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 
 export default function Lobby({
   code,
@@ -22,6 +24,7 @@ export default function Lobby({
     isReady: boolean;
     name: string;
     nameError: string;
+    color: PlayerColor;
   }>(() => {
     const currentPlayer = players.find((player) => player.isUser);
 
@@ -33,8 +36,12 @@ export default function Lobby({
       isReady: currentPlayer.isReady,
       name: currentPlayer.name,
       nameError: '',
+      color: currentPlayer.color,
     };
   });
+
+  // For reverting on server failure
+  const confirmedColor = useRef(user.color);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
@@ -75,9 +82,33 @@ export default function Lobby({
     [],
   );
 
+  const debouncedUpdatePlayerColor = useCallback(
+    debounce((color: PlayerColor) => {
+      updatePlayerMutation.mutate(
+        { field: 'color', code, color },
+        {
+          onSuccess: () => {
+            confirmedColor.current = color;
+          },
+          onError: () => {
+            setUser((prev) => ({ ...prev, color: confirmedColor.current }));
+            toast.error('Error updating colour.');
+          },
+        },
+      );
+    }, PLAYER_COLOR_UPDATE_DELAY_MS),
+    [],
+  );
+
   const handleNameChange = (name: string) => {
     setUser((prev) => ({ ...prev, name, nameError: '' }));
     debouncedUpdatePlayerName(name);
+  };
+
+  const handleColorChange = (color: string) => {
+    const nextColor = playerColorSchema.parse(color);
+    setUser((prev) => ({ ...prev, color: nextColor }));
+    debouncedUpdatePlayerColor(nextColor);
   };
 
   const handleReadyChange = (isReady: boolean) => {
@@ -92,6 +123,7 @@ export default function Lobby({
       user={user}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
+      handleColorChange={handleColorChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

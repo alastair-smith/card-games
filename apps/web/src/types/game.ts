@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { PlayerColor } from '~/utils/player-color';
 import type { Branded } from './brand';
 import type { StandardPlayingCard } from './cards';
 import type { PlayerName, UserId } from './entities';
@@ -71,6 +72,7 @@ export const gameUpdateSchema = z.enum(GameUpdate);
 export type Player = {
   id: UserId;
   name: PlayerName;
+  color: PlayerColor;
   isReady: boolean;
   isUser: boolean;
   isHost: boolean;

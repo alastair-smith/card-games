@@ -3,6 +3,11 @@ import { useMemo } from 'react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
 import {
+  PLAYER_COLOR_OPTIONS,
+  type PlayerColor,
+  playerColorValue,
+} from '~/utils/player-color';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -15,6 +20,7 @@ import {
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
+import { ColorPicker, ColorSwatch } from '../ui/color-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -151,6 +157,38 @@ function PlayerDropdown({
   );
 }
 
+function PlayerColour({
+  color,
+  isUser,
+  takenColors,
+  handleColorChange,
+}: {
+  color: PlayerColor;
+  isUser: boolean;
+  takenColors?: PlayerColor[];
+  handleColorChange?: (color: string) => void;
+}) {
+  if (!isUser || !handleColorChange) {
+    return (
+      // Match the icon button's footprint so swatches line up with the picker.
+      <span className='flex h-10 w-10 items-center justify-center border-2 border-transparent'>
+        <ColorSwatch color={playerColorValue(color)} />
+        <span className='sr-only'>Player colour</span>
+      </span>
+    );
+  }
+
+  return (
+    <ColorPicker
+      label='Change your colour'
+      colors={PLAYER_COLOR_OPTIONS}
+      value={color}
+      disabledColors={takenColors}
+      onColorSelect={handleColorChange}
+    />
+  );
+}
+
 function getButtonText({
   userIsHost,
   requiredPlayers,
@@ -183,9 +221,11 @@ export type PlayersProps = {
     isReady: boolean;
     name: string;
     nameError: string;
+    color?: PlayerColor;
   };
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
+  handleColorChange?: (color: string) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -200,6 +240,7 @@ export default function Players({
   user,
   handleNameChange,
   handleReadyChange,
+  handleColorChange,
   handleStartGame,
   handleLeave,
   handleKick,
@@ -255,13 +296,30 @@ export default function Players({
                 </div>
               )}
               <div className='flex gap-2 items-center justify-between w-full'>
-                <div className='flex gap-2 items-center'>
-                  <span>Ready</span>
-                  <Switch
-                    disabled={!player.isUser}
-                    checked={player.isUser ? user.isReady : player.isReady}
-                    onCheckedChange={handleReadyChange}
-                  />
+                <div className='flex gap-4 items-center'>
+                  <div className='flex gap-2 items-center'>
+                    <span>Colour</span>
+                    <PlayerColour
+                      color={
+                        player.isUser
+                          ? (user.color ?? player.color)
+                          : player.color
+                      }
+                      isUser={player.isUser}
+                      takenColors={players
+                        .filter((other) => other.id !== player.id)
+                        .map((other) => other.color)}
+                      handleColorChange={handleColorChange}
+                    />
+                  </div>
+                  <div className='flex gap-2 items-center'>
+                    <span>Ready</span>
+                    <Switch
+                      disabled={!player.isUser}
+                      checked={player.isUser ? user.isReady : player.isReady}
+                      onCheckedChange={handleReadyChange}
+                    />
+                  </div>
                 </div>
                 <PlayerDropdown
                   player={player}
@@ -298,6 +356,7 @@ export default function Players({
             <TableRow>
               <TableHead className='sr-only w-[1ch]'>Host</TableHead>
               <TableHead className='pl-7'>Name</TableHead>
+              <TableHead>Colour</TableHead>
               <TableHead>Ready</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -328,6 +387,20 @@ export default function Players({
                   )}
                 </TableCell>
                 <TableCell>
+                  <PlayerColour
+                    color={
+                      player.isUser
+                        ? (user.color ?? player.color)
+                        : player.color
+                    }
+                    isUser={player.isUser}
+                    takenColors={players
+                      .filter((other) => other.id !== player.id)
+                      .map((other) => other.color)}
+                    handleColorChange={handleColorChange}
+                  />
+                </TableCell>
+                <TableCell>
                   <Switch
                     disabled={!player.isUser}
                     checked={player.isUser ? user.isReady : player.isReady}
@@ -349,7 +422,7 @@ export default function Players({
             {Array.from({ length: requiredPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
                     <span>Required Player</span>
@@ -361,7 +434,7 @@ export default function Players({
             {Array.from({ length: optionalPlayers }).map((_, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4 opacity-50'>
                     <UserIcon size={22} />
                     <span>Optional Player</span>

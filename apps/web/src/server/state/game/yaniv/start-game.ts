@@ -33,6 +33,7 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     players.push({
       id: lobbyPlayer.id,
       name: lobbyPlayer.name,
+      color: lobbyPlayer.color,
       cardCount: cards.length,
       hand: cards,
       score: 0,

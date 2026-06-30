@@ -10,6 +10,7 @@ export const updatePlayerState = async ({
   value,
 }:
   | { code: GameCode; userId: UserId; field: 'name'; value: string }
+  | { code: GameCode; userId: UserId; field: 'color'; value: string }
   | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
   const lobby = await getLobby({ code });
 
@@ -19,6 +20,15 @@ export const updatePlayerState = async ({
 
   if (!lobby.players.some(({ id }) => id === userId)) {
     throw new Error('player not in game');
+  }
+
+  if (
+    field === 'color' &&
+    lobby.players.some(
+      (player) => player.id !== userId && player.color === value,
+    )
+  ) {
+    throw new Error('colour already taken');
   }
 
   const updatedPlayers = lobby.players.map((player) =>

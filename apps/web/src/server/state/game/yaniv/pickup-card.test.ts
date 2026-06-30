@@ -55,6 +55,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
   players: [
     {
       id: USER_1,
+      color: 'cyan',
       cardCount: 2,
       hand: [CARD_1, CARD_2],
       name: 'Player 1' as PlayerName,
@@ -66,6 +67,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
     },
     {
       id: USER_2,
+      color: 'cyan',
       cardCount: 2,
       hand: [
         { suit: Suit.DIAMONDS, rank: Rank.FOUR },
@@ -179,7 +181,11 @@ describe('pickupCard', () => {
 
       expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
         players: expect.arrayContaining([
-          expect.objectContaining({ id: USER_1, cardCount: 3 }),
+          expect.objectContaining({
+            id: USER_1,
+            color: 'cyan',
+            cardCount: 3,
+          }),
         ]),
       });
     });
@@ -269,7 +275,11 @@ describe('pickupCard', () => {
 
       expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
         players: expect.arrayContaining([
-          expect.objectContaining({ id: USER_1, cardCount: 3 }),
+          expect.objectContaining({
+            id: USER_1,
+            color: 'cyan',
+            cardCount: 3,
+          }),
         ]),
       });
     });

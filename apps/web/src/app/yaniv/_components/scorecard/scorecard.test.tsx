@@ -4,6 +4,7 @@ import type { PlayerName } from '~/types/entities';
 import ScoreCard from '.';
 
 const defaultProps = {
+  color: 'cyan' as const,
   cardCount: 7,
   isFiftyScoreHalved: false,
   isHundredScoreHalved: false,
