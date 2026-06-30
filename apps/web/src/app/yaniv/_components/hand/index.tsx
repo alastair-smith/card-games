@@ -5,7 +5,11 @@ import {
 } from '~/components/ui/playing-card';
 import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
-import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
+import {
+  type PlayerColor,
+  playerColorHighlight,
+  playerColorValue,
+} from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
 
 type HandProps = {
@@ -70,7 +74,7 @@ export default function Hand({
       </ol>
 
       <div
-        style={{ backgroundColor: color }}
+        style={{ backgroundColor: playerColorValue(color) }}
         className='flex flex-col rounded p-2 h-fit text-white font-extrabold text-outline-black'
       >
         <div className='flex flex-col items-end'>
