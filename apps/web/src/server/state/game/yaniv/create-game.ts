@@ -1,6 +1,7 @@
 import { lobbyExists, setLobby } from '~/server/data/lobby';
 import { setYanivState } from '~/server/data/yaniv';
 import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
+import { recordPlayerJoined } from '~/telemetry/metrics';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import { GameStage } from '~/types/games/yaniv';
@@ -33,6 +34,10 @@ export const createGame = async ({ host }: { host: UserId }) => {
     ),
     setYanivState({ code }, { gameStage: GameStage.LOBBY }),
   ]);
+
+  // The host is placed straight into the lobby rather than going through
+  // joinGame, so they need counting here or every game misses a player.
+  recordPlayerJoined(GameType.YANIV);
 
   return { code };
 };
