@@ -6,10 +6,7 @@ type SortableResult = ReturnType<typeof useSortable>;
 export type ReorderContextValue = {
   /** Whether reordering is turned off for the whole list. */
   isDisabled: boolean;
-  /**
-   * Records an item's human-readable name so the list can use it in screen
-   * reader announcements, which otherwise only have the item id to go on.
-   */
+  /** Records an item's human-readable name so the list can use it in screen reader announcements. */
   onLabelRegister: (id: string, label: string) => void;
 };
 
@@ -26,9 +23,7 @@ export function useReorder() {
 }
 
 export type ReorderItemContextValue = {
-  /** Drag attributes from dnd-kit, applied to the handle that starts the drag. */
   attributes: SortableResult['attributes'];
-  /** Drag listeners from dnd-kit, applied to the handle that starts the drag. */
   listeners: SortableResult['listeners'];
   setActivatorNodeRef: SortableResult['setActivatorNodeRef'];
   /** Human-readable name for the item, used to label its handle. */

@@ -42,19 +42,19 @@ function PlayerOrder({
   onReorder = noop,
   isDisabled = false,
 }: {
-  onReorder?: (items: string[]) => void;
+  onReorder?: (itemIds: string[]) => void;
   isDisabled?: boolean;
 }) {
   const [order, setOrder] = useState(players.map((player) => player.id));
 
   return (
     <Reorder
-      items={order}
+      itemIds={order}
       label='Player turn order'
       isDisabled={isDisabled}
-      onReorder={(items) => {
-        setOrder(items);
-        onReorder(items);
+      onReorder={(itemIds) => {
+        setOrder(itemIds);
+        onReorder(itemIds);
       }}
     >
       {order.map((id) => {

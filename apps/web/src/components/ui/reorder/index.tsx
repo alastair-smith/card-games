@@ -35,28 +35,19 @@ const screenReaderInstructions: ScreenReaderInstructions = {
 };
 
 type ReorderProps = {
-  /**
-   * Item ids in their current order. Every id must match the id of a
-   * `ReorderItem` rendered as a child.
-   */
-  items: string[];
+  itemIds: string[];
   /** Accessible name for the list, e.g. "Player turn order". */
   label: string;
-  /** Called with the full list of ids in their new order. */
-  onReorder: (items: string[]) => void;
-  /** Turns off dragging and keyboard reordering for every item. */
+  onReorder: (newItemIds: string[]) => void;
+  /** Turns off reordering for entire list. */
   isDisabled?: boolean;
   className?: string;
   children: React.ReactNode;
 };
 
-/**
- * A vertical list whose items can be reordered by dragging a handle, or by
- * focusing a handle and pressing space to pick the item up and the arrow keys
- * to move it.
- */
+/** A vertical list whose items can be reordered via a handler. */
 export function Reorder({
-  items,
+  itemIds,
   label,
   onReorder,
   isDisabled = false,
@@ -67,8 +58,7 @@ export function Reorder({
   const hasMoved = useRef(false);
 
   const sensors = useSensors(
-    // A small distance threshold means a plain click on anything inside a row
-    // (a name input, say) is not mistaken for the start of a drag.
+    // A small distance threshold prevents a clicks on row content from being mistaken for the start of a drag.
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -86,37 +76,33 @@ export function Reorder({
 
   const getLabel = (id: UniqueIdentifier) =>
     labels.current.get(String(id)) ?? String(id);
-  const getPosition = (id: UniqueIdentifier) => items.indexOf(String(id)) + 1;
+  const getPosition = (id: UniqueIdentifier) => itemIds.indexOf(String(id)) + 1;
 
-  // The defaults announce raw item ids, which read out as gibberish when the
-  // ids are uuids. These say the player's name and where they ended up.
+  // For more readable accessibility announcements than the library's defaults.
   const announcements: Announcements = {
     onDragStart: ({ active }) => {
       hasMoved.current = false;
-      return `Picked up ${getLabel(active.id)}, position ${getPosition(active.id)} of ${items.length}.`;
+      return `Picked up ${getLabel(active.id)}, position ${getPosition(active.id)} of ${itemIds.length}.`;
     },
     onDragOver: ({ active, over }) => {
       if (!over) {
         return undefined;
       }
 
-      // Picking an item up immediately reports it as over itself. Staying quiet
-      // until it has actually moved keeps that from talking over the pick-up
-      // announcement, but once it has moved, a return to the start is worth
-      // announcing.
+      // Keep quiet until moved.
       if (over.id === active.id && !hasMoved.current) {
         return undefined;
       }
 
       hasMoved.current = true;
-      return `${getLabel(active.id)} moved to position ${getPosition(over.id)} of ${items.length}.`;
+      return `${getLabel(active.id)} moved to position ${getPosition(over.id)} of ${itemIds.length}.`;
     },
     onDragEnd: ({ active, over }) =>
       over
-        ? `${getLabel(active.id)} dropped into position ${getPosition(over.id)} of ${items.length}.`
+        ? `${getLabel(active.id)} dropped into position ${getPosition(over.id)} of ${itemIds.length}.`
         : `${getLabel(active.id)} dropped.`,
     onDragCancel: ({ active }) =>
-      `Reordering cancelled. ${getLabel(active.id)} is back in position ${getPosition(active.id)} of ${items.length}.`,
+      `Reordering cancelled. ${getLabel(active.id)} is back in position ${getPosition(active.id)} of ${itemIds.length}.`,
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -124,28 +110,26 @@ export function Reorder({
       return;
     }
 
-    const fromIndex = items.indexOf(String(active.id));
-    const toIndex = items.indexOf(String(over.id));
+    const fromIndex = itemIds.indexOf(String(active.id));
+    const toIndex = itemIds.indexOf(String(over.id));
 
     if (fromIndex === -1 || toIndex === -1) {
       return;
     }
 
-    onReorder(arrayMove(items, fromIndex, toIndex));
+    onReorder(arrayMove(itemIds, fromIndex, toIndex));
   };
 
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
-      // Keep the dragged row travelling up and down its own list, rather than
-      // being flung sideways or out of the container.
       modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       accessibility={{ announcements, screenReaderInstructions }}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={items}
+        items={itemIds}
         strategy={verticalListSortingStrategy}
         disabled={isDisabled}
       >

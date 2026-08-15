@@ -19,11 +19,11 @@ const initialPlayers = [
 function usePlayerOrder() {
   const [players, setPlayers] = useState(initialPlayers);
 
-  const handleReorder = (items: string[]) => {
+  const handleReorder = (itemIds: string[]) => {
     setPlayers((current) =>
-      items.flatMap((id) => current.filter((player) => player.id === id)),
+      itemIds.flatMap((id) => current.filter((player) => player.id === id)),
     );
-    onReorder(items);
+    onReorder(itemIds);
   };
 
   return { players, handleReorder };
@@ -37,7 +37,7 @@ export const Default = () => {
   return (
     <div className='w-80 p-4'>
       <Reorder
-        items={players.map((player) => player.id)}
+        itemIds={players.map((player) => player.id)}
         label='Player turn order'
         onReorder={handleReorder}
       >
@@ -60,7 +60,7 @@ export const WithNameInputs = () => {
   return (
     <div className='w-80 p-4'>
       <Reorder
-        items={players.map((player) => player.id)}
+        itemIds={players.map((player) => player.id)}
         label='Player turn order'
         onReorder={handleReorder}
       >
@@ -89,7 +89,7 @@ export const Disabled = () => {
   return (
     <div className='w-80 p-4'>
       <Reorder
-        items={players.map((player) => player.id)}
+        itemIds={players.map((player) => player.id)}
         label='Player turn order'
         isDisabled
         onReorder={handleReorder}
