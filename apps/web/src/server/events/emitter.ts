@@ -4,6 +4,7 @@ import type { z } from 'zod';
 import type { GameState as HighCardGameState } from '~/server/data/high-card';
 import type { lobbySchema } from '~/server/data/lobby';
 import { GAME_CODE_ATTR } from '~/telemetry/attributes';
+import { setListenerCountProvider } from '~/telemetry/listener-counts';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 import type { GameState as YanivGameState } from '~/types/games/yaniv';
@@ -98,5 +99,7 @@ class MonitoredEventEmitter<
 }
 
 const monitoredEmitter = new MonitoredEventEmitter<Events>();
+
+setListenerCountProvider(() => monitoredEmitter.getListenerCounts());
 
 export default monitoredEmitter;

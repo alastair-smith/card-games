@@ -1,6 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { env } from '~/env';
 import monitoredEmitter from '~/server/events/emitter';
+import { sumListenersByEventType } from '~/telemetry/metrics';
 
 export function GET(request: Request) {
   /** Auth */
@@ -69,12 +70,16 @@ export function GET(request: Request) {
   /** Metrics */
 
   const listenerCount = monitoredEmitter.totalListenerCount();
+  const listenersByEventType = sumListenersByEventType(
+    monitoredEmitter.getListenerCounts(),
+  );
 
   const response = new Response(
     JSON.stringify({
       status: 'ok',
       metrics: {
         totalEventListeners: listenerCount,
+        eventListenersByType: Object.fromEntries(listenersByEventType),
       },
     }),
     {

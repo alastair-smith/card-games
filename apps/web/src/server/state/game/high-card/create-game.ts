@@ -1,6 +1,7 @@
 import { setHighCardState } from '~/server/data/high-card';
 import { lobbyExists, setLobby } from '~/server/data/lobby';
 import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
+import { recordPlayerJoined } from '~/telemetry/metrics';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import { GameStage } from '~/types/games/high-card';
@@ -36,6 +37,10 @@ export const createGame = async ({ host }: { host: UserId }) => {
       { stage: GameStage.LOBBY, winners: [], players: [] },
     ),
   ]);
+
+  // The host is placed straight into the lobby rather than going through
+  // joinGame, so they need counting here or every game misses a player.
+  recordPlayerJoined(GameType.HIGH_CARD);
 
   return { code };
 };

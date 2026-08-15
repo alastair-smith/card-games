@@ -10,6 +10,7 @@ import {
 
 const mockGetLobby = vi.fn();
 const mockSetYanivState = vi.fn();
+const mockGetYanivState = vi.fn();
 const mockPublishYanivState = vi.fn();
 const mockCreateDeck = vi.fn();
 const mockDrawCard = vi.fn();
@@ -18,7 +19,10 @@ const mockCreateDiscard = vi.fn();
 const mockPushDiscard = vi.fn();
 
 vi.mock('~/server/data/lobby', () => ({ getLobby: mockGetLobby }));
-vi.mock('~/server/data/yaniv', () => ({ setYanivState: mockSetYanivState }));
+vi.mock('~/server/data/yaniv', () => ({
+  setYanivState: mockSetYanivState,
+  getYanivState: mockGetYanivState,
+}));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: mockPublishYanivState,
 }));
@@ -55,6 +59,7 @@ describe('startGame', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockGetLobby.mockResolvedValue(makeLobby());
+    mockGetYanivState.mockResolvedValue({ gameStage: GameStage.LOBBY });
     mockSetYanivState.mockResolvedValue(undefined);
     mockPublishYanivState.mockResolvedValue(undefined);
     mockCreateDeck.mockResolvedValue(undefined);
@@ -170,5 +175,35 @@ describe('startGame', () => {
       CODE,
       expect.objectContaining({ gameStage: GameStage.IN_PROGRESS }),
     );
+  });
+
+  describe('when the game is already underway', () => {
+    test('refuses to start a game that is in progress', async () => {
+      mockGetYanivState.mockResolvedValue({
+        gameStage: GameStage.IN_PROGRESS,
+      });
+
+      await expect(startGame(CODE, HOST)).rejects.toThrow(
+        'Game has already started',
+      );
+    });
+
+    test('refuses to start a game that has finished', async () => {
+      mockGetYanivState.mockResolvedValue({ gameStage: GameStage.FINISHED });
+
+      await expect(startGame(CODE, HOST)).rejects.toThrow(
+        'Game has already started',
+      );
+    });
+
+    test('does not redeal a game that is already in progress', async () => {
+      mockGetYanivState.mockResolvedValue({
+        gameStage: GameStage.IN_PROGRESS,
+      });
+
+      await expect(startGame(CODE, HOST)).rejects.toThrow();
+      expect(mockCreateDeck).not.toHaveBeenCalled();
+      expect(mockSetYanivState).not.toHaveBeenCalled();
+    });
   });
 });

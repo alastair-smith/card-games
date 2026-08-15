@@ -1,7 +1,8 @@
 import { getLobby, type Lobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
+import { recordPlayerJoined } from '~/telemetry/metrics';
 import type { UserId } from '~/types/entities';
-import { type GameCode, GameUpdate, type Player } from '~/types/game';
+import { type GameCode, GameType, GameUpdate, type Player } from '~/types/game';
 import { MAX_PLAYERS } from '~/types/games/high-card';
 import { generatePlayerName } from '~/utils/name-generator';
 import { getRandomPlayerColor } from '~/utils/player-color';
@@ -72,6 +73,8 @@ export const joinGame = async ({
   );
 
   await publishLobbyState(code, updatedLobby);
+
+  recordPlayerJoined(GameType.HIGH_CARD);
 
   return {
     update: GameUpdate.LOBBY_UPDATE,

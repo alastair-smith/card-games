@@ -1,11 +1,12 @@
 import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getLobby } from '~/server/data/lobby';
-import { setYanivState } from '~/server/data/yaniv';
+import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import { recordGameStarted } from '~/telemetry/metrics';
 import { deckWithJokers } from '~/types/cards';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import {
   GameStage,
   GameStep,
@@ -24,6 +25,12 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     throw new Error('Not enough players to start the game');
   if (lobby.players.length > MAX_PLAYERS)
     throw new Error('Too many players to start the game');
+
+  // Without this a double-clicked start would redeal the game and count a
+  // second start against the same game.
+  const existingState = await getYanivState({ code });
+  if (existingState && existingState.gameStage !== GameStage.LOBBY)
+    throw new Error('Game has already started');
 
   await yanivDeck.createDeck(code, shuffle(deckWithJokers));
 
@@ -62,4 +69,6 @@ export const startGame = async (code: GameCode, userId: UserId) => {
 
   await setYanivState({ code }, state);
   await publishYanivState(code, state);
+
+  recordGameStarted(GameType.YANIV, players.length);
 };
