@@ -29,8 +29,6 @@ function usePlayerOrder() {
   return { players, handleReorder };
 }
 
-// Drag a row by its grip, or focus a grip and press space to pick the row up,
-// then the arrow keys to move it and space again to drop it.
 export const Default = () => {
   const { players, handleReorder } = usePlayerOrder();
 
@@ -52,9 +50,7 @@ export const Default = () => {
   );
 };
 
-// The case this was built for: name fields that set the turn order. The grip
-// keeps dragging separate from typing, so the inputs stay usable.
-export const WithNameInputs = () => {
+export const WithInputsInChildren = () => {
   const { players, handleReorder } = usePlayerOrder();
 
   return (
@@ -81,8 +77,6 @@ export const WithNameInputs = () => {
   );
 };
 
-// Reordering can be turned off once a game is under way, without the rows
-// losing their content.
 export const Disabled = () => {
   const { players, handleReorder } = usePlayerOrder();
 
