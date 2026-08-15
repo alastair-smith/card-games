@@ -46,3 +46,6 @@ yarn-error.log*
 dist
 
 .claude/settings.local.json
+
+# playwright mcp output
+.playwright-mcp/
