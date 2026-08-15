@@ -24,13 +24,13 @@ pnpm format:fix path/to/file
 If you really need to run a check without autofix you can use:
 
 ```bash
-pnpm format
+pnpm format:check
 ```
 
 Or for a specific file
 
 ```bash
-pnpm format /path/to/file
+pnpm format:check /path/to/file
 ```
 
 ### Type checking
@@ -52,13 +52,15 @@ pnpm --filter @repo/web typecheck
 Always run a specific unit test file first rather than the full suite — it's faster and produces less output:
 
 ```bash
-pnpm --filter @repo/web test -- run src/path/to/file.test.tsx
+pnpm --filter @repo/web test src/path/to/file.test.tsx
 ```
+
+Do not put `--` before the path — that stops the path being treated as a filter and runs the whole suite.
 
 Use `--reporter=dot` when you only need a pass/fail summary:
 
 ```bash
-pnpm --filter @repo/web test -- run --reporter=dot src/path/to/file.test.tsx
+pnpm --filter @repo/web test --reporter=dot src/path/to/file.test.tsx
 ```
 
 Run the full suite only when needed:
