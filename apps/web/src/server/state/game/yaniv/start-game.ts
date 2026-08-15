@@ -3,9 +3,10 @@ import { yanivDiscard } from '~/server/data/discard';
 import { getLobby } from '~/server/data/lobby';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import { recordGameStarted } from '~/telemetry/metrics';
 import { deckWithJokers } from '~/types/cards';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import {
   GameStage,
   GameStep,
@@ -62,4 +63,6 @@ export const startGame = async (code: GameCode, userId: UserId) => {
 
   await setYanivState({ code }, state);
   await publishYanivState(code, state);
+
+  recordGameStarted(GameType.YANIV, players.length);
 };

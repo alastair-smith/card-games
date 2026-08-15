@@ -1,7 +1,8 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
-import type { GameCode } from '~/types/game';
+import { recordGameCompleted } from '~/telemetry/metrics';
+import { type GameCode, GameType } from '~/types/game';
 import {
   GAME_OVER_SCORE,
   GameStage,
@@ -118,6 +119,10 @@ export const scoreYanivRound = async (
 
       await setYanivState({ code }, newState);
       await publishYanivState(code, newState);
+
+      if (isGameOver) {
+        recordGameCompleted(GameType.YANIV, scoredPlayers.length);
+      }
     } catch (error) {
       span.setStatus({ code: SpanStatusCode.ERROR });
       if (error instanceof Error) span.recordException(error);

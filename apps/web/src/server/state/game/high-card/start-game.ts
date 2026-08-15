@@ -1,8 +1,9 @@
 import { getHighCardState, setHighCardState } from '~/server/data/high-card';
 import { getLobby } from '~/server/data/lobby';
 import { publishHighCard } from '~/server/events/high-card';
+import { recordGameStarted } from '~/telemetry/metrics';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import { GameStage, MIN_PLAYERS } from '~/types/games/high-card';
 
 export const startGame = async (code: GameCode, userId: UserId) => {
@@ -44,6 +45,8 @@ export const startGame = async (code: GameCode, userId: UserId) => {
 
   // 5. publish event of updated state
   await publishHighCard(code, newState);
+
+  recordGameStarted(GameType.HIGH_CARD, newState.players.length);
 
   return { stage: GameStage.IN_PROGRESS };
 };

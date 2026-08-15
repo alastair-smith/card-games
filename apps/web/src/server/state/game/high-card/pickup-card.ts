@@ -6,9 +6,10 @@ import {
 } from '~/server/data/deck';
 import { getHighCardState, setHighCardState } from '~/server/data/high-card';
 import { publishHighCard } from '~/server/events/high-card';
+import { recordGameCompleted } from '~/telemetry/metrics';
 import { standardDeck } from '~/types/cards';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import { GameStage } from '~/types/games/high-card';
 import { shuffle } from '~/utils/cards';
 
@@ -72,6 +73,10 @@ export const pickupCard = async (code: GameCode, userId: UserId) => {
 
   await setHighCardState({ code }, newState);
   await publishHighCard(code, newState);
+
+  if (newState.stage === GameStage.FINISHED) {
+    recordGameCompleted(GameType.HIGH_CARD, newState.players.length);
+  }
 
   return newState;
 };
