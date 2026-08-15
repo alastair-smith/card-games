@@ -19,10 +19,9 @@ import { ATTR_DEPLOYMENT_ENVIRONMENT_NAME } from '@opentelemetry/semantic-conven
 import { env } from '~/env';
 import { registerEventListenerGauge } from './metrics';
 
-/** The uptime pinger hits this constantly to keep the instance warm. */
 const HEALTHCHECK_PATH = '/api/healthcheck';
 
-export async function startTelemetry() {
+export function startTelemetry() {
   const endpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT;
   if (!endpoint) return;
 
@@ -49,7 +48,6 @@ export async function startTelemetry() {
   const metricExporter = new OTLPMetricExporter({
     url: `${endpoint}/v1/metrics`,
     headers: exporterHeaders,
-    // New Relic's preferred temporality for OTLP metrics.
     temporalityPreference: AggregationTemporalityPreference.DELTA,
   });
 
@@ -69,7 +67,9 @@ export async function startTelemetry() {
         ignoreOutgoingRequestHook: (req) =>
           req.hostname === otlpHostname && String(req.port ?? '') === otlpPort,
         ignoreIncomingRequestHook: (req) =>
-          (req.url ?? '').startsWith(HEALTHCHECK_PATH),
+          // Exact path only — a prefix match would also swallow traces from
+          // any future route whose path merely starts with this one.
+          (req.url ?? '').split('?')[0] === HEALTHCHECK_PATH,
       }),
       new IORedisInstrumentation(),
       new PinoInstrumentation(),
@@ -78,10 +78,7 @@ export async function startTelemetry() {
 
   sdk.start();
 
-  // Imported after start so the emitter's pino logger is loaded with the
-  // instrumentation already in place.
-  const { default: monitoredEmitter } = await import('~/server/events/emitter');
-  registerEventListenerGauge(() => monitoredEmitter.getListenerCounts());
+  registerEventListenerGauge();
 
   const shutdown = () => sdk.shutdown();
   process.once('SIGTERM', shutdown);

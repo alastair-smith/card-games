@@ -54,7 +54,9 @@ const config = {
     '@opentelemetry/instrumentation-http',
     '@opentelemetry/resources',
     '@opentelemetry/sdk-logs',
+    '@opentelemetry/sdk-metrics',
     '@opentelemetry/exporter-logs-otlp-http',
+    '@opentelemetry/exporter-metrics-otlp-http',
     '@opentelemetry/instrumentation-pino',
   ],
 };

@@ -30,6 +30,12 @@ export const startGame = async (code: GameCode, userId: UserId) => {
     throw new Error('Game state not found');
   }
 
+  // Without this a double-clicked start would redeal the game and count a
+  // second start against the same game.
+  if (oldState.stage !== GameStage.LOBBY) {
+    throw new Error('Game has already started');
+  }
+
   // 4. change game state to 'in-progress' in data layer
   const newState = {
     ...oldState,

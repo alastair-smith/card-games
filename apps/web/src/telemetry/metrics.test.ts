@@ -7,6 +7,10 @@ import {
 } from '@opentelemetry/sdk-metrics';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GameType } from '~/types/game';
+import {
+  clearListenerCountProvider,
+  setListenerCountProvider,
+} from './listener-counts';
 import { sumListenersByEventType } from './metrics';
 
 type RecordedPoint = { value: number; attributes: Record<string, unknown> };
@@ -51,6 +55,7 @@ async function collectMetrics(
 
 afterEach(() => {
   metrics.disable();
+  clearListenerCountProvider();
 });
 
 describe('summing listeners by event type', () => {
@@ -134,17 +139,40 @@ describe('recording game metrics', () => {
   });
 
   it('observes listener counts grouped by event type', async () => {
+    setListenerCountProvider(() => ({
+      'yaniv:ABC123': 2,
+      'yaniv:DEF456': 3,
+      'lobby:ABC123': 1,
+    }));
+
     const recorded = await collectMetrics(({ registerEventListenerGauge }) => {
-      registerEventListenerGauge(() => ({
-        'yaniv:ABC123': 2,
-        'yaniv:DEF456': 3,
-        'lobby:ABC123': 1,
-      }));
+      registerEventListenerGauge();
     });
 
     expect(recorded.get('game.event_listeners')).toEqual([
       { value: 5, attributes: { 'event.type': 'yaniv' } },
       { value: 1, attributes: { 'event.type': 'lobby' } },
     ]);
+  });
+
+  it('observes each event type once when the gauge is registered twice', async () => {
+    setListenerCountProvider(() => ({ 'yaniv:ABC123': 2 }));
+
+    const recorded = await collectMetrics(({ registerEventListenerGauge }) => {
+      registerEventListenerGauge();
+      registerEventListenerGauge();
+    });
+
+    expect(recorded.get('game.event_listeners')).toEqual([
+      { value: 2, attributes: { 'event.type': 'yaniv' } },
+    ]);
+  });
+
+  it('observes nothing before the emitter has registered a provider', async () => {
+    const recorded = await collectMetrics(({ registerEventListenerGauge }) => {
+      registerEventListenerGauge();
+    });
+
+    expect(recorded.get('game.event_listeners')).toBeUndefined();
   });
 });

@@ -1,5 +1,6 @@
 import { type Counter, metrics } from '@opentelemetry/api';
 import type { GameType } from '~/types/game';
+import { readListenerCounts } from './listener-counts';
 
 const METER_NAME = 'card-games-metrics';
 
@@ -68,16 +69,28 @@ export function sumListenersByEventType(
   const countsByType = new Map<string, number>();
 
   for (const [eventName, count] of Object.entries(listenerCounts)) {
-    const [eventType = 'unknown'] = eventName.split(':');
+    const [prefix] = eventName.split(':');
+    // `split` always yields at least one element, but it can be empty.
+    const eventType = prefix || 'unknown';
     countsByType.set(eventType, (countsByType.get(eventType) ?? 0) + count);
   }
 
   return countsByType;
 }
 
-export function registerEventListenerGauge(
-  getListenerCounts: () => Record<string, number>,
-) {
+let isEventListenerGaugeRegistered = false;
+
+/**
+ * Counts are read through the global registry rather than from an emitter
+ * imported here — see `listener-counts.ts` for why the layers cannot share a
+ * module instance.
+ */
+export function registerEventListenerGauge() {
+  // Registering twice would observe every event type twice per collection,
+  // which dev-server restarts of the instrumentation hook would otherwise do.
+  if (isEventListenerGaugeRegistered) return;
+  isEventListenerGaugeRegistered = true;
+
   const gauge = metrics
     .getMeter(METER_NAME)
     .createObservableGauge('game.event_listeners', {
@@ -86,7 +99,7 @@ export function registerEventListenerGauge(
 
   gauge.addCallback((observableResult) => {
     for (const [eventType, count] of sumListenersByEventType(
-      getListenerCounts(),
+      readListenerCounts(),
     )) {
       observableResult.observe(count, { [EVENT_TYPE_ATTR]: eventType });
     }
