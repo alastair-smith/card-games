@@ -1,8 +1,11 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundId, ScoreboardState } from '../../_hooks/useYanivScoreboard';
-import { deriveGameSummary } from '../../_libs/derive-game-summary';
+import {
+  deriveGameSummary,
+  previewGameSummary,
+} from '../../_libs/derive-game-summary';
 import SavedGame from '.';
 
 const ADA_ID = crypto.randomUUID() as UserId;
@@ -33,8 +36,21 @@ const gameSummary = deriveGameSummary(scoreboardState);
 
 const noop = vi.fn();
 
+// Grace goes over 100, so the game is won and there is nothing to carry on.
+const finishedGameSummary = deriveGameSummary({
+  players,
+  rounds: [
+    {
+      id: crypto.randomUUID() as RoundId,
+      isComplete: true,
+      handTotals: { [ADA_ID]: 4, [GRACE_ID]: 101 },
+    },
+  ],
+});
+
 const renderSavedGame = (
   handlers: Partial<{
+    summary: typeof gameSummary;
     onContinue: () => void;
     onStartNew: () => void;
     onStartNewWithSamePlayers: () => void;
@@ -43,7 +59,7 @@ const renderSavedGame = (
   render(
     <SavedGame
       players={players}
-      gameSummary={gameSummary}
+      gameSummary={handlers.summary ?? gameSummary}
       onContinue={handlers.onContinue ?? noop}
       onStartNew={handlers.onStartNew ?? noop}
       onStartNewWithSamePlayers={handlers.onStartNewWithSamePlayers ?? noop}
@@ -65,10 +81,50 @@ describe('SavedGame', () => {
     expect(screen.getByText('30')).toBeInTheDocument();
   });
 
-  test('leaves the round that was being entered out of the totals', () => {
+  test('counts the round that was being entered towards the totals', () => {
+    renderSavedGame({
+      // Ada took 4 into the round being entered, with 9 against her in it.
+      summary: previewGameSummary(scoreboardState, gameSummary),
+    });
+
+    expect(screen.getByText('13')).toBeInTheDocument();
+  });
+
+  test('lists the players from the lowest score up', () => {
     renderSavedGame();
 
-    expect(screen.queryByText('13')).not.toBeInTheDocument();
+    const scores = screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) =>
+        within(row)
+          .getAllByRole('cell')
+          .map((cell) => cell.textContent),
+      );
+
+    expect(scores).toEqual([
+      ['Ada', '4'],
+      ['Grace', '30'],
+    ]);
+  });
+
+  test('does not offer to carry on a game that has been won', () => {
+    renderSavedGame({ summary: finishedGameSummary });
+
+    expect(
+      screen.queryByRole('button', { name: 'Continue game' }),
+    ).not.toBeInTheDocument();
+  });
+
+  test('still offers a new game once the last one has been won', () => {
+    renderSavedGame({ summary: finishedGameSummary });
+
+    expect(
+      screen.getByRole('button', { name: 'New game' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Play again' }),
+    ).toBeInTheDocument();
   });
 
   test('carries on with the saved game', () => {
@@ -84,7 +140,7 @@ describe('SavedGame', () => {
     const handleStartNew = vi.fn();
     renderSavedGame({ onStartNew: handleStartNew });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Start new game' }));
+    fireEvent.click(screen.getByRole('button', { name: 'New game' }));
 
     expect(handleStartNew).toHaveBeenCalledOnce();
   });
@@ -95,9 +151,7 @@ describe('SavedGame', () => {
       onStartNewWithSamePlayers: handleStartNewWithSamePlayers,
     });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Start new game with same players' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'Play again' }));
 
     expect(handleStartNewWithSamePlayers).toHaveBeenCalledOnce();
   });

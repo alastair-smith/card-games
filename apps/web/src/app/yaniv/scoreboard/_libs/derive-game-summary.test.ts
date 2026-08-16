@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundId, ScoreboardState } from '../_hooks/useYanivScoreboard';
-import { deriveGameSummary, previewRound } from './derive-game-summary';
+import {
+  deriveGameSummary,
+  previewGameSummary,
+  previewRound,
+} from './derive-game-summary';
 
 const ADA_ID = crypto.randomUUID() as UserId;
 const GRACE_ID = crypto.randomUUID() as UserId;
@@ -226,6 +230,32 @@ describe('deriveGameSummary', () => {
     previewRound(gameSummary, roundInProgress, gamePlayers);
 
     expect(gameSummary.players[GRACE_ID]?.total).toBe(30);
+  });
+
+  test('counts the round being entered into a preview of the whole game', () => {
+    const scoreboardState = {
+      players: gamePlayers,
+      rounds: [
+        round({ [ADA_ID]: 4, [GRACE_ID]: 30 }),
+        round({ [GRACE_ID]: 6 }, false),
+      ],
+    };
+    const gameSummary = deriveGameSummary(scoreboardState);
+
+    const preview = previewGameSummary(scoreboardState, gameSummary);
+
+    expect(preview.players[GRACE_ID]?.total).toBe(36);
+    expect(gameSummary.players[GRACE_ID]?.total).toBe(30);
+  });
+
+  test('leaves a game with no round in progress as it stands', () => {
+    const scoreboardState = {
+      players: gamePlayers,
+      rounds: [round({ [ADA_ID]: 4, [GRACE_ID]: 30 })],
+    };
+    const gameSummary = deriveGameSummary(scoreboardState);
+
+    expect(previewGameSummary(scoreboardState, gameSummary)).toBe(gameSummary);
   });
 
   test('reworks the totals around a corrected score', () => {

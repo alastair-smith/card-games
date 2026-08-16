@@ -15,6 +15,7 @@ import { GameType } from '~/types/game';
 import { cn } from '~/utils/cn';
 import { HowToDialog } from '../../../_components/how-to';
 import useYanivScoreboard from '../../_hooks/useYanivScoreboard';
+import { previewGameSummary } from '../../_libs/derive-game-summary';
 import CarouselControls from '../carousel-controls';
 import GameOver from '../game-over';
 import Round from '../round';
@@ -191,7 +192,9 @@ export default function Game() {
         <div className='w-full max-w-md'>
           <SavedGame
             players={players}
-            gameSummary={gameSummary}
+            // The totals a returning player last saw included whatever they had
+            // entered into the round they were part way through.
+            gameSummary={previewGameSummary(scoreboardState, gameSummary)}
             onContinue={continueGame}
             onStartNew={startNewGame}
             onStartNewWithSamePlayers={startNewGameWithSamePlayers}

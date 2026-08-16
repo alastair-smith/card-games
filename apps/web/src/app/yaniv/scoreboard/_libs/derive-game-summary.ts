@@ -82,6 +82,25 @@ export const previewRound = (
   scoreRound(gameSummary.players, round, players);
 
 /**
+ * The summary with the round being entered counted in, which is where the
+ * players will tell you they stand. The game itself is still decided by the
+ * rounds that have been finished.
+ */
+export const previewGameSummary = (
+  { players, rounds }: ScoreboardState,
+  gameSummary: GameSummary,
+): GameSummary => {
+  const roundInProgress = rounds.at(-1);
+
+  if (!roundInProgress || roundInProgress.isComplete) return gameSummary;
+
+  return {
+    ...gameSummary,
+    players: previewRound(gameSummary, roundInProgress, players),
+  };
+};
+
+/**
  * Every total, halving and knockout in the game is worked out from the round
  * scores alone, so correcting a score from an earlier round replays the rest of
  * the game around it rather than leaving stale totals behind.
