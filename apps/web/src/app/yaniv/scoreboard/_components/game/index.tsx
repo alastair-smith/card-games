@@ -249,6 +249,7 @@ export default function Game() {
             rounds={rounds}
             gameSummary={gameSummary}
             currentRoundNumber={selectedIndex}
+            onRoundSelect={(roundNumber) => carouselApi?.scrollTo(roundNumber)}
             className='hidden w-full max-w-md lg:block'
           />
         )}

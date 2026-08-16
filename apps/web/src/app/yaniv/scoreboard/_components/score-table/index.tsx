@@ -22,6 +22,7 @@ type ScoreTableProps = {
   gameSummary: GameSummary;
   /** The round on show in the carousel, counting from one. */
   currentRoundNumber?: number;
+  onRoundSelect: (roundNumber: number) => void;
   className?: string;
 };
 
@@ -34,6 +35,7 @@ export default function ScoreTable({
   rounds,
   gameSummary,
   currentRoundNumber,
+  onRoundSelect,
   className,
 }: ScoreTableProps) {
   return (
@@ -54,39 +56,52 @@ export default function ScoreTable({
           </TableHeader>
 
           <TableBody>
-            {rounds.map((round, roundIndex) => (
-              <TableRow
-                key={round.id}
-                aria-current={
-                  currentRoundNumber === roundIndex + 1 ? 'true' : undefined
-                }
-                className={cn(
-                  currentRoundNumber === roundIndex + 1 && 'bg-highlight',
-                )}
-              >
-                <TableCell>{roundIndex + 1}</TableCell>
+            {rounds.map((round, roundIndex) => {
+              const isCurrentRound = currentRoundNumber === roundIndex + 1;
 
-                {players.map((player) => {
-                  const handTotal = round.handTotals[player.id];
-                  const halvedAt = getRoundHalving(
-                    gameSummary,
-                    round.id,
-                    player.id,
-                  );
+              return (
+                <TableRow
+                  key={round.id}
+                  aria-current={isCurrentRound ? 'true' : undefined}
+                  className={cn(
+                    'cursor-pointer',
+                    isCurrentRound ? 'bg-highlight' : 'hover:bg-highlight/50',
+                  )}
+                  onClick={() => onRoundSelect(roundIndex + 1)}
+                >
+                  <TableCell>
+                    {/* The row is the target for a pointer, and this carries
+                        the same journey for a keyboard, its click bubbling. */}
+                    <button
+                      type='button'
+                      aria-label={`Go to round ${roundIndex + 1}`}
+                    >
+                      {roundIndex + 1}
+                    </button>
+                  </TableCell>
 
-                  return (
-                    <TableCell key={player.id}>
-                      {handTotal ?? '–'}
-                      {halvedAt && (
-                        <span className='ml-1 text-sm'>
-                          halved at {halvedAt}
-                        </span>
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
+                  {players.map((player) => {
+                    const handTotal = round.handTotals[player.id];
+                    const halvedAt = getRoundHalving(
+                      gameSummary,
+                      round.id,
+                      player.id,
+                    );
+
+                    return (
+                      <TableCell key={player.id}>
+                        {handTotal ?? '–'}
+                        {halvedAt && (
+                          <span className='ml-1 text-sm'>
+                            halved at {halvedAt}
+                          </span>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
 
           <TableFooter>

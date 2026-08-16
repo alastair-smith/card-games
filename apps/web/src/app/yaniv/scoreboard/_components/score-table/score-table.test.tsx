@@ -1,5 +1,5 @@
-import { render, screen, within } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { describe, expect, test, vi } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundId, ScoreboardState } from '../../_hooks/useYanivScoreboard';
 import { deriveGameSummary } from '../../_libs/derive-game-summary';
@@ -38,13 +38,22 @@ const scoreboardState: ScoreboardState = {
   ],
 };
 
-const renderScoreTable = (currentRoundNumber?: number) =>
+const noop = vi.fn();
+
+const renderScoreTable = ({
+  currentRoundNumber,
+  onRoundSelect = noop,
+}: {
+  currentRoundNumber?: number;
+  onRoundSelect?: (roundNumber: number) => void;
+} = {}) =>
   render(
     <ScoreTable
       players={players}
       rounds={scoreboardState.rounds}
       gameSummary={deriveGameSummary(scoreboardState)}
       currentRoundNumber={currentRoundNumber}
+      onRoundSelect={onRoundSelect}
     />,
   );
 
@@ -107,9 +116,29 @@ describe('ScoreTable', () => {
   });
 
   test('picks out the round being entered alongside', () => {
-    renderScoreTable(3);
+    renderScoreTable({ currentRoundNumber: 3 });
 
     expect(rowFor(3)).toHaveAttribute('aria-current', 'true');
     expect(rowFor(1)).not.toHaveAttribute('aria-current');
+  });
+
+  test('turns to a round when its row is clicked', () => {
+    const handleRoundSelect = vi.fn();
+    renderScoreTable({ onRoundSelect: handleRoundSelect });
+
+    fireEvent.click(rowFor(2));
+
+    expect(handleRoundSelect).toHaveBeenCalledWith(2);
+  });
+
+  test('turns to a round from the keyboard', () => {
+    const handleRoundSelect = vi.fn();
+    renderScoreTable({ onRoundSelect: handleRoundSelect });
+
+    fireEvent.click(
+      within(rowFor(2)).getByRole('button', { name: 'Go to round 2' }),
+    );
+
+    expect(handleRoundSelect).toHaveBeenCalledWith(2);
   });
 });
