@@ -163,17 +163,25 @@ export default function useYanivScoreboard() {
   }, []);
 
   const updateRoundScore = useCallback(
-    (roundId: RoundId, playerId: UserId, handTotal: number) => {
+    // A null total clears the score, putting the player back to having none
+    // entered for the round rather than scoring them nothing.
+    (roundId: RoundId, playerId: UserId, handTotal: number | null) => {
       setScoreboardState((current) => ({
         ...current,
-        rounds: current.rounds.map((round) =>
-          round.id === roundId
-            ? {
-                ...round,
-                handTotals: { ...round.handTotals, [playerId]: handTotal },
-              }
-            : round,
-        ),
+        rounds: current.rounds.map((round) => {
+          if (round.id !== roundId) return round;
+
+          if (handTotal === null) {
+            const { [playerId]: clearedHandTotal, ...handTotals } =
+              round.handTotals;
+            return { ...round, handTotals };
+          }
+
+          return {
+            ...round,
+            handTotals: { ...round.handTotals, [playerId]: handTotal },
+          };
+        }),
       }));
     },
     [],

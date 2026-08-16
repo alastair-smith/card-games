@@ -241,6 +241,41 @@ describe('useYanivScoreboard', () => {
       );
     });
 
+    test('clears a score that was entered by mistake', () => {
+      saveGame(savedGame);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() =>
+        result.current.updateRoundScore(FIRST_ROUND_ID, GRACE_ID, null),
+      );
+
+      expect(result.current.scoreboardState.rounds[0]?.handTotals).toEqual({
+        [ADA_ID]: 3,
+        [ALAN_ID]: 14,
+      });
+    });
+
+    test('will not finish a round while a score has been cleared', () => {
+      saveGame({
+        players: savedGame.players,
+        rounds: [
+          {
+            id: FIRST_ROUND_ID,
+            isComplete: false,
+            handTotals: { [ADA_ID]: 3, [GRACE_ID]: 21, [ALAN_ID]: 14 },
+          },
+        ],
+      });
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() =>
+        result.current.updateRoundScore(FIRST_ROUND_ID, GRACE_ID, null),
+      );
+      act(() => result.current.endRound());
+
+      expect(result.current.scoreboardState.rounds[0]?.isComplete).toBe(false);
+    });
+
     test('records a score for a player who had none in that round', () => {
       saveGame({
         ...savedGame,

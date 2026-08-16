@@ -187,7 +187,7 @@ describe('Round', () => {
     expect(handleScoreChange).toHaveBeenCalledWith(GRACE_ID, 9);
   });
 
-  test('does not report a score when the box is emptied', () => {
+  test('clears the score when the box is emptied', () => {
     const handleScoreChange = vi.fn();
     render(
       <Round
@@ -202,6 +202,24 @@ describe('Round', () => {
       target: { value: '' },
     });
 
-    expect(handleScoreChange).not.toHaveBeenCalled();
+    expect(handleScoreChange).toHaveBeenCalledWith(ADA_ID, null);
+  });
+
+  test('reports a score of nothing as a real score', () => {
+    const handleScoreChange = vi.fn();
+    render(
+      <Round
+        players={players}
+        round={roundInProgress}
+        gameSummary={gameSummary}
+        onScoreChange={handleScoreChange}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Round score for Grace'), {
+      target: { value: '0' },
+    });
+
+    expect(handleScoreChange).toHaveBeenCalledWith(GRACE_ID, 0);
   });
 });

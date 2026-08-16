@@ -19,7 +19,7 @@ type RoundProps = {
   players: ScoreboardPlayer[];
   round: ScoreboardRound;
   gameSummary: GameSummary;
-  onScoreChange: (playerId: UserId, handTotal: number) => void;
+  onScoreChange: (playerId: UserId, handTotal: number | null) => void;
 };
 
 export default function Round({
@@ -30,10 +30,17 @@ export default function Round({
 }: RoundProps) {
   const scoreChangeHandler =
     (playerId: UserId) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const handTotal = Number(event.target.value);
+      const { value } = event.target;
 
-      // An emptied box is left alone rather than counted as a zero.
-      if (event.target.value === '' || Number.isNaN(handTotal)) return;
+      // Emptying the box clears the score, so a mistake can be backspaced away
+      // and typed again rather than only overwritten.
+      if (value === '') {
+        onScoreChange(playerId, null);
+        return;
+      }
+
+      const handTotal = Number(value);
+      if (Number.isNaN(handTotal)) return;
 
       onScoreChange(playerId, handTotal);
     };
