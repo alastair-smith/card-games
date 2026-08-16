@@ -16,6 +16,7 @@ import CarouselControls from '../carousel-controls';
 import GameOver from '../game-over';
 import Round from '../round';
 import SavedGame from '../saved-game';
+import ScoreTable from '../score-table';
 import Setup from '../setup';
 
 const SETUP_SLIDE_INDEX = 0;
@@ -181,59 +182,77 @@ export default function Game() {
       actions={<HowToDialog />}
       className='items-center gap-4 p-4'
     >
-      <Carousel className='w-full max-w-md' setApi={setCarouselApi}>
-        <CarouselContent>
-          {/* Only the page on show can be reached, so tabbing cannot wander
+      <div className='flex w-full items-start justify-center gap-6'>
+        {/* The controls belong to the carousel, so a table that grows with
+            every round played does not push them down the page. */}
+        <div className='flex w-full max-w-md flex-col gap-4'>
+          <Carousel setApi={setCarouselApi}>
+            <CarouselContent>
+              {/* Only the page on show can be reached, so tabbing cannot wander
               off into the rounds either side of it. */}
-          <CarouselItem inert={selectedIndex !== SETUP_SLIDE_INDEX}>
-            <Setup
-              players={players}
-              errors={messagesForSlide(SETUP_SLIDE_INDEX)}
-              updatePlayerName={updatePlayerName}
-              reorderPlayers={reorderPlayers}
-              removePlayer={removePlayer}
-              addPlayer={addPlayer}
-            />
-          </CarouselItem>
+              <CarouselItem inert={selectedIndex !== SETUP_SLIDE_INDEX}>
+                <Setup
+                  players={players}
+                  errors={messagesForSlide(SETUP_SLIDE_INDEX)}
+                  updatePlayerName={updatePlayerName}
+                  reorderPlayers={reorderPlayers}
+                  removePlayer={removePlayer}
+                  addPlayer={addPlayer}
+                />
+              </CarouselItem>
 
-          {rounds.map((round, roundIndex) => (
-            <CarouselItem
-              key={round.id}
-              inert={selectedIndex !== roundIndex + 1}
-            >
-              <Round
-                players={players}
-                round={round}
-                roundNumber={roundIndex + 1}
-                gameSummary={gameSummary}
-                errors={messagesForSlide(roundIndex + 1)}
-                onScoreChange={(playerId, handTotal) =>
-                  updateRoundScore(round.id, playerId, handTotal)
-                }
-              />
-            </CarouselItem>
-          ))}
+              {rounds.map((round, roundIndex) => (
+                <CarouselItem
+                  key={round.id}
+                  inert={selectedIndex !== roundIndex + 1}
+                >
+                  <Round
+                    players={players}
+                    round={round}
+                    roundNumber={roundIndex + 1}
+                    gameSummary={gameSummary}
+                    errors={messagesForSlide(roundIndex + 1)}
+                    onScoreChange={(playerId, handTotal) =>
+                      updateRoundScore(round.id, playerId, handTotal)
+                    }
+                  />
+                </CarouselItem>
+              ))}
 
-          {gameSummary.isGameOver && (
-            <CarouselItem inert={selectedIndex !== lastSlideIndex}>
-              <GameOver
-                players={players}
-                gameSummary={gameSummary}
-                onPlayAgain={startNewGameWithSamePlayers}
-              />
-            </CarouselItem>
-          )}
-        </CarouselContent>
-      </Carousel>
+              {gameSummary.isGameOver && (
+                <CarouselItem inert={selectedIndex !== lastSlideIndex}>
+                  <GameOver
+                    players={players}
+                    gameSummary={gameSummary}
+                    onPlayAgain={startNewGameWithSamePlayers}
+                  />
+                </CarouselItem>
+              )}
+            </CarouselContent>
+          </Carousel>
 
-      <CarouselControls
-        isAtFirst={selectedIndex === SETUP_SLIDE_INDEX}
-        isAtLast={selectedIndex === lastSlideIndex}
-        onFirst={() => carouselApi?.scrollTo(SETUP_SLIDE_INDEX)}
-        onPrevious={() => carouselApi?.scrollPrev()}
-        onNext={handleNextClick}
-        onLast={() => carouselApi?.scrollTo(lastSlideIndex)}
-      />
+          <CarouselControls
+            isAtFirst={selectedIndex === SETUP_SLIDE_INDEX}
+            isAtLast={selectedIndex === lastSlideIndex}
+            onFirst={() => carouselApi?.scrollTo(SETUP_SLIDE_INDEX)}
+            onPrevious={() => carouselApi?.scrollPrev()}
+            onNext={handleNextClick}
+            onLast={() => carouselApi?.scrollTo(lastSlideIndex)}
+          />
+        </div>
+
+        {/* Read only, so it can sit in the page alongside the carousel without
+            a second set of score boxes to tab through. */}
+        {rounds.length > 0 && (
+          <ScoreTable
+            players={players}
+            rounds={rounds}
+            gameSummary={gameSummary}
+            currentRoundNumber={selectedIndex}
+            className='hidden w-full max-w-md lg:block'
+          />
+        )}
+      </div>
     </GameLayout>
   );
 }
