@@ -1,15 +1,5 @@
-'use client';
-
-import Setup from './_components/setup';
-import useYanivScoreboard from './_hooks/useYanivScoreboard';
+import Game from './_components/game';
 
 export default function YanivScoreboardPage() {
-  const {} = useYanivScoreboard();
-
-  return (
-    <div>
-      <h1>Yaniv</h1>
-      <Setup players={[{ id: 'a', name: 'b' }]} setPlayers={() => {}} />
-    </div>
-  );
+  return <Game />;
 }

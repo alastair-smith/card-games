@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 import type { Branded } from '~/types/brand';
-import {
-  type PlayerName,
-  playerNameSchema,
-  type UserId,
-  userIdSchema,
-} from '~/types/entities';
+import { type PlayerName, type UserId, userIdSchema } from '~/types/entities';
 import { deriveGameSummary } from '../_libs/derive-game-summary';
 
 export type RoundId = Branded<string, 'RoundId'>;
@@ -15,7 +10,9 @@ export const roundIdSchema = z.uuid().transform((value) => value as RoundId);
 
 export const scoreboardPlayerSchema = z.object({
   id: userIdSchema,
-  name: playerNameSchema,
+  // Names are saved as they are typed, so an unnamed player part way through
+  // setup does not make the whole saved game unreadable.
+  name: z.string().transform((value) => value as PlayerName),
 });
 
 export type ScoreboardPlayer = z.infer<typeof scoreboardPlayerSchema>;
@@ -38,10 +35,18 @@ export type ScoreboardState = z.infer<typeof scoreboardStateSchema>;
 
 export const SCOREBOARD_STORAGE_KEY = 'yaniv-scoreboard-v1';
 
-const initialState: ScoreboardState = {
-  players: [],
+const NEW_GAME_PLAYER_COUNT = 3;
+
+const newPlayer = (): ScoreboardPlayer => ({
+  id: crypto.randomUUID() as UserId,
+  name: '' as PlayerName,
+});
+
+// A factory rather than a constant, so each new game gets its own player ids.
+const newGameState = (): ScoreboardState => ({
+  players: Array.from({ length: NEW_GAME_PLAYER_COUNT }, newPlayer),
   rounds: [],
-};
+});
 
 const openRound = (): ScoreboardRound => ({
   id: crypto.randomUUID() as RoundId,
@@ -77,12 +82,20 @@ const saveScoreboardState = (state: ScoreboardState): void => {
 
 export default function useYanivScoreboard() {
   const [scoreboardState, setScoreboardState] =
-    useState<ScoreboardState>(initialState);
+    useState<ScoreboardState>(newGameState);
   const [isRestored, setIsRestored] = useState(false);
+  // A game was found in storage and the players have not yet said what to do
+  // with it. The game is loaded either way, so continuing is simply carrying on.
+  const [hasSavedGame, setHasSavedGame] = useState(false);
 
   useEffect(() => {
     const stored = loadScoreboardState();
-    if (stored) setScoreboardState(stored);
+
+    if (stored) {
+      setScoreboardState(stored);
+      setHasSavedGame(true);
+    }
+
     setIsRestored(true);
   }, []);
 
@@ -203,8 +216,18 @@ export default function useYanivScoreboard() {
     });
   }, []);
 
-  const resetGame = useCallback(() => {
-    setScoreboardState(initialState);
+  const continueGame = useCallback(() => {
+    setHasSavedGame(false);
+  }, []);
+
+  const startNewGame = useCallback(() => {
+    setScoreboardState(newGameState());
+    setHasSavedGame(false);
+  }, []);
+
+  const startNewGameWithSamePlayers = useCallback(() => {
+    setScoreboardState((current) => ({ players: current.players, rounds: [] }));
+    setHasSavedGame(false);
   }, []);
 
   const gameSummary = useMemo(
@@ -215,6 +238,10 @@ export default function useYanivScoreboard() {
   return {
     scoreboardState,
     gameSummary,
+    hasSavedGame,
+    continueGame,
+    startNewGame,
+    startNewGameWithSamePlayers,
     startGame,
     endRound,
     addPlayer,
@@ -222,6 +249,5 @@ export default function useYanivScoreboard() {
     removePlayer,
     reorderPlayers,
     updateRoundScore,
-    resetGame,
   };
 }

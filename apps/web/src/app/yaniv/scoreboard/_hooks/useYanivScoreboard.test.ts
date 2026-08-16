@@ -49,10 +49,12 @@ describe('useYanivScoreboard', () => {
   });
 
   describe('players', () => {
-    test('starts a new game with no players', () => {
+    test('starts a new game with three players waiting to be named', () => {
       const { result } = renderHook(() => useYanivScoreboard());
 
-      expect(result.current.scoreboardState.players).toEqual([]);
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
     });
 
     test('adds a player', () => {
@@ -60,8 +62,8 @@ describe('useYanivScoreboard', () => {
 
       act(() => result.current.addPlayer('Ada' as PlayerName));
 
-      expect(result.current.scoreboardState.players).toHaveLength(1);
-      expect(result.current.scoreboardState.players[0]?.name).toBe('Ada');
+      expect(result.current.scoreboardState.players).toHaveLength(4);
+      expect(result.current.scoreboardState.players.at(-1)?.name).toBe('Ada');
     });
 
     test('gives each player their own id', () => {
@@ -70,9 +72,10 @@ describe('useYanivScoreboard', () => {
       act(() => result.current.addPlayer('Ada' as PlayerName));
       act(() => result.current.addPlayer('Grace' as PlayerName));
 
-      const [firstPlayer, secondPlayer] =
-        result.current.scoreboardState.players;
-      expect(firstPlayer?.id).not.toBe(secondPlayer?.id);
+      const playerIds = result.current.scoreboardState.players.map(
+        (player) => player.id,
+      );
+      expect(new Set(playerIds).size).toBe(playerIds.length);
     });
 
     test('adds players in the order they were entered', () => {
@@ -82,7 +85,9 @@ describe('useYanivScoreboard', () => {
       act(() => result.current.addPlayer('Grace' as PlayerName));
 
       expect(
-        result.current.scoreboardState.players.map((player) => player.name),
+        result.current.scoreboardState.players
+          .slice(-2)
+          .map((player) => player.name),
       ).toEqual(['Ada', 'Grace']);
     });
 
@@ -352,26 +357,73 @@ describe('useYanivScoreboard', () => {
     });
   });
 
-  describe('starting a new game', () => {
-    test('clears the players and the rounds', () => {
+  describe('picking up a saved game', () => {
+    test('offers the saved game to the players', () => {
       saveGame(savedGame);
+
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.resetGame());
-
-      expect(result.current.scoreboardState).toEqual({
-        players: [],
-        rounds: [],
-      });
+      expect(result.current.hasSavedGame).toBe(true);
     });
 
-    test('clears the saved game', () => {
+    test('offers nothing when there is no saved game', () => {
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(result.current.hasSavedGame).toBe(false);
+    });
+
+    test('carries on with the saved game', () => {
       saveGame(savedGame);
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.resetGame());
+      act(() => result.current.continueGame());
 
-      expect(readSavedGame()).toEqual({ players: [], rounds: [] });
+      expect(result.current.hasSavedGame).toBe(false);
+      expect(result.current.scoreboardState).toEqual(savedGame);
+    });
+
+    test('starts again with nobody named', () => {
+      saveGame(savedGame);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.startNewGame());
+
+      expect(result.current.hasSavedGame).toBe(false);
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
+      expect(result.current.scoreboardState.rounds).toEqual([]);
+    });
+
+    test('gives a new game its own players', () => {
+      saveGame(savedGame);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.startNewGame());
+
+      expect(
+        result.current.scoreboardState.players.map((player) => player.id),
+      ).not.toContain(ADA_ID);
+    });
+
+    test('starts again with the same players', () => {
+      saveGame(savedGame);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.startNewGameWithSamePlayers());
+
+      expect(result.current.hasSavedGame).toBe(false);
+      expect(result.current.scoreboardState.players).toEqual(savedGame.players);
+      expect(result.current.scoreboardState.rounds).toEqual([]);
+    });
+
+    test('saves over the old game once a new one is started', () => {
+      saveGame(savedGame);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.startNewGame());
+
+      expect(readSavedGame().rounds).toEqual([]);
     });
   });
 
@@ -387,10 +439,10 @@ describe('useYanivScoreboard', () => {
     test('starts a new game when there is nothing saved', () => {
       const { result } = renderHook(() => useYanivScoreboard());
 
-      expect(result.current.scoreboardState).toEqual({
-        players: [],
-        rounds: [],
-      });
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
+      expect(result.current.scoreboardState.rounds).toEqual([]);
     });
 
     test('starts a new game when the saved game cannot be read', () => {
@@ -398,10 +450,21 @@ describe('useYanivScoreboard', () => {
 
       const { result } = renderHook(() => useYanivScoreboard());
 
-      expect(result.current.scoreboardState).toEqual({
-        players: [],
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
+      expect(result.current.scoreboardState.rounds).toEqual([]);
+    });
+
+    test('picks up a game where a player is yet to be named', () => {
+      saveGame({
+        players: [{ id: ADA_ID, name: '' as PlayerName }],
         rounds: [],
       });
+
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(result.current.scoreboardState.players).toHaveLength(1);
     });
 
     test('starts a new game when the saved game is no longer a shape we recognise', () => {
@@ -412,10 +475,10 @@ describe('useYanivScoreboard', () => {
 
       const { result } = renderHook(() => useYanivScoreboard());
 
-      expect(result.current.scoreboardState).toEqual({
-        players: [],
-        rounds: [],
-      });
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
+      expect(result.current.scoreboardState.rounds).toEqual([]);
     });
 
     test('saves the game as it is played', () => {
@@ -427,15 +490,15 @@ describe('useYanivScoreboard', () => {
       expect(readSavedGame().rounds[0].handTotals[GRACE_ID]).toBe(12);
     });
 
-    test('does not save an empty game while picking up the saved one', () => {
+    test('does not save a new game over the one being picked up', () => {
       saveGame(savedGame);
       const setItem = vi.spyOn(Storage.prototype, 'setItem');
 
       renderHook(() => useYanivScoreboard());
 
-      expect(setItem.mock.calls.map(([, value]) => value)).not.toContain(
-        JSON.stringify({ players: [], rounds: [] }),
-      );
+      for (const [, value] of setItem.mock.calls) {
+        expect(JSON.parse(value)).toEqual(savedGame);
+      }
     });
   });
 });
