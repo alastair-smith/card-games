@@ -303,10 +303,35 @@ describe('useYanivScoreboard', () => {
       ],
     };
 
-    test('opens the first round when the game starts', () => {
+    test('will not start a game while a player is yet to be named', () => {
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.addPlayer('Ada' as PlayerName));
+      act(() => result.current.startGame());
+
+      expect(result.current.scoreboardState.rounds).toEqual([]);
+    });
+
+    test('will not start a game for a player named only with spaces', () => {
+      saveGame({
+        players: [{ id: ADA_ID, name: '  ' as PlayerName }],
+        rounds: [],
+      });
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.continueGame());
+      act(() => result.current.startGame());
+
+      expect(result.current.scoreboardState.rounds).toEqual([]);
+    });
+
+    test('opens the first round when the game starts', () => {
+      saveGame({
+        players: [{ id: ADA_ID, name: 'Ada' as PlayerName }],
+        rounds: [],
+      });
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.continueGame());
       act(() => result.current.startGame());
 
       expect(result.current.scoreboardState.rounds).toHaveLength(1);

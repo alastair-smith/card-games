@@ -22,8 +22,6 @@ type GameOverProps = {
   onPlayAgain: () => void;
 };
 
-const UNNAMED_PLAYER = 'Someone';
-
 export default function GameOver({
   players,
   gameSummary,
@@ -60,8 +58,7 @@ export default function GameOver({
           <div className='flex flex-col items-center'>
             <TrophyIcon size='100' aria-hidden='true' />
             <span className='text-2xl'>
-              {winners.map(({ name }) => name || UNNAMED_PLAYER).join(' & ') ||
-                UNNAMED_PLAYER}{' '}
+              {winners.map(({ name }) => name).join(' & ')}{' '}
               {winners.length === 1 ? 'wins' : 'win'} with a score of{' '}
               {winningTotal}!
             </span>
@@ -82,7 +79,7 @@ export default function GameOver({
             <TableBody>
               {rankedPlayers.map(({ id, name, total }) => (
                 <TableRow key={id}>
-                  <TableCell>{name || UNNAMED_PLAYER}</TableCell>
+                  <TableCell>{name}</TableCell>
                   <TableCell>{total}</TableCell>
                 </TableRow>
               ))}

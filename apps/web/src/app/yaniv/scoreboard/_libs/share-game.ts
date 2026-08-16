@@ -7,15 +7,11 @@ export type SharePlayer = {
   isWinner: boolean;
 };
 
-const UNNAMED_PLAYER = 'Someone';
-
 export const buildShareText = (players: SharePlayer[]): string =>
   players
     .map(
       ({ name, total, isWinner }) =>
-        `${total.toString().padStart(3, '0')} ${name || UNNAMED_PLAYER}${
-          isWinner ? ' 🏆' : ''
-        }`,
+        `${total.toString().padStart(3, '0')} ${name}${isWinner ? ' 🏆' : ''}`,
     )
     .join('\n');
 

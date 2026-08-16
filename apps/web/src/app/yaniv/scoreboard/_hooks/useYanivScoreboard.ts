@@ -188,11 +188,18 @@ export default function useYanivScoreboard() {
   );
 
   const startGame = useCallback(() => {
-    setScoreboardState((current) =>
-      current.rounds.length > 0
-        ? current
-        : { ...current, rounds: [openRound()] },
-    );
+    setScoreboardState((current) => {
+      if (current.rounds.length > 0) return current;
+
+      // Everybody is named before play starts, so no scorecard, summary or
+      // shared result ever has to stand in for a player.
+      const isEveryPlayerNamed = current.players.every(
+        (player) => player.name.trim() !== '',
+      );
+      if (!isEveryPlayerNamed) return current;
+
+      return { ...current, rounds: [openRound()] };
+    });
   }, []);
 
   const endRound = useCallback(() => {

@@ -33,12 +33,6 @@ describe('sharing a finished game', () => {
     expect(text).toBe('012 Ada 🏆\n012 Grace 🏆');
   });
 
-  test('stands in for a player who was never named', () => {
-    const text = buildShareText([player('', 12, true)]);
-
-    expect(text).toBe('012 Someone 🏆');
-  });
-
   test('points at the game to share it from', () => {
     const shareData = buildShareData([player('Ada', 12, true)], 'example.com');
 
