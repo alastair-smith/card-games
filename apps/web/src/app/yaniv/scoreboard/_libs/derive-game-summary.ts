@@ -57,6 +57,11 @@ const scoreRound = (
       const summary = playerSummaries[player.id] ?? newPlayerSummary();
       const roundScore = round.handTotals[player.id] ?? 0;
 
+      // Halving is for reaching a total, not for resting on one. A player who
+      // scored nothing has not reached anything, so somebody put on 50 by their
+      // hundred being halved is not then halved again for staying there.
+      if (roundScore === 0) return [player.id, summary];
+
       return [
         player.id,
         applyScoreHalving(summary.total + roundScore, summary),

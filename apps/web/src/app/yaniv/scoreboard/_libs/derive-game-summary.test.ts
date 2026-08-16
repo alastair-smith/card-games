@@ -95,6 +95,41 @@ describe('deriveGameSummary', () => {
     expect(players[GRACE_ID]?.total).toBe(50);
   });
 
+  test('halves a hundred only the once', () => {
+    const { players } = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [round({ [ADA_ID]: 0, [GRACE_ID]: 100 })],
+    });
+
+    expect(players[GRACE_ID]?.total).toBe(50);
+    expect(players[GRACE_ID]?.isFiftyScoreHalved).toBe(false);
+  });
+
+  test('leaves a player put on fifty by their hundred being halved there', () => {
+    const { players } = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [
+        round({ [ADA_ID]: 0, [GRACE_ID]: 100 }),
+        round({ [ADA_ID]: 5, [GRACE_ID]: 0 }),
+      ],
+    });
+
+    expect(players[GRACE_ID]?.total).toBe(50);
+  });
+
+  test('leaves a total alone for a player who scored nothing', () => {
+    const { players } = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [
+        round({ [ADA_ID]: 0, [GRACE_ID]: 50 }),
+        round({ [ADA_ID]: 5, [GRACE_ID]: 0 }),
+      ],
+    });
+
+    // Halved to 25 on reaching 50, and left there by a round they won.
+    expect(players[GRACE_ID]?.total).toBe(25);
+  });
+
   test('keeps playing while everyone is a hundred or under', () => {
     const { isGameOver } = deriveGameSummary({
       players: gamePlayers,
