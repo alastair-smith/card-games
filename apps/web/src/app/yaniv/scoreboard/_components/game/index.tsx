@@ -64,6 +64,8 @@ export default function Game() {
   if (hasSavedGame) {
     return (
       <SavedGame
+        players={scoreboardState.players}
+        gameSummary={gameSummary}
         onContinue={continueGame}
         onStartNew={startNewGame}
         onStartNewWithSamePlayers={startNewGameWithSamePlayers}
