@@ -37,6 +37,16 @@ const saveGame = (state: ScoreboardState) => {
   localStorage.setItem(SCOREBOARD_STORAGE_KEY, JSON.stringify(state));
 };
 
+type ScoreboardHook = {
+  current: ReturnType<typeof useYanivScoreboard>;
+};
+
+const nameEveryPlayer = (result: ScoreboardHook, name: PlayerName) => {
+  for (const player of result.current.scoreboardState.players) {
+    result.current.updatePlayerName(player.id, name);
+  }
+};
+
 const readSavedGame = () => {
   const stored = localStorage.getItem(SCOREBOARD_STORAGE_KEY);
   return stored === null ? null : JSON.parse(stored);
@@ -279,13 +289,20 @@ describe('useYanivScoreboard', () => {
     test('records a score for a player who had none in that round', () => {
       saveGame({
         ...savedGame,
-        rounds: [{ id: FIRST_ROUND_ID, isComplete: true, handTotals: {} }],
+        rounds: [
+          {
+            id: FIRST_ROUND_ID,
+            isComplete: true,
+            handTotals: { [ADA_ID]: 3, [GRACE_ID]: 21, [ALAN_ID]: 14 },
+          },
+          { id: SECOND_ROUND_ID, isComplete: false, handTotals: {} },
+        ],
       });
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.updateRoundScore(FIRST_ROUND_ID, ADA_ID, 7));
+      act(() => result.current.updateRoundScore(SECOND_ROUND_ID, ADA_ID, 7));
 
-      expect(result.current.scoreboardState.rounds[0]?.handTotals).toEqual({
+      expect(result.current.scoreboardState.rounds[1]?.handTotals).toEqual({
         [ADA_ID]: 7,
       });
     });
@@ -312,26 +329,18 @@ describe('useYanivScoreboard', () => {
     });
 
     test('will not start a game for a player named only with spaces', () => {
-      saveGame({
-        players: [{ id: ADA_ID, name: '  ' as PlayerName }],
-        rounds: [],
-      });
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.continueGame());
+      act(() => nameEveryPlayer(result, '  ' as PlayerName));
       act(() => result.current.startGame());
 
       expect(result.current.scoreboardState.rounds).toEqual([]);
     });
 
     test('opens the first round when the game starts', () => {
-      saveGame({
-        players: [{ id: ADA_ID, name: 'Ada' as PlayerName }],
-        rounds: [],
-      });
       const { result } = renderHook(() => useYanivScoreboard());
 
-      act(() => result.current.continueGame());
+      act(() => nameEveryPlayer(result, 'Ada' as PlayerName));
       act(() => result.current.startGame());
 
       expect(result.current.scoreboardState.rounds).toHaveLength(1);
@@ -432,6 +441,27 @@ describe('useYanivScoreboard', () => {
       expect(result.current.hasSavedGame).toBe(false);
     });
 
+    test('offers nothing when nobody has scored in the saved game yet', () => {
+      saveGame({
+        players: savedGame.players,
+        rounds: [{ id: FIRST_ROUND_ID, isComplete: false, handTotals: {} }],
+      });
+
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(result.current.hasSavedGame).toBe(false);
+    });
+
+    test('starts fresh when nobody has scored in the saved game', () => {
+      saveGame({ players: savedGame.players, rounds: [] });
+
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(
+        result.current.scoreboardState.players.map((player) => player.name),
+      ).toEqual(['', '', '']);
+    });
+
     test('carries on with the saved game', () => {
       saveGame(savedGame);
       const { result } = renderHook(() => useYanivScoreboard());
@@ -518,13 +548,16 @@ describe('useYanivScoreboard', () => {
 
     test('picks up a game where a player is yet to be named', () => {
       saveGame({
-        players: [{ id: ADA_ID, name: '' as PlayerName }],
-        rounds: [],
+        ...savedGame,
+        players: [
+          { id: ADA_ID, name: '' as PlayerName },
+          ...savedGame.players.slice(1),
+        ],
       });
 
       const { result } = renderHook(() => useYanivScoreboard());
 
-      expect(result.current.scoreboardState.players).toHaveLength(1);
+      expect(result.current.scoreboardState.players).toHaveLength(3);
     });
 
     test('starts a new game when the saved game is no longer a shape we recognise', () => {

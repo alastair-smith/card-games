@@ -54,6 +54,13 @@ const openRound = (): ScoreboardRound => ({
   handTotals: {},
 });
 
+/**
+ * Whether a saved game is worth picking up. A game nobody has scored in is not
+ * one anybody would miss, so it gives way to a fresh start.
+ */
+const hasRecordedScores = ({ rounds }: ScoreboardState): boolean =>
+  rounds.some((round) => Object.keys(round.handTotals).length > 0);
+
 const loadScoreboardState = (): ScoreboardState | null => {
   if (typeof window === 'undefined') return null;
 
@@ -64,7 +71,9 @@ const loadScoreboardState = (): ScoreboardState | null => {
     const parsed = scoreboardStateSchema.safeParse(JSON.parse(stored));
 
     // A game saved by an older version of the app is discarded rather than crashing the page.
-    return parsed.success ? parsed.data : null;
+    if (!parsed.success) return null;
+
+    return hasRecordedScores(parsed.data) ? parsed.data : null;
   } catch {
     return null;
   }

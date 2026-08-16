@@ -88,7 +88,7 @@ describe('Round', () => {
       />,
     );
 
-    expect(screen.getByText('(30)')).toBeInTheDocument();
+    expect(screen.getByText('30')).toBeInTheDocument();
   });
 
   test('shows the running total for a round already played', () => {
@@ -104,7 +104,7 @@ describe('Round', () => {
       />,
     );
 
-    expect(screen.getByText('(4)')).toBeInTheDocument();
+    expect(screen.getByText('4')).toBeInTheDocument();
   });
 
   test('shows how far a player is from being halved', () => {
@@ -167,6 +167,37 @@ describe('Round', () => {
 
     expect(screen.getAllByText('50 score has been halved')).toHaveLength(1);
     expect(screen.getAllByText('50 score has not been halved')).toHaveLength(1);
+  });
+
+  test('says which score is missing when asked', () => {
+    render(
+      <Round
+        players={players}
+        round={roundInProgress}
+        gameSummary={gameSummary}
+        errors={{ [GRACE_ID]: 'Enter a score for Grace' }}
+        onScoreChange={noop}
+      />,
+    );
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Enter a score for Grace',
+    );
+  });
+
+  test('marks the box a missing score belongs in', () => {
+    render(
+      <Round
+        players={players}
+        round={roundInProgress}
+        gameSummary={gameSummary}
+        errors={{ [GRACE_ID]: 'Enter a score for Grace' }}
+        onScoreChange={noop}
+      />,
+    );
+
+    expect(screen.getByLabelText('Round score for Grace')).toBeInvalid();
+    expect(screen.getByLabelText('Round score for Ada')).toBeValid();
   });
 
   test('reports a score as it is entered', () => {

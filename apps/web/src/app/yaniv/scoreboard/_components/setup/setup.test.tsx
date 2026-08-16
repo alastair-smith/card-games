@@ -15,6 +15,7 @@ const noop = vi.fn();
 
 const renderSetup = (
   handlers: Partial<{
+    errors: Partial<Record<UserId, string>>;
     updatePlayerName: (playerId: UserId, newName: PlayerName) => void;
     reorderPlayers: (newPlayerIds: string[]) => void;
     removePlayer: (playerId: UserId) => void;
@@ -24,6 +25,7 @@ const renderSetup = (
   render(
     <Setup
       players={players}
+      errors={handlers.errors}
       updatePlayerName={handlers.updatePlayerName ?? noop}
       reorderPlayers={handlers.reorderPlayers ?? noop}
       removePlayer={handlers.removePlayer ?? noop}
@@ -63,6 +65,25 @@ describe('Setup', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Remove Ada' }));
 
     expect(handleRemovePlayer).toHaveBeenCalledWith(ADA_ID);
+  });
+
+  test('says which player still needs a name when asked', () => {
+    renderSetup({
+      errors: { [UNNAMED_ID]: 'Enter a name for this player' },
+    });
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Enter a name for this player',
+    );
+  });
+
+  test('marks the box a missing name belongs in', () => {
+    renderSetup({
+      errors: { [UNNAMED_ID]: 'Enter a name for this player' },
+    });
+
+    expect(screen.getByLabelText('Player 2 name')).toBeInvalid();
+    expect(screen.getByLabelText('Player 1 name')).toBeValid();
   });
 
   test('adds a player waiting to be named', () => {

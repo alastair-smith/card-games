@@ -8,12 +8,15 @@ import {
   type PlayerName,
   type UserId,
 } from '~/types/entities';
+import FieldError from '../field-error';
 
 export type SetupProps = {
   players: {
     id: UserId;
     name: PlayerName;
   }[];
+  /** What each player still needs before the game can go on, if anything. */
+  errors?: Partial<Record<UserId, string>>;
   updatePlayerName: (playerId: UserId, newName: PlayerName) => void;
   reorderPlayers: (newPlayerIds: string[]) => void;
   removePlayer: (playerId: UserId) => void;
@@ -22,6 +25,7 @@ export type SetupProps = {
 
 export default function Setup({
   players,
+  errors,
   updatePlayerName,
   reorderPlayers,
   removePlayer,
@@ -33,32 +37,46 @@ export default function Setup({
     };
 
   return (
-    <div>
-      <h2>Enter Player Names</h2>
+    <div className='flex flex-col gap-4'>
+      <h2 className='text-center text-xl font-semibold'>Enter player names</h2>
 
       <Reorder
         itemIds={players.map(({ id }) => id)}
         label='Player order'
         onReorder={reorderPlayers}
       >
-        {players.map((player) => (
-          <ReorderItem key={player.id} id={player.id} label={player.name}>
-            <ReorderHandle />
-            <Input
-              value={player.name}
-              maxLength={MAX_NAME_LENGTH}
-              onChange={nameChangeHandler(player.id)}
-            />
-            <Button
-              variant='danger'
-              size='icon'
-              aria-label={`Remove ${player.name || 'this player'}`}
-              onClick={() => removePlayer(player.id)}
-            >
-              <Trash2Icon aria-hidden='true' />
-            </Button>
-          </ReorderItem>
-        ))}
+        {players.map((player, index) => {
+          const error = errors?.[player.id];
+          const errorId = `player-${player.id}-error`;
+
+          return (
+            <ReorderItem key={player.id} id={player.id} label={player.name}>
+              <div className='flex w-full flex-col gap-1'>
+                <div className='flex items-center gap-2'>
+                  <ReorderHandle />
+                  <Input
+                    value={player.name}
+                    maxLength={MAX_NAME_LENGTH}
+                    aria-label={`Player ${index + 1} name`}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
+                    onChange={nameChangeHandler(player.id)}
+                  />
+                  <Button
+                    variant='danger'
+                    size='icon'
+                    aria-label={`Remove ${player.name || 'this player'}`}
+                    onClick={() => removePlayer(player.id)}
+                  >
+                    <Trash2Icon aria-hidden='true' />
+                  </Button>
+                </div>
+
+                <FieldError id={errorId}>{error}</FieldError>
+              </div>
+            </ReorderItem>
+          );
+        })}
       </Reorder>
 
       <Button
@@ -66,6 +84,7 @@ export default function Setup({
         variant='secondary'
         size='icon'
         aria-label='Add player'
+        className='self-center'
       >
         <UserPlusIcon aria-hidden='true' />
       </Button>
