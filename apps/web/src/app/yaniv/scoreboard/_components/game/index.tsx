@@ -12,6 +12,7 @@ import {
 } from '~/components/ui/carousel';
 import type { PlayerName } from '~/types/entities';
 import useYanivScoreboard from '../../_hooks/useYanivScoreboard';
+import GameOver from '../game-over';
 import Round from '../round';
 import SavedGame from '../saved-game';
 import Setup from '../setup';
@@ -37,6 +38,8 @@ export default function Game() {
   const hasFoundItsPlace = useRef(false);
 
   const roundCount = scoreboardState.rounds.length;
+  // Setup is the first slide, then a slide per round, then the final scores.
+  const lastSlideIndex = roundCount + (gameSummary.isGameOver ? 1 : 0);
 
   // Moving past the last slide is what starts the game and ends each round, so
   // there is nothing to press beyond the one control that turns the page.
@@ -58,12 +61,13 @@ export default function Game() {
     if (!carouselApi) return;
 
     // A round opened by the control above arrives as a new slide, which is then
-    // turned to. Picking up a saved game goes straight to its current round
-    // instead, rather than racing through every round played so far.
+    // turned to, as are the final scores once the game is won. Picking up a
+    // saved game goes straight to where it was left instead, rather than racing
+    // through every round played so far.
     carouselApi.reInit();
-    carouselApi.scrollTo(roundCount, !hasFoundItsPlace.current);
+    carouselApi.scrollTo(lastSlideIndex, !hasFoundItsPlace.current);
     hasFoundItsPlace.current = true;
-  }, [carouselApi, roundCount]);
+  }, [carouselApi, lastSlideIndex]);
 
   if (hasSavedGame) {
     return (
@@ -104,6 +108,16 @@ export default function Game() {
               />
             </CarouselItem>
           ))}
+
+          {gameSummary.isGameOver && (
+            <CarouselItem>
+              <GameOver
+                players={scoreboardState.players}
+                gameSummary={gameSummary}
+                onPlayAgain={startNewGameWithSamePlayers}
+              />
+            </CarouselItem>
+          )}
         </CarouselContent>
 
         <CarouselPrevious />
