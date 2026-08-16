@@ -73,6 +73,30 @@ export const getRoundHalving = (
   return null;
 };
 
+/**
+ * The next total a player's score would be halved at, and how far away they
+ * are — negative once they are past it. Null when both halvings are spent.
+ */
+export const getHalvingTarget = (
+  gameSummary: GameSummary,
+  playerId: UserId,
+): { target: HalvedScore; away: number } | null => {
+  const summary = gameSummary.players[playerId];
+  if (!summary) return null;
+
+  // Halving lands on the total exactly, so a player already past 50 without
+  // having been halved there has missed it, and 100 becomes the one to watch.
+  if (!summary.isFiftyScoreHalved && summary.total < 50) {
+    return { target: 50, away: 50 - summary.total };
+  }
+
+  if (!summary.isHundredScoreHalved) {
+    return { target: 100, away: 100 - summary.total };
+  }
+
+  return null;
+};
+
 export const isPlayerWinner = (
   gameSummary: GameSummary,
   playerId: UserId,

@@ -3,6 +3,7 @@ import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundId, ScoreboardState } from '../_hooks/useYanivScoreboard';
 import { deriveGameSummary } from './derive-game-summary';
 import {
+  getHalvingTarget,
   getPlayerRoundTotal,
   getPlayerTotal,
   getRoundHalving,
@@ -115,6 +116,63 @@ describe('reading the game summary', () => {
 
       expect(getRoundHalving(gameSummary, FIRST_ROUND_ID, GRACE_ID)).toBe(50);
       expect(getRoundHalving(gameSummary, SECOND_ROUND_ID, GRACE_ID)).toBe(100);
+    });
+  });
+
+  describe('the next halving', () => {
+    test('counts a player down towards fifty', () => {
+      const summary = deriveGameSummary({
+        players: gamePlayers,
+        rounds: [round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 30 })],
+      });
+
+      expect(getHalvingTarget(summary, GRACE_ID)).toEqual({
+        target: 50,
+        away: 20,
+      });
+    });
+
+    test('moves on to a hundred once a player is halved at fifty', () => {
+      expect(getHalvingTarget(halvingGame, GRACE_ID)).toEqual({
+        target: 100,
+        away: 75,
+      });
+    });
+
+    test('moves on to a hundred once a player has passed fifty unhalved', () => {
+      const summary = deriveGameSummary({
+        players: gamePlayers,
+        rounds: [round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 60 })],
+      });
+
+      expect(getHalvingTarget(summary, GRACE_ID)).toEqual({
+        target: 100,
+        away: 40,
+      });
+    });
+
+    test('counts past the target for a player who has gone beyond it', () => {
+      const summary = deriveGameSummary({
+        players: gamePlayers,
+        rounds: [round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 101 })],
+      });
+
+      expect(getHalvingTarget(summary, GRACE_ID)).toEqual({
+        target: 100,
+        away: -1,
+      });
+    });
+
+    test('has nothing left to watch once both halvings are spent', () => {
+      const summary = deriveGameSummary({
+        players: gamePlayers,
+        rounds: [
+          round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 50 }),
+          round(SECOND_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 75 }),
+        ],
+      });
+
+      expect(getHalvingTarget(summary, GRACE_ID)).toBeNull();
     });
   });
 
