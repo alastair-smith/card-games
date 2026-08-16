@@ -1,6 +1,11 @@
 import type { UserId } from '~/types/entities';
 import { GAME_OVER_SCORE } from '~/types/games/yaniv';
-import type { RoundId, ScoreboardState } from '../_hooks/useYanivScoreboard';
+import type {
+  RoundId,
+  ScoreboardPlayer,
+  ScoreboardRound,
+  ScoreboardState,
+} from '../_hooks/useYanivScoreboard';
 
 export type PlayerSummary = {
   total: number;
@@ -42,6 +47,35 @@ const applyScoreHalving = (
   return { ...summary, total: newTotal };
 };
 
+const scoreRound = (
+  playerSummaries: Record<UserId, PlayerSummary>,
+  round: ScoreboardRound,
+  players: ScoreboardPlayer[],
+): Record<UserId, PlayerSummary> =>
+  Object.fromEntries(
+    players.map((player) => {
+      const summary = playerSummaries[player.id] ?? newPlayerSummary();
+      const roundScore = round.handTotals[player.id] ?? 0;
+
+      return [
+        player.id,
+        applyScoreHalving(summary.total + roundScore, summary),
+      ];
+    }),
+  );
+
+/**
+ * Where the players would stand if the round being entered were finished now,
+ * so a total keeps up with the scores as they are typed without the round
+ * counting towards the game until it is finished.
+ */
+export const previewRound = (
+  gameSummary: GameSummary,
+  round: ScoreboardRound,
+  players: ScoreboardPlayer[],
+): Record<UserId, PlayerSummary> =>
+  scoreRound(gameSummary.players, round, players);
+
 /**
  * Every total, halving and knockout in the game is worked out from the round
  * scores alone, so correcting a score from an earlier round replays the rest of
@@ -62,17 +96,7 @@ export const deriveGameSummary = ({
     // The round still being entered is not scored until the players finish it.
     if (!round.isComplete) break;
 
-    playerSummaries = Object.fromEntries(
-      players.map((player) => {
-        const summary = playerSummaries[player.id] ?? newPlayerSummary();
-        const roundScore = round.handTotals[player.id] ?? 0;
-
-        return [
-          player.id,
-          applyScoreHalving(summary.total + roundScore, summary),
-        ];
-      }),
-    );
+    playerSummaries = scoreRound(playerSummaries, round, players);
 
     byRound.push({ roundId: round.id, players: playerSummaries });
 

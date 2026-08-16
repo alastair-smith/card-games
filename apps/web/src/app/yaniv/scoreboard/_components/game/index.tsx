@@ -106,7 +106,7 @@ export default function Game() {
 
       for (const player of players) {
         if (round.handTotals[player.id] === undefined) {
-          messages[player.id] = `Enter a score for ${player.name}`;
+          messages[player.id] = 'Enter score';
         }
       }
 
@@ -183,7 +183,9 @@ export default function Game() {
     >
       <Carousel className='w-full max-w-md' setApi={setCarouselApi}>
         <CarouselContent>
-          <CarouselItem>
+          {/* Only the page on show can be reached, so tabbing cannot wander
+              off into the rounds either side of it. */}
+          <CarouselItem inert={selectedIndex !== SETUP_SLIDE_INDEX}>
             <Setup
               players={players}
               errors={messagesForSlide(SETUP_SLIDE_INDEX)}
@@ -195,10 +197,14 @@ export default function Game() {
           </CarouselItem>
 
           {rounds.map((round, roundIndex) => (
-            <CarouselItem key={round.id}>
+            <CarouselItem
+              key={round.id}
+              inert={selectedIndex !== roundIndex + 1}
+            >
               <Round
                 players={players}
                 round={round}
+                roundNumber={roundIndex + 1}
                 gameSummary={gameSummary}
                 errors={messagesForSlide(roundIndex + 1)}
                 onScoreChange={(playerId, handTotal) =>
@@ -209,7 +215,7 @@ export default function Game() {
           ))}
 
           {gameSummary.isGameOver && (
-            <CarouselItem>
+            <CarouselItem inert={selectedIndex !== lastSlideIndex}>
               <GameOver
                 players={players}
                 gameSummary={gameSummary}

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundId, ScoreboardState } from '../_hooks/useYanivScoreboard';
-import { deriveGameSummary } from './derive-game-summary';
+import { deriveGameSummary, previewRound } from './derive-game-summary';
 
 const ADA_ID = crypto.randomUUID() as UserId;
 const GRACE_ID = crypto.randomUUID() as UserId;
@@ -150,6 +150,47 @@ describe('deriveGameSummary', () => {
     });
 
     expect(players[GRACE_ID]?.total).toBe(20);
+  });
+
+  test('counts the round being entered towards a preview of the totals', () => {
+    const playedRound = round({ [ADA_ID]: 4, [GRACE_ID]: 30 });
+    const roundInProgress = round({ [GRACE_ID]: 6 }, false);
+    const gameSummary = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [playedRound, roundInProgress],
+    });
+
+    const preview = previewRound(gameSummary, roundInProgress, gamePlayers);
+
+    expect(preview[GRACE_ID]?.total).toBe(36);
+    expect(preview[ADA_ID]?.total).toBe(4);
+  });
+
+  test('halves a preview that lands exactly on fifty', () => {
+    const playedRound = round({ [ADA_ID]: 0, [GRACE_ID]: 30 });
+    const roundInProgress = round({ [GRACE_ID]: 20 }, false);
+    const gameSummary = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [playedRound, roundInProgress],
+    });
+
+    const preview = previewRound(gameSummary, roundInProgress, gamePlayers);
+
+    expect(preview[GRACE_ID]?.total).toBe(25);
+    expect(preview[GRACE_ID]?.isFiftyScoreHalved).toBe(true);
+  });
+
+  test('leaves the game itself untouched by a preview', () => {
+    const playedRound = round({ [ADA_ID]: 0, [GRACE_ID]: 30 });
+    const roundInProgress = round({ [GRACE_ID]: 20 }, false);
+    const gameSummary = deriveGameSummary({
+      players: gamePlayers,
+      rounds: [playedRound, roundInProgress],
+    });
+
+    previewRound(gameSummary, roundInProgress, gamePlayers);
+
+    expect(gameSummary.players[GRACE_ID]?.total).toBe(30);
   });
 
   test('reworks the totals around a corrected score', () => {
