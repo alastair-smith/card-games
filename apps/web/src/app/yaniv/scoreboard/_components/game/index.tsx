@@ -25,6 +25,12 @@ import Setup from '../setup';
 
 const SETUP_SLIDE_INDEX = 0;
 
+// Phone: 3.75rem of header, 0.75rem of gap, 1rem of padding above and 6rem of
+// tab switch below. Desktop: the same but 1rem below, with no switch to keep
+// clear of.
+const SCORE_TABLE_MAX_HEIGHT =
+  'max-h-[calc(100dvh-11.5rem)] lg:max-h-[calc(100dvh-6.5rem)]';
+
 /** Which half of the scoreboard is on show when there is only room for one. */
 enum PageTab {
   ROUNDS = 'rounds',
@@ -231,31 +237,28 @@ export default function Game() {
       className={cn(
         'items-center gap-4 p-4',
         // Held to the height of the screen, so the game sits still as it is
-        // played rather than growing a round at a time. Below this the page
-        // scrolls as a whole and there is nothing to hold.
-        'lg:min-h-0',
+        // played rather than growing a round at a time. Whatever outgrows its
+        // share of the screen scrolls where it stands instead.
+        'min-h-0',
         // Room for the switch pinned to the foot of the screen.
         rounds.length > 0 && 'pb-24 lg:pb-4',
       )}
     >
       {/* Centred while the carousel is on its own, and once the table joins it
           the table takes up the slack, leaving the carousel against the left. */}
-      <div className='flex w-full items-start justify-center gap-6 lg:min-h-0 lg:flex-1'>
+      <div className='flex w-full min-h-0 flex-1 justify-center gap-6'>
         {/* The controls belong to the carousel, so a table that grows with
             every round played does not push them down the page. */}
         <div
           className={cn(
-            'w-full max-w-md shrink-0 flex-col gap-4 lg:min-h-0 lg:self-stretch',
+            'w-full min-h-0 max-w-md shrink-0 flex-col gap-4',
             // Both are on show side by side once there is room for them.
             activeTab === PageTab.ROUNDS ? 'flex' : 'hidden lg:flex',
           )}
         >
           {/* Gives way to the screen before the controls do, so a round with a
               table full of players still has its Next button in reach. */}
-          <Carousel
-            setApi={setCarouselApi}
-            className='lg:min-h-0 lg:overflow-y-auto'
-          >
+          <Carousel setApi={setCarouselApi} className='min-h-0 overflow-y-auto'>
             <CarouselContent>
               {/* Only the page on show can be reached, so tabbing cannot wander
               off into the rounds either side of it. */}
@@ -324,11 +327,19 @@ export default function Game() {
             }}
             className={cn(
               // Given the run of the page beside the carousel, so a table of
-              // six players has the room to lay itself out. min-w-0 and
-              // min-h-0 let it give way to the screen either way, leaving the
-              // table itself to scroll rather than the page.
-              'w-full max-w-md lg:max-w-none lg:min-h-0 lg:min-w-0 lg:flex-1 lg:self-stretch',
-              activeTab === PageTab.SCORES ? 'block' : 'hidden lg:block',
+              // six players has the room to lay itself out, and min-w-0 lets it
+              // give way to the screen with the table left to scroll.
+              'w-full max-w-md lg:max-w-none lg:min-w-0 lg:flex-1',
+              // Held against the screen rather than against the page around it:
+              // measured off the viewport, the height holds however the page is
+              // laid out. What is taken off is the chrome the card sits within —
+              // the header and the gap under it, the padding of the page, and on
+              // a phone the room kept clear for the tab switch.
+              SCORE_TABLE_MAX_HEIGHT,
+              // Shown as a flex column rather than a block: the table lays
+              // itself out inside one, and the last word on display belongs to
+              // whoever writes it last.
+              activeTab === PageTab.SCORES ? 'flex' : 'hidden lg:flex',
             )}
           />
         )}

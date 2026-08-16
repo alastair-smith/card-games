@@ -20,6 +20,9 @@ import {
   getRoundHalving,
 } from '../../_libs/read-game-summary';
 
+const STICKY_HEADING =
+  'sticky top-0 z-10 bg-card-background shadow-[inset_0_-1px_0_theme(colors.border)]';
+
 type ScoreTableProps = {
   players: ScoreboardPlayer[];
   rounds: ScoreboardRound[];
@@ -50,13 +53,19 @@ export default function ScoreTable({
         <CardTitle>Scores</CardTitle>
       </CardHeader>
 
-      <CardContent className='min-h-0 flex-1 overflow-y-auto'>
-        <Table>
+      <CardContent className='flex min-h-0 flex-1 flex-col'>
+        {/* The rounds scroll against the table's own frame, so the column
+            headings can hold the top of it while they go by. */}
+        <Table rootClassName='min-h-0 flex-1 overflow-y-auto'>
           <TableHeader>
             <TableRow>
-              <TableHead>Round</TableHead>
+              {/* A collapsed border does not travel with a sticky cell, so the
+                  line under the headings is drawn inside them instead. */}
+              <TableHead className={STICKY_HEADING}>Round</TableHead>
               {players.map((player) => (
-                <TableHead key={player.id}>{player.name}</TableHead>
+                <TableHead key={player.id} className={STICKY_HEADING}>
+                  {player.name}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
