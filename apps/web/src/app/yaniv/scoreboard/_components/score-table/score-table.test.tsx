@@ -84,15 +84,30 @@ describe('ScoreTable', () => {
   test('gives a row to every round played', () => {
     renderScoreTable();
 
-    expect(within(rowFor(1)).getByText('30')).toBeInTheDocument();
-    expect(within(rowFor(2)).getByText('20')).toBeInTheDocument();
+    // The round number, then each player's hand for that round.
+    expect(cellsIn(rowFor(1))).toEqual(['1', '4 (4)', '30 (30)']);
+  });
+
+  test('follows each hand with the total it left the player on', () => {
+    renderScoreTable();
+
+    // Ada's second hand of 6 takes her from 4 to 10.
+    expect(within(rowFor(2)).getByText('(10)')).toBeInTheDocument();
   });
 
   test('shows the scores entered so far into the round in progress', () => {
     renderScoreTable();
 
-    // The round number, then Ada's score, then nothing for Grace yet.
+    // The round number, then Ada's score, then nothing for Grace yet. No
+    // totals: the round has not been played out, so it has not been scored.
     expect(cellsIn(rowFor(3))).toEqual(['3', '3', '–']);
+  });
+
+  test('follows a halved hand with the total the halving left', () => {
+    renderScoreTable();
+
+    // Grace's 20 takes her to 50, which halves her to 25.
+    expect(cellsIn(rowFor(2))[2]).toBe('20 (25) halved at 50');
   });
 
   test('marks the round a player was halved in', () => {

@@ -14,7 +14,11 @@ import type {
   ScoreboardRound,
 } from '../../_hooks/useYanivScoreboard';
 import type { GameSummary } from '../../_libs/derive-game-summary';
-import { getPlayerTotal, getRoundHalving } from '../../_libs/read-game-summary';
+import {
+  getPlayerRoundTotal,
+  getPlayerTotal,
+  getRoundHalving,
+} from '../../_libs/read-game-summary';
 
 type ScoreTableProps = {
   players: ScoreboardPlayer[];
@@ -84,6 +88,11 @@ export default function ScoreTable({
 
                   {players.map((player) => {
                     const handTotal = round.handTotals[player.id];
+                    const runningTotal = getPlayerRoundTotal(
+                      gameSummary,
+                      round.id,
+                      player.id,
+                    );
                     const halvedAt = getRoundHalving(
                       gameSummary,
                       round.id,
@@ -93,10 +102,19 @@ export default function ScoreTable({
                     return (
                       <TableCell key={player.id}>
                         {handTotal ?? '–'}
-                        {halvedAt && (
-                          <span className='ml-1 text-sm'>
-                            halved at {halvedAt}
+                        {/* The hand is the score entered, the total beside it
+                            is where that left the player. A round that has not
+                            been scored has no total to show: one still being
+                            entered, or one played out after the game had
+                            already been won. */}
+                        {runningTotal !== null && (
+                          <span className='text-sm text-light-text-disabled'>
+                            {' '}
+                            ({runningTotal})
                           </span>
+                        )}
+                        {halvedAt && (
+                          <span className='text-sm'> halved at {halvedAt}</span>
                         )}
                       </TableCell>
                     );
