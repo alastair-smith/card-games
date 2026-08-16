@@ -39,22 +39,13 @@ export default function CarouselControls({
         <ChevronFirstIcon aria-hidden='true' />
       </Button>
 
-      <Button
-        variant='secondary'
-        size='icon'
-        aria-label='Previous page'
-        disabled={isAtFirst}
-        onClick={onPrevious}
-      >
+      <Button variant='secondary' disabled={isAtFirst} onClick={onPrevious}>
         <ChevronLeftIcon aria-hidden='true' />
+        Previous
       </Button>
 
-      <Button
-        variant='secondary'
-        size='icon'
-        aria-label='Next page'
-        onClick={onNext}
-      >
+      <Button onClick={onNext}>
+        Next
         <ChevronRightIcon aria-hidden='true' />
       </Button>
 
