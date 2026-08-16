@@ -28,7 +28,7 @@ export default function CarouselControls({
   onLast,
 }: CarouselControlsProps) {
   return (
-    <div className='flex items-center justify-center gap-2'>
+    <div className='flex shrink-0 items-center justify-center gap-2'>
       <Button
         variant='secondary'
         size='icon'

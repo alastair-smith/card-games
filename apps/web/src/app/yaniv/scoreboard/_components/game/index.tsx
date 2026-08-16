@@ -59,6 +59,9 @@ export default function Game() {
   const [activeTab, setActiveTab] = useState<PageTab>(PageTab.ROUNDS);
   // The first slide shown is arrived at rather than turned to.
   const hasFoundItsPlace = useRef(false);
+  // Where the end of the game was when the slides last changed, so following it
+  // along can tell whoever was standing there from whoever was not.
+  const previousLastSlideIndex = useRef(SETUP_SLIDE_INDEX);
 
   const { players, rounds } = scoreboardState;
   const roundCount = rounds.length;
@@ -84,13 +87,30 @@ export default function Game() {
   useEffect(() => {
     if (!carouselApi) return;
 
-    // A round opened by the controls arrives as a new slide, which is then
-    // turned to, as are the final scores once the game is won. Picking up a
-    // saved game goes straight to where it was left instead, rather than racing
-    // through every round played so far.
+    // Read before the carousel is told about the new slide, so this is where
+    // the players were standing rather than where they have been put.
+    const slideIndexInView = carouselApi.selectedScrollSnap();
+    const endOfTheGame = previousLastSlideIndex.current;
+    previousLastSlideIndex.current = lastSlideIndex;
+
     carouselApi.reInit();
-    carouselApi.scrollTo(lastSlideIndex, !hasFoundItsPlace.current);
-    hasFoundItsPlace.current = true;
+
+    // Picking up a saved game goes straight to where it was left, rather than
+    // racing through every round played so far.
+    if (!hasFoundItsPlace.current) {
+      hasFoundItsPlace.current = true;
+      carouselApi.scrollTo(lastSlideIndex, true);
+      return;
+    }
+
+    // A round opened by the controls arrives as a new slide at the end, as do
+    // the final scores once the game is won, and whoever pressed Next follows
+    // it along. Only from the end, though: putting right a score from an
+    // earlier round can end the game as well, and that must not take the page
+    // out from under the player still typing in it.
+    if (slideIndexInView === endOfTheGame) {
+      carouselApi.scrollTo(lastSlideIndex);
+    }
   }, [carouselApi, lastSlideIndex]);
 
   // Putting right whatever was missing takes the message away with it.
@@ -210,23 +230,32 @@ export default function Game() {
       actions={<HowToDialog />}
       className={cn(
         'items-center gap-4 p-4',
+        // Held to the height of the screen, so the game sits still as it is
+        // played rather than growing a round at a time. Below this the page
+        // scrolls as a whole and there is nothing to hold.
+        'lg:min-h-0',
         // Room for the switch pinned to the foot of the screen.
         rounds.length > 0 && 'pb-24 lg:pb-4',
       )}
     >
       {/* Centred while the carousel is on its own, and once the table joins it
           the table takes up the slack, leaving the carousel against the left. */}
-      <div className='flex w-full items-start justify-center gap-6'>
+      <div className='flex w-full items-start justify-center gap-6 lg:min-h-0 lg:flex-1'>
         {/* The controls belong to the carousel, so a table that grows with
             every round played does not push them down the page. */}
         <div
           className={cn(
-            'w-full max-w-md shrink-0 flex-col gap-4',
+            'w-full max-w-md shrink-0 flex-col gap-4 lg:min-h-0 lg:self-stretch',
             // Both are on show side by side once there is room for them.
             activeTab === PageTab.ROUNDS ? 'flex' : 'hidden lg:flex',
           )}
         >
-          <Carousel setApi={setCarouselApi}>
+          {/* Gives way to the screen before the controls do, so a round with a
+              table full of players still has its Next button in reach. */}
+          <Carousel
+            setApi={setCarouselApi}
+            className='lg:min-h-0 lg:overflow-y-auto'
+          >
             <CarouselContent>
               {/* Only the page on show can be reached, so tabbing cannot wander
               off into the rounds either side of it. */}
@@ -295,9 +324,10 @@ export default function Game() {
             }}
             className={cn(
               // Given the run of the page beside the carousel, so a table of
-              // six players has the room to lay itself out. min-w-0 lets it
-              // give way to the screen, leaving the table itself to scroll.
-              'w-full max-w-md lg:max-w-none lg:min-w-0 lg:flex-1',
+              // six players has the room to lay itself out. min-w-0 and
+              // min-h-0 let it give way to the screen either way, leaving the
+              // table itself to scroll rather than the page.
+              'w-full max-w-md lg:max-w-none lg:min-h-0 lg:min-w-0 lg:flex-1 lg:self-stretch',
               activeTab === PageTab.SCORES ? 'block' : 'hidden lg:block',
             )}
           />

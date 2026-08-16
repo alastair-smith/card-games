@@ -426,6 +426,74 @@ describe('useYanivScoreboard', () => {
     });
   });
 
+  describe('putting a score right after the game was won', () => {
+    // Grace is out on 105, so the game has been won and there is no round open.
+    const gameWon: ScoreboardState = {
+      players: savedGame.players,
+      rounds: [
+        {
+          id: FIRST_ROUND_ID,
+          isComplete: true,
+          handTotals: { [ADA_ID]: 3, [GRACE_ID]: 60, [ALAN_ID]: 14 },
+        },
+        {
+          id: SECOND_ROUND_ID,
+          isComplete: true,
+          handTotals: { [ADA_ID]: 18, [GRACE_ID]: 45, [ALAN_ID]: 9 },
+        },
+      ],
+    };
+
+    test('counts the game as won while a player is over a hundred', () => {
+      saveGame(gameWon);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(result.current.gameSummary.isGameOver).toBe(true);
+      expect(result.current.scoreboardState.rounds).toHaveLength(2);
+    });
+
+    test('puts the game back on when the score no longer wins it', () => {
+      saveGame(gameWon);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.updateRoundScore(SECOND_ROUND_ID, GRACE_ID, 5));
+
+      expect(result.current.gameSummary.isGameOver).toBe(false);
+    });
+
+    test('opens a round to carry on with once the game is back on', () => {
+      saveGame(gameWon);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.updateRoundScore(SECOND_ROUND_ID, GRACE_ID, 5));
+
+      expect(result.current.scoreboardState.rounds).toHaveLength(3);
+      expect(result.current.scoreboardState.rounds[2]?.isComplete).toBe(false);
+      expect(result.current.scoreboardState.rounds[2]?.handTotals).toEqual({});
+    });
+
+    test('leaves the game won when the score put right still passes a hundred', () => {
+      saveGame(gameWon);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.updateRoundScore(SECOND_ROUND_ID, GRACE_ID, 50));
+
+      expect(result.current.gameSummary.isGameOver).toBe(true);
+      expect(result.current.scoreboardState.rounds).toHaveLength(2);
+    });
+
+    test('opens a round to carry on with when the player who was out leaves', () => {
+      saveGame(gameWon);
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      act(() => result.current.removePlayer(GRACE_ID));
+
+      expect(result.current.gameSummary.isGameOver).toBe(false);
+      expect(result.current.scoreboardState.rounds).toHaveLength(3);
+      expect(result.current.scoreboardState.rounds[2]?.isComplete).toBe(false);
+    });
+  });
+
   describe('picking up a saved game', () => {
     test('offers the saved game to the players', () => {
       saveGame(savedGame);

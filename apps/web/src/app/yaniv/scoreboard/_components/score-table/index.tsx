@@ -39,12 +39,14 @@ export default function ScoreTable({
   className,
 }: ScoreTableProps) {
   return (
-    <Card className={className}>
-      <CardHeader>
+    // The heading stays put and the rounds scroll beneath it, so a game long
+    // enough to outgrow the card does not carry the page along with it.
+    <Card className={cn('flex flex-col overflow-hidden', className)}>
+      <CardHeader className='shrink-0'>
         <CardTitle>Scores</CardTitle>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className='min-h-0 flex-1 overflow-y-auto'>
         <Table>
           <TableHeader>
             <TableRow>

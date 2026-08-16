@@ -55,6 +55,23 @@ const openRound = (): ScoreboardRound => ({
 });
 
 /**
+ * A live game always has a round to play into. Whether it is live is worked out
+ * by replaying the scores rather than held as a flag, so putting right a score
+ * from an earlier round can bring back a game that had been won — and a game
+ * brought back needs somewhere to carry on. Anything that can change a total has
+ * to come back through here, or the game is left finished with no way to reopen
+ * it.
+ */
+const withRoundToPlay = (state: ScoreboardState): ScoreboardState => {
+  // Play has not started, or the round in hand is still being entered.
+  if (!state.rounds.at(-1)?.isComplete) return state;
+
+  if (deriveGameSummary(state).isGameOver) return state;
+
+  return { ...state, rounds: [...state.rounds, openRound()] };
+};
+
+/**
  * Whether a saved game is worth picking up. A game nobody has scored in is not
  * one anybody would miss, so it gives way to a fresh start.
  */
@@ -144,15 +161,19 @@ export default function useYanivScoreboard() {
   }, []);
 
   const removePlayer = useCallback((playerId: UserId) => {
-    setScoreboardState((current) => ({
-      ...current,
-      players: current.players.filter((player) => player.id !== playerId),
-      rounds: current.rounds.map((round) => {
-        const { [playerId]: removedHandTotal, ...handTotals } =
-          round.handTotals;
-        return { ...round, handTotals };
+    setScoreboardState((current) =>
+      // Leaving takes the player's scores with them, which can be the very
+      // scores that had won the game.
+      withRoundToPlay({
+        ...current,
+        players: current.players.filter((player) => player.id !== playerId),
+        rounds: current.rounds.map((round) => {
+          const { [playerId]: removedHandTotal, ...handTotals } =
+            round.handTotals;
+          return { ...round, handTotals };
+        }),
       }),
-    }));
+    );
   }, []);
 
   const reorderPlayers = useCallback((newPlayerIds: string[]) => {
@@ -175,23 +196,27 @@ export default function useYanivScoreboard() {
     // A null total clears the score, putting the player back to having none
     // entered for the round rather than scoring them nothing.
     (roundId: RoundId, playerId: UserId, handTotal: number | null) => {
-      setScoreboardState((current) => ({
-        ...current,
-        rounds: current.rounds.map((round) => {
-          if (round.id !== roundId) return round;
+      setScoreboardState((current) =>
+        // Correcting a round played earlier can put a player back under a
+        // hundred, which puts the game back on.
+        withRoundToPlay({
+          ...current,
+          rounds: current.rounds.map((round) => {
+            if (round.id !== roundId) return round;
 
-          if (handTotal === null) {
-            const { [playerId]: clearedHandTotal, ...handTotals } =
-              round.handTotals;
-            return { ...round, handTotals };
-          }
+            if (handTotal === null) {
+              const { [playerId]: clearedHandTotal, ...handTotals } =
+                round.handTotals;
+              return { ...round, handTotals };
+            }
 
-          return {
-            ...round,
-            handTotals: { ...round.handTotals, [playerId]: handTotal },
-          };
+            return {
+              ...round,
+              handTotals: { ...round.handTotals, [playerId]: handTotal },
+            };
+          }),
         }),
-      }));
+      );
     },
     [],
   );
@@ -223,20 +248,13 @@ export default function useYanivScoreboard() {
 
       if (!isEveryScoreEntered) return current;
 
-      const rounds = [
-        ...current.rounds.slice(0, -1),
-        { ...roundInProgress, isComplete: true },
-      ];
-
-      // A new round is only opened while the game is still live; whether it is
-      // live comes from replaying the scores, never from a stored flag, so
-      // correcting an earlier round can bring the game back.
-      const { isGameOver } = deriveGameSummary({ ...current, rounds });
-
-      return {
+      return withRoundToPlay({
         ...current,
-        rounds: isGameOver ? rounds : [...rounds, openRound()],
-      };
+        rounds: [
+          ...current.rounds.slice(0, -1),
+          { ...roundInProgress, isComplete: true },
+        ],
+      });
     });
   }, []);
 
