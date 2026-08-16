@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import {
   Carousel,
@@ -33,6 +33,8 @@ export default function Game() {
     updateRoundScore,
   } = useYanivScoreboard();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  // The first slide shown is arrived at rather than turned to.
+  const hasFoundItsPlace = useRef(false);
 
   const roundCount = scoreboardState.rounds.length;
 
@@ -56,9 +58,11 @@ export default function Game() {
     if (!carouselApi) return;
 
     // A round opened by the control above arrives as a new slide, which is then
-    // turned to. Returning to a saved game lands on its current round the same way.
+    // turned to. Picking up a saved game goes straight to its current round
+    // instead, rather than racing through every round played so far.
     carouselApi.reInit();
-    carouselApi.scrollTo(roundCount);
+    carouselApi.scrollTo(roundCount, !hasFoundItsPlace.current);
+    hasFoundItsPlace.current = true;
   }, [carouselApi, roundCount]);
 
   if (hasSavedGame) {
