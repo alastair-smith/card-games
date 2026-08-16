@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
-import { deriveStandings } from './derive-standings';
+import type { RoundId, ScoreboardState } from '../_hooks/useYanivScoreboard';
+import { deriveGameSummary } from './derive-game-summary';
 import {
   getPlayerRoundTotal,
   getPlayerTotal,
@@ -8,8 +9,7 @@ import {
   hasHalvedFiftyScore,
   hasHalvedHundredScore,
   isPlayerWinner,
-} from './read-standings';
-import type { RoundId, ScoreboardState } from './useYanivScoreboard';
+} from './read-game-summary';
 
 const ADA_ID = crypto.randomUUID() as UserId;
 const GRACE_ID = crypto.randomUUID() as UserId;
@@ -17,7 +17,7 @@ const FIRST_ROUND_ID = crypto.randomUUID() as RoundId;
 const SECOND_ROUND_ID = crypto.randomUUID() as RoundId;
 const THIRD_ROUND_ID = crypto.randomUUID() as RoundId;
 
-const players = [
+const gamePlayers = [
   { id: ADA_ID, name: 'Ada' as PlayerName },
   { id: GRACE_ID, name: 'Grace' as PlayerName },
 ];
@@ -29,8 +29,8 @@ const round = (
 ): ScoreboardState['rounds'][number] => ({ id, isComplete, handTotals });
 
 // Grace lands on 50 in the second round, halving her to 25.
-const halvingGame = deriveStandings({
-  players,
+const halvingGame = deriveGameSummary({
+  players: gamePlayers,
   rounds: [
     round(FIRST_ROUND_ID, { [ADA_ID]: 4, [GRACE_ID]: 30 }),
     round(SECOND_ROUND_ID, { [ADA_ID]: 6, [GRACE_ID]: 20 }),
@@ -38,7 +38,7 @@ const halvingGame = deriveStandings({
   ],
 });
 
-describe('reading the standings', () => {
+describe('reading the game summary', () => {
   describe('totals', () => {
     test('gives a player their total as the game stands', () => {
       expect(getPlayerTotal(halvingGame, GRACE_ID)).toBe(25);
@@ -80,15 +80,15 @@ describe('reading the standings', () => {
     });
 
     test('reports a player who has been halved at a hundred', () => {
-      const standings = deriveStandings({
-        players,
+      const gameSummary = deriveGameSummary({
+        players: gamePlayers,
         rounds: [
           round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 60 }),
           round(SECOND_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 40 }),
         ],
       });
 
-      expect(hasHalvedHundredScore(standings, GRACE_ID)).toBe(true);
+      expect(hasHalvedHundredScore(gameSummary, GRACE_ID)).toBe(true);
     });
 
     test('marks the round a player was halved in', () => {
@@ -105,22 +105,22 @@ describe('reading the standings', () => {
     });
 
     test('marks a halving at a hundred separately from one at fifty', () => {
-      const standings = deriveStandings({
-        players,
+      const gameSummary = deriveGameSummary({
+        players: gamePlayers,
         rounds: [
           round(FIRST_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 50 }),
           round(SECOND_ROUND_ID, { [ADA_ID]: 0, [GRACE_ID]: 75 }),
         ],
       });
 
-      expect(getRoundHalving(standings, FIRST_ROUND_ID, GRACE_ID)).toBe(50);
-      expect(getRoundHalving(standings, SECOND_ROUND_ID, GRACE_ID)).toBe(100);
+      expect(getRoundHalving(gameSummary, FIRST_ROUND_ID, GRACE_ID)).toBe(50);
+      expect(getRoundHalving(gameSummary, SECOND_ROUND_ID, GRACE_ID)).toBe(100);
     });
   });
 
   describe('winning', () => {
-    const wonGame = deriveStandings({
-      players,
+    const wonGame = deriveGameSummary({
+      players: gamePlayers,
       rounds: [round(FIRST_ROUND_ID, { [ADA_ID]: 4, [GRACE_ID]: 101 })],
     });
 

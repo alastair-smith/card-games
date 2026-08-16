@@ -338,7 +338,7 @@ describe('useYanivScoreboard', () => {
       act(() => result.current.endRound());
 
       expect(result.current.scoreboardState.rounds).toHaveLength(1);
-      expect(result.current.standings.isGameOver).toBe(true);
+      expect(result.current.gameSummary.isGameOver).toBe(true);
     });
 
     test('reports the running totals as rounds are played', () => {
@@ -347,8 +347,8 @@ describe('useYanivScoreboard', () => {
 
       act(() => result.current.endRound());
 
-      expect(result.current.standings.totals[GRACE_ID]?.total).toBe(21);
-      expect(result.current.standings.totals[ADA_ID]?.total).toBe(3);
+      expect(result.current.gameSummary.players[GRACE_ID]?.total).toBe(21);
+      expect(result.current.gameSummary.players[ADA_ID]?.total).toBe(3);
     });
   });
 

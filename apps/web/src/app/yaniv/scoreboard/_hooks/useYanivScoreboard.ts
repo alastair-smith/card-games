@@ -7,7 +7,7 @@ import {
   type UserId,
   userIdSchema,
 } from '~/types/entities';
-import { deriveStandings } from './derive-standings';
+import { deriveGameSummary } from '../_libs/derive-game-summary';
 
 export type RoundId = Branded<string, 'RoundId'>;
 
@@ -194,7 +194,7 @@ export default function useYanivScoreboard() {
       // A new round is only opened while the game is still live; whether it is
       // live comes from replaying the scores, never from a stored flag, so
       // correcting an earlier round can bring the game back.
-      const { isGameOver } = deriveStandings({ ...current, rounds });
+      const { isGameOver } = deriveGameSummary({ ...current, rounds });
 
       return {
         ...current,
@@ -207,14 +207,14 @@ export default function useYanivScoreboard() {
     setScoreboardState(initialState);
   }, []);
 
-  const standings = useMemo(
-    () => deriveStandings(scoreboardState),
+  const gameSummary = useMemo(
+    () => deriveGameSummary(scoreboardState),
     [scoreboardState],
   );
 
   return {
     scoreboardState,
-    standings,
+    gameSummary,
     startGame,
     endRound,
     addPlayer,

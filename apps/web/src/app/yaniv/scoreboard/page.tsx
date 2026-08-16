@@ -1,7 +1,7 @@
 'use client';
 
 import Setup from './_components/setup';
-import useYanivScoreboard from './useYanivScoreboard';
+import useYanivScoreboard from './_hooks/useYanivScoreboard';
 
 export default function YanivScoreboardPage() {
   const {} = useYanivScoreboard();
