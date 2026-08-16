@@ -1,4 +1,4 @@
-import { CrossIcon, Trash2Icon, TrashIcon, XIcon } from 'lucide-react';
+import { Trash2Icon, UserPlusIcon } from 'lucide-react';
 import type { ChangeEvent } from 'react';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -17,6 +17,7 @@ export type SetupProps = {
   updatePlayerName: (playerId: UserId, newName: PlayerName) => void;
   reorderPlayers: (newPlayerIds: string[]) => void;
   removePlayer: (playerId: UserId) => void;
+  addPlayer: (name: PlayerName) => void;
 };
 
 export default function Setup({
@@ -24,6 +25,7 @@ export default function Setup({
   updatePlayerName,
   reorderPlayers,
   removePlayer,
+  addPlayer,
 }: SetupProps) {
   const nameChangeHandler =
     (id: UserId) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +59,14 @@ export default function Setup({
           </ReorderItem>
         ))}
       </Reorder>
+
+      <Button
+        onClick={() => addPlayer('' as PlayerName)}
+        variant='secondary'
+        size='icon'
+      >
+        <UserPlusIcon />
+      </Button>
     </div>
   );
 }

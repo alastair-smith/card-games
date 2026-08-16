@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '~/components/ui/button';
 import {
   Carousel,
   type CarouselApi,
@@ -10,7 +9,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '~/components/ui/carousel';
-import type { PlayerName } from '~/types/entities';
 import useYanivScoreboard from '../../_hooks/useYanivScoreboard';
 import GameOver from '../game-over';
 import Round from '../round';
@@ -93,6 +91,7 @@ export default function Game() {
               updatePlayerName={updatePlayerName}
               reorderPlayers={reorderPlayers}
               removePlayer={removePlayer}
+              addPlayer={addPlayer}
             />
           </CarouselItem>
 
@@ -123,8 +122,6 @@ export default function Game() {
         <CarouselPrevious />
         <CarouselNext disabled={false} onClick={handleNextClick} />
       </Carousel>
-
-      <Button onClick={() => addPlayer('' as PlayerName)}>Add Player</Button>
     </div>
   );
 }
