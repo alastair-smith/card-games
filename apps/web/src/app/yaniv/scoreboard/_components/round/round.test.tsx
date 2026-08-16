@@ -144,6 +144,31 @@ describe('Round', () => {
     expect(screen.getByText('40 from 100')).toBeInTheDocument();
   });
 
+  test('marks the players who have had their score halved', () => {
+    const halvedAtFifty = deriveGameSummary({
+      players,
+      rounds: [
+        {
+          id: FIRST_ROUND_ID,
+          isComplete: true,
+          handTotals: { [ADA_ID]: 4, [GRACE_ID]: 50 },
+        },
+      ],
+    });
+
+    render(
+      <Round
+        players={players}
+        round={roundInProgress}
+        gameSummary={halvedAtFifty}
+        onScoreChange={noop}
+      />,
+    );
+
+    expect(screen.getAllByText('50 score has been halved')).toHaveLength(1);
+    expect(screen.getAllByText('50 score has not been halved')).toHaveLength(1);
+  });
+
   test('reports a score as it is entered', () => {
     const handleScoreChange = vi.fn();
     render(

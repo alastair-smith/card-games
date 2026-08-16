@@ -10,7 +10,10 @@ import {
   getHalvingTarget,
   getPlayerRoundTotal,
   getPlayerTotal,
+  hasHalvedFiftyScore,
+  hasHalvedHundredScore,
 } from '../../_libs/read-game-summary';
+import HalvingMarkers from '../halving-markers';
 
 type RoundProps = {
   players: ScoreboardPlayer[];
@@ -57,7 +60,16 @@ export default function Round({
                 onChange={scoreChangeHandler(player.id)}
               />
             </dd>
-            <dd>({total})</dd>
+            <dd className='flex items-center gap-2'>
+              ({total})
+              <HalvingMarkers
+                isFiftyScoreHalved={hasHalvedFiftyScore(gameSummary, player.id)}
+                isHundredScoreHalved={hasHalvedHundredScore(
+                  gameSummary,
+                  player.id,
+                )}
+              />
+            </dd>
             <dd>
               {halvingTarget
                 ? `${Math.abs(halvingTarget.away)} ${
