@@ -52,9 +52,10 @@ export default function Setup({
             <Button
               variant='danger'
               size='icon'
+              aria-label={`Remove ${player.name || 'this player'}`}
               onClick={() => removePlayer(player.id)}
             >
-              <Trash2Icon />
+              <Trash2Icon aria-hidden='true' />
             </Button>
           </ReorderItem>
         ))}
@@ -64,8 +65,9 @@ export default function Setup({
         onClick={() => addPlayer('' as PlayerName)}
         variant='secondary'
         size='icon'
+        aria-label='Add player'
       >
-        <UserPlusIcon />
+        <UserPlusIcon aria-hidden='true' />
       </Button>
     </div>
   );
