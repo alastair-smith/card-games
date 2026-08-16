@@ -262,6 +262,8 @@ export default function useYanivScoreboard() {
   return {
     scoreboardState,
     gameSummary,
+    /** False until the saved game has been read, when there is nothing to show. */
+    isRestored,
     hasSavedGame,
     continueGame,
     startNewGame,

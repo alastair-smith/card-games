@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameLayout from '~/components/layout/game-layout';
+import Loading from '~/components/loading';
 import {
   Carousel,
   type CarouselApi,
@@ -38,6 +39,7 @@ export default function Game() {
   const {
     scoreboardState,
     gameSummary,
+    isRestored,
     hasSavedGame,
     continueGame,
     startNewGame,
@@ -164,6 +166,20 @@ export default function Game() {
 
   const messagesForSlide = (slideIndex: number) =>
     errors?.slideIndex === slideIndex ? errors.messages : undefined;
+
+  // Until the saved game has been read there is nothing worth showing: the
+  // scoreboard underneath is a new game that may be about to be replaced.
+  if (!isRestored) {
+    return (
+      <GameLayout
+        gameType={GameType.YANIV}
+        actions={<HowToDialog />}
+        className='items-center gap-4 p-4'
+      >
+        <Loading />
+      </GameLayout>
+    );
+  }
 
   if (hasSavedGame) {
     return (

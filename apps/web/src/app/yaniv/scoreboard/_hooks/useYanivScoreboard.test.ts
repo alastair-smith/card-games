@@ -435,6 +435,14 @@ describe('useYanivScoreboard', () => {
       expect(result.current.hasSavedGame).toBe(true);
     });
 
+    test('has read the saved game by the time it is asked about', () => {
+      saveGame(savedGame);
+
+      const { result } = renderHook(() => useYanivScoreboard());
+
+      expect(result.current.isRestored).toBe(true);
+    });
+
     test('offers nothing when there is no saved game', () => {
       const { result } = renderHook(() => useYanivScoreboard());
 
