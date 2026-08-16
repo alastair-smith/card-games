@@ -8,8 +8,10 @@ import {
   CarouselContent,
   CarouselItem,
 } from '~/components/ui/carousel';
+import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
+import { cn } from '~/utils/cn';
 import { HowToDialog } from '../../../_components/how-to';
 import useYanivScoreboard from '../../_hooks/useYanivScoreboard';
 import CarouselControls from '../carousel-controls';
@@ -20,6 +22,12 @@ import ScoreTable from '../score-table';
 import Setup from '../setup';
 
 const SETUP_SLIDE_INDEX = 0;
+
+/** Which half of the scoreboard is on show when there is only room for one. */
+enum PageTab {
+  ROUNDS = 'rounds',
+  SCORES = 'scores',
+}
 
 type SlideErrors = {
   slideIndex: number;
@@ -45,6 +53,7 @@ export default function Game() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(SETUP_SLIDE_INDEX);
   const [errors, setErrors] = useState<SlideErrors | null>(null);
+  const [activeTab, setActiveTab] = useState<PageTab>(PageTab.ROUNDS);
   // The first slide shown is arrived at rather than turned to.
   const hasFoundItsPlace = useRef(false);
 
@@ -180,12 +189,22 @@ export default function Game() {
     <GameLayout
       gameType={GameType.YANIV}
       actions={<HowToDialog />}
-      className='items-center gap-4 p-4'
+      className={cn(
+        'items-center gap-4 p-4',
+        // Room for the switch pinned to the foot of the screen.
+        rounds.length > 0 && 'pb-24 lg:pb-4',
+      )}
     >
       <div className='flex w-full items-start justify-center gap-6'>
         {/* The controls belong to the carousel, so a table that grows with
             every round played does not push them down the page. */}
-        <div className='flex w-full max-w-md flex-col gap-4'>
+        <div
+          className={cn(
+            'w-full max-w-md flex-col gap-4',
+            // Both are on show side by side once there is room for them.
+            activeTab === PageTab.ROUNDS ? 'flex' : 'hidden lg:flex',
+          )}
+        >
           <Carousel setApi={setCarouselApi}>
             <CarouselContent>
               {/* Only the page on show can be reached, so tabbing cannot wander
@@ -249,11 +268,36 @@ export default function Game() {
             rounds={rounds}
             gameSummary={gameSummary}
             currentRoundNumber={selectedIndex}
-            onRoundSelect={(roundNumber) => carouselApi?.scrollTo(roundNumber)}
-            className='hidden w-full max-w-md lg:block'
+            onRoundSelect={(roundNumber) => {
+              carouselApi?.scrollTo(roundNumber);
+              setActiveTab(PageTab.ROUNDS);
+            }}
+            className={cn(
+              'w-full max-w-md',
+              activeTab === PageTab.SCORES ? 'block' : 'hidden lg:block',
+            )}
           />
         )}
       </div>
+
+      {rounds.length > 0 && (
+        // Pinned to the foot of the screen, so a long game does not carry the
+        // switch off the bottom of the page.
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as PageTab)}
+          className='fixed inset-x-0 bottom-0 z-10 bg-main-background px-3 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] lg:hidden'
+        >
+          <TabsList className='w-full'>
+            <TabsTrigger value={PageTab.ROUNDS} className='flex-1'>
+              Rounds
+            </TabsTrigger>
+            <TabsTrigger value={PageTab.SCORES} className='flex-1'>
+              Scores
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
     </GameLayout>
   );
 }
