@@ -214,12 +214,14 @@ export default function Game() {
         rounds.length > 0 && 'pb-24 lg:pb-4',
       )}
     >
+      {/* Centred while the carousel is on its own, and once the table joins it
+          the table takes up the slack, leaving the carousel against the left. */}
       <div className='flex w-full items-start justify-center gap-6'>
         {/* The controls belong to the carousel, so a table that grows with
             every round played does not push them down the page. */}
         <div
           className={cn(
-            'w-full max-w-md flex-col gap-4',
+            'w-full max-w-md shrink-0 flex-col gap-4',
             // Both are on show side by side once there is room for them.
             activeTab === PageTab.ROUNDS ? 'flex' : 'hidden lg:flex',
           )}
@@ -292,7 +294,10 @@ export default function Game() {
               setActiveTab(PageTab.ROUNDS);
             }}
             className={cn(
-              'w-full max-w-md',
+              // Given the run of the page beside the carousel, so a table of
+              // six players has the room to lay itself out. min-w-0 lets it
+              // give way to the screen, leaving the table itself to scroll.
+              'w-full max-w-md lg:max-w-none lg:min-w-0 lg:flex-1',
               activeTab === PageTab.SCORES ? 'block' : 'hidden lg:block',
             )}
           />
