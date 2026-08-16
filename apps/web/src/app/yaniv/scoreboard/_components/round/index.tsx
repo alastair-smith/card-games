@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
-import { Separator } from '~/components/ui/separator';
 import type { UserId } from '~/types/entities';
 import type {
   ScoreboardPlayer,
@@ -74,43 +73,37 @@ export default function Round({
 
       <CardContent>
         <ul className='flex flex-col gap-3'>
-          {players.map((player, index) => {
+          {players.map((player) => {
             const total = getPlayerTotal(roundSummary, player.id);
             const halvingTarget = getHalvingTarget(roundSummary, player.id);
             const error = errors?.[player.id];
             const errorId = `round-${round.id}-player-${player.id}-error`;
 
             return (
-              <li key={player.id} className='flex flex-col gap-1'>
-                {index > 0 && <Separator className='mb-2' />}
-
-                <div className='flex items-start gap-3'>
-                  <span className='flex-1 pt-2 font-medium'>{player.name}</span>
-
-                  <div className='relative w-20'>
-                    <Input
-                      type='number'
-                      inputMode='numeric'
-                      aria-label={`Round score for ${player.name}`}
-                      aria-invalid={error ? true : undefined}
-                      aria-describedby={error ? errorId : undefined}
-                      value={round.handTotals[player.id] ?? ''}
-                      onChange={scoreChangeHandler(player.id)}
-                    />
-
-                    {/* Out of the flow, so saying what is missing does not
-                        shift the totals underneath it. */}
-                    <FieldError
-                      id={errorId}
-                      className='absolute top-full right-0 mt-0.5 whitespace-nowrap'
-                    >
-                      {error}
-                    </FieldError>
-                  </div>
+              <li
+                key={player.id}
+                className='flex items-stretch overflow-hidden rounded-md border-2 border-border bg-highlighted-card-background'
+              >
+                {/* No padding or gaps on the row itself, so every line runs
+                    edge to edge and meets the ones it crosses. */}
+                <div className='flex flex-1 flex-col justify-center'>
+                  <span className='border-b border-border px-2 py-1 text-lg font-medium'>
+                    {player.name}
+                  </span>
+                  <span className='flex-1 bg-white/20 px-2 py-1 text-sm font-semibold'>
+                    Total: {total}
+                  </span>
                 </div>
 
-                <div className='flex items-center gap-2 text-sm'>
-                  <span className='font-semibold'>{total}</span>
+                <div className='flex flex-col items-end justify-center gap-0.5 border-x border-border bg-white/20 px-2 py-1 text-sm'>
+                  {halvingTarget && (
+                    <span>
+                      {Math.abs(halvingTarget.away)}{' '}
+                      {halvingTarget.away >= 0 ? 'from' : 'beyond'}{' '}
+                      {halvingTarget.target}
+                    </span>
+                  )}
+
                   <HalvingMarkers
                     isFiftyScoreHalved={hasHalvedFiftyScore(
                       roundSummary,
@@ -121,13 +114,22 @@ export default function Round({
                       player.id,
                     )}
                   />
-                  {halvingTarget && (
-                    <span>
-                      {Math.abs(halvingTarget.away)}{' '}
-                      {halvingTarget.away >= 0 ? 'from' : 'beyond'}{' '}
-                      {halvingTarget.target}
-                    </span>
-                  )}
+                </div>
+
+                <div className='flex w-24 flex-col justify-center gap-0.5 bg-white/20 px-2 py-1'>
+                  <Input
+                    type='number'
+                    inputMode='numeric'
+                    aria-label={`Round score for ${player.name}`}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? errorId : undefined}
+                    value={round.handTotals[player.id] ?? ''}
+                    onChange={scoreChangeHandler(player.id)}
+                  />
+
+                  <FieldError id={errorId} className='text-right'>
+                    {error}
+                  </FieldError>
                 </div>
               </li>
             );

@@ -90,20 +90,20 @@ describe('Round', () => {
   test('shows the total a player takes into the round', () => {
     renderRound();
 
-    expect(screen.getByText('30')).toBeInTheDocument();
+    expect(screen.getByText('Total: 30')).toBeInTheDocument();
   });
 
   test('counts a score towards the total as it is entered', () => {
     renderRound();
 
     // Ada took 4 into the round and has 7 entered against her.
-    expect(screen.getByText('11')).toBeInTheDocument();
+    expect(screen.getByText('Total: 11')).toBeInTheDocument();
   });
 
   test('shows the running total for a round already played', () => {
     renderRound({ round: playedRound, roundNumber: 1 });
 
-    expect(screen.getByText('4')).toBeInTheDocument();
+    expect(screen.getByText('Total: 4')).toBeInTheDocument();
   });
 
   test('shows how far a player is from being halved', () => {
