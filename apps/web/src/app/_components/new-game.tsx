@@ -33,17 +33,17 @@ type GameProps = {
 
 // TODO update min + max players
 const games: GameProps[] = [
-  {
-    gameType: GameType.HIGH_CARD,
-    thumbnail: <HighCardThumbnail />,
-    players: {
-      min: MIN_PLAYERS,
-      max: MAX_PLAYERS,
-    },
-    length: GameLength.short,
-    summary:
-      'High Card is a simple luck-based game where the player with the highest card wins.',
-  },
+  // {
+  //   gameType: GameType.HIGH_CARD,
+  //   thumbnail: <HighCardThumbnail />,
+  //   players: {
+  //     min: MIN_PLAYERS,
+  //     max: MAX_PLAYERS,
+  //   },
+  //   length: GameLength.short,
+  //   summary:
+  //     'High Card is a simple luck-based game where the player with the highest card wins.',
+  // },
   {
     gameType: GameType.YANIV,
     thumbnail: <YanivThumbnail />,
