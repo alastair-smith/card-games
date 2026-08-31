@@ -57,7 +57,7 @@ export default async function PrivacyPolicy() {
         <Article includeContents>
           <ArticleHeader>
             <ArticleTitle>Privacy Policy</ArticleTitle>
-            <ArticleSubtitle>Last updated: 4 May 2026</ArticleSubtitle>
+            <ArticleSubtitle>Last updated: 31 August 2026</ArticleSubtitle>
           </ArticleHeader>
 
           <ArticleContent>
@@ -75,9 +75,16 @@ export default async function PrivacyPolicy() {
 
             <ArticleHeading id='analytics'>Analytics (optional)</ArticleHeading>
             <p className='text-sm'>
-              You can opt in to sharing anonymised usage data to help improve
+              You can opt in to sharing pseudonymised usage data to help improve
               the app. Use the toggle below, or find it on the home page under
               &ldquo;About&rdquo;.
+            </p>
+            <p className='text-sm'>
+              Pseudonymised means identifiers are replaced with hashes before
+              they leave your browser to avoid directly identifying users.
+              However, in principle your identifier could be combined with the
+              game code to match a hash back to a player. We treat this data as
+              personal data and handle it under the UK GDPR accordingly.
             </p>
             <TelemetryToggle className='py-2' />
             <p className='text-sm'>
@@ -193,8 +200,12 @@ export default async function PrivacyPolicy() {
                   </TableCell>
                   <TableCell>
                     A hash of the identifier for your player session. It is
-                    derived using a per-game key so it cannot be used to
-                    identify you or link your activity across games.
+                    derived using a per-game key, so the same player produces a
+                    different hash in every game and this field cannot be used
+                    to link your activity across games. It is pseudonymised
+                    rather than anonymous: while a game&rsquo;s records still
+                    exist, the hash could in principle be matched back to a
+                    player.
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -213,12 +224,13 @@ export default async function PrivacyPolicy() {
               the home page.
             </p>
             <p className='text-sm'>
-              Separately, our servers generate their own anonymised technical
+              Separately, our servers generate their own pseudonymised technical
               traces as a normal part of running the service. These are produced
               on the server when it processes your game activity, not in your
-              browser, and do not contain your player name or any directly
-              identifiable information. These traces are necessary for operating
-              the service and cannot be opted out of.
+              browser. They use the same hashed player identifier described
+              above, and do not contain your player name, IP address or browser
+              user agent. These traces are necessary for operating the service
+              and cannot be opted out of.
             </p>
 
             <ArticleHeading id='cookies'>Cookies</ArticleHeading>
