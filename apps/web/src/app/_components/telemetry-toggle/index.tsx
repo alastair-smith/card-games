@@ -37,7 +37,7 @@ export function TelemetryToggle({ className }: { className?: string }) {
         />
       )}
       <label htmlFor='telemetry-toggle' className='cursor-pointer select-none'>
-        Share anonymised usage to help improve this app
+        Share pseudonymised usage to help improve this app
       </label>
     </div>
   );
