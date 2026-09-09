@@ -7,10 +7,10 @@ import { deckWithJokers, Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
-  HAND_SIZE,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
@@ -69,6 +69,7 @@ const USER_2_CARDS: YanivPlayingCard[] = [
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.REDEAL,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_1,
   players: [
     {
@@ -163,7 +164,7 @@ describe('startNewRound', () => {
     });
   });
 
-  test('sets card count to hand size for each player', async () => {
+  test('sets card count to the number of cards dealt for each player', async () => {
     await startNewRound(CODE, USER_1);
 
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
@@ -172,15 +173,33 @@ describe('startNewRound', () => {
         expect.objectContaining({
           id: USER_1,
           color: 'cyan',
-          cardCount: HAND_SIZE,
+          cardCount: USER_1_CARDS.length,
         }),
         expect.objectContaining({
           id: USER_2,
           color: 'cyan',
-          cardCount: HAND_SIZE,
+          cardCount: USER_2_CARDS.length,
         }),
       ]),
     });
+  });
+
+  test('deals the hand size the game was set up with', async () => {
+    await startNewRound(CODE, USER_1);
+
+    expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenCalledWith(
+      CODE,
+      DEFAULT_HAND_SIZE,
+    );
+  });
+
+  test('deals a larger hand when the game was set up with one', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(makeState({ handSize: 7 }));
+
+    await startNewRound(CODE, USER_1);
+
+    expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenCalledWith(CODE, 7);
   });
 
   test('deals hands to all players', async () => {

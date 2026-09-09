@@ -7,6 +7,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -51,6 +52,7 @@ const DRAWN_CARD: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.THREE };
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PICKUP_CARD,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_1,
   players: [
     {

@@ -4,7 +4,11 @@ import GameLayout from '~/components/layout/game-layout';
 import { ScreenEdgeHighlight } from '~/components/ui/screen-edge-highlight';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
-import { GameViewStage, type YanivPlayingCard } from '~/types/games/yaniv';
+import {
+  GameViewStage,
+  type HandSize,
+  type YanivPlayingCard,
+} from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
@@ -19,6 +23,7 @@ import { useYanivCalledToast } from './use-yaniv-called-toast';
 
 type BaseGameProps = {
   cards: YanivPlayingCard[];
+  handSize: HandSize;
   selectedCards?: YanivPlayingCard[];
   onCardToggle?: (card: YanivPlayingCard) => void;
   onPickupFromDeck?: () => void;
@@ -65,6 +70,7 @@ export default function Game({
   players,
   stage,
   cards,
+  handSize,
   selectedCards,
   userId,
   playedCards,
@@ -185,6 +191,7 @@ export default function Game({
           className='md:text-2xl sm:text-lg'
           color={userPlayer.color}
           cards={cardsWithSelection}
+          handSize={handSize}
           handTotal={handTotal}
           isFiftyScoreHalved={userPlayer.isFiftyScoreHalved}
           totalScore={userPlayer.score}

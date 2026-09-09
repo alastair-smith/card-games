@@ -6,6 +6,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -48,6 +49,7 @@ const USER_2_HAND: YanivPlayingCard[] = [
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PROCEED,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_1,
   players: [
     {
@@ -92,6 +94,7 @@ const makeState = (overrides: Partial<State> = {}): State => ({
 const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PROCEED,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_2,
   players: [
     {

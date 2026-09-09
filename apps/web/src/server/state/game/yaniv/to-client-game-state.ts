@@ -3,6 +3,7 @@ import {
   GameStage,
   type GameState,
   type GameStep,
+  type HandSize,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
@@ -16,6 +17,7 @@ type ClientPlayer = Omit<Player, 'hand'> & { isUser: boolean };
 type ClientInProgressGameState = {
   gameStage: GameStage.IN_PROGRESS;
   gameStep: GameStep;
+  handSize: HandSize;
   playedCards: YanivPlayingCard[];
   topDiscardCard?: YanivPlayingCard | null;
   currentPlayerId: UserId;

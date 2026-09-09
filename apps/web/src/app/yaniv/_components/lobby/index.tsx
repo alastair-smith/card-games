@@ -1,11 +1,12 @@
 'use client';
 
 import debounce from 'lodash/debounce';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
+import { type HandSize, handSizeSchema } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
@@ -16,9 +17,11 @@ const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 export default function Lobby({
   code,
   players,
+  handSize,
 }: {
   code: GameCode;
   players: Player[];
+  handSize: HandSize;
 }) {
   const [user, setUser] = useState<{
     isReady: boolean;
@@ -40,6 +43,14 @@ export default function Lobby({
     };
   });
 
+  // Shown straight away on click, rather than waiting for the server broadcast
+  const [selectedHandSize, setSelectedHandSize] = useState(handSize);
+
+  // Keep up with changes made by whoever is host
+  useEffect(() => {
+    setSelectedHandSize(handSize);
+  }, [handSize]);
+
   // For reverting on server failure
   const confirmedColor = useRef(user.color);
 
@@ -52,6 +63,7 @@ export default function Lobby({
   });
   const makeHostMutation = api.lobby.makeHost.useMutation();
   const startGameMutation = api.yaniv.startGame.useMutation();
+  const updateSettingsMutation = api.yaniv.updateSettings.useMutation();
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
@@ -111,6 +123,22 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
+  const handleHandSizeChange = (newHandSize: string) => {
+    const nextHandSize = handSizeSchema.parse(Number(newHandSize));
+    const previousHandSize = selectedHandSize;
+
+    setSelectedHandSize(nextHandSize);
+    updateSettingsMutation.mutate(
+      { code, handSize: nextHandSize },
+      {
+        onError: () => {
+          setSelectedHandSize(previousHandSize);
+          toast.error('Error updating settings.');
+        },
+      },
+    );
+  };
+
   const handleReadyChange = (isReady: boolean) => {
     setUser((prev) => ({ ...prev, isReady }));
     debouncedUpdatePlayerReady(isReady);
@@ -120,10 +148,12 @@ export default function Lobby({
     <LobbyView
       code={code}
       players={players}
+      handSize={selectedHandSize}
       user={user}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
+      handleHandSizeChange={handleHandSizeChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

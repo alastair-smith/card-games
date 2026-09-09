@@ -7,6 +7,7 @@ import { startGameMutation } from './start-game';
 import { startNewRoundMutation } from './start-new-round';
 import { yanivStateSubscription } from './state';
 import { triggerEmojiMutation } from './trigger-emoji';
+import { updateSettingsMutation } from './update-settings';
 
 export const yanivRouter = createTRPCRouter({
   state: yanivStateSubscription,
@@ -17,4 +18,5 @@ export const yanivRouter = createTRPCRouter({
   startNewRound: startNewRoundMutation,
   endTurn: endTurnMutation,
   triggerEmoji: triggerEmojiMutation,
+  updateSettings: updateSettingsMutation,
 });

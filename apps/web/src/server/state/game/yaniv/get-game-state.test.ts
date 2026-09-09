@@ -4,6 +4,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -61,6 +62,7 @@ const makeInProgressState = (
 ): InProgressState => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PLAY_CARDS,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_1,
   players: makePlayers(),
   playedCards: [],
