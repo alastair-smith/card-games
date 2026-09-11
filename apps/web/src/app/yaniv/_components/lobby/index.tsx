@@ -1,7 +1,7 @@
 'use client';
 
 import debounce from 'lodash/debounce';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
@@ -9,11 +9,10 @@ import type { GameCode, Player } from '~/types/game';
 import { type HandSize, handSizeSchema } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
+import { useWaitForServerValue } from './use-wait-for-server-value';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
-const PLAYER_READY_UPDATE_DELAY_MS = 300;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
-const HAND_SIZE_UPDATE_DELAY_MS = 300;
 
 export default function Lobby({
   code,
@@ -24,39 +23,40 @@ export default function Lobby({
   players: Player[];
   handSize: HandSize;
 }) {
+  const currentPlayer = players.find((player) => player.isUser);
+
+  if (!currentPlayer) {
+    throw new Error('Current player not found in lobby');
+  }
+
   const [user, setUser] = useState<{
-    isReady: boolean;
     name: string;
     nameError: string;
     color: PlayerColor;
-  }>(() => {
-    const currentPlayer = players.find((player) => player.isUser);
-
-    if (!currentPlayer) {
-      throw new Error('Current player not found in lobby');
-    }
-
-    return {
-      isReady: currentPlayer.isReady,
-      name: currentPlayer.name,
-      nameError: '',
-      color: currentPlayer.color,
-    };
-  });
-
-  // Shown straight away on click, rather than waiting for the server broadcast
-  const [selectedHandSize, setSelectedHandSize] = useState(handSize);
+  }>(() => ({
+    name: currentPlayer.name,
+    nameError: '',
+    color: currentPlayer.color,
+  }));
 
   const confirmedColor = useRef(user.color);
-  const confirmedHandSize = useRef(handSize);
 
-  // Keep up with changes made by whoever is host
-  useEffect(() => {
-    setSelectedHandSize(handSize);
-    confirmedHandSize.current = handSize;
-  }, [handSize]);
+  const waitForIsReady = useWaitForServerValue(currentPlayer.isReady);
+  const waitForHandSize = useWaitForServerValue(handSize);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
+
+  const updateReadyMutation = api.lobby.updatePlayer.useMutation({
+    scope: { id: `player-ready-${code}` },
+    onSuccess: (_data, variables) =>
+      variables.field === 'isReady'
+        ? waitForIsReady(variables.isReady)
+        : undefined,
+    onError: () => {
+      toast.error('Error updating ready status.');
+    },
+  });
+
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
   const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
     onError: () => {
@@ -65,7 +65,25 @@ export default function Lobby({
   });
   const makeHostMutation = api.lobby.makeHost.useMutation();
   const startGameMutation = api.yaniv.startGame.useMutation();
-  const updateSettingsMutation = api.yaniv.updateSettings.useMutation();
+  const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
+    scope: { id: `settings-${code}` },
+    onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+    onError: () => {
+      toast.error('Error updating settings.');
+    },
+  });
+
+  const readyUpdate = updateReadyMutation.variables;
+  const pendingIsReady =
+    updateReadyMutation.isPending && readyUpdate?.field === 'isReady'
+      ? readyUpdate.isReady
+      : undefined;
+  const isReady = pendingIsReady ?? currentPlayer.isReady;
+
+  const pendingHandSize = updateSettingsMutation.isPending
+    ? updateSettingsMutation.variables?.handSize
+    : undefined;
+  const selectedHandSize = pendingHandSize ?? handSize;
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
@@ -78,21 +96,6 @@ export default function Lobby({
         },
       );
     }, PLAYER_NAME_UPDATE_DELAY_MS),
-    [],
-  );
-
-  const debouncedUpdatePlayerReady = useCallback(
-    debounce((isReady: boolean) => {
-      updatePlayerMutation.mutate(
-        { field: 'isReady', code, isReady },
-        {
-          onError: () => {
-            setUser((prev) => ({ ...prev, isReady: !isReady }));
-            toast.error('Error updating ready status.');
-          },
-        },
-      );
-    }, PLAYER_READY_UPDATE_DELAY_MS),
     [],
   );
 
@@ -114,24 +117,6 @@ export default function Lobby({
     [],
   );
 
-  const debouncedUpdateHandSize = useCallback(
-    debounce((nextHandSize: HandSize) => {
-      updateSettingsMutation.mutate(
-        { code, handSize: nextHandSize },
-        {
-          onSuccess: () => {
-            confirmedHandSize.current = nextHandSize;
-          },
-          onError: () => {
-            setSelectedHandSize(confirmedHandSize.current);
-            toast.error('Error updating settings.');
-          },
-        },
-      );
-    }, HAND_SIZE_UPDATE_DELAY_MS),
-    [],
-  );
-
   const handleNameChange = (name: string) => {
     setUser((prev) => ({ ...prev, name, nameError: '' }));
     debouncedUpdatePlayerName(name);
@@ -144,15 +129,18 @@ export default function Lobby({
   };
 
   const handleHandSizeChange = (newHandSize: string) => {
-    const nextHandSize = handSizeSchema.parse(Number(newHandSize));
-
-    setSelectedHandSize(nextHandSize);
-    debouncedUpdateHandSize(nextHandSize);
+    updateSettingsMutation.mutate({
+      code,
+      handSize: handSizeSchema.parse(Number(newHandSize)),
+    });
   };
 
-  const handleReadyChange = (isReady: boolean) => {
-    setUser((prev) => ({ ...prev, isReady }));
-    debouncedUpdatePlayerReady(isReady);
+  const handleReadyChange = (nextIsReady: boolean) => {
+    updateReadyMutation.mutate({
+      field: 'isReady',
+      code,
+      isReady: nextIsReady,
+    });
   };
 
   return (
@@ -160,7 +148,7 @@ export default function Lobby({
       code={code}
       players={players}
       handSize={selectedHandSize}
-      user={user}
+      user={{ ...user, isReady }}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
