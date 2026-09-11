@@ -13,6 +13,7 @@ import LobbyView from './lobby.view';
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_READY_UPDATE_DELAY_MS = 300;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
+const HAND_SIZE_UPDATE_DELAY_MS = 300;
 
 export default function Lobby({
   code,
@@ -46,13 +47,14 @@ export default function Lobby({
   // Shown straight away on click, rather than waiting for the server broadcast
   const [selectedHandSize, setSelectedHandSize] = useState(handSize);
 
+  const confirmedColor = useRef(user.color);
+  const confirmedHandSize = useRef(handSize);
+
   // Keep up with changes made by whoever is host
   useEffect(() => {
     setSelectedHandSize(handSize);
+    confirmedHandSize.current = handSize;
   }, [handSize]);
-
-  // For reverting on server failure
-  const confirmedColor = useRef(user.color);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
@@ -112,6 +114,24 @@ export default function Lobby({
     [],
   );
 
+  const debouncedUpdateHandSize = useCallback(
+    debounce((nextHandSize: HandSize) => {
+      updateSettingsMutation.mutate(
+        { code, handSize: nextHandSize },
+        {
+          onSuccess: () => {
+            confirmedHandSize.current = nextHandSize;
+          },
+          onError: () => {
+            setSelectedHandSize(confirmedHandSize.current);
+            toast.error('Error updating settings.');
+          },
+        },
+      );
+    }, HAND_SIZE_UPDATE_DELAY_MS),
+    [],
+  );
+
   const handleNameChange = (name: string) => {
     setUser((prev) => ({ ...prev, name, nameError: '' }));
     debouncedUpdatePlayerName(name);
@@ -125,18 +145,9 @@ export default function Lobby({
 
   const handleHandSizeChange = (newHandSize: string) => {
     const nextHandSize = handSizeSchema.parse(Number(newHandSize));
-    const previousHandSize = selectedHandSize;
 
     setSelectedHandSize(nextHandSize);
-    updateSettingsMutation.mutate(
-      { code, handSize: nextHandSize },
-      {
-        onError: () => {
-          setSelectedHandSize(previousHandSize);
-          toast.error('Error updating settings.');
-        },
-      },
-    );
+    debouncedUpdateHandSize(nextHandSize);
   };
 
   const handleReadyChange = (isReady: boolean) => {
