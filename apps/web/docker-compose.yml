@@ -1,3 +1,5 @@
+name: card-games
+
 services:
   redis:
     image: docker.io/redis/redis-stack:latest
