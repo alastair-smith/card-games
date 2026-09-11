@@ -5,7 +5,7 @@ import { publishYanivState } from '~/server/events/yaniv';
 import { deckWithJokers } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import { GameStage, GameStep, HAND_SIZE } from '~/types/games/yaniv';
+import { GameStage, GameStep } from '~/types/games/yaniv';
 import { shuffle } from '~/utils/cards/index';
 
 export const startNewRound = async (code: GameCode, userId: UserId) => {
@@ -22,7 +22,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) => {
 
   const players = [];
   for (const existing of state.players) {
-    const cards = await yanivDeck.drawCards(code, HAND_SIZE);
+    const cards = await yanivDeck.drawCards(code, state.handSize);
     players.push({
       ...existing,
       isYanivCalled: false,

@@ -20,6 +20,7 @@ import {
   type ReactionEmoji,
   type SystemEmoji,
 } from '~/types/game';
+import type { Settings } from '~/types/games/yaniv';
 import Loading from './loading';
 
 const clientTracer = trace.getTracer('card-games-web');
@@ -40,6 +41,7 @@ export default function YanivClient({
 
   const [status, setStatus] = useState<GameStatus>(GameStatus.LOADING);
   const [players, setPlayers] = useState<Player[] | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
   const [gameState, setGameState] = useState<ClientGameState | null>(null);
   const [reactions, setReactions] = useState<
     Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }>
@@ -89,6 +91,7 @@ export default function YanivClient({
                 case GameUpdate.LOBBY_UPDATE:
                   setStatus(GameStatus.LOBBY);
                   setPlayers(newGameState.players);
+                  setSettings(newGameState.settings);
                   return;
 
                 case GameUpdate.GAME_STATE_UPDATE:
@@ -138,10 +141,10 @@ export default function YanivClient({
   }
 
   if (status === GameStatus.LOBBY) {
-    if (players === null) {
+    if (players === null || settings === null) {
       return <Loading />;
     }
-    return <Lobby code={code} players={players} />;
+    return <Lobby code={code} players={players} handSize={settings.handSize} />;
   }
 
   if (gameState === null) {

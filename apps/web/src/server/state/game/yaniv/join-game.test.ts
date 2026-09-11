@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, GameUpdate } from '~/types/game';
-import { MAX_PLAYERS } from '~/types/games/yaniv';
+import {
+  DEFAULT_HAND_SIZE,
+  type HandSize,
+  MAX_PLAYERS,
+} from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetLobby = vi.fn();
@@ -28,10 +32,14 @@ const HOST_ID = 'host-1' as UserId;
 const USER_ID = 'user-2' as UserId;
 const NEW_PLAYER_NAME = 'Brave Otter';
 
-const makeLobby = (playerIds: UserId[]) => ({
+const makeLobby = (
+  playerIds: UserId[],
+  settings: { handSize: HandSize } = { handSize: DEFAULT_HAND_SIZE },
+) => ({
   code: CODE,
   type: GameType.YANIV,
   host: HOST_ID,
+  settings,
   players: playerIds.map((id) => ({
     id,
     name: `Player ${id}`,
@@ -61,6 +69,7 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
+      settings: { handSize: DEFAULT_HAND_SIZE },
     });
     expect(mockSetLobby).not.toHaveBeenCalled();
   });
@@ -74,7 +83,18 @@ describe('joinGame', () => {
         expect.objectContaining({ id: HOST_ID, isHost: true }),
         expect.objectContaining({ id: USER_ID, isHost: false }),
       ]),
+      settings: { handSize: DEFAULT_HAND_SIZE },
     });
+  });
+
+  test('returns the hand size the host has chosen', async () => {
+    mockGetLobby.mockResolvedValue(
+      makeLobby([HOST_ID, USER_ID], { handSize: 7 }),
+    );
+
+    const result = await joinGame({ code: CODE, userId: USER_ID });
+
+    expect(result).toMatchObject({ settings: { handSize: 7 } });
   });
 
   test('returns full indicator when at maximum player capacity', async () => {
@@ -115,6 +135,7 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
+      settings: { handSize: DEFAULT_HAND_SIZE },
     });
   });
 

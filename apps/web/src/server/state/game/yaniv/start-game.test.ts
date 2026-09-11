@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   GameStep,
-  HAND_SIZE,
+  type HandSize,
   MAX_PLAYERS,
 } from '~/types/games/yaniv';
 
@@ -43,9 +44,14 @@ const CODE = 'ABCDEF' as GameCode;
 const HOST = 'user-1' as UserId;
 const PLAYER_2 = 'user-2' as UserId;
 
-const makeLobby = (players = [HOST, PLAYER_2]) => ({
+const makeLobby = (
+  players = [HOST, PLAYER_2],
+  settings: { handSize: HandSize } = { handSize: DEFAULT_HAND_SIZE },
+) => ({
   code: CODE,
+  type: GameType.YANIV,
   host: HOST,
+  settings,
   players: players.map((id) => ({ id, name: `Player ${id}`, isReady: true })),
 });
 
@@ -121,7 +127,7 @@ describe('startGame', () => {
       players: Array<{ id: string; hand: unknown[] }>;
     };
     for (const player of state.players) {
-      expect(player.hand).toHaveLength(HAND_SIZE);
+      expect(player.hand).toHaveLength(DEFAULT_HAND_SIZE);
     }
   });
 
@@ -131,8 +137,20 @@ describe('startGame', () => {
       players: Array<{ cardCount: number }>;
     };
     for (const player of state.players) {
-      expect(player.cardCount).toBe(HAND_SIZE);
+      expect(player.cardCount).toBe(DEFAULT_HAND_SIZE);
     }
+  });
+
+  test('deals the hand size the host chose', async () => {
+    mockGetLobby.mockResolvedValue(
+      makeLobby([HOST, PLAYER_2], { handSize: 7 }),
+    );
+
+    await startGame(CODE, HOST);
+
+    expect(mockDrawCards).toHaveBeenCalledWith(CODE, 7);
+    const state = mockSetYanivState.mock.calls[0]?.[1] as { handSize: number };
+    expect(state.handSize).toBe(7);
   });
 
   test('seeds the discard pile with one card', async () => {
@@ -145,7 +163,7 @@ describe('startGame', () => {
   test('draws one hand per player via drawCards and one card for the discard', async () => {
     await startGame(CODE, HOST);
     expect(mockDrawCards).toHaveBeenCalledTimes(2);
-    expect(mockDrawCards).toHaveBeenCalledWith(CODE, HAND_SIZE);
+    expect(mockDrawCards).toHaveBeenCalledWith(CODE, DEFAULT_HAND_SIZE);
     expect(mockDrawCard).toHaveBeenCalledOnce();
   });
 

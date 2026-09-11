@@ -3,7 +3,7 @@ import {
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
-import { HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
+import type { HandSize, YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
@@ -13,6 +13,8 @@ type HandProps = {
   className?: string;
   color: PlayerColor;
   cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
+  /** Cards dealt at the start of a round, used to reserve space in the hand. */
+  handSize: HandSize;
   handTotal: number;
   isFiftyScoreHalved: boolean;
   totalScore: number;
@@ -24,6 +26,7 @@ export default function Hand({
   className,
   color,
   cards,
+  handSize,
   handTotal,
   isFiftyScoreHalved,
   totalScore,
@@ -53,7 +56,7 @@ export default function Hand({
             />
           </li>
         ))}
-        {Array.from({ length: HAND_SIZE - sortedCards.length }).map(
+        {Array.from({ length: Math.max(handSize - sortedCards.length, 0) }).map(
           (_, index) => (
             <li
               // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders

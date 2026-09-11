@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameViewStage } from '~/types/games/yaniv';
+import { DEFAULT_HAND_SIZE, GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 vi.mock('~/components/layout/game-layout', () => ({
@@ -56,6 +56,7 @@ vi.mock('../how-to', () => ({
 }));
 
 const baseProps = {
+  handSize: DEFAULT_HAND_SIZE,
   onEmojiClick: vi.fn(),
   onEndTurnClick: vi.fn(),
   onYanivClick: vi.fn(),

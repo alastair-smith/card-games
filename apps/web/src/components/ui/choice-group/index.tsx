@@ -65,7 +65,7 @@ export function ChoiceCard({
     <Label
       data-slot='choice-card'
       className={cn(
-        'flex cursor-pointer items-start gap-3 rounded-lg border-2 border-lighter-slate bg-true-white p-4 text-base leading-normal text-light-text transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-data-checked:border-primary has-data-checked:bg-primary/25 has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50',
+        'flex cursor-pointer items-start gap-3 rounded-lg border-2 border-border bg-input-background p-4 text-base leading-normal text-light-text transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-data-checked:border-dark-yellow has-data-checked:bg-primary/25 has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50',
         className,
       )}
     >

@@ -1,5 +1,6 @@
 'use client';
 
+import GameSettings from '~/app/yaniv/_components/game-settings';
 import { HowTo } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
@@ -7,12 +8,13 @@ import Players from '~/components/lobby/players.view';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
-import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
+import { type HandSize, MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 
 export type LobbyProps = {
   code: GameCode;
   players: Player[];
+  handSize: HandSize;
   user: {
     isReady: boolean;
     name: string;
@@ -22,13 +24,23 @@ export type LobbyProps = {
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange: (color: string) => void;
+  handleHandSizeChange: (handSize: string) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
 };
 
-export default function LobbyView({ code, ...playerProps }: LobbyProps) {
+export default function LobbyView({
+  code,
+  handSize,
+  handleHandSizeChange,
+  ...playerProps
+}: LobbyProps) {
+  const isHost = playerProps.players.some(
+    ({ isHost: isPlayerHost, isUser }) => isPlayerHost && isUser,
+  );
+
   return (
     <GameLayout
       gameType={GameType.YANIV}
@@ -45,14 +57,22 @@ export default function LobbyView({ code, ...playerProps }: LobbyProps) {
             {...playerProps}
           />
         </div>
-        <Card className='min-w-[20rem] flex-1 basis-120'>
-          <CardHeader>
-            <h2 className='text-xl font-semibold'>How to play Yaniv</h2>
-          </CardHeader>
-          <CardContent>
-            <HowTo />
-          </CardContent>
-        </Card>
+        <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
+          <GameSettings
+            className='w-full'
+            handSize={handSize}
+            isHost={isHost}
+            onHandSizeChange={handleHandSizeChange}
+          />
+          <Card className='flex-1'>
+            <CardHeader>
+              <h2 className='text-xl font-semibold'>How to Play Yaniv</h2>
+            </CardHeader>
+            <CardContent>
+              <HowTo />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </GameLayout>
   );

@@ -6,44 +6,57 @@ import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
+import { type HandSize, handSizeSchema } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
+import { useWaitForServerValue } from './use-wait-for-server-value';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
-const PLAYER_READY_UPDATE_DELAY_MS = 300;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 
 export default function Lobby({
   code,
   players,
+  handSize,
 }: {
   code: GameCode;
   players: Player[];
+  handSize: HandSize;
 }) {
+  const currentPlayer = players.find((player) => player.isUser);
+
+  if (!currentPlayer) {
+    throw new Error('Current player not found in lobby');
+  }
+
   const [user, setUser] = useState<{
-    isReady: boolean;
     name: string;
     nameError: string;
     color: PlayerColor;
-  }>(() => {
-    const currentPlayer = players.find((player) => player.isUser);
+  }>(() => ({
+    name: currentPlayer.name,
+    nameError: '',
+    color: currentPlayer.color,
+  }));
 
-    if (!currentPlayer) {
-      throw new Error('Current player not found in lobby');
-    }
-
-    return {
-      isReady: currentPlayer.isReady,
-      name: currentPlayer.name,
-      nameError: '',
-      color: currentPlayer.color,
-    };
-  });
-
-  // For reverting on server failure
   const confirmedColor = useRef(user.color);
 
+  const waitForIsReady = useWaitForServerValue(currentPlayer.isReady);
+  const waitForHandSize = useWaitForServerValue(handSize);
+
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
+
+  const updateReadyMutation = api.lobby.updatePlayer.useMutation({
+    scope: { id: `player-ready-${code}` },
+    onSuccess: (_data, variables) =>
+      variables.field === 'isReady'
+        ? waitForIsReady(variables.isReady)
+        : undefined,
+    onError: () => {
+      toast.error('Error updating ready status.');
+    },
+  });
+
   const leaveGameMutation = api.lobby.leaveGame.useMutation();
   const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
     onError: () => {
@@ -52,6 +65,25 @@ export default function Lobby({
   });
   const makeHostMutation = api.lobby.makeHost.useMutation();
   const startGameMutation = api.yaniv.startGame.useMutation();
+  const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
+    scope: { id: `settings-${code}` },
+    onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+    onError: () => {
+      toast.error('Error updating settings.');
+    },
+  });
+
+  const readyUpdate = updateReadyMutation.variables;
+  const pendingIsReady =
+    updateReadyMutation.isPending && readyUpdate?.field === 'isReady'
+      ? readyUpdate.isReady
+      : undefined;
+  const isReady = pendingIsReady ?? currentPlayer.isReady;
+
+  const pendingHandSize = updateSettingsMutation.isPending
+    ? updateSettingsMutation.variables?.handSize
+    : undefined;
+  const selectedHandSize = pendingHandSize ?? handSize;
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
@@ -64,21 +96,6 @@ export default function Lobby({
         },
       );
     }, PLAYER_NAME_UPDATE_DELAY_MS),
-    [],
-  );
-
-  const debouncedUpdatePlayerReady = useCallback(
-    debounce((isReady: boolean) => {
-      updatePlayerMutation.mutate(
-        { field: 'isReady', code, isReady },
-        {
-          onError: () => {
-            setUser((prev) => ({ ...prev, isReady: !isReady }));
-            toast.error('Error updating ready status.');
-          },
-        },
-      );
-    }, PLAYER_READY_UPDATE_DELAY_MS),
     [],
   );
 
@@ -111,19 +128,31 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
-  const handleReadyChange = (isReady: boolean) => {
-    setUser((prev) => ({ ...prev, isReady }));
-    debouncedUpdatePlayerReady(isReady);
+  const handleHandSizeChange = (newHandSize: string) => {
+    updateSettingsMutation.mutate({
+      code,
+      handSize: handSizeSchema.parse(Number(newHandSize)),
+    });
+  };
+
+  const handleReadyChange = (nextIsReady: boolean) => {
+    updateReadyMutation.mutate({
+      field: 'isReady',
+      code,
+      isReady: nextIsReady,
+    });
   };
 
   return (
     <LobbyView
       code={code}
       players={players}
-      user={user}
+      handSize={selectedHandSize}
+      user={{ ...user, isReady }}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
+      handleHandSizeChange={handleHandSizeChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

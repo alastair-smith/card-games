@@ -8,7 +8,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
 import { yanivDiscard } from '~/server/data/discard';
-import { lobbySchema } from '~/server/data/lobby';
+import { yanivLobbySchema } from '~/server/data/lobby';
 import emitter from '~/server/events/emitter';
 import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
@@ -28,7 +28,7 @@ import {
   type ReactionEmoji,
   type SystemEmoji,
 } from '~/types/game';
-import { GameStage, gameStateSchema } from '~/types/games/yaniv';
+import { GameStage, gameStateSchema, type Settings } from '~/types/games/yaniv';
 import { logger } from '~/utils/logger';
 
 const TICK_RATE_MS = 100;
@@ -46,6 +46,7 @@ type StateSubscriptionData =
   | {
       update: GameUpdate.LOBBY_UPDATE;
       players: Player[];
+      settings: Settings;
     }
   | {
       update: GameUpdate.GAME_STATE_UPDATE | GameUpdate.FINISHED;
@@ -104,6 +105,7 @@ export const yanivStateSubscription = protectedProcedure
         yield {
           update: lobbyData.update,
           players: lobbyData.players,
+          settings: lobbyData.settings,
         };
 
         break;
@@ -129,7 +131,7 @@ export const yanivStateSubscription = protectedProcedure
 
     function lobbyHandler(message: unknown) {
       const emitContext = trace.getSpanContext(otelContext.active());
-      const messageData = lobbySchema.safeParse(message);
+      const messageData = yanivLobbySchema.safeParse(message);
 
       if (messageData.success) {
         if (!messageData.data.players.some((player) => player.id === userId)) {
@@ -146,7 +148,11 @@ export const yanivStateSubscription = protectedProcedure
           isUser: player.id === userId,
         }));
         messageQueue.push({
-          data: { update: GameUpdate.LOBBY_UPDATE, players },
+          data: {
+            update: GameUpdate.LOBBY_UPDATE,
+            players,
+            settings: messageData.data.settings,
+          },
           emitContext,
         });
       } else {

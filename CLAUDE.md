@@ -129,6 +129,13 @@ export const fooSchema = z.object({ ... });
 export type Foo = z.infer<typeof fooSchema>;
 ```
 
+### Stored state
+
+Game and lobby state lives in Redis and is short-lived, so schema changes do not
+need to be backwards compatible — games already in progress can break. Add new
+fields as required, not optional or defaulted, and don't add fallbacks for
+records written before the change.
+
 ### Component prop naming
 
 Action callbacks: prop is `on<Action>`, the handler passed in is `handle<Noun><Action>`:

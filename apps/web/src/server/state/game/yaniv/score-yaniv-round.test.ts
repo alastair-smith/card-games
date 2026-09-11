@@ -5,6 +5,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -30,6 +31,7 @@ const USER_3 = 'user-3' as UserId;
 const makeState = (overrides: Partial<State> = {}): State => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PROCEED,
+  handSize: DEFAULT_HAND_SIZE,
   currentPlayerId: USER_1,
   players: [
     {

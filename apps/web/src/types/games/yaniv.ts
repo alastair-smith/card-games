@@ -10,7 +10,7 @@ import { playerColorSchema } from '~/utils/player-color';
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
-export const HAND_SIZE = 7;
+export const HAND_SIZE_OPTIONS = [5, 7] as const;
 export const MINIMUM_RUN_SIZE = 3;
 export const YANIV_CALL_THRESHOLD = 7;
 export const YANIV_CALLER_PENALTY = 25;
@@ -22,6 +22,22 @@ export const yanivPlayingCardSchema = z.union([
 ]);
 
 export type YanivPlayingCard = z.infer<typeof yanivPlayingCardSchema>;
+
+export const handSizeSchema = z.literal(HAND_SIZE_OPTIONS);
+
+export type HandSize = z.infer<typeof handSizeSchema>;
+
+export const DEFAULT_HAND_SIZE: HandSize = 5;
+
+/** Host-chosen settings, picked in the lobby before the game starts. */
+export const settingsSchema = z.object({
+  handSize: handSizeSchema,
+});
+
+export type Settings = z.infer<typeof settingsSchema>;
+
+/** What a new Yaniv lobby starts with. */
+export const DEFAULT_SETTINGS: Settings = { handSize: DEFAULT_HAND_SIZE };
 
 export const YANIV_RANK_SCORE = {
   [Rank.TWO]: 2,
@@ -103,6 +119,7 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
   z.object({
     gameStage: z.literal(GameStage.IN_PROGRESS),
     gameStep: gameStepSchema,
+    handSize: handSizeSchema,
     players: z.array(playerSchema),
     playedCards: z.array(yanivPlayingCardSchema),
     topDiscardCard: yanivPlayingCardSchema.nullable().optional(),

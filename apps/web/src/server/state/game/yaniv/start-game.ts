@@ -5,11 +5,10 @@ import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import { deckWithJokers } from '~/types/cards';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import {
   GameStage,
   GameStep,
-  HAND_SIZE,
   MAX_PLAYERS,
   MIN_PLAYERS,
 } from '~/types/games/yaniv';
@@ -18,6 +17,7 @@ import { shuffle } from '~/utils/cards/index';
 export const startGame = async (code: GameCode, userId: UserId) => {
   const lobby = await getLobby({ code });
   if (!lobby) throw new Error('Lobby not found');
+  if (lobby.type !== GameType.YANIV) throw new Error('Not a Yaniv lobby');
   if (lobby.host !== userId)
     throw new Error('Only the host can start the game');
   if (lobby.players.length < MIN_PLAYERS)
@@ -25,11 +25,13 @@ export const startGame = async (code: GameCode, userId: UserId) => {
   if (lobby.players.length > MAX_PLAYERS)
     throw new Error('Too many players to start the game');
 
+  const { handSize } = lobby.settings;
+
   await yanivDeck.createDeck(code, shuffle(deckWithJokers));
 
   const players = [];
   for (const lobbyPlayer of lobby.players) {
-    const cards = await yanivDeck.drawCards(code, HAND_SIZE);
+    const cards = await yanivDeck.drawCards(code, handSize);
     players.push({
       id: lobbyPlayer.id,
       name: lobbyPlayer.name,
@@ -55,6 +57,7 @@ export const startGame = async (code: GameCode, userId: UserId) => {
   const state = {
     gameStage: GameStage.IN_PROGRESS as const,
     gameStep: GameStep.PLAY_CARDS,
+    handSize,
     currentPlayerId: firstPlayer.id,
     players,
     playedCards: [],

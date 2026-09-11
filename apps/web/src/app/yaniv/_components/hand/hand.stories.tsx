@@ -1,7 +1,7 @@
 import { action } from '@ladle/react';
 import { useState } from 'react';
 import { Rank, Suit } from '~/types/cards';
-import type { YanivPlayingCard } from '~/types/games/yaniv';
+import { DEFAULT_HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
 import Hand from '.';
 
 export default {
@@ -10,6 +10,7 @@ export default {
 
 const defaultProps: React.ComponentProps<typeof Hand> = {
   color: 'cyan',
+  handSize: DEFAULT_HAND_SIZE,
   cards: [
     {
       suit: Suit.CLUBS,

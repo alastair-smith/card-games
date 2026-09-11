@@ -1,8 +1,8 @@
 import { getLobby, type Lobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
 import type { UserId } from '~/types/entities';
-import { type GameCode, GameUpdate, type Player } from '~/types/game';
-import { MAX_PLAYERS } from '~/types/games/yaniv';
+import { type GameCode, GameType, GameUpdate, type Player } from '~/types/game';
+import { MAX_PLAYERS, type Settings } from '~/types/games/yaniv';
 import { generatePlayerName } from '~/utils/name-generator';
 import { getRandomPlayerColor } from '~/utils/player-color';
 
@@ -33,6 +33,7 @@ export const joinGame = async ({
   | {
       update: GameUpdate.LOBBY_UPDATE;
       players: Player[];
+      settings: Settings;
     }
 > => {
   const lobby = await getLobby({ code });
@@ -41,11 +42,16 @@ export const joinGame = async ({
     throw new Error('lobby not found');
   }
 
+  if (lobby.type !== GameType.YANIV) {
+    throw new Error('not a Yaniv lobby');
+  }
+
   // already in game
   if (lobby.players.some(({ id }) => id === userId)) {
     return {
       update: GameUpdate.LOBBY_UPDATE,
       players: enrichPlayerData(lobby.players, lobby.host, userId),
+      settings: lobby.settings,
     };
   }
 
@@ -76,5 +82,6 @@ export const joinGame = async ({
   return {
     update: GameUpdate.LOBBY_UPDATE,
     players: enrichPlayerData(updatedLobby.players, updatedLobby.host, userId),
+    settings: lobby.settings,
   };
 };

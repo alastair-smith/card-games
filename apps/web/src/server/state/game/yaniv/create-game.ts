@@ -3,7 +3,7 @@ import { setYanivState } from '~/server/data/yaniv';
 import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
-import { GameStage } from '~/types/games/yaniv';
+import { DEFAULT_SETTINGS, GameStage } from '~/types/games/yaniv';
 import { generatePlayerName } from '~/utils/name-generator';
 import { getRandomPlayerColor } from '~/utils/player-color';
 
@@ -21,6 +21,7 @@ export const createGame = async ({ host }: { host: UserId }) => {
         code,
         type: GameType.YANIV,
         host,
+        settings: DEFAULT_SETTINGS,
         players: [
           {
             id: host,

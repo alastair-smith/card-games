@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
+import { DEFAULT_HAND_SIZE } from '~/types/games/yaniv';
 import Hand from '.';
 
 vi.mock('~/components/ui/playing-card', () => ({
@@ -37,6 +38,7 @@ const cards = [
 const defaultProps = {
   color: 'cyan' as const,
   cards,
+  handSize: DEFAULT_HAND_SIZE,
   handTotal: 16,
   isFiftyScoreHalved: false,
   totalScore: 0,
@@ -106,6 +108,36 @@ describe('Hand', () => {
           .getByRole('button', { name: `${Rank.FIVE} of ${Suit.HEARTS}` })
           .getAttribute('data-highlighted'),
       ).toBe('false');
+    });
+  });
+
+  describe('layout', () => {
+    const getSlots = () =>
+      within(screen.getByRole('list', { name: 'Your hand' })).getAllByRole(
+        'listitem',
+        { hidden: true },
+      );
+
+    test('keeps space for a full hand of five', () => {
+      render(<Hand {...defaultProps} handSize={5} />);
+      expect(getSlots()).toHaveLength(5);
+    });
+
+    test('keeps space for a full hand of seven', () => {
+      render(<Hand {...defaultProps} handSize={7} />);
+      expect(getSlots()).toHaveLength(7);
+    });
+
+    test('keeps no spare space when holding more cards than were dealt', () => {
+      const pickedUpCards = [
+        ...cards,
+        { suit: Suit.CLUBS, rank: Rank.TWO },
+        { suit: Suit.HEARTS, rank: Rank.THREE },
+        { suit: Suit.SPADES, rank: Rank.FOUR },
+        { suit: Suit.DIAMONDS, rank: Rank.SIX },
+      ];
+      render(<Hand {...defaultProps} cards={pickedUpCards} handSize={5} />);
+      expect(getSlots()).toHaveLength(pickedUpCards.length);
     });
   });
 });

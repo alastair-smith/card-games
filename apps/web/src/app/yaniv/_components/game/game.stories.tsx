@@ -7,7 +7,7 @@ import {
   type PlayerName,
   type UserId,
 } from '~/types/entities';
-import { GameViewStage } from '~/types/games/yaniv';
+import { DEFAULT_HAND_SIZE, GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 export default {
@@ -20,6 +20,7 @@ const defaultProps: React.ComponentProps<typeof Game> = {
   onYanivClick: action('Yaniv clicked'),
   onPlayCards: action('Play cards clicked'),
   stage: GameViewStage.PICKING_CARDS,
+  handSize: DEFAULT_HAND_SIZE,
   players: [
     {
       id: '1' as UserId,
