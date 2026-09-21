@@ -9,6 +9,9 @@ const config: StorybookConfig = {
   ],
   framework: '@storybook/nextjs-vite',
   staticDirs: ['./assets', '../public'],
+  tags: {
+    _docs: { defaultFilterSelection: 'include' },
+  },
   features: {
     componentsManifest: true,
   },
