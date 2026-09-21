@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
-import { fn } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
@@ -44,9 +43,7 @@ const meta = {
     className: PLAYING_CARD_DEFAULT_SIZE,
     selected: false,
     highlighted: false,
-    border: true,
     design: 'default',
-    onClick: fn(),
   },
   argTypes: {
     design: { control: 'inline-radio', options: ['default', 'simple'] },

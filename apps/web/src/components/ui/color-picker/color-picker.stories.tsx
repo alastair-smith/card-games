@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useState } from 'react';
+import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import { PLAYER_COLOR_OPTIONS } from '~/utils/player-color';
 import { ColorPicker } from '.';
@@ -22,16 +22,16 @@ const meta = {
     },
   },
   // The picker is a swatch button showing the current colour; open it to reveal
-  // the colour popover. Selection is held locally so the swatch updates.
-  render: ({ value, onColorSelect, ...args }) => {
-    const [color, setColor] = useState<string | undefined>(value);
+  // the colour popover. Selection is written back to the args so the swatch
+  // updates and stays in sync with the controls panel.
+  render: function Render({ onColorSelect, ...args }) {
+    const [, updateArgs] = useArgs<{ value: string }>();
 
     return (
       <ColorPicker
         {...args}
-        value={color}
         onColorSelect={(selected) => {
-          setColor(selected);
+          updateArgs({ value: selected });
           onColorSelect(selected);
         }}
       />

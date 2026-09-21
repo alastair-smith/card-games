@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { useState } from 'react';
+import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import {
   DEFAULT_HAND_SIZE,
@@ -28,16 +28,14 @@ type Story = StoryObj<typeof meta>;
 
 // The host picks the settings the game is played with.
 export const Host: Story = {
-  render: ({ handSize, onHandSizeChange, ...args }) => {
-    const [selectedHandSize, setSelectedHandSize] =
-      useState<HandSize>(handSize);
+  render: function Render({ onHandSizeChange, ...args }) {
+    const [, updateArgs] = useArgs<{ handSize: HandSize }>();
 
     return (
       <GameSettings
         {...args}
-        handSize={selectedHandSize}
         onHandSizeChange={(value) => {
-          setSelectedHandSize(handSizeSchema.parse(Number(value)));
+          updateArgs({ handSize: handSizeSchema.parse(Number(value)) });
           onHandSizeChange(value);
         }}
       />
