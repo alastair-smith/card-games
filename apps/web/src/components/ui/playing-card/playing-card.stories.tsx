@@ -37,7 +37,7 @@ const CARD_SIZES = [
 ] as const;
 
 const meta = {
-  title: 'Components / Playing Card',
+  title: 'UI Components /Playing Card',
   component: PlayingCard,
   args: {
     card: { suit: Suit.SPADES, rank: Rank.ACE },

@@ -7,7 +7,7 @@ import { ColorPicker } from '.';
 const FIRST_COLOR = PLAYER_COLOR_OPTIONS[0]?.key;
 
 const meta = {
-  title: 'Components / Color Picker',
+  title: 'UI Components /Color Picker',
   component: ColorPicker,
   args: {
     colors: PLAYER_COLOR_OPTIONS,

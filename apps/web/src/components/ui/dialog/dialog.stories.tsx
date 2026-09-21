@@ -14,7 +14,7 @@ type DialogStoryProps = React.ComponentProps<typeof Dialog> & {
 };
 
 const meta: Meta<DialogStoryProps> = {
-  title: 'Components / Dialog',
+  title: 'UI Components /Dialog',
   component: Dialog,
   args: {
     defaultOpen: false,

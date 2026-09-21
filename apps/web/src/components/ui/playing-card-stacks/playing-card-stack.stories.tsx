@@ -9,7 +9,7 @@ type PlayingCardStackStoryProps = ComponentProps<typeof PlayingCardStack> & {
 };
 
 const meta: Meta<PlayingCardStackStoryProps> = {
-  title: 'Components / Playing Card Stack',
+  title: 'UI Components /Playing Card Stack',
   component: PlayingCardStack,
   args: {
     cardCount: 1,

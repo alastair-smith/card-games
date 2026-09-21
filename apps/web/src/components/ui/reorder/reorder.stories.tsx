@@ -17,7 +17,7 @@ type ReorderStoryProps = ComponentProps<typeof Reorder> & {
 };
 
 const meta: Meta<ReorderStoryProps> = {
-  title: 'Components / Reorder',
+  title: 'UI Components /Reorder',
   component: Reorder,
   args: {
     label: 'Player turn order',

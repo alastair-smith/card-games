@@ -49,7 +49,7 @@ type AccordionStoryProps = {
 };
 
 const meta: Meta<AccordionStoryProps> = {
-  title: 'Components / Accordion',
+  title: 'UI Components /Accordion',
   component: Accordion,
   args: {
     type: 'single',

@@ -1,4 +1,4 @@
 import { addons } from 'storybook/manager-api';
-import { themes } from 'storybook/theming';
+import { getSystemTheme } from './theme';
 
-addons.setConfig({ theme: themes.dark });
+addons.setConfig({ theme: getSystemTheme() });

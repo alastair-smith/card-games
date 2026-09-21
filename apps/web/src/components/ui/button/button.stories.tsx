@@ -14,7 +14,7 @@ import {
 import { Button } from '.';
 
 const meta = {
-  title: 'Components / Button',
+  title: 'UI Components /Button',
   component: Button,
   args: {
     children: 'Example',

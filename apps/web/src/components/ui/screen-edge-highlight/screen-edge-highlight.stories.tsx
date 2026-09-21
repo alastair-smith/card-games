@@ -3,7 +3,7 @@ import { PLAYER_COLORS } from '~/utils/player-color';
 import { ScreenEdgeHighlight } from '.';
 
 const meta = {
-  title: 'Components / Screen Edge Highlight',
+  title: 'UI Components /Screen Edge Highlight',
   component: ScreenEdgeHighlight,
   argTypes: {
     color: {

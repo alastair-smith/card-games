@@ -19,7 +19,7 @@ import {
 } from '.';
 
 const meta = {
-  title: 'Components / Article',
+  title: 'UI Components /Article',
   component: Article,
   args: {
     includeContents: true,

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Input } from './input';
 
 const meta = {
-  title: 'Components / Input',
+  title: 'UI Components /Input',
   component: Input,
   args: {
     placeholder: 'Type here',
