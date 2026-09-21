@@ -1,4 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { toast } from '~/components/ui/toast';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
 import {
@@ -9,255 +11,137 @@ import {
 import { GameStage } from '~/types/games/high-card';
 import Game from './game-view';
 
-export const Turn1 = () => {
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            isUser: false,
-            card: null,
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            isUser: true,
-            card: null,
-          },
-          {
-            id: '3' as UserId,
-            name: 'Zoe' as PlayerName,
-            isUser: false,
-            card: null,
-          },
-        ],
-        winners: [],
-        stage: GameStage.IN_PROGRESS,
-      }}
-    />
-  );
+type GameProps = React.ComponentProps<typeof Game>;
+type Player = GameProps['state']['players'][number];
+
+const player = (
+  id: string,
+  name: string,
+  card: StandardPlayingCard | null,
+  isUser = false,
+): Player => ({
+  id: id as UserId,
+  name: name as PlayerName,
+  isUser,
+  card,
+});
+
+const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
+  '',
+) as PlayerName;
+
+const meta = {
+  title: 'High Card / Game',
+  component: Game,
+  parameters: { isFullScreen: true },
+  args: {
+    onEmojiClick: fn(),
+    reactions: {},
+    pickupCard: () => {
+      toast.success('Card picked up!');
+    },
+    state: {
+      players: [
+        player('1', 'Alice', null),
+        player('2', 'Bob', null, true),
+        player('3', 'Zoe', null),
+      ],
+      winners: [],
+      stage: GameStage.IN_PROGRESS,
+    },
+  },
+} satisfies Meta<typeof Game>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Turn1: Story = {};
+
+// The user's card is picked up during the story, so it is held locally.
+export const Turn2: Story = {
+  render: ({ state, ...args }) => {
+    const [userCard, setUserCard] = useState<StandardPlayingCard | null>(null);
+
+    return (
+      <Game
+        {...args}
+        pickupCard={() => {
+          setUserCard({ suit: Suit.SPADES, rank: Rank.QUEEN });
+          toast.success('Card picked up!');
+        }}
+        state={{
+          ...state,
+          players: [
+            player('1', 'Alice', { suit: Suit.HEARTS, rank: Rank.THREE }),
+            player('2', 'Bob', userCard, true),
+            player('3', 'Zoe', null),
+          ],
+        }}
+      />
+    );
+  },
 };
 
-export const Turn2 = () => {
-  const [card2, setCard2] = useState<StandardPlayingCard | null>(null);
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        setCard2({ suit: Suit.SPADES, rank: Rank.QUEEN });
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.HEARTS, rank: Rank.THREE },
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            isUser: true,
-            card: card2,
-          },
-          {
-            id: '3' as UserId,
-            name: 'Zoe' as PlayerName,
-            isUser: false,
-            card: null,
-          },
-        ],
-        winners: [],
-        stage: GameStage.IN_PROGRESS,
-      }}
-    />
-  );
+export const Turn3: Story = {
+  args: {
+    state: {
+      players: [
+        player('1', 'Alice', { suit: Suit.HEARTS, rank: Rank.THREE }),
+        player('2', 'Bob', { suit: Suit.SPADES, rank: Rank.QUEEN }, true),
+        player('3', 'Zoe', null),
+      ],
+      winners: [],
+      stage: GameStage.IN_PROGRESS,
+    },
+  },
 };
 
-export const Turn3 = () => {
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.HEARTS, rank: Rank.THREE },
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            isUser: true,
-            card: { suit: Suit.SPADES, rank: Rank.QUEEN },
-          },
-          {
-            id: '3' as UserId,
-            name: 'Zoe' as PlayerName,
-            isUser: false,
-            card: null,
-          },
-        ],
-        winners: [],
-        stage: GameStage.IN_PROGRESS,
-      }}
-    />
-  );
+export const Turn4: Story = {
+  args: {
+    state: {
+      players: [
+        player('1', 'Alice', { suit: Suit.HEARTS, rank: Rank.THREE }),
+        player('2', 'Bob', { suit: Suit.SPADES, rank: Rank.QUEEN }, true),
+        player('3', 'Zoe', { suit: Suit.CLUBS, rank: Rank.TEN }),
+      ],
+      winners: ['2'] as UserId[],
+      stage: GameStage.FINISHED,
+    },
+  },
 };
 
-export const Turn4 = () => {
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.HEARTS, rank: Rank.THREE },
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            isUser: true,
-            card: { suit: Suit.SPADES, rank: Rank.QUEEN },
-          },
-          {
-            id: '3' as UserId,
-            name: 'Zoe' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.CLUBS, rank: Rank.TEN },
-          },
-        ],
-        winners: ['2'] as UserId[],
-        stage: GameStage.FINISHED,
-      }}
-    />
-  );
+export const MaxPlayers: Story = {
+  args: {
+    state: {
+      players: [
+        player('1', 'Alice', { suit: Suit.HEARTS, rank: Rank.THREE }),
+        player('2', 'Bob', { suit: Suit.SPADES, rank: Rank.QUEEN }, true),
+        player('3', 'Carl', { suit: Suit.CLUBS, rank: Rank.TEN }),
+        player('4', 'Denise', { suit: Suit.HEARTS, rank: Rank.TEN }),
+        player('5', 'Ella', { suit: Suit.SPADES, rank: Rank.FOUR }),
+        player('6', 'Freddie', { suit: Suit.CLUBS, rank: Rank.THREE }),
+        player('7', 'Georgina', { suit: Suit.CLUBS, rank: Rank.SEVEN }),
+        player('8', 'Henry', { suit: Suit.SPADES, rank: Rank.JACK }),
+        player('9', 'Ian', { suit: Suit.DIAMONDS, rank: Rank.ACE }),
+        player('10', 'John', { suit: Suit.CLUBS, rank: Rank.NINE }),
+      ],
+      winners: [],
+      stage: GameStage.IN_PROGRESS,
+    },
+  },
 };
 
-export const MaxPlayers = () => {
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          {
-            id: '1' as UserId,
-            name: 'Alice' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.HEARTS, rank: Rank.THREE },
-          },
-          {
-            id: '2' as UserId,
-            name: 'Bob' as PlayerName,
-            isUser: true,
-            card: { suit: Suit.SPADES, rank: Rank.QUEEN },
-          },
-          {
-            id: '3' as UserId,
-            name: 'Carl' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.CLUBS, rank: Rank.TEN },
-          },
-          {
-            id: '4' as UserId,
-            name: 'Denise' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.HEARTS, rank: Rank.TEN },
-          },
-          {
-            id: '5' as UserId,
-            name: 'Ella' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.SPADES, rank: Rank.FOUR },
-          },
-          {
-            id: '6' as UserId,
-            name: 'Freddie' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.CLUBS, rank: Rank.THREE },
-          },
-          {
-            id: '7' as UserId,
-            name: 'Georgina' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.CLUBS, rank: Rank.SEVEN },
-          },
-          {
-            id: '8' as UserId,
-            name: 'Henry' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.SPADES, rank: Rank.JACK },
-          },
-          {
-            id: '9' as UserId,
-            name: 'Ian' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.DIAMONDS, rank: Rank.ACE },
-          },
-          {
-            id: '10' as UserId,
-            name: 'John' as PlayerName,
-            isUser: false,
-            card: { suit: Suit.CLUBS, rank: Rank.NINE },
-          },
-        ],
-        winners: [],
-        stage: GameStage.IN_PROGRESS,
-      }}
-    />
-  );
-};
-
-export const LongName = () => {
-  const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
-    '',
-  ) as PlayerName;
-  return (
-    <Game
-      onEmojiClick={() => {}}
-      reactions={{}}
-      pickupCard={() => {
-        toast.success('Card picked up!');
-      }}
-      state={{
-        players: [
-          { id: '1' as UserId, name: longName, isUser: false, card: null },
-          {
-            id: '2' as UserId,
-            name: longName,
-            isUser: true,
-            card: null,
-          },
-          { id: '3' as UserId, name: longName, isUser: false, card: null },
-        ],
-        winners: [],
-        stage: GameStage.IN_PROGRESS,
-      }}
-    />
-  );
+export const LongName: Story = {
+  args: {
+    state: {
+      players: [
+        player('1', longName, null),
+        player('2', longName, null, true),
+        player('3', longName, null),
+      ],
+      winners: [],
+      stage: GameStage.IN_PROGRESS,
+    },
+  },
 };

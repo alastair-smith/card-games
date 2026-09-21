@@ -1,4 +1,5 @@
-import { action } from '@ladle/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { fn } from 'storybook/test';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
@@ -6,311 +7,152 @@ import {
 } from '~/types/entities';
 import Players, { type PlayersProps } from './players.view';
 
-const handlers = {
-  handleNameChange: action('handleNameChange'),
-  handleReadyChange: action('handleReadyChange'),
-  handleColorChange: action('handleColorChange'),
-  handleStartGame: action('handleStartGame'),
-  handleKick: action('handleKick'),
-  handleLeave: action('handleLeave'),
-  handleMakeHost: action('handleMakeHost'),
-} as const satisfies Partial<PlayersProps>;
+type Player = PlayersProps['players'][number];
 
-export const MinPlayersNotMet = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: true,
-        isHost: true,
-      },
-    ]}
-    minPlayers={4}
-    maxPlayers={6}
-    user={{
-      isReady: false,
-      name: 'Frank',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const MinPlayersMet = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: false,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: 'Roz' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: true,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: false,
-      name: 'Roz',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const MaxPlayers = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: false,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: 'Roz' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: true,
-        isHost: false,
-      },
-      {
-        id: '3' as UserId,
-        name: 'Niles' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: false,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: false,
-      name: 'Roz',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const SomePlayersReady = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: 'Roz' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-      {
-        id: '3' as UserId,
-        name: 'Niles' as PlayerName,
-        color: 'cyan',
-        isReady: false,
-        isUser: false,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: 'Frank',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const AllPlayersReadyIsHost = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: 'Roz' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-      {
-        id: '3' as UserId,
-        name: 'Niles' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: 'Frank',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const AllPlayersReadyIsNotHost = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: 'Roz' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: false,
-      },
-      {
-        id: '3' as UserId,
-        name: 'Niles' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: 'Roz',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const AllPlayersReadyButNotEnough = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: true,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: 'Frank',
-      nameError: '',
-    }}
-    {...handlers}
-  />
-);
-
-export const NameError = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: 'Frank' as PlayerName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: true,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: '',
-      nameError: 'Min length not met',
-    }}
-    {...handlers}
-  />
-);
+const player = (
+  id: string,
+  name: string,
+  {
+    isReady = false,
+    isUser = false,
+    isHost = false,
+  }: Partial<Pick<Player, 'isReady' | 'isUser' | 'isHost'>> = {},
+): Player => ({
+  id: id as UserId,
+  name: name as PlayerName,
+  color: 'cyan',
+  isReady,
+  isUser,
+  isHost,
+});
 
 const longName = Array.from({ length: MAX_NAME_LENGTH })
   .map(() => 'W')
   .join('') as PlayerName;
 
-export const LongPlayerNames = () => (
-  <Players
-    players={[
-      {
-        id: '1' as UserId,
-        name: longName,
-        color: 'cyan',
-        isReady: true,
-        isUser: true,
-        isHost: true,
-      },
-      {
-        id: '2' as UserId,
-        name: longName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-      {
-        id: '3' as UserId,
-        name: longName,
-        color: 'cyan',
-        isReady: true,
-        isUser: false,
-        isHost: false,
-      },
-    ]}
-    minPlayers={2}
-    maxPlayers={3}
-    user={{
-      isReady: true,
-      name: longName,
+const meta = {
+  title: 'Lobby / Players',
+  component: Players,
+  args: {
+    players: [player('1', 'Frank', { isUser: true, isHost: true })],
+    minPlayers: 4,
+    maxPlayers: 6,
+    user: {
+      isReady: false,
+      name: 'Frank',
       nameError: '',
-    }}
-    {...handlers}
-  />
-);
+    },
+    handleNameChange: fn(),
+    handleReadyChange: fn(),
+    handleColorChange: fn(),
+    handleStartGame: fn(),
+    handleKick: fn(),
+    handleLeave: fn(),
+    handleMakeHost: fn(),
+  },
+} satisfies Meta<typeof Players>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const MinPlayersNotMet: Story = {};
+
+export const MinPlayersMet: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isHost: true }),
+      player('2', 'Roz', { isUser: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: false, name: 'Roz', nameError: '' },
+  },
+};
+
+export const MaxPlayers: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isHost: true }),
+      player('2', 'Roz', { isUser: true }),
+      player('3', 'Niles'),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: false, name: 'Roz', nameError: '' },
+  },
+};
+
+export const SomePlayersReady: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isReady: true, isUser: true, isHost: true }),
+      player('2', 'Roz', { isReady: true }),
+      player('3', 'Niles'),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: 'Frank', nameError: '' },
+  },
+};
+
+export const AllPlayersReadyIsHost: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isReady: true, isUser: true, isHost: true }),
+      player('2', 'Roz', { isReady: true }),
+      player('3', 'Niles', { isReady: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: 'Frank', nameError: '' },
+  },
+};
+
+export const AllPlayersReadyIsNotHost: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isReady: true, isHost: true }),
+      player('2', 'Roz', { isReady: true, isUser: true }),
+      player('3', 'Niles', { isReady: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: 'Roz', nameError: '' },
+  },
+};
+
+export const AllPlayersReadyButNotEnough: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isReady: true, isUser: true, isHost: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: 'Frank', nameError: '' },
+  },
+};
+
+export const NameError: Story = {
+  args: {
+    players: [
+      player('1', 'Frank', { isReady: true, isUser: true, isHost: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: '', nameError: 'Min length not met' },
+  },
+};
+
+export const LongPlayerNames: Story = {
+  args: {
+    players: [
+      player('1', longName, { isReady: true, isUser: true, isHost: true }),
+      player('2', longName, { isReady: true }),
+      player('3', longName, { isReady: true }),
+    ],
+    minPlayers: 2,
+    maxPlayers: 3,
+    user: { isReady: true, name: longName, nameError: '' },
+  },
+};

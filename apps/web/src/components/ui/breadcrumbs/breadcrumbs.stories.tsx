@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { ComponentProps } from 'react';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
@@ -18,51 +20,27 @@ import {
   BreadcrumbSeparator,
 } from '.';
 
-export default {
-  title: 'Components / Breadcrumbs',
+type BreadcrumbsStoryProps = ComponentProps<typeof Breadcrumb> & {
+  isEllipsisShown: boolean;
 };
 
-export const Docs = () => (
-  <Card>
-    <CardHeader className='text-2xl font-medium'>Breadcrumbs</CardHeader>
-    <CardContent>
-      <p>
-        Breadcrumbs are used to show the user's location in a site's hierarchy.
-      </p>
-      <Table className='w-fit'>
-        <TableCaption>Variations of the Breadcrumbs component</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Variant</TableHead>
-            <TableHead>Example</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Default</TableCell>
-            <TableCell>
-              <Default />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>With Ellipsis</TableCell>
-            <TableCell>
-              <WithEllipsis />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-);
-
-export const Default = () => (
+const Trail = ({
+  isEllipsisShown,
+}: Pick<BreadcrumbsStoryProps, 'isEllipsisShown'>) => (
   <Breadcrumb>
     <BreadcrumbList>
       <BreadcrumbItem>
         <BreadcrumbLink href='#'>Home</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
+      {isEllipsisShown && (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbEllipsis />
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+        </>
+      )}
       <BreadcrumbItem>
         <BreadcrumbLink href='#'>Components</BreadcrumbLink>
       </BreadcrumbItem>
@@ -73,27 +51,58 @@ export const Default = () => (
     </BreadcrumbList>
   </Breadcrumb>
 );
-Default.storyName = 'Default';
 
-export const WithEllipsis = () => (
-  <Breadcrumb>
-    <BreadcrumbList>
-      <BreadcrumbItem>
-        <BreadcrumbLink href='#'>Home</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbEllipsis />
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbLink href='#'>Components</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbPage>Breadcrumbs</BreadcrumbPage>
-      </BreadcrumbItem>
-    </BreadcrumbList>
-  </Breadcrumb>
-);
-WithEllipsis.storyName = 'With Ellipsis';
+const meta: Meta<BreadcrumbsStoryProps> = {
+  title: 'UI Components / Breadcrumbs',
+  component: Breadcrumb,
+  args: {
+    isEllipsisShown: false,
+  },
+  render: (args) => <Trail {...args} />,
+};
+
+export default meta;
+
+type Story = StoryObj<BreadcrumbsStoryProps>;
+
+export const Default: Story = {};
+
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Card>
+      <CardHeader className='text-2xl font-medium'>Breadcrumbs</CardHeader>
+      <CardContent>
+        <p>
+          Breadcrumbs are used to show the user's location in a site's
+          hierarchy.
+        </p>
+        <Table className='w-fit'>
+          <TableCaption>Variations of the Breadcrumbs component</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Variant</TableHead>
+              <TableHead>Example</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Default</TableCell>
+              <TableCell>
+                <Trail isEllipsisShown={false} />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>With Ellipsis</TableCell>
+              <TableCell>
+                <Trail isEllipsisShown={true} />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const WithEllipsis: Story = { args: { isEllipsisShown: true } };

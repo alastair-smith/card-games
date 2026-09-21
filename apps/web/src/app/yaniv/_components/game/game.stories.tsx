@@ -1,5 +1,6 @@
-import { action } from '@ladle/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { Rank, Suit } from '~/types/cards';
 import {
   type EmojiReactionId,
@@ -10,188 +11,153 @@ import {
 import { DEFAULT_HAND_SIZE, GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
-export default {
-  title: 'Yaniv / Game',
-};
+type GameProps = React.ComponentProps<typeof Game>;
 
-const defaultProps: React.ComponentProps<typeof Game> = {
-  onEmojiClick: action('Emoji clicked'),
-  onEndTurnClick: action('End turn clicked'),
-  onYanivClick: action('Yaniv clicked'),
-  onPlayCards: action('Play cards clicked'),
-  stage: GameViewStage.PICKING_CARDS,
-  handSize: DEFAULT_HAND_SIZE,
-  players: [
-    {
-      id: '1' as UserId,
-      color: 'red',
-      cardCount: 7,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Kevin' as PlayerName,
-      score: 0,
-      roundScore: { original: 5, adjusted: 0 },
-      isYanivCalled: false,
-      isPlayersTurn: true,
-    },
-    {
-      id: '2' as UserId,
-      color: 'cyan',
-      cardCount: 0,
-      isFiftyScoreHalved: true,
-      isHundredScoreHalved: false,
-      name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
-        '',
-      ) as PlayerName,
-      score: 12,
-      roundScore: { original: 12, adjusted: 12 },
-      isYanivCalled: false,
-    },
-    {
-      id: '3' as UserId,
-      color: 'purple',
-      cardCount: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Paul' as PlayerName,
-      score: 14,
-      roundScore: { original: 7, adjusted: 25 },
-      isYanivCalled: true,
-    },
-    {
-      id: '4' as UserId,
-      color: 'green',
-      cardCount: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Viola' as PlayerName,
-      score: 0,
-      roundScore: { original: 4, adjusted: 4 },
-      isYanivCalled: false,
-    },
-    {
-      id: '5' as UserId,
-      color: 'indigo',
-      cardCount: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Duncan' as PlayerName,
-      score: 0,
-      roundScore: { original: 13, adjusted: 13 },
-      isYanivCalled: false,
-    },
-    {
-      id: '6' as UserId,
-      color: 'fuchsia',
-      cardCount: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Kathy' as PlayerName,
-      score: 0,
-      roundScore: { original: 10, adjusted: 10 },
-      isYanivCalled: false,
-    },
-  ],
-  cards: [
-    {
-      suit: Suit.CLUBS,
-      rank: Rank.ACE,
-    },
-    {
-      suit: Suit.HEARTS,
-      rank: Rank.KING,
-    },
-    {
-      suit: Suit.SPADES,
-      rank: Rank.QUEEN,
-    },
-    {
-      suit: Suit.DIAMONDS,
-      rank: Rank.JACK,
-    },
-    {
-      suit: Suit.CLUBS,
-      rank: Rank.TEN,
-    },
-    {
-      suit: Suit.HEARTS,
-      rank: Rank.NINE,
-    },
-    {
-      suit: Suit.SPADES,
-      rank: Rank.EIGHT,
-    },
-  ],
-  userId: '1' as UserId,
-  playedCards: [
-    {
-      suit: Suit.HEARTS,
-      rank: Rank.SEVEN,
-    },
-    {
-      suit: Suit.DIAMONDS,
-      rank: Rank.SEVEN,
-    },
-    {
-      suit: Suit.SPADES,
-      rank: Rank.SEVEN,
-    },
-  ],
-  discardCard: {
-    suit: Suit.CLUBS,
-    rank: Rank.FOUR,
+const players: GameProps['players'] = [
+  {
+    id: '1' as UserId,
+    color: 'red',
+    cardCount: 7,
+    isFiftyScoreHalved: false,
+    isHundredScoreHalved: false,
+    name: 'Kevin' as PlayerName,
+    score: 0,
+    roundScore: { original: 5, adjusted: 0 },
+    isYanivCalled: false,
+    isPlayersTurn: true,
+  },
+  {
+    id: '2' as UserId,
+    color: 'cyan',
+    cardCount: 0,
+    isFiftyScoreHalved: true,
+    isHundredScoreHalved: false,
+    name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
+      '',
+    ) as PlayerName,
+    score: 12,
+    roundScore: { original: 12, adjusted: 12 },
+    isYanivCalled: false,
+  },
+  {
+    id: '3' as UserId,
+    color: 'purple',
+    cardCount: 0,
+    isFiftyScoreHalved: false,
+    isHundredScoreHalved: false,
+    name: 'Paul' as PlayerName,
+    score: 14,
+    roundScore: { original: 7, adjusted: 25 },
+    isYanivCalled: true,
+  },
+  {
+    id: '4' as UserId,
+    color: 'green',
+    cardCount: 0,
+    isFiftyScoreHalved: false,
+    isHundredScoreHalved: false,
+    name: 'Viola' as PlayerName,
+    score: 0,
+    roundScore: { original: 4, adjusted: 4 },
+    isYanivCalled: false,
+  },
+  {
+    id: '5' as UserId,
+    color: 'indigo',
+    cardCount: 0,
+    isFiftyScoreHalved: false,
+    isHundredScoreHalved: false,
+    name: 'Duncan' as PlayerName,
+    score: 0,
+    roundScore: { original: 13, adjusted: 13 },
+    isYanivCalled: false,
+  },
+  {
+    id: '6' as UserId,
+    color: 'fuchsia',
+    cardCount: 0,
+    isFiftyScoreHalved: false,
+    isHundredScoreHalved: false,
+    name: 'Kathy' as PlayerName,
+    score: 0,
+    roundScore: { original: 10, adjusted: 10 },
+    isYanivCalled: false,
+  },
+];
+
+const meta = {
+  title: 'Yaniv / Game',
+  component: Game,
+  parameters: { isFullScreen: true },
+  args: {
+    onEmojiClick: fn(),
+    onEndTurnClick: fn(),
+    onYanivClick: fn(),
+    onPlayCards: fn(),
+    stage: GameViewStage.PICKING_CARDS,
+    handSize: DEFAULT_HAND_SIZE,
+    players,
+    cards: [
+      { suit: Suit.CLUBS, rank: Rank.ACE },
+      { suit: Suit.HEARTS, rank: Rank.KING },
+      { suit: Suit.SPADES, rank: Rank.QUEEN },
+      { suit: Suit.DIAMONDS, rank: Rank.JACK },
+      { suit: Suit.CLUBS, rank: Rank.TEN },
+      { suit: Suit.HEARTS, rank: Rank.NINE },
+      { suit: Suit.SPADES, rank: Rank.EIGHT },
+    ],
+    userId: '1' as UserId,
+    playedCards: [
+      { suit: Suit.HEARTS, rank: Rank.SEVEN },
+      { suit: Suit.DIAMONDS, rank: Rank.SEVEN },
+      { suit: Suit.SPADES, rank: Rank.SEVEN },
+    ],
+    discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
+  },
+  argTypes: {
+    stage: { control: 'select', options: Object.values(GameViewStage) },
+    handSize: { control: 'inline-radio', options: [5, 7] },
+  },
+} satisfies Meta<typeof Game>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+const withPlayerCount = (numberOfPlayers: number): Story => ({
+  args: { players: players.slice(0, numberOfPlayers) },
+});
+
+export const SixPlayers: Story = withPlayerCount(6);
+export const FivePlayers: Story = withPlayerCount(5);
+export const FourPlayers: Story = withPlayerCount(4);
+export const ThreePlayers: Story = withPlayerCount(3);
+export const TwoPlayers: Story = withPlayerCount(2);
+
+export const OtherPlayerTurn: Story = {
+  args: {
+    players: players.map((player, index) => {
+      if (index === 0) return { ...player, isPlayersTurn: false };
+      if (index === 2) return { ...player, isPlayersTurn: true };
+      return player;
+    }),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
   },
 };
 
-const limitPlayers = (numberOfPlayers: number) => {
-  const props = {
-    ...defaultProps,
-    players: defaultProps.players.slice(0, numberOfPlayers),
-  };
-  return () => <Game {...props} />;
+export const PickupCard: Story = {
+  args: { stage: GameViewStage.DRAWING_CARDS },
 };
 
-export const SixPlayers = limitPlayers(6);
-export const FivePlayers = limitPlayers(5);
-export const FourPlayers = limitPlayers(4);
-export const ThreePlayers = limitPlayers(3);
-export const TwoPlayers = limitPlayers(2);
+export const EndTurn: Story = { args: { stage: GameViewStage.END_TURN } };
 
-export const OtherPlayerTurn = () => (
-  <Game
-    {...defaultProps}
-    players={defaultProps.players.map((player, i) => {
-      if (i === 0) {
-        return { ...player, isPlayersTurn: false };
-      }
-      if (i === 2) {
-        return { ...player, isPlayersTurn: true };
-      }
-      return player;
-    })}
-    stage={GameViewStage.WAITING_FOR_PLAYER}
-  />
-);
+export const SingleCardPlayed: Story = {
+  args: { playedCards: [{ suit: Suit.DIAMONDS, rank: Rank.NINE }] },
+};
 
-export const PickupCard = () => (
-  <Game {...defaultProps} stage={GameViewStage.DRAWING_CARDS} />
-);
-
-export const EndTurn = () => (
-  <Game {...defaultProps} stage={GameViewStage.END_TURN} />
-);
-
-export const SingleCardPlayed = () => (
-  <Game
-    {...defaultProps}
-    playedCards={[{ suit: Suit.DIAMONDS, rank: Rank.NINE }]}
-  />
-);
-
-export const BigHandPlayed = () => (
-  <Game
-    {...defaultProps}
-    playedCards={[
+export const BigHandPlayed: Story = {
+  args: {
+    playedCards: [
       { suit: Suit.SPADES, rank: Rank.TWO },
       { suit: Suit.SPADES, rank: Rank.THREE },
       { suit: Suit.SPADES, rank: Rank.FOUR },
@@ -199,80 +165,75 @@ export const BigHandPlayed = () => (
       { suit: Suit.SPADES, rank: Rank.SIX },
       { suit: Suit.SPADES, rank: Rank.SEVEN },
       { suit: Suit.SPADES, rank: Rank.EIGHT },
-    ]}
-  />
-);
-
-export const EndOfRound = () => (
-  <Game {...defaultProps} stage={GameViewStage.END_OF_ROUND} />
-);
-
-export const EmojiReaction = () => {
-  const [players, setPlayers] = useState(defaultProps.players);
-
-  return (
-    <Game
-      {...defaultProps}
-      players={players}
-      onEmojiClick={(emoji) => {
-        setPlayers((prevPlayers) =>
-          prevPlayers.map((player, i) =>
-            i === 0
-              ? {
-                  ...player,
-                  emojiReaction: {
-                    emoji: emoji,
-                    id: crypto.randomUUID() as EmojiReactionId,
-                  },
-                }
-              : player,
-          ),
-        );
-      }}
-    />
-  );
+    ],
+  },
 };
 
-export const CallYaniv = () => {
-  const [players, setPlayers] = useState(defaultProps.players);
+export const EndOfRound: Story = {
+  args: { stage: GameViewStage.END_OF_ROUND },
+};
 
-  const handleYaniv = () => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player, i) =>
-        i === 0 ? { ...player, isYanivCalled: true } : player,
-      ),
+export const EmojiReaction: Story = {
+  render: ({ players: initialPlayers, onEmojiClick, ...args }) => {
+    const [reactingPlayers, setReactingPlayers] = useState(initialPlayers);
+
+    return (
+      <Game
+        {...args}
+        players={reactingPlayers}
+        onEmojiClick={(emoji) => {
+          setReactingPlayers((previousPlayers) =>
+            previousPlayers.map((player, index) =>
+              index === 0
+                ? {
+                    ...player,
+                    emojiReaction: {
+                      emoji,
+                      id: crypto.randomUUID() as EmojiReactionId,
+                    },
+                  }
+                : player,
+            ),
+          );
+          onEmojiClick(emoji);
+        }}
+      />
     );
-  };
-
-  return (
-    <Game
-      {...defaultProps}
-      players={players}
-      stage={GameViewStage.END_TURN}
-      onYanivClick={handleYaniv}
-    />
-  );
+  },
 };
 
-export const InstaPlayCard = () => {
-  return (
-    <Game
-      {...defaultProps}
-      stage={GameViewStage.END_TURN}
-      drawnCard={{ suit: Suit.SPADES, rank: Rank.ACE }}
-      onAutoPlayDrawnCard={() => {}}
-      canAutoPlay
-    />
-  );
+export const CallYaniv: Story = {
+  args: { stage: GameViewStage.END_TURN },
+  render: ({ players: initialPlayers, onYanivClick, ...args }) => {
+    const [yanivPlayers, setYanivPlayers] = useState(initialPlayers);
+
+    const handleYaniv = () => {
+      setYanivPlayers((previousPlayers) =>
+        previousPlayers.map((player, index) =>
+          index === 0 ? { ...player, isYanivCalled: true } : player,
+        ),
+      );
+      onYanivClick();
+    };
+
+    return <Game {...args} players={yanivPlayers} onYanivClick={handleYaniv} />;
+  },
 };
-export const NotInstaPlayCard = () => {
-  return (
-    <Game
-      {...defaultProps}
-      stage={GameViewStage.END_TURN}
-      drawnCard={{ suit: Suit.SPADES, rank: Rank.ACE }}
-      onAutoPlayDrawnCard={() => {}}
-      canAutoPlay={false}
-    />
-  );
+
+export const InstaPlayCard: Story = {
+  args: {
+    stage: GameViewStage.END_TURN,
+    drawnCard: { suit: Suit.SPADES, rank: Rank.ACE },
+    onAutoPlayDrawnCard: fn(),
+    canAutoPlay: true,
+  },
+};
+
+export const NotInstaPlayCard: Story = {
+  args: {
+    stage: GameViewStage.END_TURN,
+    drawnCard: { suit: Suit.SPADES, rank: Rank.ACE },
+    onAutoPlayDrawnCard: fn(),
+    canAutoPlay: false,
+  },
 };

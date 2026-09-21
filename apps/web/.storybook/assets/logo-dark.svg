@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40">
+  <rect width="40" height="40" rx="6" fill="#01190f"/>
+  <text x="20" y="20" dominant-baseline="middle" text-anchor="middle" font-size="28" fill="white">♠</text>
+  <text x="52" y="29" fill="#f4eff5" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="800">Play Cards</text>
+</svg>

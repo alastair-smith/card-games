@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
@@ -15,93 +16,106 @@ import {
   AccordionTrigger,
 } from '.';
 
-export default {
-  title: 'Components / Accordion',
+const items = [
+  {
+    value: 'item-1',
+    question: 'Is it accessible?',
+    answer: 'Yes. It adheres to the WAI-ARIA design pattern.',
+  },
+  {
+    value: 'item-2',
+    question: 'Is it styled?',
+    answer:
+      "Yes. It comes with default styles that matches the other components' aesthetic.",
+  },
+  {
+    value: 'item-3',
+    question: 'Is it animated?',
+    answer:
+      "Yes. It's animated by default, but you can disable it if you prefer.",
+  },
+];
+
+const accordionItems = items.map((item) => (
+  <AccordionItem key={item.value} value={item.value}>
+    <AccordionTrigger>{item.question}</AccordionTrigger>
+    <AccordionContent>{item.answer}</AccordionContent>
+  </AccordionItem>
+));
+
+type AccordionStoryProps = {
+  type: 'single' | 'multiple';
+  className?: string;
 };
 
-export const Docs = () => (
-  <Card>
-    <CardHeader className='text-2xl font-medium'>Accordion</CardHeader>
-    <CardContent>
-      <p>
-        A vertically stacked set of interactive headings that each reveal a
-        section of content.
-      </p>
-      <Table className='w-fit'>
-        <TableCaption>Variations of the Accordion component</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Variant</TableHead>
-            <TableHead>Example</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Default</TableCell>
-            <TableCell>
-              <Default />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Multiple</TableCell>
-            <TableCell>
-              <Multiple />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-);
+const meta: Meta<AccordionStoryProps> = {
+  title: 'UI Components / Accordion',
+  component: Accordion,
+  args: {
+    type: 'single',
+    className: 'w-96',
+  },
+  argTypes: {
+    type: { control: 'inline-radio', options: ['single', 'multiple'] },
+  },
+  render: ({ type, className }) =>
+    type === 'single' ? (
+      <Accordion type='single' collapsible className={className}>
+        {accordionItems}
+      </Accordion>
+    ) : (
+      <Accordion type='multiple' className={className}>
+        {accordionItems}
+      </Accordion>
+    ),
+};
 
-export const Default = () => (
-  <Accordion type='single' collapsible className='w-96'>
-    <AccordionItem value='item-1'>
-      <AccordionTrigger>Is it accessible?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It adheres to the WAI-ARIA design pattern.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value='item-2'>
-      <AccordionTrigger>Is it styled?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It comes with default styles that matches the other
-        components&apos; aesthetic.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value='item-3'>
-      <AccordionTrigger>Is it animated?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It&apos;s animated by default, but you can disable it if you
-        prefer.
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion>
-);
-Default.storyName = 'Default';
+export default meta;
 
-export const Multiple = () => (
-  <Accordion type='multiple' className='w-96'>
-    <AccordionItem value='item-1'>
-      <AccordionTrigger>Is it accessible?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It adheres to the WAI-ARIA design pattern.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value='item-2'>
-      <AccordionTrigger>Is it styled?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It comes with default styles that matches the other
-        components&apos; aesthetic.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value='item-3'>
-      <AccordionTrigger>Is it animated?</AccordionTrigger>
-      <AccordionContent>
-        Yes. It&apos;s animated by default, but you can disable it if you
-        prefer.
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion>
-);
-Multiple.storyName = 'Multiple';
+type Story = StoryObj<AccordionStoryProps>;
+
+export const Default: Story = {};
+
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Card>
+      <CardHeader className='text-2xl font-medium'>Accordion</CardHeader>
+      <CardContent>
+        <p>
+          A vertically stacked set of interactive headings that each reveal a
+          section of content.
+        </p>
+        <Table className='w-fit'>
+          <TableCaption>Variations of the Accordion component</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Variant</TableHead>
+              <TableHead>Example</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Default</TableCell>
+              <TableCell>
+                <Accordion type='single' collapsible className='w-96'>
+                  {accordionItems}
+                </Accordion>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Multiple</TableCell>
+              <TableCell>
+                <Accordion type='multiple' className='w-96'>
+                  {accordionItems}
+                </Accordion>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  ),
+};
+
+export const Multiple: Story = { args: { type: 'multiple' } };

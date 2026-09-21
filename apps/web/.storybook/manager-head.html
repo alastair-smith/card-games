@@ -1,0 +1,18 @@
+<style>
+  .sidebar-subheading [data-action='collapse-root'] {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 14px;
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .sidebar-item:not([data-selected='true']) > :is(a, button) svg {
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  button[aria-label='Create a new story'] {
+    display: none;
+  }
+</style>

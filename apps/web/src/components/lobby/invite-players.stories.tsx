@@ -1,6 +1,17 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import type { GameCode } from '~/types/game';
 import InvitePlayersComponent from './invite-players';
 
-const code = '123456' as GameCode;
+const meta = {
+  title: 'Lobby / Invite Players',
+  component: InvitePlayersComponent,
+  args: {
+    code: '123456' as GameCode,
+  },
+} satisfies Meta<typeof InvitePlayersComponent>;
 
-export const InvitePlayers = () => <InvitePlayersComponent code={code} />;
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const InvitePlayers: Story = {};
