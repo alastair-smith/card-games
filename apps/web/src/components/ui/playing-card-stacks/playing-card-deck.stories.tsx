@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
@@ -10,12 +11,42 @@ import {
 } from '~/components/ui/table';
 import { PlayingCardDeck } from '.';
 
-export const DefaultDeck = () => {
-  return <PlayingCardDeck />;
-};
+const CARD_SIZES = [
+  'text-xs',
+  'text-sm',
+  'text-base',
+  'text-lg',
+  'text-xl',
+  'text-2xl',
+  'text-3xl',
+  'text-4xl',
+  'text-5xl',
+  'text-6xl',
+  'text-7xl',
+  'text-8xl',
+  'text-9xl',
+] as `text-${string}`[];
 
-export const Docs = () => {
-  return (
+const meta = {
+  title: 'Components / Playing Card Deck',
+  component: PlayingCardDeck,
+  args: {
+    className: 'text-4xl',
+  },
+  argTypes: {
+    className: { control: 'select', options: CARD_SIZES },
+  },
+} satisfies Meta<typeof PlayingCardDeck>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const DefaultDeck: Story = {};
+
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
     <div>
       <Card>
         <CardHeader className='text-2xl font-medium'>Sizing</CardHeader>
@@ -31,23 +62,7 @@ export const Docs = () => {
             </TableHeader>
 
             <TableBody>
-              {(
-                [
-                  'text-xs',
-                  'text-sm',
-                  'text-base',
-                  'text-lg',
-                  'text-xl',
-                  'text-2xl',
-                  'text-3xl',
-                  'text-4xl',
-                  'text-5xl',
-                  'text-6xl',
-                  'text-7xl',
-                  'text-8xl',
-                  'text-9xl',
-                ] as `text-${string}`[]
-              ).map((className) => (
+              {CARD_SIZES.map((className) => (
                 <TableRow key={className}>
                   <TableCell>
                     {className}
@@ -63,5 +78,5 @@ export const Docs = () => {
         </CardContent>
       </Card>
     </div>
-  );
+  ),
 };

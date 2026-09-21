@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qr-code';
 import type { GameCode } from '~/types/game';
 import { cn } from '~/utils/cn';
 import { Button } from '../ui/button';

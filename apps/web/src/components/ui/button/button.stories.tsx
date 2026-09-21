@@ -1,5 +1,6 @@
-import { action } from '@ladle/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { EllipsisVertical } from 'lucide-react';
+import { fn } from 'storybook/test';
 import { Card, CardContent, CardHeader } from '../card';
 import {
   Table,
@@ -12,162 +13,161 @@ import {
 } from '../table';
 import { Button } from '.';
 
-export default {
+const meta = {
   title: 'Components / Button',
+  component: Button,
+  args: {
+    children: 'Example',
+    onClick: fn(),
+    variant: 'default',
+    size: 'default',
+    isLoading: false,
+    disabled: false,
+  },
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'secondary', 'danger', 'raw'],
+    },
+    size: {
+      control: 'select',
+      options: ['default', 'sm', 'lg', 'icon', 'fit'],
+    },
+  },
+} satisfies Meta<typeof Button>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {};
+
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Card>
+      <CardHeader className='text-2xl font-medium'>Button</CardHeader>
+      <CardContent>
+        <Table className='w-fit'>
+          <TableCaption>Variations of the Button component</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Variant</TableHead>
+              <TableHead>Enabled</TableHead>
+              <TableHead>Loading</TableHead>
+              <TableHead>Disabled</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Primary</TableCell>
+              <TableCell>
+                <Button>Example</Button>
+              </TableCell>
+              <TableCell>
+                <Button isLoading>Example</Button>
+              </TableCell>
+              <TableCell>
+                <Button disabled>Example</Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Secondary</TableCell>
+              <TableCell>
+                <Button variant='secondary'>Example</Button>
+              </TableCell>
+              <TableCell>
+                <Button variant='secondary' isLoading>
+                  Example
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button variant='secondary' disabled>
+                  Example
+                </Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Danger</TableCell>
+              <TableCell>
+                <Button variant='danger'>Example</Button>
+              </TableCell>
+              <TableCell>
+                <Button variant='danger' isLoading>
+                  Example
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button variant='danger' disabled>
+                  Example
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+        <Table className='w-fit mt-8'>
+          <TableCaption>Sizes of the Button component</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Size</TableHead>
+              <TableHead>Example</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Small (sm)</TableCell>
+              <TableCell>
+                <Button size='sm'>Example</Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Default</TableCell>
+              <TableCell>
+                <Button>Example</Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Large (lg)</TableCell>
+              <TableCell>
+                <Button size='lg'>Example</Button>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Icon</TableCell>
+              <TableCell>
+                <Button size='icon'>
+                  <EllipsisVertical />
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  ),
 };
 
-const onClick = action('onClick');
+export const PrimaryLoading: Story = { args: { isLoading: true } };
 
-export const Docs = () => (
-  <Card>
-    <CardHeader className='text-2xl font-medium'>Button</CardHeader>
-    <CardContent>
-      <Table className='w-fit'>
-        <TableCaption>Variations of the Button component</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Variant</TableHead>
-            <TableHead>Enabled</TableHead>
-            <TableHead>Loading</TableHead>
-            <TableHead>Disabled</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Primary</TableCell>
-            <TableCell>
-              <Primary />
-            </TableCell>
-            <TableCell>
-              <PrimaryLoading />
-            </TableCell>
-            <TableCell>
-              <PrimaryDisabled />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Secondary</TableCell>
-            <TableCell>
-              <Secondary />
-            </TableCell>
-            <TableCell>
-              <SecondaryLoading />
-            </TableCell>
-            <TableCell>
-              <SecondaryDisabled />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Danger</TableCell>
-            <TableCell>
-              <Danger />
-            </TableCell>
-            <TableCell>
-              <DangerLoading />
-            </TableCell>
-            <TableCell>
-              <DangerDisabled />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+export const PrimaryDisabled: Story = { args: { disabled: true } };
 
-      <Table className='w-fit mt-8'>
-        <TableCaption>Sizes of the Button component</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Size</TableHead>
-            <TableHead>Example</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Small (sm)</TableCell>
-            <TableCell>
-              <Button size='sm'>Example</Button>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Default</TableCell>
-            <TableCell>
-              <Button>Example</Button>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Large (lg)</TableCell>
-            <TableCell>
-              <Button size='lg'>Example</Button>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Icon</TableCell>
-            <TableCell>
-              <Button size='icon'>
-                <EllipsisVertical />
-              </Button>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-);
+export const Secondary: Story = { args: { variant: 'secondary' } };
 
-export const Primary = () => <Button onClick={onClick}>Example</Button>;
-Primary.storyName = 'Primary';
+export const SecondaryLoading: Story = {
+  args: { variant: 'secondary', isLoading: true },
+};
 
-export const PrimaryLoading = () => (
-  <Button onClick={onClick} isLoading>
-    Example
-  </Button>
-);
-PrimaryLoading.storyName = 'Primary Loading';
+export const SecondaryDisabled: Story = {
+  args: { variant: 'secondary', disabled: true },
+};
 
-export const PrimaryDisabled = () => (
-  <Button onClick={onClick} disabled>
-    Example
-  </Button>
-);
-PrimaryDisabled.storyName = 'Primary Disabled';
+export const Danger: Story = { args: { variant: 'danger' } };
 
-export const Secondary = () => (
-  <Button variant='secondary' onClick={onClick}>
-    Example
-  </Button>
-);
-Secondary.storyName = 'Secondary';
+export const DangerLoading: Story = {
+  args: { variant: 'danger', isLoading: true },
+};
 
-export const SecondaryLoading = () => (
-  <Button variant='secondary' onClick={onClick} isLoading>
-    Example
-  </Button>
-);
-SecondaryLoading.storyName = 'Secondary Loading';
-
-export const SecondaryDisabled = () => (
-  <Button variant='secondary' onClick={onClick} disabled>
-    Example
-  </Button>
-);
-SecondaryDisabled.storyName = 'Secondary Disabled';
-
-export const Danger = () => (
-  <Button variant='danger' onClick={onClick}>
-    Example
-  </Button>
-);
-Danger.storyName = 'Danger';
-
-export const DangerLoading = () => (
-  <Button variant='danger' onClick={onClick} isLoading>
-    Example
-  </Button>
-);
-DangerLoading.storyName = 'Danger Loading';
-
-export const DangerDisabled = () => (
-  <Button variant='danger' onClick={onClick} disabled>
-    Example
-  </Button>
-);
-DangerDisabled.storyName = 'Danger Disabled';
+export const DangerDisabled: Story = {
+  args: { variant: 'danger', disabled: true },
+};

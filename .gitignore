@@ -49,3 +49,6 @@ dist
 
 # playwright mcp output
 .playwright-mcp/
+
+*storybook.log
+storybook-static

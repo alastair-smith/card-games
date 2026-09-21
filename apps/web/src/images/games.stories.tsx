@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ClubIcon, HeartIcon, SpadeIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
@@ -11,6 +12,15 @@ import {
   TableRow,
 } from '~/components/ui/table';
 import { Rank, Suit } from '~/types/cards';
+
+const meta: Meta = {
+  title: 'Images / Games',
+  parameters: { controls: { disable: true } },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
 
 function ImageSizing({
   title,
@@ -38,8 +48,8 @@ function ImageSizing({
   );
 }
 
-export function GameImages() {
-  return (
+export const GameImages: Story = {
+  render: () => (
     <div className='flex flex-col gap-12 p-6 w-fit'>
       <ImageSizing
         title='Home'
@@ -509,5 +519,5 @@ export function GameImages() {
         }
       />
     </div>
-  );
-}
+  ),
+};

@@ -1,6 +1,7 @@
-import { action } from '@ladle/react';
-import type { ReactNode } from 'react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { ComponentProps, ReactNode } from 'react';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
@@ -18,12 +19,6 @@ import {
   ChoiceCardTitle,
   ChoiceGroup,
 } from '.';
-
-export default {
-  title: 'Components / Choice Group',
-};
-
-const onValueChange = action('onValueChange');
 
 const gameModes = [
   {
@@ -56,53 +51,6 @@ const scorecardColors = [
   { value: 'red', name: 'Cherry', swatch: 'bg-red' },
 ];
 
-export const Docs = () => (
-  <Card>
-    <CardHeader className='text-2xl font-medium'>Choice Group</CardHeader>
-    <CardContent>
-      <p>
-        One choice from a small set of options, each explained on a card that is
-        clickable in full. A card takes whatever content you give it.
-      </p>
-      <Table>
-        <TableCaption>Variations of the Choice Group component</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Variant</TableHead>
-            <TableHead>Example</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Default</TableCell>
-            <TableCell>
-              <Default />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Custom content</TableCell>
-            <TableCell>
-              <WithCustomContent />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Disabled choice</TableCell>
-            <TableCell>
-              <WithDisabledChoice />
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Disabled</TableCell>
-            <TableCell>
-              <Disabled />
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </CardContent>
-  </Card>
-);
-
 type SettingsCardProps = {
   heading: string;
   children: ReactNode;
@@ -118,20 +66,102 @@ function SettingsCard({ heading, children }: SettingsCardProps) {
   );
 }
 
-// One choice from a set of options that need explaining.
-export const Default = () => {
-  const [gameMode, setGameMode] = useState('standard');
+type ChoiceGroupStoryProps = ComponentProps<typeof ChoiceGroup> & {
+  heading: string;
+};
 
-  return (
-    <SettingsCard heading='Game mode'>
-      <ChoiceGroup
-        label='Game mode'
-        value={gameMode}
-        onValueChange={(value) => {
-          setGameMode(value);
-          onValueChange(value);
-        }}
-      >
+const meta: Meta<ChoiceGroupStoryProps> = {
+  title: 'Components / Choice Group',
+  component: ChoiceGroup,
+  args: {
+    heading: 'Game mode',
+    label: 'Game mode',
+    isDisabled: false,
+    onValueChange: fn(),
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<ChoiceGroupStoryProps>;
+
+// One choice from a set of options that need explaining.
+export const Default: Story = {
+  render: ({ heading, onValueChange, ...args }) => {
+    const [gameMode, setGameMode] = useState('standard');
+
+    return (
+      <SettingsCard heading={heading}>
+        <ChoiceGroup
+          {...args}
+          value={gameMode}
+          onValueChange={(value) => {
+            setGameMode(value);
+            onValueChange?.(value);
+          }}
+        >
+          {gameModes.map((mode) => (
+            <ChoiceCard key={mode.value} value={mode.value}>
+              <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
+              <ChoiceCardDescription>{mode.description}</ChoiceCardDescription>
+            </ChoiceCard>
+          ))}
+        </ChoiceGroup>
+      </SettingsCard>
+    );
+  },
+};
+
+// A card takes whatever content you give it, not just a title and description.
+export const WithCustomContent: Story = {
+  args: { heading: 'Scorecard colour', label: 'Scorecard colour' },
+  render: ({ heading, ...args }) => (
+    <SettingsCard heading={heading}>
+      <ChoiceGroup {...args} defaultValue='yellow'>
+        {scorecardColors.map((color) => (
+          <ChoiceCard key={color.value} value={color.value}>
+            <span className='flex items-center gap-2 font-semibold'>
+              <span
+                className={cn(
+                  'size-5 rounded-full border-2 border-border',
+                  color.swatch,
+                )}
+              />
+              {color.name}
+            </span>
+          </ChoiceCard>
+        ))}
+      </ChoiceGroup>
+    </SettingsCard>
+  ),
+};
+
+// Choices that are not available yet can be turned off individually.
+export const WithDisabledChoice: Story = {
+  args: { heading: 'Who deals first', label: 'Who deals first' },
+  render: ({ heading, ...args }) => (
+    <SettingsCard heading={heading}>
+      <ChoiceGroup {...args} defaultValue='youngest'>
+        {dealers.map((dealer) => (
+          <ChoiceCard
+            key={dealer.value}
+            value={dealer.value}
+            isDisabled={dealer.isDisabled}
+          >
+            <ChoiceCardTitle>{dealer.name}</ChoiceCardTitle>
+          </ChoiceCard>
+        ))}
+      </ChoiceGroup>
+    </SettingsCard>
+  ),
+};
+
+// The whole group can be turned off, e.g. for players who are not the host.
+export const Disabled: Story = {
+  args: { isDisabled: true },
+  render: ({ heading, ...args }) => (
+    <SettingsCard heading={heading}>
+      <ChoiceGroup {...args} defaultValue='standard'>
         {gameModes.map((mode) => (
           <ChoiceCard key={mode.value} value={mode.value}>
             <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
@@ -140,70 +170,101 @@ export const Default = () => {
         ))}
       </ChoiceGroup>
     </SettingsCard>
-  );
+  ),
 };
 
-// A card takes whatever content you give it, not just a title and description.
-export const WithCustomContent = () => (
-  <SettingsCard heading='Scorecard colour'>
-    <ChoiceGroup
-      label='Scorecard colour'
-      defaultValue='yellow'
-      onValueChange={onValueChange}
-    >
-      {scorecardColors.map((color) => (
-        <ChoiceCard key={color.value} value={color.value}>
-          <span className='flex items-center gap-2 font-semibold'>
-            <span
-              className={cn(
-                'size-5 rounded-full border-2 border-border',
-                color.swatch,
-              )}
-            />
-            {color.name}
-          </span>
-        </ChoiceCard>
-      ))}
-    </ChoiceGroup>
-  </SettingsCard>
-);
-
-// Choices that are not available yet can be turned off individually.
-export const WithDisabledChoice = () => (
-  <SettingsCard heading='Who deals first'>
-    <ChoiceGroup
-      label='Who deals first'
-      defaultValue='youngest'
-      onValueChange={onValueChange}
-    >
-      {dealers.map((dealer) => (
-        <ChoiceCard
-          key={dealer.value}
-          value={dealer.value}
-          isDisabled={dealer.isDisabled}
-        >
-          <ChoiceCardTitle>{dealer.name}</ChoiceCardTitle>
-        </ChoiceCard>
-      ))}
-    </ChoiceGroup>
-  </SettingsCard>
-);
-
-// The whole group can be turned off, e.g. for players who are not the host.
-export const Disabled = () => (
-  <SettingsCard heading='Game mode'>
-    <ChoiceGroup
-      label='Game mode'
-      defaultValue='standard'
-      isDisabled
-      onValueChange={onValueChange}
-    >
-      {gameModes.map((mode) => (
-        <ChoiceCard key={mode.value} value={mode.value}>
-          <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
-          <ChoiceCardDescription>{mode.description}</ChoiceCardDescription>
-        </ChoiceCard>
-      ))}
-    </ChoiceGroup>
-  </SettingsCard>
-);
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Card>
+      <CardHeader className='text-2xl font-medium'>Choice Group</CardHeader>
+      <CardContent>
+        <p>
+          One choice from a small set of options, each explained on a card that
+          is clickable in full. A card takes whatever content you give it.
+        </p>
+        <Table>
+          <TableCaption>Variations of the Choice Group component</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Variant</TableHead>
+              <TableHead>Example</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Default</TableCell>
+              <TableCell>
+                <ChoiceGroup label='Game mode' defaultValue='standard'>
+                  {gameModes.map((mode) => (
+                    <ChoiceCard key={mode.value} value={mode.value}>
+                      <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
+                      <ChoiceCardDescription>
+                        {mode.description}
+                      </ChoiceCardDescription>
+                    </ChoiceCard>
+                  ))}
+                </ChoiceGroup>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Custom content</TableCell>
+              <TableCell>
+                <ChoiceGroup label='Scorecard colour' defaultValue='yellow'>
+                  {scorecardColors.map((color) => (
+                    <ChoiceCard key={color.value} value={color.value}>
+                      <span className='flex items-center gap-2 font-semibold'>
+                        <span
+                          className={cn(
+                            'size-5 rounded-full border-2 border-border',
+                            color.swatch,
+                          )}
+                        />
+                        {color.name}
+                      </span>
+                    </ChoiceCard>
+                  ))}
+                </ChoiceGroup>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Disabled choice</TableCell>
+              <TableCell>
+                <ChoiceGroup label='Who deals first' defaultValue='youngest'>
+                  {dealers.map((dealer) => (
+                    <ChoiceCard
+                      key={dealer.value}
+                      value={dealer.value}
+                      isDisabled={dealer.isDisabled}
+                    >
+                      <ChoiceCardTitle>{dealer.name}</ChoiceCardTitle>
+                    </ChoiceCard>
+                  ))}
+                </ChoiceGroup>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Disabled</TableCell>
+              <TableCell>
+                <ChoiceGroup
+                  label='Game mode'
+                  defaultValue='standard'
+                  isDisabled
+                >
+                  {gameModes.map((mode) => (
+                    <ChoiceCard key={mode.value} value={mode.value}>
+                      <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
+                      <ChoiceCardDescription>
+                        {mode.description}
+                      </ChoiceCardDescription>
+                    </ChoiceCard>
+                  ))}
+                </ChoiceGroup>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  ),
+};
