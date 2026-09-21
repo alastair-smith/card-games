@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Link } from '.';
 
 const meta = {
-  title: 'UI Components /Link',
+  title: 'UI Components / Link',
   component: Link,
   args: {
     children: 'Example link',

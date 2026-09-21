@@ -24,7 +24,7 @@ type DiscardPileStoryProps = ComponentProps<typeof PlayingCardDiscardPile> & {
 };
 
 const meta: Meta<DiscardPileStoryProps> = {
-  title: 'UI Components /Playing Card Discard Pile',
+  title: 'UI Components / Playing Card Discard Pile',
   component: PlayingCardDiscardPile,
   args: {
     cardCount: 1,

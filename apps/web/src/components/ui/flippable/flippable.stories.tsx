@@ -20,7 +20,7 @@ const faces = (
 );
 
 const meta = {
-  title: 'UI Components /Flippable',
+  title: 'UI Components / Flippable',
   component: FlippableRoot,
   args: {
     showFront: true,

@@ -29,7 +29,7 @@ type CarouselStoryProps = ComponentProps<typeof Carousel> & {
 };
 
 const meta: Meta<CarouselStoryProps> = {
-  title: 'UI Components /Carousel',
+  title: 'UI Components / Carousel',
   component: Carousel,
   args: {
     orientation: 'horizontal',

@@ -12,7 +12,7 @@ import {
 import { Switch } from '.';
 
 const meta = {
-  title: 'UI Components /Switch',
+  title: 'UI Components / Switch',
   component: Switch,
   args: {
     defaultChecked: false,

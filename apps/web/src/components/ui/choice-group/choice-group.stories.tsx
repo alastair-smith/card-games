@@ -71,7 +71,7 @@ type ChoiceGroupStoryProps = ComponentProps<typeof ChoiceGroup> & {
 };
 
 const meta: Meta<ChoiceGroupStoryProps> = {
-  title: 'UI Components /Choice Group',
+  title: 'UI Components / Choice Group',
   component: ChoiceGroup,
   args: {
     heading: 'Game mode',

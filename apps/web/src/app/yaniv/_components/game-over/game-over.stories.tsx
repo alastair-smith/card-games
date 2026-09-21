@@ -19,6 +19,7 @@ const player = (
 const meta = {
   title: 'Yaniv / Game Over',
   component: GameOver,
+  parameters: { isFullScreen: true },
   args: {
     userId: '2' as UserId,
     players: [

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import LoadingComponent from './loading';
 
 const meta = {
-  title: 'UI Components /Loading',
+  title: 'UI Components / Loading',
   component: LoadingComponent,
 } satisfies Meta<typeof LoadingComponent>;
 

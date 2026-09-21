@@ -88,6 +88,7 @@ const players: GameProps['players'] = [
 const meta = {
   title: 'Yaniv / Game',
   component: Game,
+  parameters: { isFullScreen: true },
   args: {
     onEmojiClick: fn(),
     onEndTurnClick: fn(),

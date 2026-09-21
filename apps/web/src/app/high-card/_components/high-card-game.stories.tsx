@@ -33,6 +33,7 @@ const longName = Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
 const meta = {
   title: 'High Card / Game',
   component: Game,
+  parameters: { isFullScreen: true },
   args: {
     onEmojiClick: fn(),
     reactions: {},

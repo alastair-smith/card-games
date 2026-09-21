@@ -19,7 +19,7 @@ type TooltipStoryProps = ComponentProps<typeof Tooltip> & {
 };
 
 const meta: Meta<TooltipStoryProps> = {
-  title: 'UI Components /Tooltip',
+  title: 'UI Components / Tooltip',
   component: Tooltip,
   args: {
     open: true,

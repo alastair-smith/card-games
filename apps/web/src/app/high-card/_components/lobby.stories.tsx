@@ -7,6 +7,7 @@ import Lobby from './lobby.view';
 const meta = {
   title: 'High Card / Lobby',
   component: Lobby,
+  parameters: { isFullScreen: true },
   args: {
     code: '123456' as GameCode,
     players: [

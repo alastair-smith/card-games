@@ -53,7 +53,7 @@ const Trail = ({
 );
 
 const meta: Meta<BreadcrumbsStoryProps> = {
-  title: 'UI Components /Breadcrumbs',
+  title: 'UI Components / Breadcrumbs',
   component: Breadcrumb,
   args: {
     isEllipsisShown: false,

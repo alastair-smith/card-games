@@ -3,8 +3,9 @@ import { PLAYER_COLORS } from '~/utils/player-color';
 import { ScreenEdgeHighlight } from '.';
 
 const meta = {
-  title: 'UI Components /Screen Edge Highlight',
+  title: 'UI Components / Screen Edge Highlight',
   component: ScreenEdgeHighlight,
+  parameters: { isFullScreen: true },
   argTypes: {
     color: {
       control: 'select',

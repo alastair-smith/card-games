@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '.';
 
 const meta = {
-  title: 'UI Components /Tabs',
+  title: 'UI Components / Tabs',
   component: Tabs,
   args: {
     defaultValue: 'hand',

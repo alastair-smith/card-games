@@ -28,7 +28,7 @@ const CARD_SIZES = [
 ] as `text-${string}`[];
 
 const meta = {
-  title: 'UI Components /Playing Card Deck',
+  title: 'UI Components / Playing Card Deck',
   component: PlayingCardDeck,
   args: {
     className: 'text-4xl',
