@@ -8,6 +8,9 @@ const config: StorybookConfig = {
     '@storybook/addon-mcp',
   ],
   framework: '@storybook/nextjs-vite',
+  core: {
+    allowedHosts: ['localhost'],
+  },
   staticDirs: ['./assets', '../public'],
   tags: {
     _docs: { defaultFilterSelection: 'include' },
