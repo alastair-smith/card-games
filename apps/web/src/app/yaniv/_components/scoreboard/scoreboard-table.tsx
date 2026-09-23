@@ -11,7 +11,10 @@ import { cn } from '~/utils/cn';
 import { RoundPoints } from './round-points';
 import type { ScoreboardRow } from './rows';
 
-const pinnedClassName = 'sticky z-10 bg-(--scoreboard-background)';
+const backgroundClassName =
+  'bg-[var(--scoreboard-background,var(--color-main-background))]';
+
+const pinnedClassName = cn('sticky z-10', backgroundClassName);
 
 const pinnedStartClassName = cn(
   pinnedClassName,
@@ -48,10 +51,7 @@ export function ScoreboardTable({
   return (
     <Table
       ref={tableRef}
-      rootClassName={cn(
-        'overscroll-x-none bg-(--scoreboard-background)',
-        className,
-      )}
+      rootClassName={cn('overscroll-x-none', backgroundClassName, className)}
       className='tabular-nums'
     >
       <TableHeader className='[&_tr]:border-current/30'>

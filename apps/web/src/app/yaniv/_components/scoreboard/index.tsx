@@ -33,12 +33,7 @@ export function Scoreboard({
   ).slice(isExpanded ? 0 : -1);
 
   return (
-    <div
-      className={cn(
-        '[--scoreboard-background:var(--color-main-background)] flex flex-col gap-2',
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col gap-2', className)}>
       <ScoreboardList
         className='sm:hidden'
         rows={rows}

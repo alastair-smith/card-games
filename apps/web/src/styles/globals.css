@@ -19,6 +19,7 @@
   --color-grey-lily-white: hsl(from var(--color-lily-white) h 20% 30%);
   --color-dark-yellow: hsl(from var(--color-yellow) h s 50%);
   --color-dark-white: hsl(199 8% 75%);
+  --color-lifted-green: hsl(from var(--color-dark-green) h 41% 21%);
   --color-highlight: hsl(from var(--color-blue) h s l / 30%);
 
   /* background colors*/
@@ -27,6 +28,7 @@
   --color-highlighted-card-background: var(--color-dark-white);
   --color-highlighted-playing-card-background: hsl(48 80% 85%);
   --color-alt-background: var(--color-grey-lily-white);
+  --color-panel-background: var(--color-lifted-green);
   --color-input-background: var(--color-lily-white);
 
   /* text colors*/

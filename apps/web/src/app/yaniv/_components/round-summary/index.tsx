@@ -27,7 +27,7 @@ export function RoundSummary({ players, userId }: RoundSummaryProps) {
   );
 
   return (
-    <Card className='w-full max-w-xl bg-alt-background text-dark-text'>
+    <Card className='w-full max-w-xl text-dark-text bg-panel-background border-2 border-white/30 [--scoreboard-background:var(--color-panel-background)]'>
       <CardHeader className='items-center text-center'>
         <CardDescription className='text-dark-text-disabled'>
           Round {roundNumber}
@@ -35,11 +35,7 @@ export function RoundSummary({ players, userId }: RoundSummaryProps) {
         <CardTitle>{getRoundMessage(players, userId)}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Scoreboard
-          players={players}
-          userId={userId}
-          className='[--scoreboard-background:var(--color-alt-background)]'
-        />
+        <Scoreboard players={players} userId={userId} />
       </CardContent>
     </Card>
   );
