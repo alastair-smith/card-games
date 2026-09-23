@@ -56,6 +56,10 @@ vi.mock('../how-to', () => ({
   HowToDialog: () => null,
 }));
 
+vi.mock('../round-summary', () => ({
+  RoundSummary: () => <div data-testid='round-summary' />,
+}));
+
 const baseProps = {
   handSize: DEFAULT_HAND_SIZE,
   onEmojiClick: vi.fn(),
@@ -106,12 +110,12 @@ describe('Game', () => {
 
   test('shows the round summary at the end of a round', () => {
     render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
-    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
   });
 
   test('shows the round summary when waiting for new round', () => {
     render(<Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />);
-    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
   });
 
   describe('turn announcement', () => {

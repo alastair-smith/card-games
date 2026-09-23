@@ -1,53 +1,46 @@
-import { Card } from '~/components/ui/card';
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import type { PlayerName, UserId } from '~/types/entities';
+import type { RoundScore } from '~/types/games/yaniv';
+import { Scoreboard } from '../scoreboard';
+import { getRoundMessage } from './round-message';
 
 type RoundSummaryProps = {
-  /** Sorted by points scored */
   players: {
     id: UserId;
     name: PlayerName;
-    roundScore: { original: number; adjusted: number };
+    score: number;
+    roundScores: RoundScore[];
   }[];
+  userId: UserId;
 };
 
-export function RoundSummary({ players }: RoundSummaryProps) {
+export function RoundSummary({ players, userId }: RoundSummaryProps) {
+  const roundNumber = Math.max(
+    0,
+    ...players.map((player) => player.roundScores.length),
+  );
+
   return (
-    <Card className='w-fit bg-alt-background text-dark-text min-w-80'>
-      <Table>
-        <TableCaption className='text-dark-text-disabled'>
-          Round Summary
-        </TableCaption>
-
-        <TableHeader className='font-semibold'>
-          <TableRow>
-            <TableCell className='text-right py-2 md:py-4'>Player</TableCell>
-            <TableCell className='py-2 md:py-4'>Hand score</TableCell>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {players.map((player) => {
-            const { original, adjusted } = player.roundScore;
-            const scoreDisplay = `${adjusted}${original !== adjusted ? ` (${original})` : ''}`;
-            return (
-              <TableRow key={player.id}>
-                <TableCell className='text-right py-2 md:py-4'>
-                  {player.name}
-                </TableCell>
-                <TableCell className='py-2 md:py-4'>{scoreDisplay}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+    <Card className='w-full max-w-xl bg-alt-background text-dark-text'>
+      <CardHeader className='items-center text-center'>
+        <CardDescription className='text-dark-text-disabled'>
+          Round {roundNumber}
+        </CardDescription>
+        <CardTitle>{getRoundMessage(players, userId)}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Scoreboard
+          players={players}
+          userId={userId}
+          className='[--scoreboard-background:var(--color-alt-background)]'
+        />
+      </CardContent>
     </Card>
   );
 }

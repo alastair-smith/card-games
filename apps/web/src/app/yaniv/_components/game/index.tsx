@@ -119,17 +119,6 @@ export default function Game({
     [cards, selectedCards, drawnCard, isShownInOverlay],
   );
 
-  const roundSummary = useMemo(
-    () =>
-      players
-        .flatMap(({ id, name, roundScores }) => {
-          const roundScore = roundScores.at(-1);
-          return roundScore ? [{ id, name, roundScore }] : [];
-        })
-        .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted),
-    [players],
-  );
-
   const handTotal =
     stage === GameViewStage.END_OF_ROUND ||
     stage === GameViewStage.WAITING_FOR_NEW_ROUND
@@ -161,7 +150,7 @@ export default function Game({
         <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
           {stage === GameViewStage.END_OF_ROUND ||
           stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
-            <RoundSummary players={roundSummary} />
+            <RoundSummary players={players} userId={userId} />
           ) : (
             <PlayArea
               color={userPlayer.color}

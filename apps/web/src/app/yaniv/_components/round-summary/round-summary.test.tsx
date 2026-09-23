@@ -1,68 +1,51 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import { RoundSummary } from '.';
 
+vi.mock('../scoreboard', () => ({
+  Scoreboard: ({ players }: { players: { name: string }[] }) => (
+    <div data-testid='scoreboard'>
+      {players.map(({ name }) => name).join(', ')}
+    </div>
+  ),
+}));
+
+const roundScore = (original: number, adjusted = original) => ({
+  original,
+  adjusted,
+  isScoreHalved: false,
+});
+
 const players = [
-  {
+  buildClientPlayer({
     id: '1' as UserId,
     name: 'Alice' as PlayerName,
-    roundScore: { original: 0, adjusted: 0 },
-  },
-  {
+    score: 12,
+    roundScores: [roundScore(12), roundScore(3, 0)],
+  }),
+  buildClientPlayer({
     id: '2' as UserId,
     name: 'Bob' as PlayerName,
-    roundScore: { original: 8, adjusted: 8 },
-  },
-  {
-    id: '3' as UserId,
-    name: 'Charlie' as PlayerName,
-    roundScore: { original: 15, adjusted: 15 },
-  },
+    score: 30,
+    roundScores: [roundScore(5), roundScore(7, 25)],
+  }),
 ];
 
 describe('RoundSummary', () => {
-  test('shows the round summary caption', () => {
-    render(<RoundSummary players={players} />);
-    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+  test('shows which round has just finished', () => {
+    render(<RoundSummary players={players} userId={'2' as UserId} />);
+    expect(screen.getByText('Round 2')).toBeInTheDocument();
   });
 
-  test('shows all player names', () => {
-    render(<RoundSummary players={players} />);
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('Bob')).toBeInTheDocument();
-    expect(screen.getByText('Charlie')).toBeInTheDocument();
+  test('announces who won the round', () => {
+    render(<RoundSummary players={players} userId={'2' as UserId} />);
+    expect(screen.getByText('Alice won the round!')).toBeInTheDocument();
   });
 
-  test('shows plain score when adjusted matches original', () => {
-    render(<RoundSummary players={players} />);
-    expect(screen.getByText('0')).toBeInTheDocument();
-    expect(screen.getByText('8')).toBeInTheDocument();
-    expect(screen.getByText('15')).toBeInTheDocument();
-  });
-
-  test('shows adjusted score with original in brackets when they differ', () => {
-    const yanivPlayers = [
-      {
-        id: '1' as UserId,
-        name: 'Alice' as PlayerName,
-        roundScore: { original: 4, adjusted: 0 },
-      },
-      {
-        id: '2' as UserId,
-        name: 'Bob' as PlayerName,
-        roundScore: { original: 3, adjusted: 25 },
-      },
-    ];
-    render(<RoundSummary players={yanivPlayers} />);
-    expect(screen.getByText('0 (4)')).toBeInTheDocument();
-    expect(screen.getByText('25 (3)')).toBeInTheDocument();
-  });
-
-  test('renders a row for each player', () => {
-    render(<RoundSummary players={players} />);
-    const rows = screen.getAllByRole('row');
-    // One header row + one row per player
-    expect(rows).toHaveLength(players.length + 1);
+  test('shows the scoreboard for every player', () => {
+    render(<RoundSummary players={players} userId={'2' as UserId} />);
+    expect(screen.getByTestId('scoreboard')).toHaveTextContent('Alice, Bob');
   });
 });
