@@ -70,6 +70,20 @@ describe('Scoreboard', () => {
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
     });
 
+    test('can start with every round shown', () => {
+      render(
+        <Scoreboard
+          players={threeRoundPlayers}
+          userId={'1' as UserId}
+          isInitiallyExpanded
+        />,
+      );
+      expect(screen.getByTestId('scoreboard-table')).toHaveTextContent('1,2,3');
+      expect(
+        screen.getByRole('button', { name: /hide earlier rounds/i }),
+      ).toBeInTheDocument();
+    });
+
     test('offers no way to show all rounds after the first round', () => {
       render(
         <Scoreboard

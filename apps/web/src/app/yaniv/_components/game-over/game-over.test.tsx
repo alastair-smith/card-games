@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
+import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import GameOver from '.';
 import { buildShareData, performShare } from './share';
@@ -37,15 +38,48 @@ vi.mock('../how-to', () => ({
   HowToDialog: () => null,
 }));
 
+vi.mock('../scoreboard', () => ({
+  Scoreboard: ({
+    players,
+    userId,
+    isInitiallyExpanded,
+  }: {
+    players: { id: string; name: string }[];
+    userId: string;
+    isInitiallyExpanded?: boolean;
+  }) => (
+    <div data-testid='scoreboard'>
+      {isInitiallyExpanded && 'all rounds shown: '}
+      {players
+        .map(({ id, name }) => (id === userId ? `${name} (You)` : name))
+        .join(', ')}
+    </div>
+  ),
+}));
+
+const gamePlayer = (
+  id: string,
+  name: string,
+  score: number,
+  isWinner: boolean,
+) => ({
+  ...buildClientPlayer({
+    id: id as UserId,
+    name: name as PlayerName,
+    score,
+  }),
+  isWinner,
+});
+
 const players = [
-  { id: '1' as UserId, name: 'Alice' as PlayerName, score: 20, isWinner: true },
-  { id: '2' as UserId, name: 'Bob' as PlayerName, score: 30, isWinner: false },
-  {
-    id: '3' as UserId,
-    name: 'Charlie' as PlayerName,
-    score: 40,
-    isWinner: false,
-  },
+  gamePlayer('1', 'Alice', 20, true),
+  gamePlayer('2', 'Bob', 30, false),
+  gamePlayer('3', 'Charlie', 40, false),
+];
+
+const twoWinners = [
+  gamePlayer('1', 'Alice', 20, true),
+  gamePlayer('2', 'Bob', 20, true),
 ];
 
 describe('GameOver', () => {
@@ -65,20 +99,6 @@ describe('GameOver', () => {
     });
 
     test('shows both names joined for multiple winners when user is among them', () => {
-      const twoWinners = [
-        {
-          id: '1' as UserId,
-          name: 'Alice' as PlayerName,
-          score: 20,
-          isWinner: true,
-        },
-        {
-          id: '2' as UserId,
-          name: 'Bob' as PlayerName,
-          score: 20,
-          isWinner: true,
-        },
-      ];
       render(<GameOver players={twoWinners} userId={'1' as UserId} />);
       expect(
         screen.getByText(/You & Bob win with a score of 20!/),
@@ -86,20 +106,6 @@ describe('GameOver', () => {
     });
 
     test('shows both names joined for multiple winners when user did not win', () => {
-      const twoWinners = [
-        {
-          id: '1' as UserId,
-          name: 'Alice' as PlayerName,
-          score: 20,
-          isWinner: true,
-        },
-        {
-          id: '2' as UserId,
-          name: 'Bob' as PlayerName,
-          score: 20,
-          isWinner: true,
-        },
-      ];
       render(<GameOver players={twoWinners} userId={'3' as UserId} />);
       expect(
         screen.getByText(/Alice & Bob win with a score of 20!/),
@@ -158,52 +164,19 @@ describe('GameOver', () => {
     });
   });
 
-  describe('scores table', () => {
-    test('shows all player names', () => {
+  describe('scoreboard', () => {
+    test('shows the scoreboard for every player with the current user marked', () => {
       render(<GameOver players={players} userId={'2' as UserId} />);
-      expect(screen.getAllByText('Alice').length).toBeGreaterThan(0);
-      expect(screen.getByText('Bob (You)')).toBeInTheDocument();
-      expect(screen.getByText('Charlie')).toBeInTheDocument();
+      expect(screen.getByTestId('scoreboard')).toHaveTextContent(
+        'Alice, Bob (You), Charlie',
+      );
     });
 
-    test('shows all player scores', () => {
+    test('shows every round of the game', () => {
       render(<GameOver players={players} userId={'2' as UserId} />);
-      expect(screen.getByText('30')).toBeInTheDocument();
-      expect(screen.getByText('40')).toBeInTheDocument();
-    });
-
-    test('marks the current user with (You)', () => {
-      render(<GameOver players={players} userId={'2' as UserId} />);
-      expect(screen.getByText('Bob (You)')).toBeInTheDocument();
-    });
-
-    test('displays players in ascending score order regardless of input order', () => {
-      const unsortedPlayers = [
-        {
-          id: '3' as UserId,
-          name: 'Charlie' as PlayerName,
-          score: 40,
-          isWinner: false,
-        },
-        {
-          id: '2' as UserId,
-          name: 'Bob' as PlayerName,
-          score: 30,
-          isWinner: false,
-        },
-        {
-          id: '1' as UserId,
-          name: 'Alice' as PlayerName,
-          score: 20,
-          isWinner: true,
-        },
-      ];
-      render(<GameOver players={unsortedPlayers} userId={'2' as UserId} />);
-      const rows = screen.getAllByRole('row');
-      // rows[0] is the header; rows[1..3] are player rows
-      expect(rows[1]).toHaveTextContent('Alice');
-      expect(rows[2]).toHaveTextContent('Bob');
-      expect(rows[3]).toHaveTextContent('Charlie');
+      expect(screen.getByTestId('scoreboard')).toHaveTextContent(
+        /^all rounds shown/,
+      );
     });
   });
 });

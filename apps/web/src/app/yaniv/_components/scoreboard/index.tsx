@@ -11,10 +11,16 @@ type ScoreboardProps = {
   className?: string;
   players: ScoreboardPlayer[];
   userId: UserId;
+  isInitiallyExpanded?: boolean;
 };
 
-export function Scoreboard({ className, players, userId }: ScoreboardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function Scoreboard({
+  className,
+  players,
+  userId,
+  isInitiallyExpanded = false,
+}: ScoreboardProps) {
+  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const rows = toScoreboardRows(players, userId);
   const roundCount = Math.max(
