@@ -45,12 +45,12 @@ export default function GameOver({ players, userId }: GameOverProps) {
     <CelebrationRain
       emoji={userWins ? '🏆' : '🗑️'}
       isActive={isCelebrating}
-      className='h-dvh'
+      className='min-h-dvh'
     >
       <GameLayout
         actions={<HowToDialog />}
         gameType={GameType.YANIV}
-        className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4 items-center'
+        className='flex flex-col w-full pb-2 gap-4 items-center'
       >
         <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
           <Card className='w-full'>
