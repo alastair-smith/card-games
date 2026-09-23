@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
-  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -46,92 +46,40 @@ const USER_2_HAND: YanivPlayingCard[] = [
 ];
 
 // Normal state: no Yaniv called, USER_1 is current player
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PROCEED,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 3,
-      hand: [
-        { suit: Suit.HEARTS, rank: Rank.FIVE },
-        { suit: Suit.SPADES, rank: Rank.SEVEN },
-        DRAWN_CARD,
-      ],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-        { suit: Suit.CLUBS, rank: Rank.SIX },
-      ],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-  ],
-  playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-  drawnCard: DRAWN_CARD,
-  ...overrides,
-});
+const makeState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.PROCEED,
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({
+        id: USER_1,
+        hand: [
+          { suit: Suit.HEARTS, rank: Rank.FIVE },
+          { suit: Suit.SPADES, rank: Rank.SEVEN },
+          DRAWN_CARD,
+        ],
+      }),
+      buildPlayer({ id: USER_2, hand: USER_2_HAND }),
+    ],
+    playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+    drawnCard: DRAWN_CARD,
+    ...overrides,
+  });
 
 // Post-Yaniv state: USER_1 called Yaniv (hand=5), USER_2 is taking their final turn
 // When USER_2 calls endTurn, next is USER_1 (isYanivCalled) → round ends
-const makeYanivCalledState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PROCEED,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_2,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.HEARTS, rank: Rank.ACE },
-        { suit: Suit.SPADES, rank: Rank.FOUR },
-      ],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: true,
-      roundScore: { original: 5, adjusted: 5 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-        { suit: Suit.CLUBS, rank: Rank.SIX },
-      ],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-  ],
-  playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-  drawnCard: undefined,
-  ...overrides,
-});
+const makeYanivCalledState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.PROCEED,
+    currentPlayerId: USER_2,
+    players: [
+      buildPlayer({ id: USER_1, hand: USER_1_HAND, isYanivCalled: true }),
+      buildPlayer({ id: USER_2, hand: USER_2_HAND }),
+    ],
+    playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+    drawnCard: undefined,
+    ...overrides,
+  });
 
 describe('endTurn', () => {
   beforeEach(() => {
@@ -172,30 +120,8 @@ describe('endTurn', () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
-          {
-            id: USER_1,
-            color: 'cyan',
-            cardCount: 0,
-            hand: [],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
-            id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
-            hand: USER_2_HAND,
-            name: 'Player 2' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          buildPlayer({ id: USER_1, hand: [] }),
+          buildPlayer({ id: USER_2, hand: USER_2_HAND }),
         ],
       }),
     );
@@ -293,36 +219,14 @@ describe('endTurn', () => {
       vi.mocked(getYanivState).mockResolvedValue(
         makeYanivCalledState({
           players: [
-            {
-              id: USER_1,
-              color: 'cyan',
-              cardCount: 2,
-              hand: [
-                { suit: Suit.HEARTS, rank: Rank.ACE },
-                { suit: Suit.SPADES, rank: Rank.FOUR },
-              ],
-              name: 'Player 1' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: true,
-              roundScore: { original: 0, adjusted: 0 },
-            },
-            {
+            buildPlayer({ id: USER_1, hand: USER_1_HAND, isYanivCalled: true }),
+            buildPlayer({
               id: USER_2,
-              color: 'cyan',
-              cardCount: 2,
               hand: [
                 { suit: Suit.DIAMONDS, rank: Rank.TWO },
                 { suit: Suit.CLUBS, rank: Rank.THREE },
               ],
-              name: 'Player 2' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: false,
-              roundScore: { original: 0, adjusted: 0 },
-            },
+            }),
           ],
         }),
       );
@@ -339,36 +243,19 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
-                hand: [
-                  { suit: Suit.HEARTS, rank: Rank.ACE },
-                  { suit: Suit.SPADES, rank: Rank.FOUR },
-                ],
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
+                hand: USER_1_HAND,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
+              }),
+              buildPlayer({
                 id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
                 hand: [
                   { suit: Suit.DIAMONDS, rank: Rank.TWO },
                   { suit: Suit.CLUBS, rank: Rank.FOUR },
                 ],
-                name: 'Player 2' as PlayerName,
                 score: 44,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
             ],
           }),
         );
@@ -386,30 +273,17 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_1_HAND,
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
+              }),
+              buildPlayer({
                 id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_2_HAND,
-                name: 'Player 2' as PlayerName,
                 score: 90,
                 isFiftyScoreHalved: true,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
             ],
           }),
         );
@@ -427,30 +301,17 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_1_HAND,
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
+              }),
+              buildPlayer({
                 id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_2_HAND,
-                name: 'Player 2' as PlayerName,
                 score: 44,
                 isFiftyScoreHalved: true,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
             ],
           }),
         );
@@ -466,36 +327,19 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
-                hand: [
-                  { suit: Suit.HEARTS, rank: Rank.ACE },
-                  { suit: Suit.SPADES, rank: Rank.FOUR },
-                ],
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
+                hand: USER_1_HAND,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
+              }),
+              buildPlayer({
                 id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
                 hand: [
                   { suit: Suit.DIAMONDS, rank: Rank.FOUR },
                   { suit: Suit.CLUBS, rank: Rank.FOUR },
                 ],
-                name: 'Player 2' as PlayerName,
                 score: 45,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
             ],
           }),
         );
@@ -549,30 +393,12 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_1_HAND,
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
-                id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
-                hand: USER_2_HAND,
-                name: 'Player 2' as PlayerName,
-                score: 95,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
+              buildPlayer({ id: USER_2, hand: USER_2_HAND, score: 95 }),
             ],
           }),
         );
@@ -588,30 +414,12 @@ describe('endTurn', () => {
         vi.mocked(getYanivState).mockResolvedValue(
           makeYanivCalledState({
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
                 hand: USER_1_HAND,
-                name: 'Player 1' as PlayerName,
-                score: 0,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
-                id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
-                hand: USER_2_HAND,
-                name: 'Player 2' as PlayerName,
-                score: 95,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
+              buildPlayer({ id: USER_2, hand: USER_2_HAND, score: 95 }),
             ],
           }),
         );
@@ -635,51 +443,21 @@ describe('endTurn', () => {
           makeYanivCalledState({
             currentPlayerId: USER_3,
             players: [
-              {
+              buildPlayer({
                 id: USER_1,
-                color: 'cyan',
-                cardCount: 2,
-                hand: [
-                  { suit: Suit.HEARTS, rank: Rank.ACE },
-                  { suit: Suit.SPADES, rank: Rank.FOUR },
-                ],
-                name: 'Player 1' as PlayerName,
+                hand: USER_1_HAND,
                 score: 10,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
                 isYanivCalled: true,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
-                id: USER_2,
-                color: 'cyan',
-                cardCount: 2,
-                hand: [
-                  { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-                  { suit: Suit.CLUBS, rank: Rank.SIX },
-                ],
-                name: 'Player 2' as PlayerName,
-                score: 95,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
-              {
+              }),
+              buildPlayer({ id: USER_2, hand: USER_2_HAND, score: 95 }),
+              buildPlayer({
                 id: USER_3,
-                color: 'cyan',
-                cardCount: 2,
                 hand: [
                   { suit: Suit.HEARTS, rank: Rank.TWO },
                   { suit: Suit.SPADES, rank: Rank.THREE },
                 ],
-                name: 'Player 3' as PlayerName,
                 score: 5,
-                isFiftyScoreHalved: false,
-                isHundredScoreHalved: false,
-                isYanivCalled: false,
-                roundScore: { original: 0, adjusted: 0 },
-              },
+              }),
             ],
           }),
         );
@@ -699,36 +477,8 @@ describe('endTurn', () => {
       test('preserves hands on players in finished state', async () => {
         const state = makeYanivCalledState({
           players: [
-            {
-              id: USER_1,
-              color: 'cyan',
-              cardCount: 2,
-              hand: [
-                { suit: Suit.HEARTS, rank: Rank.ACE },
-                { suit: Suit.SPADES, rank: Rank.FOUR },
-              ],
-              name: 'Player 1' as PlayerName,
-              score: 0,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: true,
-              roundScore: { original: 0, adjusted: 0 },
-            },
-            {
-              id: USER_2,
-              color: 'cyan',
-              cardCount: 2,
-              hand: [
-                { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-                { suit: Suit.CLUBS, rank: Rank.SIX },
-              ],
-              name: 'Player 2' as PlayerName,
-              score: 195,
-              isFiftyScoreHalved: false,
-              isHundredScoreHalved: false,
-              isYanivCalled: false,
-              roundScore: { original: 0, adjusted: 0 },
-            },
+            buildPlayer({ id: USER_1, hand: USER_1_HAND, isYanivCalled: true }),
+            buildPlayer({ id: USER_2, hand: USER_2_HAND, score: 195 }),
           ],
         });
         vi.mocked(getYanivState).mockResolvedValue(state);

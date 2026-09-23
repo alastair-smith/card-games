@@ -1,15 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getYanivState } from '~/server/data/yaniv';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import {
-  DEFAULT_HAND_SIZE,
-  GameStage,
-  type GameState,
-  GameStep,
-  type YanivPlayingCard,
-} from '~/types/games/yaniv';
+import { GameStage, type GameState } from '~/types/games/yaniv';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 type FinishedState = Extract<GameState, { gameStage: GameStage.FINISHED }>;
@@ -24,50 +19,33 @@ const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;
 const USER_2 = 'user-2' as UserId;
 
-const makePlayers = (): InProgressState['players'] => [
-  {
+const makePlayers = () => [
+  buildPlayer({
     id: USER_1,
-    color: 'cyan',
-    cardCount: 2,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.TWO },
       { suit: Suit.SPADES, rank: Rank.THREE },
-    ] as YanivPlayingCard[],
-    name: 'Player 1' as PlayerName,
+    ],
     score: 10,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    isYanivCalled: false,
-    roundScore: { original: 10, adjusted: 10 },
-  },
-  {
+  }),
+  buildPlayer({
     id: USER_2,
-    color: 'cyan',
-    cardCount: 2,
     hand: [
       { suit: Suit.CLUBS, rank: Rank.FOUR },
       { suit: Suit.DIAMONDS, rank: Rank.FIVE },
-    ] as YanivPlayingCard[],
-    name: 'Player 2' as PlayerName,
+    ],
     score: 20,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    isYanivCalled: false,
-    roundScore: { original: 20, adjusted: 20 },
-  },
+  }),
 ];
 
 const makeInProgressState = (
   overrides: Partial<InProgressState> = {},
-): InProgressState => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PLAY_CARDS,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: makePlayers(),
-  playedCards: [],
-  ...overrides,
-});
+): InProgressState =>
+  buildInProgressState({
+    currentPlayerId: USER_1,
+    players: makePlayers(),
+    ...overrides,
+  });
 
 const makeFinishedState = (
   overrides: Partial<FinishedState> = {},

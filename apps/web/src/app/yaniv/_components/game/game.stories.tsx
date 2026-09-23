@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
+import { buildClientPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import {
   type EmojiReactionId,
@@ -15,74 +16,50 @@ type GameProps = React.ComponentProps<typeof Game>;
 
 const players: GameProps['players'] = [
   {
-    id: '1' as UserId,
-    color: 'red',
-    cardCount: 7,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    name: 'Kevin' as PlayerName,
-    score: 0,
-    roundScore: { original: 5, adjusted: 0 },
-    isYanivCalled: false,
+    ...buildClientPlayer({
+      id: '1' as UserId,
+      color: 'red',
+      cardCount: 7,
+      name: 'Kevin' as PlayerName,
+      roundScore: { original: 5, adjusted: 0 },
+    }),
     isPlayersTurn: true,
   },
-  {
+  buildClientPlayer({
     id: '2' as UserId,
-    color: 'cyan',
-    cardCount: 0,
     isFiftyScoreHalved: true,
-    isHundredScoreHalved: false,
     name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
       '',
     ) as PlayerName,
     score: 12,
     roundScore: { original: 12, adjusted: 12 },
-    isYanivCalled: false,
-  },
-  {
+  }),
+  buildClientPlayer({
     id: '3' as UserId,
     color: 'purple',
-    cardCount: 0,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
     name: 'Paul' as PlayerName,
     score: 14,
     roundScore: { original: 7, adjusted: 25 },
     isYanivCalled: true,
-  },
-  {
+  }),
+  buildClientPlayer({
     id: '4' as UserId,
     color: 'green',
-    cardCount: 0,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
     name: 'Viola' as PlayerName,
-    score: 0,
     roundScore: { original: 4, adjusted: 4 },
-    isYanivCalled: false,
-  },
-  {
+  }),
+  buildClientPlayer({
     id: '5' as UserId,
     color: 'indigo',
-    cardCount: 0,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
     name: 'Duncan' as PlayerName,
-    score: 0,
     roundScore: { original: 13, adjusted: 13 },
-    isYanivCalled: false,
-  },
-  {
+  }),
+  buildClientPlayer({
     id: '6' as UserId,
     color: 'fuchsia',
-    cardCount: 0,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
     name: 'Kathy' as PlayerName,
-    score: 0,
     roundScore: { original: 10, adjusted: 10 },
-    isYanivCalled: false,
-  },
+  }),
 ];
 
 const meta = {

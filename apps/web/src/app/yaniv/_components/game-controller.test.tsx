@@ -2,10 +2,16 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
+import { buildClientPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import { GameStage, GameStep, GameViewStage } from '~/types/games/yaniv';
+import {
+  DEFAULT_HAND_SIZE,
+  GameStage,
+  GameStep,
+  GameViewStage,
+} from '~/types/games/yaniv';
 import YanivGameController from './game-controller';
 
 vi.mock('~/components/ui/toast', () => ({
@@ -87,19 +93,18 @@ const USER_ID = 'user-1' as UserId;
 const OPPONENT_ID = 'user-2' as UserId;
 const CODE = 'ABCD' as GameCode;
 
-const basePlayer = {
-  color: 'cyan' as const,
-  cardCount: 5,
-  isFiftyScoreHalved: false,
-  isHundredScoreHalved: false,
-  score: 0,
-  roundScore: { original: 0, adjusted: 0 },
-  isYanivCalled: false,
-};
-
 const players = [
-  { ...basePlayer, id: USER_ID, name: 'Alice' as PlayerName, isUser: true },
-  { ...basePlayer, id: OPPONENT_ID, name: 'Bob' as PlayerName, isUser: false },
+  buildClientPlayer({
+    id: USER_ID,
+    name: 'Alice' as PlayerName,
+    cardCount: 5,
+    isUser: true,
+  }),
+  buildClientPlayer({
+    id: OPPONENT_ID,
+    name: 'Bob' as PlayerName,
+    cardCount: 5,
+  }),
 ];
 
 function inProgressState(
@@ -116,6 +121,7 @@ function inProgressState(
   return {
     gameStage: GameStage.IN_PROGRESS,
     gameStep: GameStep.PLAY_CARDS,
+    handSize: DEFAULT_HAND_SIZE,
     currentPlayerId: USER_ID,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.KING },
@@ -125,7 +131,7 @@ function inProgressState(
     topDiscardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
     players,
     ...overrides,
-  } as ClientGameState;
+  };
 }
 
 const baseProps = {
@@ -466,12 +472,12 @@ describe('YanivGameController', () => {
 
   describe('game over', () => {
     test('renders the game over screen when the game is finished', () => {
-      const finishedState = {
+      const finishedState: ClientGameState = {
         gameStage: GameStage.FINISHED,
         winners: [USER_ID],
         hand: [],
         players,
-      } as ClientGameState;
+      };
 
       render(<YanivGameController {...baseProps} gameState={finishedState} />);
       expect(screen.getByTestId('game-over')).toBeInTheDocument();

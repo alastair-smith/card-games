@@ -1,14 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import {
-  DEFAULT_HAND_SIZE,
-  GameStage,
-  GameStep,
-  type YanivPlayingCard,
-} from '~/types/games/yaniv';
+import { GameStage, type YanivPlayingCard } from '~/types/games/yaniv';
 
 vi.mock('~/server/data/discard', () => ({
   yanivDiscard: {
@@ -29,39 +25,17 @@ const USER_2 = '00000000-0000-4000-8000-000000000002' as UserId;
 
 const TOP_CARD: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.ACE };
 
-const makeInProgressState = () => ({
-  gameStage: GameStage.IN_PROGRESS as const,
-  gameStep: GameStep.PLAY_CARDS,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan' as const,
-      cardCount: 2,
-      hand: [{ suit: Suit.CLUBS, rank: Rank.TWO }],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      roundScore: { original: 0, adjusted: 0 },
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-    },
-    {
-      id: USER_2,
-      color: 'cyan' as const,
-      cardCount: 2,
-      hand: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      roundScore: { original: 0, adjusted: 0 },
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-    },
-  ],
-  playedCards: [],
-});
+const makeInProgressState = () =>
+  buildInProgressState({
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({ id: USER_1, hand: [{ suit: Suit.CLUBS, rank: Rank.TWO }] }),
+      buildPlayer({
+        id: USER_2,
+        hand: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
+      }),
+    ],
+  });
 
 describe('publishYanivState', () => {
   beforeEach(() => {

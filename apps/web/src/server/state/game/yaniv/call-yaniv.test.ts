@@ -3,15 +3,11 @@ import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
-import {
-  DEFAULT_HAND_SIZE,
-  GameStage,
-  type GameState,
-  GameStep,
-} from '~/types/games/yaniv';
+import { GameStage, type GameState, GameStep } from '~/types/games/yaniv';
 
 type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
@@ -39,47 +35,30 @@ const USER_2 = 'user-2' as UserId;
 const USER_3 = 'user-3' as UserId;
 
 // USER_1 hand sums to 5 (ACE=1, FOUR=4), USER_2 hand sums to 10 (FOUR=4, SIX=6)
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PROCEED,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.HEARTS, rank: Rank.ACE },
-        { suit: Suit.SPADES, rank: Rank.FOUR },
-      ],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-        { suit: Suit.CLUBS, rank: Rank.SIX },
-      ],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-  ],
-  playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-  drawnCard: undefined,
-  ...overrides,
-});
+const makeState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.PROCEED,
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({
+        id: USER_1,
+        hand: [
+          { suit: Suit.HEARTS, rank: Rank.ACE },
+          { suit: Suit.SPADES, rank: Rank.FOUR },
+        ],
+      }),
+      buildPlayer({
+        id: USER_2,
+        hand: [
+          { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+          { suit: Suit.CLUBS, rank: Rank.SIX },
+        ],
+      }),
+    ],
+    playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+    drawnCard: undefined,
+    ...overrides,
+  });
 
 describe('callYaniv', () => {
   beforeEach(() => {
@@ -123,36 +102,20 @@ describe('callYaniv', () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
-          {
+          buildPlayer({
             id: USER_1,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.FIVE },
               { suit: Suit.SPADES, rank: Rank.FIVE },
             ],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.FOUR },
               { suit: Suit.CLUBS, rank: Rank.SIX },
             ],
-            name: 'Player 2' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          }),
         ],
       }),
     );
@@ -199,36 +162,22 @@ describe('callYaniv', () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
-          {
+          buildPlayer({
             id: USER_1,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
               { suit: Suit.SPADES, rank: Rank.TWO },
             ],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },
               { suit: Suit.CLUBS, rank: Rank.THREE },
             ],
-            name: 'Player 2' as PlayerName,
             score: 10,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
             isYanivCalled: true,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          }),
         ],
       }),
     );
@@ -248,36 +197,22 @@ describe('callYaniv', () => {
     vi.mocked(getYanivState).mockResolvedValue(
       makeState({
         players: [
-          {
+          buildPlayer({
             id: USER_1,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
               { suit: Suit.SPADES, rank: Rank.TWO },
             ],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },
               { suit: Suit.CLUBS, rank: Rank.THREE },
             ],
-            name: 'Player 2' as PlayerName,
             score: 20,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
             isYanivCalled: true,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          }),
         ],
       }),
     );
@@ -296,51 +231,28 @@ describe('callYaniv', () => {
       makeState({
         currentPlayerId: USER_2,
         players: [
-          {
+          buildPlayer({
             id: USER_1,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
               { suit: Suit.SPADES, rank: Rank.FOUR },
             ],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
             isYanivCalled: true,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.TWO },
               { suit: Suit.CLUBS, rank: Rank.THREE },
             ],
-            name: 'Player 2' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_3,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.SPADES, rank: Rank.TWO },
               { suit: Suit.HEARTS, rank: Rank.SIX },
             ],
-            name: 'Player 3' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          }),
         ],
       }),
     );
@@ -372,36 +284,20 @@ describe('callYaniv', () => {
       makeState({
         currentPlayerId: USER_2,
         players: [
-          {
+          buildPlayer({
             id: USER_1,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.HEARTS, rank: Rank.ACE },
               { suit: Suit.SPADES, rank: Rank.FOUR },
             ],
-            name: 'Player 1' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
-          {
+          }),
+          buildPlayer({
             id: USER_2,
-            color: 'cyan',
-            cardCount: 2,
             hand: [
               { suit: Suit.DIAMONDS, rank: Rank.ACE },
               { suit: Suit.CLUBS, rank: Rank.THREE },
             ],
-            name: 'Player 2' as PlayerName,
-            score: 0,
-            isFiftyScoreHalved: false,
-            isHundredScoreHalved: false,
-            isYanivCalled: false,
-            roundScore: { original: 0, adjusted: 0 },
-          },
+          }),
         ],
       }),
     );
