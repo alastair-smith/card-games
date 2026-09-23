@@ -8,9 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import { GameType, gameDisplayName, gameURL } from '~/types/game';
-import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
-import { HighCardThumbnail } from './thumbnails/high-card';
 import { YanivThumbnail } from './thumbnails/yaniv';
 
 enum GameLength {
