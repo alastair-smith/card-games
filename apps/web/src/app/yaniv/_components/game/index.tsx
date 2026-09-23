@@ -10,6 +10,7 @@ import {
   type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
+import { cn } from '~/utils/cn';
 import type { PlayerColor } from '~/utils/player-color';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
@@ -119,17 +120,22 @@ export default function Game({
     [cards, selectedCards, drawnCard, isShownInOverlay],
   );
 
-  const handTotal =
+  const isRoundOver =
     stage === GameViewStage.END_OF_ROUND ||
-    stage === GameViewStage.WAITING_FOR_NEW_ROUND
-      ? (userPlayer.roundScores.at(-1)?.original ?? 0)
-      : sumYanivHand(cards);
+    stage === GameViewStage.WAITING_FOR_NEW_ROUND;
+
+  const handTotal = isRoundOver
+    ? (userPlayer.roundScores.at(-1)?.original ?? 0)
+    : sumYanivHand(cards);
 
   return (
     <GameLayout
       actions={<HowToDialog />}
       gameType={GameType.YANIV}
-      className='h-dvh w-full overflow-hidden px-2 pb-2'
+      className={cn(
+        'w-full px-2 pb-2',
+        !isRoundOver && 'h-dvh overflow-hidden',
+      )}
     >
       {isUserTakingTurn && <ScreenEdgeHighlight color={userPlayer.color} />}
 
@@ -141,15 +147,24 @@ export default function Game({
         reactions={pageReactions}
         className='flex-1 flex flex-col justify-center gap-4'
       >
-        <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+        <div
+          className={cn(
+            'grid grid-cols-2 md:grid-cols-3 gap-3',
+            isRoundOver && 'max-sm:hidden',
+          )}
+        >
           {players.map(({ id, emojiReaction, ...player }) => (
             <ScoreCard key={id} reactionEmoji={emojiReaction} {...player} />
           ))}
         </div>
 
-        <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
-          {stage === GameViewStage.END_OF_ROUND ||
-          stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
+        <div
+          className={cn(
+            'flex-1 flex flex-col justify-center items-center',
+            !isRoundOver && 'max-h-120',
+          )}
+        >
+          {isRoundOver ? (
             <RoundSummary players={players} userId={userId} />
           ) : (
             <PlayArea
@@ -181,7 +196,10 @@ export default function Game({
         />
 
         <Hand
-          className='md:text-2xl sm:text-lg'
+          className={cn(
+            'md:text-2xl sm:text-lg',
+            isRoundOver && 'max-sm:hidden',
+          )}
           color={userPlayer.color}
           cards={cardsWithSelection}
           handSize={handSize}
