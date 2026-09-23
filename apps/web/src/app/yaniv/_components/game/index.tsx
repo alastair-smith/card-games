@@ -7,6 +7,7 @@ import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import {
   GameViewStage,
   type HandSize,
+  type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
@@ -44,7 +45,7 @@ type BaseGameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
-    roundScore: { original: number; adjusted: number };
+    roundScores: RoundScore[];
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId };
     isPlayersTurn?: boolean;
@@ -120,16 +121,19 @@ export default function Game({
 
   const roundSummary = useMemo(
     () =>
-      [...players]
-        .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted)
-        .map(({ id, name, roundScore }) => ({ id, name, roundScore })),
+      players
+        .flatMap(({ id, name, roundScores }) => {
+          const roundScore = roundScores.at(-1);
+          return roundScore ? [{ id, name, roundScore }] : [];
+        })
+        .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted),
     [players],
   );
 
   const handTotal =
     stage === GameViewStage.END_OF_ROUND ||
     stage === GameViewStage.WAITING_FOR_NEW_ROUND
-      ? userPlayer.roundScore.original
+      ? (userPlayer.roundScores.at(-1)?.original ?? 0)
       : sumYanivHand(cards);
 
   return (

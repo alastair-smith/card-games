@@ -14,6 +14,12 @@ import Game from '.';
 
 type GameProps = React.ComponentProps<typeof Game>;
 
+const roundScore = (
+  original: number,
+  adjusted = original,
+  isScoreHalved = false,
+) => ({ original, adjusted, isScoreHalved });
+
 const players: GameProps['players'] = [
   {
     ...buildClientPlayer({
@@ -21,7 +27,8 @@ const players: GameProps['players'] = [
       color: 'red',
       cardCount: 7,
       name: 'Kevin' as PlayerName,
-      roundScore: { original: 5, adjusted: 0 },
+      score: 9,
+      roundScores: [roundScore(9), roundScore(5, 0)],
     }),
     isPlayersTurn: true,
   },
@@ -31,34 +38,37 @@ const players: GameProps['players'] = [
     name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
       '',
     ) as PlayerName,
-    score: 12,
-    roundScore: { original: 12, adjusted: 12 },
+    score: 25,
+    roundScores: [roundScore(38), roundScore(12, 12, true)],
   }),
   buildClientPlayer({
     id: '3' as UserId,
     color: 'purple',
     name: 'Paul' as PlayerName,
-    score: 14,
-    roundScore: { original: 7, adjusted: 25 },
+    score: 36,
+    roundScores: [roundScore(11), roundScore(7, 25)],
     isYanivCalled: true,
   }),
   buildClientPlayer({
     id: '4' as UserId,
     color: 'green',
     name: 'Viola' as PlayerName,
-    roundScore: { original: 4, adjusted: 4 },
+    score: 10,
+    roundScores: [roundScore(6), roundScore(4)],
   }),
   buildClientPlayer({
     id: '5' as UserId,
     color: 'indigo',
     name: 'Duncan' as PlayerName,
-    roundScore: { original: 13, adjusted: 13 },
+    score: 13,
+    roundScores: [roundScore(2, 0), roundScore(13)],
   }),
   buildClientPlayer({
     id: '6' as UserId,
     color: 'fuchsia',
     name: 'Kathy' as PlayerName,
-    roundScore: { original: 10, adjusted: 10 },
+    score: 25,
+    roundScores: [roundScore(15), roundScore(10)],
   }),
 ];
 

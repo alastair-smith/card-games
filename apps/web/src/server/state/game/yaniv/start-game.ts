@@ -39,7 +39,7 @@ export const startGame = async (code: GameCode, userId: UserId) => {
       cardCount: cards.length,
       hand: cards,
       score: 0,
-      roundScore: { original: 0, adjusted: 0 },
+      roundScores: [],
       isFiftyScoreHalved: false,
       isHundredScoreHalved: false,
       isYanivCalled: false,

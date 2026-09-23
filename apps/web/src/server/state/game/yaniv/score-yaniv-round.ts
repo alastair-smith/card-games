@@ -70,11 +70,19 @@ export const scoreYanivRound = async (
               : YANIV_CALLER_PENALTY
             : handValue;
           const newScore = player.score + adjusted;
+          const halvedScore = applyScoreHalving(newScore, player);
 
           return {
             ...player,
-            ...applyScoreHalving(newScore, player),
-            roundScore: { original: handValue, adjusted },
+            ...halvedScore,
+            roundScores: [
+              ...player.roundScores,
+              {
+                original: handValue,
+                adjusted,
+                isScoreHalved: halvedScore.score !== newScore,
+              },
+            ],
           };
         },
       );

@@ -23,7 +23,7 @@ export const buildPlayer = (overrides: Partial<Player> = {}): Player => {
     isFiftyScoreHalved: false,
     isHundredScoreHalved: false,
     isYanivCalled: false,
-    roundScore: { original: 0, adjusted: 0 },
+    roundScores: [],
     ...overrides,
   };
 };

@@ -91,12 +91,13 @@ describe('scoreYanivRound', () => {
     const player1 = savedState.players.find((p) => p.id === USER_1);
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player1?.score).toBe(0);
-    expect(player1?.roundScore).toEqual({ original: 3, adjusted: 0 });
+    expect(player1?.roundScores).toEqual([
+      { original: 3, adjusted: 0, isScoreHalved: false },
+    ]);
     expect(player2?.score).toBe(YANIV_CALLER_PENALTY);
-    expect(player2?.roundScore).toEqual({
-      original: 7,
-      adjusted: YANIV_CALLER_PENALTY,
-    });
+    expect(player2?.roundScores).toEqual([
+      { original: 7, adjusted: YANIV_CALLER_PENALTY, isScoreHalved: false },
+    ]);
   });
 
   test('callers with equal hand values both get zero', async () => {
@@ -136,7 +137,9 @@ describe('scoreYanivRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player2?.score).toBe(10);
-    expect(player2?.roundScore).toEqual({ original: 10, adjusted: 10 });
+    expect(player2?.roundScores).toEqual([
+      { original: 10, adjusted: 10, isScoreHalved: false },
+    ]);
   });
 
   test('single caller always gets zero', async () => {
@@ -147,7 +150,86 @@ describe('scoreYanivRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     const player1 = savedState.players.find((p) => p.id === USER_1);
     expect(player1?.score).toBe(0);
-    expect(player1?.roundScore).toEqual({ original: 3, adjusted: 0 });
+    expect(player1?.roundScores).toEqual([
+      { original: 3, adjusted: 0, isScoreHalved: false },
+    ]);
+  });
+
+  describe('round history', () => {
+    const NON_CALLER_HAND = [
+      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+      { suit: Suit.CLUBS, rank: Rank.SIX },
+    ];
+
+    test('adds the round to the scores from previous rounds', async () => {
+      const previousRound = {
+        original: 12,
+        adjusted: 12,
+        isScoreHalved: false,
+      };
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({
+            id: USER_2,
+            hand: NON_CALLER_HAND,
+            score: 12,
+            roundScores: [previousRound],
+          }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(
+        savedState.players.find((p) => p.id === USER_2)?.roundScores,
+      ).toEqual([
+        previousRound,
+        { original: 10, adjusted: 10, isScoreHalved: false },
+      ]);
+    });
+
+    test('marks the round as halved when the score lands on 50', async () => {
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({ id: USER_2, hand: NON_CALLER_HAND, score: 40 }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const player2 = savedState.players.find((p) => p.id === USER_2);
+      expect(player2?.score).toBe(25);
+      expect(player2?.roundScores).toEqual([
+        { original: 10, adjusted: 10, isScoreHalved: true },
+      ]);
+    });
+
+    test('marks the round as halved when the score lands on 100', async () => {
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({
+            id: USER_2,
+            hand: NON_CALLER_HAND,
+            score: 90,
+            isFiftyScoreHalved: true,
+          }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const player2 = savedState.players.find((p) => p.id === USER_2);
+      expect(player2?.score).toBe(50);
+      expect(player2?.roundScores).toEqual([
+        { original: 10, adjusted: 10, isScoreHalved: true },
+      ]);
+    });
   });
 
   test('among three callers, only the one with highest hand gets penalty', async () => {

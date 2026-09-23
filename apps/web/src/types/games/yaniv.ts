@@ -99,6 +99,14 @@ export enum GameViewStage {
   WAITING_FOR_NEW_ROUND = 'waiting-for-new-round',
 }
 
+export const roundScoreSchema = z.object({
+  original: z.number(),
+  adjusted: z.number(),
+  isScoreHalved: z.boolean(),
+});
+
+export type RoundScore = z.infer<typeof roundScoreSchema>;
+
 const playerSchema = z.object({
   id: userIdSchema,
   color: playerColorSchema,
@@ -108,7 +116,7 @@ const playerSchema = z.object({
   isHundredScoreHalved: z.boolean(),
   name: playerNameSchema,
   score: z.number(),
-  roundScore: z.object({ original: z.number(), adjusted: z.number() }),
+  roundScores: z.array(roundScoreSchema),
   isYanivCalled: z.boolean(),
 });
 

@@ -77,13 +77,13 @@ const makeState = (overrides: Partial<State> = {}): State =>
         hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
         score: 10,
         isYanivCalled: true,
-        roundScore: { original: 3, adjusted: 3 },
+        roundScores: [{ original: 3, adjusted: 0, isScoreHalved: false }],
       }),
       buildPlayer({
         id: USER_2,
         hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
         score: 20,
-        roundScore: { original: 5, adjusted: 5 },
+        roundScores: [{ original: 5, adjusted: 5, isScoreHalved: false }],
       }),
     ],
     playedCards: [{ suit: Suit.CLUBS, rank: Rank.THREE }],
@@ -149,6 +149,24 @@ describe('startNewRound', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_1, isYanivCalled: false }),
         expect.objectContaining({ id: USER_2, isYanivCalled: false }),
+      ]),
+    });
+  });
+
+  test('keeps the scores from previous rounds', async () => {
+    await startNewRound(CODE, USER_1);
+
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
+    expect(savedState).toMatchObject({
+      players: expect.arrayContaining([
+        expect.objectContaining({
+          id: USER_1,
+          roundScores: [{ original: 3, adjusted: 0, isScoreHalved: false }],
+        }),
+        expect.objectContaining({
+          id: USER_2,
+          roundScores: [{ original: 5, adjusted: 5, isScoreHalved: false }],
+        }),
       ]),
     });
   });
