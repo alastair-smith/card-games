@@ -24,7 +24,7 @@ export function RoundSummary({ players, userId }: RoundSummaryProps) {
   const roundNumber = getRoundCount(players);
 
   return (
-    <Card className='w-full max-w-xl text-dark-text bg-panel-background border-2 border-white/30 [--scoreboard-background:var(--color-panel-background)]'>
+    <Card variant='panel' className='w-full max-w-xl'>
       <CardHeader className='items-center text-center'>
         <CardDescription className='text-dark-text-disabled'>
           Round {roundNumber}

@@ -12,7 +12,7 @@ import { RoundPoints } from './round-points';
 import type { ScoreboardRow } from './rows';
 
 const backgroundClassName =
-  'bg-[var(--scoreboard-background,var(--color-main-background))]';
+  'bg-[var(--card-surface,var(--color-main-background))]';
 
 const pinnedClassName = cn('sticky z-10', backgroundClassName);
 

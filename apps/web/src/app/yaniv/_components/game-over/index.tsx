@@ -53,7 +53,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
         className='flex flex-col w-full pb-2 gap-4 items-center'
       >
         <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
-          <Card className='w-full text-dark-text bg-panel-background border-2 border-white/30'>
+          <Card variant='panel' className='w-full'>
             <CardContent className='pt-4'>
               <div className='flex flex-col items-center'>
                 <CrownIcon
@@ -73,7 +73,7 @@ export default function GameOver({ players, userId }: GameOverProps) {
             </CardContent>
           </Card>
 
-          <Card className='w-full text-dark-text bg-panel-background border-2 border-white/30 [--scoreboard-background:var(--color-panel-background)]'>
+          <Card variant='panel' className='w-full'>
             <CardContent className='pt-4'>
               <Scoreboard
                 players={players}
