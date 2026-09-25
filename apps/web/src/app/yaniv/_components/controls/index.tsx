@@ -90,7 +90,10 @@ export default function Controls({
       )}
 
       {stage === GameViewStage.END_OF_ROUND && (
-        <Button onClick={() => onPlayCards()} className='-col-end-1'>
+        <Button
+          onClick={() => onPlayCards()}
+          className='col-span-2 md:col-span-1 md:col-start-4'
+        >
           Start new round
           <ArrowRightCircleIcon />
         </Button>
