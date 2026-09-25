@@ -5,17 +5,25 @@ type RoundPointsProps = {
 };
 
 export function RoundPoints({ roundScore }: RoundPointsProps) {
+  const { original, adjusted, halvedBy } = roundScore;
+
   return (
     <span className='whitespace-nowrap'>
-      {roundScore.adjusted}
-      {roundScore.halvedBy > 0 && (
+      {adjusted}
+      {original !== adjusted && (
         <>
           <span aria-hidden='true' className='ml-1 opacity-70'>
-            (−{roundScore.halvedBy})
+            ({original})
           </span>
-          <span className='sr-only'>
-            , score halved by {roundScore.halvedBy}
+          <span className='sr-only'>, hand worth {original}</span>
+        </>
+      )}
+      {halvedBy > 0 && (
+        <>
+          <span aria-hidden='true' className='ml-1 opacity-70'>
+            (−{halvedBy})
           </span>
+          <span className='sr-only'>, score halved by {halvedBy}</span>
         </>
       )}
     </span>
