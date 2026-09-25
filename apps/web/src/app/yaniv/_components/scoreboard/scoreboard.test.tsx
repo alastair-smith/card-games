@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import { Scoreboard } from '.';
 
@@ -16,16 +16,14 @@ vi.mock('./scoreboard-table', () => ({
   ),
 }));
 
-const roundScore = (original: number) => ({
-  original,
-  adjusted: original,
-  isScoreHalved: false,
-});
-
 const threeRoundPlayers = [
   buildClientPlayer({
     id: '1' as UserId,
-    roundScores: [roundScore(5), roundScore(8), roundScore(3)],
+    roundScores: [
+      buildRoundScore({ original: 5 }),
+      buildRoundScore({ original: 8 }),
+      buildRoundScore({ original: 3 }),
+    ],
   }),
 ];
 
@@ -87,7 +85,11 @@ describe('Scoreboard', () => {
     test('offers no way to show all rounds after the first round', () => {
       render(
         <Scoreboard
-          players={[buildClientPlayer({ roundScores: [roundScore(4)] })]}
+          players={[
+            buildClientPlayer({
+              roundScores: [buildRoundScore({ original: 4 })],
+            }),
+          ]}
           userId={'1' as UserId}
         />,
       );

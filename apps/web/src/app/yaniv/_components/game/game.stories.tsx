@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import {
   type EmojiReactionId,
@@ -14,12 +14,6 @@ import Game from '.';
 
 type GameProps = React.ComponentProps<typeof Game>;
 
-const roundScore = (
-  original: number,
-  adjusted = original,
-  isScoreHalved = false,
-) => ({ original, adjusted, isScoreHalved });
-
 const players: GameProps['players'] = [
   {
     ...buildClientPlayer({
@@ -28,7 +22,10 @@ const players: GameProps['players'] = [
       cardCount: 7,
       name: 'Kevin' as PlayerName,
       score: 9,
-      roundScores: [roundScore(9), roundScore(5, 0)],
+      roundScores: [
+        buildRoundScore({ original: 9 }),
+        buildRoundScore({ original: 5, adjusted: 0 }),
+      ],
     }),
     isPlayersTurn: true,
   },
@@ -39,14 +36,20 @@ const players: GameProps['players'] = [
       '',
     ) as PlayerName,
     score: 25,
-    roundScores: [roundScore(38), roundScore(12, 12, true)],
+    roundScores: [
+      buildRoundScore({ original: 38 }),
+      buildRoundScore({ original: 12, isScoreHalved: true }),
+    ],
   }),
   buildClientPlayer({
     id: '3' as UserId,
     color: 'purple',
     name: 'Paul' as PlayerName,
     score: 36,
-    roundScores: [roundScore(11), roundScore(7, 25)],
+    roundScores: [
+      buildRoundScore({ original: 11 }),
+      buildRoundScore({ original: 7, adjusted: 25 }),
+    ],
     isYanivCalled: true,
   }),
   buildClientPlayer({
@@ -54,21 +57,30 @@ const players: GameProps['players'] = [
     color: 'green',
     name: 'Viola' as PlayerName,
     score: 10,
-    roundScores: [roundScore(6), roundScore(4)],
+    roundScores: [
+      buildRoundScore({ original: 6 }),
+      buildRoundScore({ original: 4 }),
+    ],
   }),
   buildClientPlayer({
     id: '5' as UserId,
     color: 'indigo',
     name: 'Duncan' as PlayerName,
     score: 13,
-    roundScores: [roundScore(2, 0), roundScore(13)],
+    roundScores: [
+      buildRoundScore({ original: 2, adjusted: 0 }),
+      buildRoundScore({ original: 13 }),
+    ],
   }),
   buildClientPlayer({
     id: '6' as UserId,
     color: 'fuchsia',
     name: 'Kathy' as PlayerName,
     score: 25,
-    roundScores: [roundScore(15), roundScore(10)],
+    roundScores: [
+      buildRoundScore({ original: 15 }),
+      buildRoundScore({ original: 10 }),
+    ],
   }),
 ];
 

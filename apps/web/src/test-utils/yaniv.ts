@@ -5,11 +5,24 @@ import {
   GameStage,
   type GameState,
   GameStep,
+  type RoundScore,
 } from '~/types/games/yaniv';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
 type Player = InProgressState['players'][number];
+
+export const buildRoundScore = (
+  overrides: Partial<RoundScore> = {},
+): RoundScore => {
+  const original = overrides.original ?? 0;
+  return {
+    original,
+    adjusted: original,
+    isScoreHalved: false,
+    ...overrides,
+  };
+};
 
 export const buildPlayer = (overrides: Partial<Player> = {}): Player => {
   const hand = overrides.hand ?? [];

@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
-import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
+import {
+  buildInProgressState,
+  buildPlayer,
+  buildRoundScore,
+} from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -92,11 +96,11 @@ describe('scoreYanivRound', () => {
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player1?.score).toBe(0);
     expect(player1?.roundScores).toEqual([
-      { original: 3, adjusted: 0, isScoreHalved: false },
+      buildRoundScore({ original: 3, adjusted: 0 }),
     ]);
     expect(player2?.score).toBe(YANIV_CALLER_PENALTY);
     expect(player2?.roundScores).toEqual([
-      { original: 7, adjusted: YANIV_CALLER_PENALTY, isScoreHalved: false },
+      buildRoundScore({ original: 7, adjusted: YANIV_CALLER_PENALTY }),
     ]);
   });
 
@@ -137,9 +141,7 @@ describe('scoreYanivRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player2?.score).toBe(10);
-    expect(player2?.roundScores).toEqual([
-      { original: 10, adjusted: 10, isScoreHalved: false },
-    ]);
+    expect(player2?.roundScores).toEqual([buildRoundScore({ original: 10 })]);
   });
 
   test('single caller always gets zero', async () => {
@@ -151,7 +153,7 @@ describe('scoreYanivRound', () => {
     const player1 = savedState.players.find((p) => p.id === USER_1);
     expect(player1?.score).toBe(0);
     expect(player1?.roundScores).toEqual([
-      { original: 3, adjusted: 0, isScoreHalved: false },
+      buildRoundScore({ original: 3, adjusted: 0 }),
     ]);
   });
 
@@ -162,11 +164,7 @@ describe('scoreYanivRound', () => {
     ];
 
     test('adds the round to the scores from previous rounds', async () => {
-      const previousRound = {
-        original: 12,
-        adjusted: 12,
-        isScoreHalved: false,
-      };
+      const previousRound = buildRoundScore({ original: 12 });
       const state = makeState({
         players: [
           buildPlayer({ id: USER_1, isYanivCalled: true }),
@@ -184,10 +182,7 @@ describe('scoreYanivRound', () => {
       const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
       expect(
         savedState.players.find((p) => p.id === USER_2)?.roundScores,
-      ).toEqual([
-        previousRound,
-        { original: 10, adjusted: 10, isScoreHalved: false },
-      ]);
+      ).toEqual([previousRound, buildRoundScore({ original: 10 })]);
     });
 
     test('marks the round as halved when the score lands on 50', async () => {
@@ -204,7 +199,7 @@ describe('scoreYanivRound', () => {
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(25);
       expect(player2?.roundScores).toEqual([
-        { original: 10, adjusted: 10, isScoreHalved: true },
+        buildRoundScore({ original: 10, isScoreHalved: true }),
       ]);
     });
 
@@ -227,7 +222,7 @@ describe('scoreYanivRound', () => {
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(50);
       expect(player2?.roundScores).toEqual([
-        { original: 10, adjusted: 10, isScoreHalved: true },
+        buildRoundScore({ original: 10, isScoreHalved: true }),
       ]);
     });
   });

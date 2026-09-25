@@ -1,13 +1,7 @@
 import { describe, expect, test } from 'vitest';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import { getRoundMessage } from './round-message';
-
-const roundScore = (original: number, adjusted = original) => ({
-  original,
-  adjusted,
-  isScoreHalved: false,
-});
 
 const USER_ID = '1' as UserId;
 
@@ -15,7 +9,7 @@ const buildPlayer = (id: string, name: string, points: number[]) =>
   buildClientPlayer({
     id: id as UserId,
     name: name as PlayerName,
-    roundScores: points.map((point) => roundScore(point)),
+    roundScores: points.map((point) => buildRoundScore({ original: point })),
   });
 
 describe('getRoundMessage', () => {

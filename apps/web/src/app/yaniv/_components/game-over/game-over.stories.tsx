@@ -1,17 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundScore } from '~/types/games/yaniv';
 import GameOver from '.';
 
-const roundScore = (
-  original: number,
-  adjusted = original,
-  isScoreHalved = false,
-): RoundScore => ({ original, adjusted, isScoreHalved });
-
 const rounds = (...points: number[]) =>
-  points.map((point) => roundScore(point));
+  points.map((point) => buildRoundScore({ original: point }));
 
 const player = (
   id: string,
@@ -36,7 +30,11 @@ const david = player(
   '4',
   'David',
   30,
-  [...rounds(15, 11), roundScore(24, 24, true), ...rounds(3, 0, 2)],
+  [
+    ...rounds(15, 11),
+    buildRoundScore({ original: 24, isScoreHalved: true }),
+    ...rounds(3, 0, 2),
+  ],
   false,
 );
 const eve = player('5', 'Eve', 97, rounds(20, 14, 9, 25, 18, 11), false);

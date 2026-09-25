@@ -3,7 +3,11 @@ import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
-import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
+import {
+  buildInProgressState,
+  buildPlayer,
+  buildRoundScore,
+} from '~/test-utils/yaniv';
 import { deckWithJokers, Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -67,6 +71,9 @@ const USER_2_CARDS: YanivPlayingCard[] = [
   { suit: Suit.SPADES, rank: Rank.TWO },
 ];
 
+const USER_1_ROUND_SCORES = [buildRoundScore({ original: 3, adjusted: 0 })];
+const USER_2_ROUND_SCORES = [buildRoundScore({ original: 5 })];
+
 const makeState = (overrides: Partial<State> = {}): State =>
   buildInProgressState({
     gameStep: GameStep.REDEAL,
@@ -77,13 +84,13 @@ const makeState = (overrides: Partial<State> = {}): State =>
         hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
         score: 10,
         isYanivCalled: true,
-        roundScores: [{ original: 3, adjusted: 0, isScoreHalved: false }],
+        roundScores: USER_1_ROUND_SCORES,
       }),
       buildPlayer({
         id: USER_2,
         hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
         score: 20,
-        roundScores: [{ original: 5, adjusted: 5, isScoreHalved: false }],
+        roundScores: USER_2_ROUND_SCORES,
       }),
     ],
     playedCards: [{ suit: Suit.CLUBS, rank: Rank.THREE }],
@@ -161,11 +168,11 @@ describe('startNewRound', () => {
       players: expect.arrayContaining([
         expect.objectContaining({
           id: USER_1,
-          roundScores: [{ original: 3, adjusted: 0, isScoreHalved: false }],
+          roundScores: USER_1_ROUND_SCORES,
         }),
         expect.objectContaining({
           id: USER_2,
-          roundScores: [{ original: 5, adjusted: 5, isScoreHalved: false }],
+          roundScores: USER_2_ROUND_SCORES,
         }),
       ]),
     });

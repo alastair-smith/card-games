@@ -1,13 +1,7 @@
 import { describe, expect, test } from 'vitest';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import { toScoreboardRows } from './rows';
-
-const roundScore = (
-  original: number,
-  adjusted = original,
-  isScoreHalved = false,
-) => ({ original, adjusted, isScoreHalved });
 
 describe('toScoreboardRows', () => {
   describe('ordering', () => {
@@ -45,7 +39,10 @@ describe('toScoreboardRows', () => {
       const [row] = toScoreboardRows(
         [
           buildClientPlayer({
-            roundScores: [roundScore(12), roundScore(7, 25)],
+            roundScores: [
+              buildRoundScore({ original: 12 }),
+              buildRoundScore({ original: 7, adjusted: 25 }),
+            ],
           }),
         ],
         '1' as UserId,
@@ -60,7 +57,10 @@ describe('toScoreboardRows', () => {
       const [row] = toScoreboardRows(
         [
           buildClientPlayer({
-            roundScores: [roundScore(40), roundScore(10, 10, true)],
+            roundScores: [
+              buildRoundScore({ original: 40 }),
+              buildRoundScore({ original: 10, isScoreHalved: true }),
+            ],
           }),
         ],
         '1' as UserId,
@@ -73,10 +73,10 @@ describe('toScoreboardRows', () => {
         [
           buildClientPlayer({
             roundScores: [
-              roundScore(40),
-              roundScore(10, 10, true),
-              roundScore(45),
-              roundScore(30, 30, true),
+              buildRoundScore({ original: 40 }),
+              buildRoundScore({ original: 10, isScoreHalved: true }),
+              buildRoundScore({ original: 45 }),
+              buildRoundScore({ original: 30, isScoreHalved: true }),
             ],
           }),
         ],

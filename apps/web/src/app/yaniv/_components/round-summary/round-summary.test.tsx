@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import { RoundSummary } from '.';
 
@@ -12,24 +12,24 @@ vi.mock('../scoreboard', () => ({
   ),
 }));
 
-const roundScore = (original: number, adjusted = original) => ({
-  original,
-  adjusted,
-  isScoreHalved: false,
-});
-
 const players = [
   buildClientPlayer({
     id: '1' as UserId,
     name: 'Alice' as PlayerName,
     score: 12,
-    roundScores: [roundScore(12), roundScore(3, 0)],
+    roundScores: [
+      buildRoundScore({ original: 12 }),
+      buildRoundScore({ original: 3, adjusted: 0 }),
+    ],
   }),
   buildClientPlayer({
     id: '2' as UserId,
     name: 'Bob' as PlayerName,
     score: 30,
-    roundScores: [roundScore(5), roundScore(7, 25)],
+    roundScores: [
+      buildRoundScore({ original: 5 }),
+      buildRoundScore({ original: 7, adjusted: 25 }),
+    ],
   }),
 ];
 

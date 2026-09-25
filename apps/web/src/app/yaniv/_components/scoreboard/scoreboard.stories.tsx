@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect } from 'storybook/test';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
@@ -8,19 +8,15 @@ import {
 } from '~/types/entities';
 import { Scoreboard } from '.';
 
-const roundScore = (
-  original: number,
-  adjusted = original,
-  isScoreHalved = false,
-) => ({ original, adjusted, isScoreHalved });
-
 const longGamePlayers = [
   buildClientPlayer({
     id: '1' as UserId,
     name: 'Kevin' as PlayerName,
     score: 72,
     roundScores: Array.from({ length: 14 }, (_, index) =>
-      roundScore(index % 3 === 0 ? 2 : 8, index % 3 === 0 ? 0 : 8),
+      index % 3 === 0
+        ? buildRoundScore({ original: 2, adjusted: 0 })
+        : buildRoundScore({ original: 8 }),
     ),
   }),
   buildClientPlayer({
@@ -28,7 +24,7 @@ const longGamePlayers = [
     name: 'Paul' as PlayerName,
     score: 98,
     roundScores: Array.from({ length: 14 }, (_, index) =>
-      roundScore(index % 2 === 0 ? 9 : 5),
+      buildRoundScore({ original: index % 2 === 0 ? 9 : 5 }),
     ),
   }),
 ];
@@ -44,7 +40,11 @@ const meta = {
         id: '1' as UserId,
         name: 'Kevin' as PlayerName,
         score: 9,
-        roundScores: [roundScore(9), roundScore(5, 0), roundScore(12, 0)],
+        roundScores: [
+          buildRoundScore({ original: 9 }),
+          buildRoundScore({ original: 5, adjusted: 0 }),
+          buildRoundScore({ original: 12, adjusted: 0 }),
+        ],
       }),
       buildClientPlayer({
         id: '2' as UserId,
@@ -52,29 +52,41 @@ const meta = {
           '',
         ) as PlayerName,
         score: 33,
-        roundScores: [roundScore(38), roundScore(12, 12, true), roundScore(8)],
+        roundScores: [
+          buildRoundScore({ original: 38 }),
+          buildRoundScore({ original: 12, isScoreHalved: true }),
+          buildRoundScore({ original: 8 }),
+        ],
       }),
       buildClientPlayer({
         id: '3' as UserId,
         name: 'Paul' as PlayerName,
         score: 25,
         roundScores: [
-          roundScore(11),
-          roundScore(7, 25),
-          roundScore(14, 14, true),
+          buildRoundScore({ original: 11 }),
+          buildRoundScore({ original: 7, adjusted: 25 }),
+          buildRoundScore({ original: 14, isScoreHalved: true }),
         ],
       }),
       buildClientPlayer({
         id: '4' as UserId,
         name: 'Viola' as PlayerName,
         score: 16,
-        roundScores: [roundScore(6), roundScore(4), roundScore(6)],
+        roundScores: [
+          buildRoundScore({ original: 6 }),
+          buildRoundScore({ original: 4 }),
+          buildRoundScore({ original: 6 }),
+        ],
       }),
       buildClientPlayer({
         id: '5' as UserId,
         name: 'Duncan' as PlayerName,
         score: 13,
-        roundScores: [roundScore(2, 0), roundScore(13), roundScore(0, 0)],
+        roundScores: [
+          buildRoundScore({ original: 2, adjusted: 0 }),
+          buildRoundScore({ original: 13 }),
+          buildRoundScore({ original: 0 }),
+        ],
       }),
     ],
   },
@@ -93,13 +105,13 @@ export const FirstRound: Story = {
         id: '1' as UserId,
         name: 'Kevin' as PlayerName,
         score: 0,
-        roundScores: [roundScore(4, 0)],
+        roundScores: [buildRoundScore({ original: 4, adjusted: 0 })],
       }),
       buildClientPlayer({
         id: '2' as UserId,
         name: 'Paul' as PlayerName,
         score: 17,
-        roundScores: [roundScore(17)],
+        roundScores: [buildRoundScore({ original: 17 })],
       }),
     ],
   },
