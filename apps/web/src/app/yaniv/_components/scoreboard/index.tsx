@@ -3,9 +3,11 @@ import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import type { UserId } from '~/types/entities';
 import { cn } from '~/utils/cn';
-import { type ScoreboardPlayer, toScoreboardRows } from './rows';
+import { getRoundCount, type ScoreboardPlayer, toScoreboardRows } from './rows';
 import { ScoreboardList } from './scoreboard-list';
 import { ScoreboardTable } from './scoreboard-table';
+
+export { getRoundCount } from './rows';
 
 type ScoreboardProps = {
   className?: string;
@@ -23,10 +25,7 @@ export function Scoreboard({
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
   const rows = toScoreboardRows(players, userId);
-  const roundCount = Math.max(
-    0,
-    ...players.map((player) => player.roundScores.length),
-  );
+  const roundCount = getRoundCount(players);
   const roundNumbers = Array.from(
     { length: roundCount },
     (_, index) => index + 1,

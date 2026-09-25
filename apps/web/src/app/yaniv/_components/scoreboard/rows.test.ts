@@ -1,7 +1,25 @@
 import { describe, expect, test } from 'vitest';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
-import { toScoreboardRows } from './rows';
+import { getRoundCount, toScoreboardRows } from './rows';
+
+describe('getRoundCount', () => {
+  test('counts the rounds played so far', () => {
+    const players = [
+      buildClientPlayer({
+        roundScores: [
+          buildRoundScore({ original: 5 }),
+          buildRoundScore({ original: 8 }),
+        ],
+      }),
+    ];
+    expect(getRoundCount(players)).toBe(2);
+  });
+
+  test('counts no rounds before any round has been scored', () => {
+    expect(getRoundCount([buildClientPlayer()])).toBe(0);
+  });
+});
 
 describe('toScoreboardRows', () => {
   describe('ordering', () => {

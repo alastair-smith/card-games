@@ -10,6 +10,10 @@ export type ScoreboardPlayer = {
 
 export type ScoreboardRow = ScoreboardPlayer & { isUser: boolean };
 
+export const getRoundCount = (
+  players: Pick<ScoreboardPlayer, 'roundScores'>[],
+) => Math.max(0, ...players.map((player) => player.roundScores.length));
+
 export const toScoreboardRows = (
   players: ScoreboardPlayer[],
   userId: UserId,

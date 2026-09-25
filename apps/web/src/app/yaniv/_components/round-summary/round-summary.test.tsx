@@ -4,7 +4,8 @@ import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import { RoundSummary } from '.';
 
-vi.mock('../scoreboard', () => ({
+vi.mock('../scoreboard', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../scoreboard')>()),
   Scoreboard: ({ players }: { players: { name: string }[] }) => (
     <div data-testid='scoreboard'>
       {players.map(({ name }) => name).join(', ')}

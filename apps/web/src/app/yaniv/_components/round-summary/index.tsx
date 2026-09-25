@@ -7,7 +7,7 @@ import {
 } from '~/components/ui/card';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { RoundScore } from '~/types/games/yaniv';
-import { Scoreboard } from '../scoreboard';
+import { getRoundCount, Scoreboard } from '../scoreboard';
 import { getRoundMessage } from './round-message';
 
 type RoundSummaryProps = {
@@ -21,10 +21,7 @@ type RoundSummaryProps = {
 };
 
 export function RoundSummary({ players, userId }: RoundSummaryProps) {
-  const roundNumber = Math.max(
-    0,
-    ...players.map((player) => player.roundScores.length),
-  );
+  const roundNumber = getRoundCount(players);
 
   return (
     <Card className='w-full max-w-xl text-dark-text bg-panel-background border-2 border-white/30 [--scoreboard-background:var(--color-panel-background)]'>
