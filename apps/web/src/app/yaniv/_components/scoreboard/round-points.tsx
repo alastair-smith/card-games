@@ -1,20 +1,20 @@
-import type { RoundChange } from './rows';
+import type { RoundScore } from '~/types/games/yaniv';
 
 type RoundPointsProps = {
-  roundChange: RoundChange;
+  roundScore: RoundScore;
 };
 
-export function RoundPoints({ roundChange }: RoundPointsProps) {
+export function RoundPoints({ roundScore }: RoundPointsProps) {
   return (
     <span className='whitespace-nowrap'>
-      {roundChange.adjusted}
-      {roundChange.halvedBy > 0 && (
+      {roundScore.adjusted}
+      {roundScore.halvedBy > 0 && (
         <>
           <span aria-hidden='true' className='ml-1 opacity-70'>
-            (−{roundChange.halvedBy})
+            (−{roundScore.halvedBy})
           </span>
           <span className='sr-only'>
-            , score halved by {roundChange.halvedBy}
+            , score halved by {roundScore.halvedBy}
           </span>
         </>
       )}

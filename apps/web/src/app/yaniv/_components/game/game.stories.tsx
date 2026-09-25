@@ -38,7 +38,7 @@ const players: GameProps['players'] = [
     score: 25,
     roundScores: [
       buildRoundScore({ original: 38 }),
-      buildRoundScore({ original: 12, isScoreHalved: true }),
+      buildRoundScore({ original: 12, halvedBy: 25 }),
     ],
   }),
   buildClientPlayer({

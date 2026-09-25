@@ -80,7 +80,7 @@ export const scoreYanivRound = async (
               {
                 original: handValue,
                 adjusted,
-                isScoreHalved: halvedScore.score !== newScore,
+                halvedBy: newScore - halvedScore.score,
               },
             ],
           };

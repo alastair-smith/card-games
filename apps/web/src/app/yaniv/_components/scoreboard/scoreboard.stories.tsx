@@ -54,7 +54,7 @@ const meta = {
         score: 33,
         roundScores: [
           buildRoundScore({ original: 38 }),
-          buildRoundScore({ original: 12, isScoreHalved: true }),
+          buildRoundScore({ original: 12, halvedBy: 25 }),
           buildRoundScore({ original: 8 }),
         ],
       }),
@@ -65,7 +65,7 @@ const meta = {
         roundScores: [
           buildRoundScore({ original: 11 }),
           buildRoundScore({ original: 7, adjusted: 25 }),
-          buildRoundScore({ original: 14, isScoreHalved: true }),
+          buildRoundScore({ original: 14, halvedBy: 25 }),
         ],
       }),
       buildClientPlayer({

@@ -20,7 +20,7 @@ export function ScoreboardList({
       aria-label='Scoreboard'
       className={cn('flex flex-col tabular-nums', className)}
     >
-      {rows.map(({ id, name, score, isUser, roundChanges }) => (
+      {rows.map(({ id, name, score, isUser, roundScores }) => (
         <li
           key={id}
           className={cn(
@@ -36,7 +36,7 @@ export function ScoreboardList({
           <div className='flex items-start justify-between gap-3 text-sm'>
             <ul className='flex flex-wrap gap-x-1.5 gap-y-1'>
               {roundNumbers.map((roundNumber, index) => {
-                const roundChange = roundChanges[roundNumber - 1];
+                const roundScore = roundScores[roundNumber - 1];
                 return (
                   <li key={roundNumber}>
                     {index > 0 && (
@@ -47,7 +47,7 @@ export function ScoreboardList({
                     <span className={cn('opacity-70', isExpanded && 'sr-only')}>
                       Round {roundNumber}:
                     </span>{' '}
-                    {roundChange && <RoundPoints roundChange={roundChange} />}
+                    {roundScore && <RoundPoints roundScore={roundScore} />}
                   </li>
                 );
               })}

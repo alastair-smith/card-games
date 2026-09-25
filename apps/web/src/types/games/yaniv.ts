@@ -102,7 +102,7 @@ export enum GameViewStage {
 export const roundScoreSchema = z.object({
   original: z.number(),
   adjusted: z.number(),
-  isScoreHalved: z.boolean(),
+  halvedBy: z.number(),
 });
 
 export type RoundScore = z.infer<typeof roundScoreSchema>;

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
+import { buildRoundScore } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { ScoreboardRow } from './rows';
 import { ScoreboardList } from './scoreboard-list';
@@ -10,9 +11,9 @@ const rows: ScoreboardRow[] = [
     name: 'Charlie' as PlayerName,
     score: 8,
     isUser: false,
-    roundChanges: [
-      { adjusted: 0, halvedBy: 0 },
-      { adjusted: 8, halvedBy: 0 },
+    roundScores: [
+      buildRoundScore({ original: 0 }),
+      buildRoundScore({ original: 8 }),
     ],
   },
   {
@@ -20,9 +21,9 @@ const rows: ScoreboardRow[] = [
     name: 'Bob' as PlayerName,
     score: 5,
     isUser: true,
-    roundChanges: [
-      { adjusted: 5, halvedBy: 0 },
-      { adjusted: 25, halvedBy: 25 },
+    roundScores: [
+      buildRoundScore({ original: 5 }),
+      buildRoundScore({ original: 25, halvedBy: 25 }),
     ],
   },
 ];

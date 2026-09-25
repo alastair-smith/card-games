@@ -19,7 +19,7 @@ export const buildRoundScore = (
   return {
     original,
     adjusted: original,
-    isScoreHalved: false,
+    halvedBy: 0,
     ...overrides,
   };
 };

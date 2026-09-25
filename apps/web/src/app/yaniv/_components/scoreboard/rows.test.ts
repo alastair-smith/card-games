@@ -34,55 +34,17 @@ describe('toScoreboardRows', () => {
     });
   });
 
-  describe('round changes', () => {
-    test('keeps the points scored in each round', () => {
+  describe('round scores', () => {
+    test('keeps each round score for the player', () => {
+      const roundScores = [
+        buildRoundScore({ original: 40 }),
+        buildRoundScore({ original: 10, halvedBy: 25 }),
+      ];
       const [row] = toScoreboardRows(
-        [
-          buildClientPlayer({
-            roundScores: [
-              buildRoundScore({ original: 12 }),
-              buildRoundScore({ original: 7, adjusted: 25 }),
-            ],
-          }),
-        ],
+        [buildClientPlayer({ roundScores })],
         '1' as UserId,
       );
-      expect(row?.roundChanges).toEqual([
-        { adjusted: 12, halvedBy: 0 },
-        { adjusted: 25, halvedBy: 0 },
-      ]);
-    });
-
-    test('works out the drop when a score is halved on 50', () => {
-      const [row] = toScoreboardRows(
-        [
-          buildClientPlayer({
-            roundScores: [
-              buildRoundScore({ original: 40 }),
-              buildRoundScore({ original: 10, isScoreHalved: true }),
-            ],
-          }),
-        ],
-        '1' as UserId,
-      );
-      expect(row?.roundChanges.at(-1)).toEqual({ adjusted: 10, halvedBy: 25 });
-    });
-
-    test('works out the drop when a score is halved on 100', () => {
-      const [row] = toScoreboardRows(
-        [
-          buildClientPlayer({
-            roundScores: [
-              buildRoundScore({ original: 40 }),
-              buildRoundScore({ original: 10, isScoreHalved: true }),
-              buildRoundScore({ original: 45 }),
-              buildRoundScore({ original: 30, isScoreHalved: true }),
-            ],
-          }),
-        ],
-        '1' as UserId,
-      );
-      expect(row?.roundChanges.at(-1)).toEqual({ adjusted: 30, halvedBy: 50 });
+      expect(row?.roundScores).toEqual(roundScores);
     });
   });
 });

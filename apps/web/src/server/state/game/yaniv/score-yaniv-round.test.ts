@@ -185,7 +185,7 @@ describe('scoreYanivRound', () => {
       ).toEqual([previousRound, buildRoundScore({ original: 10 })]);
     });
 
-    test('marks the round as halved when the score lands on 50', async () => {
+    test('records the drop when the score lands on 50 and is halved', async () => {
       const state = makeState({
         players: [
           buildPlayer({ id: USER_1, isYanivCalled: true }),
@@ -199,11 +199,11 @@ describe('scoreYanivRound', () => {
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(25);
       expect(player2?.roundScores).toEqual([
-        buildRoundScore({ original: 10, isScoreHalved: true }),
+        buildRoundScore({ original: 10, halvedBy: 25 }),
       ]);
     });
 
-    test('marks the round as halved when the score lands on 100', async () => {
+    test('records the drop when the score lands on 100 and is halved', async () => {
       const state = makeState({
         players: [
           buildPlayer({ id: USER_1, isYanivCalled: true }),
@@ -222,7 +222,7 @@ describe('scoreYanivRound', () => {
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(50);
       expect(player2?.roundScores).toEqual([
-        buildRoundScore({ original: 10, isScoreHalved: true }),
+        buildRoundScore({ original: 10, halvedBy: 50 }),
       ]);
     });
   });

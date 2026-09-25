@@ -85,7 +85,7 @@ export function ScoreboardTable({
       </TableHeader>
 
       <TableBody>
-        {rows.map(({ id, name, score, isUser, roundChanges }) => (
+        {rows.map(({ id, name, score, isUser, roundScores }) => (
           <TableRow
             key={id}
             className={cn(
@@ -103,10 +103,10 @@ export function ScoreboardTable({
               {isUser && ' (You)'}
             </TableCell>
             {roundNumbers.map((roundNumber) => {
-              const roundChange = roundChanges[roundNumber - 1];
+              const roundScore = roundScores[roundNumber - 1];
               return (
                 <TableCell key={roundNumber} className='px-2 py-2 text-center'>
-                  {roundChange && <RoundPoints roundChange={roundChange} />}
+                  {roundScore && <RoundPoints roundScore={roundScore} />}
                 </TableCell>
               );
             })}

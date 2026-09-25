@@ -32,7 +32,7 @@ const david = player(
   30,
   [
     ...rounds(15, 11),
-    buildRoundScore({ original: 24, isScoreHalved: true }),
+    buildRoundScore({ original: 24, halvedBy: 25 }),
     ...rounds(3, 0, 2),
   ],
   false,
