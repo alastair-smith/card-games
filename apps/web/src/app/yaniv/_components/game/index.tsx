@@ -145,12 +145,12 @@ export default function Game({
 
       <PageEmojiRain
         reactions={pageReactions}
-        className='flex-1 flex flex-col justify-center gap-4'
+        className='flex-1 grid grid-cols-1 grid-rows-[auto_1fr_auto_auto] gap-4'
       >
         <div
           className={cn(
-            'grid grid-cols-2 md:grid-cols-3 gap-3',
-            isRoundOver && 'max-sm:hidden',
+            'col-start-1 row-start-1 grid grid-cols-2 md:grid-cols-3 gap-3',
+            isRoundOver && 'invisible max-sm:hidden',
           )}
         >
           {players.map(({ id, emojiReaction, ...player }) => (
@@ -160,32 +160,33 @@ export default function Game({
 
         <div
           className={cn(
-            'flex-1 flex flex-col justify-center items-center',
-            !isRoundOver && 'max-h-120',
+            'col-start-1 row-start-2 flex flex-col justify-center items-center',
+            isRoundOver && 'invisible max-sm:hidden',
           )}
         >
-          {isRoundOver ? (
-            <RoundSummary players={players} userId={userId} />
-          ) : (
-            <PlayArea
-              color={userPlayer.color}
-              playedCards={playedCards}
-              discardCard={discardCard}
-              isActive={
-                stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn
-              }
-              onDeckClick={onPickupFromDeck}
-              onDiscardClick={onPickupFromDiscard}
-              className='md:text-2xl sm:text-lg h-fit'
-              drawnCard={drawnCard}
-              canAutoPlay={canAutoPlay}
-              onAutoPlayDrawnCard={onAutoPlayDrawnCard}
-              onDrawnCardDismissed={onOverlayDismissed}
-            />
-          )}
+          <PlayArea
+            color={userPlayer.color}
+            playedCards={playedCards}
+            discardCard={discardCard}
+            isActive={stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn}
+            onDeckClick={onPickupFromDeck}
+            onDiscardClick={onPickupFromDiscard}
+            className='md:text-2xl sm:text-lg h-fit'
+            drawnCard={drawnCard}
+            canAutoPlay={canAutoPlay}
+            onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+            onDrawnCardDismissed={onOverlayDismissed}
+          />
         </div>
 
+        {isRoundOver && (
+          <div className='col-start-1 row-start-1 row-span-2 min-h-min flex flex-col justify-center items-center'>
+            <RoundSummary players={players} userId={userId} />
+          </div>
+        )}
+
         <Controls
+          className='col-start-1 row-start-3'
           onEmojiClick={onEmojiClick}
           onEndTurnClick={onEndTurnClick}
           onYanivClick={onYanivClick}
@@ -197,7 +198,7 @@ export default function Game({
 
         <Hand
           className={cn(
-            'md:text-2xl sm:text-lg',
+            'col-start-1 row-start-4 md:text-2xl sm:text-lg',
             isRoundOver && 'max-sm:hidden',
           )}
           color={userPlayer.color}
