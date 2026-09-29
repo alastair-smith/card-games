@@ -6,9 +6,9 @@ const cardVariants = cva('rounded-lg', {
   variants: {
     variant: {
       default:
-        'bg-card-background text-light-text [--card-surface:var(--color-card-background)]',
+        'bg-card-background text-light-text [--card-surface:var(--color-card-background)] [--card-muted-text:var(--color-light-text-disabled)]',
       panel:
-        'bg-panel-background text-dark-text border-2 border-white/30 [--card-surface:var(--color-panel-background)]',
+        'bg-panel-background text-dark-text border-2 border-white/30 [--card-surface:var(--color-panel-background)] [--card-muted-text:var(--color-dark-text-disabled)]',
     },
   },
   defaultVariants: {
@@ -63,7 +63,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn('text-light-text-disabled text-sm', className)}
+    className={cn('text-(--card-muted-text) text-sm', className)}
     {...props}
   />
 ));
