@@ -68,7 +68,7 @@ export function ScoreboardTable({
             <TableHead
               key={roundNumber}
               aria-label={`Round ${roundNumber}`}
-              className='h-auto px-2 py-2 text-center text-current opacity-70 whitespace-nowrap'
+              className='h-auto px-2 py-2 text-center text-dark-text-disabled whitespace-nowrap'
             >
               {isExpanded ? roundNumber : `Round ${roundNumber}`}
             </TableHead>

@@ -44,7 +44,12 @@ export function ScoreboardList({
                         ·
                       </span>
                     )}
-                    <span className={cn('opacity-70', isExpanded && 'sr-only')}>
+                    <span
+                      className={cn(
+                        'text-dark-text-disabled',
+                        isExpanded && 'sr-only',
+                      )}
+                    >
                       Round {roundNumber}:
                     </span>{' '}
                     {roundScore && <RoundPoints roundScore={roundScore} />}
@@ -54,7 +59,7 @@ export function ScoreboardList({
             </ul>
 
             <span className='shrink-0 whitespace-nowrap'>
-              <span className='opacity-70'>Total:</span>{' '}
+              <span className='text-dark-text-disabled'>Total:</span>{' '}
               <span className='text-base font-extrabold'>{score}</span>
             </span>
           </div>

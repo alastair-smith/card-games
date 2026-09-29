@@ -12,7 +12,7 @@ export function RoundPoints({ roundScore }: RoundPointsProps) {
       {adjusted}
       {original !== adjusted && (
         <>
-          <span aria-hidden='true' className='ml-1 opacity-70'>
+          <span aria-hidden='true' className='ml-1 text-dark-text-disabled'>
             ({original})
           </span>
           <span className='sr-only'>, hand worth {original}</span>
@@ -20,7 +20,7 @@ export function RoundPoints({ roundScore }: RoundPointsProps) {
       )}
       {halvedBy > 0 && (
         <>
-          <span aria-hidden='true' className='ml-1 opacity-70'>
+          <span aria-hidden='true' className='ml-1 text-dark-text-disabled'>
             (−{halvedBy})
           </span>
           <span className='sr-only'>, score halved by {halvedBy}</span>

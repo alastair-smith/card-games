@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect } from 'storybook/test';
+import { Card, CardContent } from '~/components/ui/card';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import {
   MAX_NAME_LENGTH,
@@ -97,6 +98,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {};
+
+export const InPanelCard: Story = {
+  decorators: [
+    (Story) => (
+      <Card variant='panel' className='w-full max-w-xl'>
+        <CardContent className='pt-4'>
+          <Story />
+        </CardContent>
+      </Card>
+    ),
+  ],
+};
 
 export const FirstRound: Story = {
   args: {
