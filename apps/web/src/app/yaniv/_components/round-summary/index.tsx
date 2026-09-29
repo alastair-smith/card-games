@@ -26,9 +26,7 @@ export function RoundSummary({ players, userId }: RoundSummaryProps) {
   return (
     <Card variant='panel' className='w-full max-w-xl'>
       <CardHeader className='items-center text-center'>
-        <CardDescription className='text-dark-text-disabled'>
-          Round {roundNumber}
-        </CardDescription>
+        <CardDescription>Round {roundNumber}</CardDescription>
         <CardTitle>{getRoundMessage(players, userId)}</CardTitle>
       </CardHeader>
       <CardContent>
