@@ -1,4 +1,3 @@
-import { useLayoutEffect, useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -39,18 +38,8 @@ export function ScoreboardTable({
   roundNumbers,
   isExpanded,
 }: ScoreboardTableProps) {
-  const tableRef = useRef<HTMLTableElement>(null);
-
-  useLayoutEffect(() => {
-    const scroller = tableRef.current?.parentElement;
-    if (isExpanded && roundNumbers.length > 0 && scroller) {
-      scroller.scrollLeft = scroller.scrollWidth;
-    }
-  }, [isExpanded, roundNumbers.length]);
-
   return (
     <Table
-      ref={tableRef}
       rootClassName={cn('overscroll-x-none', backgroundClassName, className)}
       className='tabular-nums'
     >
