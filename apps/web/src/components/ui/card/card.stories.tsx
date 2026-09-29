@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './card';
+} from '.';
 
 const meta = {
   title: 'UI Components / Card',
