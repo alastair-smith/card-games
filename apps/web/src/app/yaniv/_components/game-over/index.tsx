@@ -4,18 +4,12 @@ import { CelebrationRain } from '~/components/emoji-rain/celebration-rain';
 import GameLayout from '~/components/layout/game-layout';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
 import { toast } from '~/components/ui/toast';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
+import type { RoundScore } from '~/types/games/yaniv';
 import { HowToDialog } from '../how-to';
+import { Scoreboard } from '../scoreboard';
 import { buildShareData, performShare } from './share';
 
 type GameOverProps = {
@@ -23,6 +17,7 @@ type GameOverProps = {
     id: UserId;
     name: PlayerName;
     score: number;
+    roundScores: RoundScore[];
     isWinner: boolean;
   }[];
   userId: UserId;
@@ -32,7 +27,6 @@ export default function GameOver({ players, userId }: GameOverProps) {
   const winners = players.filter((player) => player.isWinner);
   const winningScore = winners[0]?.score;
   const userWins = winners.some((player) => player.id === userId);
-  const sortedPlayers = [...players].sort((a, b) => a.score - b.score);
   const [isCelebrating, setIsCelebrating] = useState(false);
 
   const handleShare = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,15 +45,15 @@ export default function GameOver({ players, userId }: GameOverProps) {
     <CelebrationRain
       emoji={userWins ? '🏆' : '🗑️'}
       isActive={isCelebrating}
-      className='h-dvh'
+      className='min-h-dvh'
     >
       <GameLayout
         actions={<HowToDialog />}
         gameType={GameType.YANIV}
-        className='flex flex-col h-dvh w-full overflow-hidden pb-2 gap-4 items-center'
+        className='flex flex-col w-full pb-2 gap-4 items-center'
       >
-        <div className='flex flex-col gap-3 items-center w-fit max-w-xl'>
-          <Card className='w-full'>
+        <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
+          <Card variant='panel' className='w-full'>
             <CardContent className='pt-4'>
               <div className='flex flex-col items-center'>
                 <CrownIcon
@@ -79,28 +73,13 @@ export default function GameOver({ players, userId }: GameOverProps) {
             </CardContent>
           </Card>
 
-          <Card className='max-w-xl w-full'>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Player</TableHead>
-                    <TableHead>Score</TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {sortedPlayers.map(({ id, name, score }) => (
-                    <TableRow key={id}>
-                      <TableCell>
-                        {name}
-                        {id === userId && ' (You)'}
-                      </TableCell>
-                      <TableCell>{score}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+          <Card variant='panel' className='w-full'>
+            <CardContent className='pt-4'>
+              <Scoreboard
+                players={players}
+                userId={userId}
+                isInitiallyExpanded
+              />
             </CardContent>
           </Card>
 

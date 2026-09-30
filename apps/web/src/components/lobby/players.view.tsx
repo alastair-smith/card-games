@@ -344,7 +344,7 @@ export default function Players({
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: placholder row
               key={index}
-              className='flex justify-center gap-4 opacity-50 py-4'
+              className='flex justify-center gap-4 text-light-text-disabled py-4'
             >
               <UserIcon size={22} />
               <span>Optional Player</span>
@@ -435,7 +435,7 @@ export default function Players({
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
               <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={5}>
-                  <div className='flex justify-center gap-4 opacity-50'>
+                  <div className='flex justify-center gap-4 text-light-text-disabled'>
                     <UserIcon size={22} />
                     <span>Optional Player</span>
                   </div>

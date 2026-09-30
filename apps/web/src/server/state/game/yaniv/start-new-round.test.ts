@@ -3,8 +3,13 @@ import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import {
+  buildInProgressState,
+  buildPlayer,
+  buildRoundScore,
+} from '~/test-utils/yaniv';
 import { deckWithJokers, Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
@@ -66,40 +71,31 @@ const USER_2_CARDS: YanivPlayingCard[] = [
   { suit: Suit.SPADES, rank: Rank.TWO },
 ];
 
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.REDEAL,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 3,
-      hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-      name: 'Player 1' as PlayerName,
-      score: 10,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: true,
-      roundScore: { original: 3, adjusted: 3 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 5,
-      hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
-      name: 'Player 2' as PlayerName,
-      score: 20,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 5, adjusted: 5 },
-    },
-  ],
-  playedCards: [{ suit: Suit.CLUBS, rank: Rank.THREE }],
-  ...overrides,
-});
+const USER_1_ROUND_SCORES = [buildRoundScore({ original: 3, adjusted: 0 })];
+const USER_2_ROUND_SCORES = [buildRoundScore({ original: 5 })];
+
+const makeState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.REDEAL,
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({
+        id: USER_1,
+        hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+        score: 10,
+        isYanivCalled: true,
+        roundScores: USER_1_ROUND_SCORES,
+      }),
+      buildPlayer({
+        id: USER_2,
+        hand: [{ suit: Suit.SPADES, rank: Rank.FIVE }],
+        score: 20,
+        roundScores: USER_2_ROUND_SCORES,
+      }),
+    ],
+    playedCards: [{ suit: Suit.CLUBS, rank: Rank.THREE }],
+    ...overrides,
+  });
 
 describe('startNewRound', () => {
   beforeEach(() => {
@@ -160,6 +156,24 @@ describe('startNewRound', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_1, isYanivCalled: false }),
         expect.objectContaining({ id: USER_2, isYanivCalled: false }),
+      ]),
+    });
+  });
+
+  test('keeps the scores from previous rounds', async () => {
+    await startNewRound(CODE, USER_1);
+
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
+    expect(savedState).toMatchObject({
+      players: expect.arrayContaining([
+        expect.objectContaining({
+          id: USER_1,
+          roundScores: USER_1_ROUND_SCORES,
+        }),
+        expect.objectContaining({
+          id: USER_2,
+          roundScores: USER_2_ROUND_SCORES,
+        }),
       ]),
     });
   });

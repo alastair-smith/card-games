@@ -1,12 +1,16 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import {
+  buildInProgressState,
+  buildPlayer,
+  buildRoundScore,
+} from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
-  DEFAULT_HAND_SIZE,
-  GameStage,
+  type GameStage,
   type GameState,
   GameStep,
   YANIV_CALLER_PENALTY,
@@ -28,47 +32,30 @@ const USER_1 = 'user-1' as UserId;
 const USER_2 = 'user-2' as UserId;
 const USER_3 = 'user-3' as UserId;
 
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PROCEED,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.HEARTS, rank: Rank.ACE },
-        { suit: Suit.SPADES, rank: Rank.TWO },
-      ],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: true,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-        { suit: Suit.CLUBS, rank: Rank.SIX },
-      ],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-  ],
-  playedCards: [],
-  drawnCard: undefined,
-  ...overrides,
-});
+const makeState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.PROCEED,
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({
+        id: USER_1,
+        hand: [
+          { suit: Suit.HEARTS, rank: Rank.ACE },
+          { suit: Suit.SPADES, rank: Rank.TWO },
+        ],
+        isYanivCalled: true,
+      }),
+      buildPlayer({
+        id: USER_2,
+        hand: [
+          { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+          { suit: Suit.CLUBS, rank: Rank.SIX },
+        ],
+      }),
+    ],
+    drawnCard: undefined,
+    ...overrides,
+  });
 
 describe('scoreYanivRound', () => {
   beforeEach(() => {
@@ -83,36 +70,22 @@ describe('scoreYanivRound', () => {
     // USER_1 should get +0, USER_2 should get +25
     const state = makeState({
       players: [
-        {
+        buildPlayer({
           id: USER_1,
-          color: 'cyan',
-          cardCount: 2,
           hand: [
             { suit: Suit.HEARTS, rank: Rank.ACE },
             { suit: Suit.SPADES, rank: Rank.TWO },
           ],
-          name: 'Player 1' as PlayerName,
-          score: 0,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
-        {
+        }),
+        buildPlayer({
           id: USER_2,
-          color: 'cyan',
-          cardCount: 2,
           hand: [
             { suit: Suit.DIAMONDS, rank: Rank.THREE },
             { suit: Suit.CLUBS, rank: Rank.FOUR },
           ],
-          name: 'Player 2' as PlayerName,
-          score: 0,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
+        }),
       ],
     });
 
@@ -122,47 +95,34 @@ describe('scoreYanivRound', () => {
     const player1 = savedState.players.find((p) => p.id === USER_1);
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player1?.score).toBe(0);
-    expect(player1?.roundScore).toEqual({ original: 3, adjusted: 0 });
+    expect(player1?.roundScores).toEqual([
+      buildRoundScore({ original: 3, adjusted: 0 }),
+    ]);
     expect(player2?.score).toBe(YANIV_CALLER_PENALTY);
-    expect(player2?.roundScore).toEqual({
-      original: 7,
-      adjusted: YANIV_CALLER_PENALTY,
-    });
+    expect(player2?.roundScores).toEqual([
+      buildRoundScore({ original: 7, adjusted: YANIV_CALLER_PENALTY }),
+    ]);
   });
 
   test('callers with equal hand values both get zero', async () => {
     const state = makeState({
       players: [
-        {
+        buildPlayer({
           id: USER_1,
-          color: 'cyan',
-          cardCount: 2,
           hand: [
             { suit: Suit.HEARTS, rank: Rank.ACE },
             { suit: Suit.SPADES, rank: Rank.TWO },
           ],
-          name: 'Player 1' as PlayerName,
-          score: 0,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
-        {
+        }),
+        buildPlayer({
           id: USER_2,
-          color: 'cyan',
-          cardCount: 2,
           hand: [
             { suit: Suit.DIAMONDS, rank: Rank.ACE },
             { suit: Suit.CLUBS, rank: Rank.TWO },
           ],
-          name: 'Player 2' as PlayerName,
-          score: 0,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
+        }),
       ],
     });
 
@@ -181,7 +141,7 @@ describe('scoreYanivRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player2?.score).toBe(10);
-    expect(player2?.roundScore).toEqual({ original: 10, adjusted: 10 });
+    expect(player2?.roundScores).toEqual([buildRoundScore({ original: 10 })]);
   });
 
   test('single caller always gets zero', async () => {
@@ -192,48 +152,102 @@ describe('scoreYanivRound', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     const player1 = savedState.players.find((p) => p.id === USER_1);
     expect(player1?.score).toBe(0);
-    expect(player1?.roundScore).toEqual({ original: 3, adjusted: 0 });
+    expect(player1?.roundScores).toEqual([
+      buildRoundScore({ original: 3, adjusted: 0 }),
+    ]);
+  });
+
+  describe('round history', () => {
+    const NON_CALLER_HAND = [
+      { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+      { suit: Suit.CLUBS, rank: Rank.SIX },
+    ];
+
+    test('adds the round to the scores from previous rounds', async () => {
+      const previousRound = buildRoundScore({ original: 12 });
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({
+            id: USER_2,
+            hand: NON_CALLER_HAND,
+            score: 12,
+            roundScores: [previousRound],
+          }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(
+        savedState.players.find((p) => p.id === USER_2)?.roundScores,
+      ).toEqual([previousRound, buildRoundScore({ original: 10 })]);
+    });
+
+    test('records the drop when the score lands on 50 and is halved', async () => {
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({ id: USER_2, hand: NON_CALLER_HAND, score: 40 }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const player2 = savedState.players.find((p) => p.id === USER_2);
+      expect(player2?.score).toBe(25);
+      expect(player2?.roundScores).toEqual([
+        buildRoundScore({ original: 10, halvedBy: 25 }),
+      ]);
+    });
+
+    test('records the drop when the score lands on 100 and is halved', async () => {
+      const state = makeState({
+        players: [
+          buildPlayer({ id: USER_1, isYanivCalled: true }),
+          buildPlayer({
+            id: USER_2,
+            hand: NON_CALLER_HAND,
+            score: 90,
+            isFiftyScoreHalved: true,
+          }),
+        ],
+      });
+
+      await scoreYanivRound(CODE, state);
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const player2 = savedState.players.find((p) => p.id === USER_2);
+      expect(player2?.score).toBe(50);
+      expect(player2?.roundScores).toEqual([
+        buildRoundScore({ original: 10, halvedBy: 50 }),
+      ]);
+    });
   });
 
   test('among three callers, only the one with highest hand gets penalty', async () => {
     const state = makeState({
       players: [
-        {
+        buildPlayer({
           id: USER_1,
-          color: 'cyan',
-          cardCount: 1,
           hand: [{ suit: Suit.HEARTS, rank: Rank.ACE }],
-          name: 'Player 1' as PlayerName,
           score: 10,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
-        {
+        }),
+        buildPlayer({
           id: USER_2,
-          color: 'cyan',
-          cardCount: 1,
           hand: [{ suit: Suit.DIAMONDS, rank: Rank.ACE }],
-          name: 'Player 2' as PlayerName,
           score: 20,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
-        {
+        }),
+        buildPlayer({
           id: USER_3,
-          color: 'cyan',
-          cardCount: 1,
           hand: [{ suit: Suit.CLUBS, rank: Rank.FIVE }],
-          name: 'Player 3' as PlayerName,
           score: 30,
-          isFiftyScoreHalved: false,
-          isHundredScoreHalved: false,
           isYanivCalled: true,
-          roundScore: { original: 0, adjusted: 0 },
-        },
+        }),
       ],
     });
 

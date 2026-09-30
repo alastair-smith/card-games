@@ -8,7 +8,7 @@
     "build:stories": "SKIP_ENV_VALIDATION=true storybook build",
     "dev": "pnpm run dev:app",
     "dev:app": "node --env-file .env.development ./src/server.js",
-    "dev:stories": "storybook dev -p 6006 --host 0.0.0.0",
+    "dev:stories": "storybook dev -p 6006 --host 0.0.0.0 --no-open",
     "preview": "next build && next start",
     "start": "NODE_ENV=production node --env-file .env ./src/server.js",
     "typecheck": "tsc --noEmit",

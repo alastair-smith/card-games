@@ -1,11 +1,10 @@
 import { describe, expect, test } from 'vitest';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import {
-  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
-  GameStep,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { toClientGameState } from './to-client-game-state';
@@ -25,44 +24,19 @@ const USER_2_CARDS: YanivPlayingCard[] = [
   { suit: Suit.DIAMONDS, rank: Rank.FIVE },
 ];
 
-const makePlayers = (): InProgressState['players'] => [
-  {
-    id: USER_1,
-    color: 'cyan',
-    cardCount: 2,
-    hand: USER_1_CARDS,
-    name: 'Player 1' as PlayerName,
-    score: 10,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    isYanivCalled: false,
-    roundScore: { original: 10, adjusted: 10 },
-  },
-  {
-    id: USER_2,
-    color: 'cyan',
-    cardCount: 2,
-    hand: USER_2_CARDS,
-    name: 'Player 2' as PlayerName,
-    score: 20,
-    isFiftyScoreHalved: false,
-    isHundredScoreHalved: false,
-    isYanivCalled: false,
-    roundScore: { original: 20, adjusted: 20 },
-  },
+const makePlayers = () => [
+  buildPlayer({ id: USER_1, hand: USER_1_CARDS, score: 10 }),
+  buildPlayer({ id: USER_2, hand: USER_2_CARDS, score: 20 }),
 ];
 
 const makeInProgressState = (
   overrides: Partial<InProgressState> = {},
-): InProgressState => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PLAY_CARDS,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: makePlayers(),
-  playedCards: [],
-  ...overrides,
-});
+): InProgressState =>
+  buildInProgressState({
+    currentPlayerId: USER_1,
+    players: makePlayers(),
+    ...overrides,
+  });
 
 const makeFinishedState = (
   overrides: Partial<FinishedState> = {},

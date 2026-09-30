@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
+import { buildClientPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { DEFAULT_HAND_SIZE, GameViewStage } from '~/types/games/yaniv';
@@ -55,6 +56,10 @@ vi.mock('../how-to', () => ({
   HowToDialog: () => null,
 }));
 
+vi.mock('../round-summary', () => ({
+  RoundSummary: () => <div data-testid='round-summary' />,
+}));
+
 const baseProps = {
   handSize: DEFAULT_HAND_SIZE,
   onEmojiClick: vi.fn(),
@@ -63,28 +68,21 @@ const baseProps = {
   onPlayCards: vi.fn(),
   players: [
     {
-      id: '1' as UserId,
-      color: 'red' as const,
-      cardCount: 7,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      name: 'Alice' as PlayerName,
-      score: 10,
-      roundScore: { original: 0, adjusted: 0 },
-      isYanivCalled: false,
+      ...buildClientPlayer({
+        id: '1' as UserId,
+        color: 'red',
+        cardCount: 7,
+        name: 'Alice' as PlayerName,
+        score: 10,
+      }),
       isPlayersTurn: true,
     },
-    {
+    buildClientPlayer({
       id: '2' as UserId,
-      color: 'cyan' as const,
       cardCount: 5,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
       name: 'Bob' as PlayerName,
       score: 20,
-      roundScore: { original: 0, adjusted: 0 },
-      isYanivCalled: false,
-    },
+    }),
   ],
   userId: '1' as UserId,
   cards: [{ suit: Suit.CLUBS, rank: Rank.ACE }],
@@ -112,12 +110,12 @@ describe('Game', () => {
 
   test('shows the round summary at the end of a round', () => {
     render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
-    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
   });
 
   test('shows the round summary when waiting for new round', () => {
     render(<Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />);
-    expect(screen.getByText('Round Summary')).toBeInTheDocument();
+    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
   });
 
   describe('turn announcement', () => {

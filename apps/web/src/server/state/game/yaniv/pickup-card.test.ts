@@ -3,11 +3,11 @@ import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
+import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
-import type { PlayerName, UserId } from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
-  DEFAULT_HAND_SIZE,
   GameStage,
   type GameState,
   GameStep,
@@ -49,43 +49,23 @@ const CARD_1: YanivPlayingCard = { suit: Suit.HEARTS, rank: Rank.FIVE };
 const CARD_2: YanivPlayingCard = { suit: Suit.SPADES, rank: Rank.SEVEN };
 const DRAWN_CARD: YanivPlayingCard = { suit: Suit.CLUBS, rank: Rank.THREE };
 
-const makeState = (overrides: Partial<State> = {}): State => ({
-  gameStage: GameStage.IN_PROGRESS,
-  gameStep: GameStep.PICKUP_CARD,
-  handSize: DEFAULT_HAND_SIZE,
-  currentPlayerId: USER_1,
-  players: [
-    {
-      id: USER_1,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [CARD_1, CARD_2],
-      name: 'Player 1' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-    {
-      id: USER_2,
-      color: 'cyan',
-      cardCount: 2,
-      hand: [
-        { suit: Suit.DIAMONDS, rank: Rank.FOUR },
-        { suit: Suit.CLUBS, rank: Rank.SIX },
-      ],
-      name: 'Player 2' as PlayerName,
-      score: 0,
-      isFiftyScoreHalved: false,
-      isHundredScoreHalved: false,
-      isYanivCalled: false,
-      roundScore: { original: 0, adjusted: 0 },
-    },
-  ],
-  playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-  ...overrides,
-});
+const makeState = (overrides: Partial<State> = {}): State =>
+  buildInProgressState({
+    gameStep: GameStep.PICKUP_CARD,
+    currentPlayerId: USER_1,
+    players: [
+      buildPlayer({ id: USER_1, hand: [CARD_1, CARD_2] }),
+      buildPlayer({
+        id: USER_2,
+        hand: [
+          { suit: Suit.DIAMONDS, rank: Rank.FOUR },
+          { suit: Suit.CLUBS, rank: Rank.SIX },
+        ],
+      }),
+    ],
+    playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+    ...overrides,
+  });
 
 describe('pickupCard', () => {
   beforeEach(() => {

@@ -7,8 +7,10 @@ import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import {
   GameViewStage,
   type HandSize,
+  type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
+import { cn } from '~/utils/cn';
 import type { PlayerColor } from '~/utils/player-color';
 import { sumYanivHand } from '~/utils/yaniv';
 import Controls from '../controls';
@@ -44,7 +46,7 @@ type BaseGameProps = {
     isHundredScoreHalved: boolean;
     name: PlayerName;
     score: number;
-    roundScore: { original: number; adjusted: number };
+    roundScores: RoundScore[];
     isYanivCalled: boolean;
     emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId };
     isPlayersTurn?: boolean;
@@ -118,25 +120,22 @@ export default function Game({
     [cards, selectedCards, drawnCard, isShownInOverlay],
   );
 
-  const roundSummary = useMemo(
-    () =>
-      [...players]
-        .sort((a, b) => a.roundScore.adjusted - b.roundScore.adjusted)
-        .map(({ id, name, roundScore }) => ({ id, name, roundScore })),
-    [players],
-  );
-
-  const handTotal =
+  const isRoundOver =
     stage === GameViewStage.END_OF_ROUND ||
-    stage === GameViewStage.WAITING_FOR_NEW_ROUND
-      ? userPlayer.roundScore.original
-      : sumYanivHand(cards);
+    stage === GameViewStage.WAITING_FOR_NEW_ROUND;
+
+  const handTotal = isRoundOver
+    ? (userPlayer.roundScores.at(-1)?.original ?? 0)
+    : sumYanivHand(cards);
 
   return (
     <GameLayout
       actions={<HowToDialog />}
       gameType={GameType.YANIV}
-      className='h-dvh w-full overflow-hidden px-2 pb-2'
+      className={cn(
+        'w-full px-2 pb-2',
+        !isRoundOver && 'h-dvh overflow-hidden',
+      )}
     >
       {isUserTakingTurn && <ScreenEdgeHighlight color={userPlayer.color} />}
 
@@ -146,38 +145,48 @@ export default function Game({
 
       <PageEmojiRain
         reactions={pageReactions}
-        className='flex-1 flex flex-col justify-center gap-4'
+        className='flex-1 grid grid-cols-1 grid-rows-[auto_1fr_auto_auto] gap-4'
       >
-        <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+        <div
+          className={cn(
+            'col-start-1 row-start-1 grid grid-cols-2 md:grid-cols-3 gap-3',
+            isRoundOver && 'invisible max-sm:hidden',
+          )}
+        >
           {players.map(({ id, emojiReaction, ...player }) => (
             <ScoreCard key={id} reactionEmoji={emojiReaction} {...player} />
           ))}
         </div>
 
-        <div className='flex-1 max-h-120 flex flex-col justify-center items-center'>
-          {stage === GameViewStage.END_OF_ROUND ||
-          stage === GameViewStage.WAITING_FOR_NEW_ROUND ? (
-            <RoundSummary players={roundSummary} />
-          ) : (
-            <PlayArea
-              color={userPlayer.color}
-              playedCards={playedCards}
-              discardCard={discardCard}
-              isActive={
-                stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn
-              }
-              onDeckClick={onPickupFromDeck}
-              onDiscardClick={onPickupFromDiscard}
-              className='md:text-2xl sm:text-lg h-fit'
-              drawnCard={drawnCard}
-              canAutoPlay={canAutoPlay}
-              onAutoPlayDrawnCard={onAutoPlayDrawnCard}
-              onDrawnCardDismissed={onOverlayDismissed}
-            />
+        <div
+          className={cn(
+            'col-start-1 row-start-2 flex flex-col justify-center items-center',
+            isRoundOver && 'invisible max-sm:hidden',
           )}
+        >
+          <PlayArea
+            color={userPlayer.color}
+            playedCards={playedCards}
+            discardCard={discardCard}
+            isActive={stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn}
+            onDeckClick={onPickupFromDeck}
+            onDiscardClick={onPickupFromDiscard}
+            className='md:text-2xl sm:text-lg h-fit'
+            drawnCard={drawnCard}
+            canAutoPlay={canAutoPlay}
+            onAutoPlayDrawnCard={onAutoPlayDrawnCard}
+            onDrawnCardDismissed={onOverlayDismissed}
+          />
         </div>
 
+        {isRoundOver && (
+          <div className='col-start-1 row-start-1 row-span-2 min-h-min flex flex-col justify-center items-center'>
+            <RoundSummary players={players} userId={userId} />
+          </div>
+        )}
+
         <Controls
+          className='col-start-1 row-start-3'
           onEmojiClick={onEmojiClick}
           onEndTurnClick={onEndTurnClick}
           onYanivClick={onYanivClick}
@@ -188,7 +197,10 @@ export default function Game({
         />
 
         <Hand
-          className='md:text-2xl sm:text-lg'
+          className={cn(
+            'col-start-1 row-start-4 md:text-2xl sm:text-lg',
+            isRoundOver && 'max-sm:hidden',
+          )}
           color={userPlayer.color}
           cards={cardsWithSelection}
           handSize={handSize}

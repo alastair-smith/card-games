@@ -28,7 +28,6 @@ export const startNewRound = async (code: GameCode, userId: UserId) => {
       isYanivCalled: false,
       cardCount: cards.length,
       hand: cards,
-      roundScore: { original: 0, adjusted: 0 },
     });
   }
 
