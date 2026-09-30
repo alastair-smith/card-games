@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
-import type { UserId } from '~/types/entities';
+import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import { type HandSize, handSizeSchema } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
@@ -119,6 +119,10 @@ export default function Lobby({
 
   const handleNameChange = (name: string) => {
     setUser((prev) => ({ ...prev, name, nameError: '' }));
+    if (name.length < MIN_NAME_LENGTH) {
+      debouncedUpdatePlayerName.cancel();
+      return;
+    }
     debouncedUpdatePlayerName(name);
   };
 

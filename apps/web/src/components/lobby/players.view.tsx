@@ -27,7 +27,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import {
   Table,
@@ -37,6 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
+import { PlayerNameInput } from './player-name-input';
 
 function PlayerDropdown({
   className,
@@ -286,9 +286,9 @@ export default function Players({
                 ''
               )}
               {player.isUser ? (
-                <Input
-                  value={user.name}
-                  onChange={(e) => handleNameChange(e.target.value)}
+                <PlayerNameInput
+                  name={user.name}
+                  onNameChange={handleNameChange}
                 />
               ) : (
                 <div className='w-full overflow-hidden'>
@@ -376,9 +376,9 @@ export default function Players({
                 </TableCell>
                 <TableCell>
                   {player.isUser ? (
-                    <Input
-                      value={user.name}
-                      onChange={(e) => handleNameChange(e.target.value)}
+                    <PlayerNameInput
+                      name={user.name}
+                      onNameChange={handleNameChange}
                     />
                   ) : (
                     <span className='border border-transparent px-3'>
