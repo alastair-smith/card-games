@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import type { HandSize } from '~/types/games/yaniv';
@@ -49,13 +49,19 @@ vi.mock('~/trpc/react', () => ({
 vi.mock('./lobby.view', () => ({
   default: (props: {
     handSize: HandSize;
-    user: { isReady: boolean };
+    user: { isReady: boolean; name: string };
+    handleNameChange: (name: string) => void;
     handleHandSizeChange: (handSize: string) => void;
     handleReadyChange: (isReady: boolean) => void;
   }) => (
     <div>
       <p>Hand size: {props.handSize}</p>
       <p>Ready: {String(props.user.isReady)}</p>
+      <input
+        aria-label='Your name'
+        value={props.user.name}
+        onChange={(event) => props.handleNameChange(event.target.value)}
+      />
       <button type='button' onClick={() => props.handleHandSizeChange('5')}>
         Choose 5
       </button>
@@ -196,6 +202,53 @@ describe('Lobby', () => {
       renderLobby({ isReady: true });
 
       expect(screen.getByText('Ready: true')).toBeInTheDocument();
+    });
+  });
+
+  describe('name', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const changeName = (name: string) =>
+      fireEvent.change(screen.getByRole('textbox', { name: 'Your name' }), {
+        target: { value: name },
+      });
+
+    test('saves the name once typing has paused', () => {
+      renderLobby();
+
+      changeName('Grace');
+      vi.runAllTimers();
+
+      expect(otherMutation.mutate).toHaveBeenCalledOnce();
+      expect(otherMutation.mutate).toHaveBeenCalledWith(
+        { field: 'name', code, playerName: 'Grace' },
+        expect.anything(),
+      );
+    });
+
+    test('does not save an empty name', () => {
+      renderLobby();
+
+      changeName('');
+      vi.runAllTimers();
+
+      expect(otherMutation.mutate).not.toHaveBeenCalled();
+    });
+
+    test('does not save a name that was cleared before it was saved', () => {
+      renderLobby();
+
+      changeName('G');
+      changeName('');
+      vi.runAllTimers();
+
+      expect(otherMutation.mutate).not.toHaveBeenCalled();
     });
   });
 });
