@@ -7,7 +7,7 @@ import type { UserId } from '~/types/entities';
 import { type GameCode, GameUpdate } from '~/types/game';
 import { logger } from '~/utils/logger';
 
-export function removePlayer({
+export async function removePlayer({
   gameCode,
   actor,
   target,

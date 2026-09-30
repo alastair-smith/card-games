@@ -4,7 +4,7 @@ import { publishLobbyState } from '~/server/events/lobby';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 
-export const updatePlayerState = ({
+export const updatePlayerState = async ({
   code,
   userId,
   field,

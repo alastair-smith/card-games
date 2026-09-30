@@ -5,7 +5,7 @@ import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import type { Settings } from '~/types/games/yaniv';
 
-export const updateSettings = ({
+export const updateSettings = async ({
   code,
   userId,
   settings,

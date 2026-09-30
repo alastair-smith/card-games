@@ -21,7 +21,7 @@ const enrichPlayerData = (
   });
 };
 
-export const joinGame = ({
+export const joinGame = async ({
   code,
   userId,
 }: {

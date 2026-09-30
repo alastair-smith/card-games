@@ -7,7 +7,7 @@ import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { logger } from '~/utils/logger';
 
-export function makeHost({
+export async function makeHost({
   gameCode,
   target,
   actor,
