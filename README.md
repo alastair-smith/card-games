@@ -20,6 +20,7 @@
   <a href="#about">About</a>
   | <a href="#getting-started">Getting Started</a>
   | <a href="#contributing">Contributing</a>
+  | <a href="#licence">Licence</a>
 </p>
 
 ## About
@@ -101,3 +102,11 @@ Contributions are welcome! A few guidelines to keep things smooth:
 - **Game rules are intentionally opinionated** — Bug reports and fun/balance suggestions are welcome, but variations on rules are unlikely to be accepted at this time.
 
 If you've spotted a bug or have a suggestion, please [open an issue](https://github.com/alastair-smith/card-games/issues).
+
+## Licence
+
+Copyright (C) 2026 Alastair Smith
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU Affero General Public License](./LICENSE.md) for more details.
