@@ -1,4 +1,5 @@
 import { getLobby, type Lobby, setLobby } from '~/server/data/lobby';
+import { withLobbyLock } from '~/server/data/lobby-lock';
 import { publishLobbyState } from '~/server/events/lobby';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, GameUpdate, type Player } from '~/types/game';
@@ -20,7 +21,7 @@ const enrichPlayerData = (
   });
 };
 
-export const joinGame = async ({
+export const joinGame = ({
   code,
   userId,
 }: {
@@ -35,53 +36,58 @@ export const joinGame = async ({
       players: Player[];
       settings: Settings;
     }
-> => {
-  const lobby = await getLobby({ code });
+> =>
+  withLobbyLock(code, async () => {
+    const lobby = await getLobby({ code });
 
-  if (!lobby) {
-    throw new Error('lobby not found');
-  }
+    if (!lobby) {
+      throw new Error('lobby not found');
+    }
 
-  if (lobby.type !== GameType.YANIV) {
-    throw new Error('not a Yaniv lobby');
-  }
+    if (lobby.type !== GameType.YANIV) {
+      throw new Error('not a Yaniv lobby');
+    }
 
-  // already in game
-  if (lobby.players.some(({ id }) => id === userId)) {
+    // already in game
+    if (lobby.players.some(({ id }) => id === userId)) {
+      return {
+        update: GameUpdate.LOBBY_UPDATE,
+        players: enrichPlayerData(lobby.players, lobby.host, userId),
+        settings: lobby.settings,
+      };
+    }
+
+    // full
+    if (lobby.players.length === MAX_PLAYERS) {
+      return { update: GameUpdate.LOBBY_FULL };
+    }
+
+    // else join
+
+    const updatedPlayers = [
+      ...lobby.players,
+      {
+        id: userId,
+        name: generatePlayerName(),
+        color: getRandomPlayerColor(lobby.players.map(({ color }) => color)),
+        isReady: false,
+      },
+    ];
+
+    const updatedLobby = await setLobby(
+      { code },
+      { ...lobby, players: updatedPlayers },
+    );
+
+    await publishLobbyState(code, updatedLobby);
+
     return {
       update: GameUpdate.LOBBY_UPDATE,
-      players: enrichPlayerData(lobby.players, lobby.host, userId),
+      players: enrichPlayerData(
+        updatedLobby.players,
+        updatedLobby.host,
+        userId,
+      ),
       settings: lobby.settings,
     };
-  }
-
-  // full
-  if (lobby.players.length === MAX_PLAYERS) {
-    return { update: GameUpdate.LOBBY_FULL };
-  }
-
-  // else join
-
-  const updatedPlayers = [
-    ...lobby.players,
-    {
-      id: userId,
-      name: generatePlayerName(),
-      color: getRandomPlayerColor(lobby.players.map(({ color }) => color)),
-      isReady: false,
-    },
-  ];
-
-  const updatedLobby = await setLobby(
-    { code },
-    { ...lobby, players: updatedPlayers },
-  );
-
-  await publishLobbyState(code, updatedLobby);
-
-  return {
-    update: GameUpdate.LOBBY_UPDATE,
-    players: enrichPlayerData(updatedLobby.players, updatedLobby.host, userId),
-    settings: lobby.settings,
-  };
-};
+  });

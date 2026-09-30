@@ -53,16 +53,14 @@ export default function YanivClient({
       onStarted: () => {
         console.log(`Subscription to game ${code} started`);
       },
-      onData: async (newGameState) => {
+      onData: (newGameState) => {
         const remoteCtx = remoteContextFromTraceparent(newGameState._trace);
-        await clientTracer.startActiveSpan(
+        clientTracer.startActiveSpan(
           'subscription.receive',
           {},
           remoteCtx,
-          async (span) => {
+          (span) => {
             try {
-              await setGameAttributes(span, code, userId);
-
               switch (newGameState.update) {
                 case GameUpdate.KICKED:
                   setStatus(GameStatus.FINISHED);
@@ -124,7 +122,9 @@ export default function YanivClient({
                 }
               }
             } finally {
-              span.end();
+              void setGameAttributes(span, code, userId).finally(() =>
+                span.end(),
+              );
             }
           },
         );

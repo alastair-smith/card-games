@@ -78,58 +78,12 @@ export const yanivStateSubscription = protectedProcedure
     input: { code },
     ctx: { userId, signal },
   }): AsyncGenerator<StateSubscription> {
-    const rawState = await getGameState(code);
-
-    if (!rawState) {
-      return { update: GameUpdate.GAME_NOT_FOUND };
-    }
-
-    switch (rawState.gameStage) {
-      case GameStage.FINISHED: {
-        if (!rawState.players.some((player) => player.id === userId)) {
-          return { update: GameUpdate.GAME_NOT_FOUND };
-        }
-        return {
-          update: GameUpdate.FINISHED,
-          state: toClientGameState(rawState, userId),
-        };
-      }
-
-      case GameStage.LOBBY: {
-        const lobbyData = await joinGame({ code, userId });
-
-        if (lobbyData.update === GameUpdate.LOBBY_FULL) {
-          return { update: GameUpdate.LOBBY_FULL };
-        }
-
-        yield {
-          update: lobbyData.update,
-          players: lobbyData.players,
-          settings: lobbyData.settings,
-        };
-
-        break;
-      }
-
-      case GameStage.IN_PROGRESS: {
-        const topDiscardCard = await yanivDiscard.peekDiscard(code);
-        yield {
-          update: GameUpdate.GAME_STATE_UPDATE,
-          state: toClientGameState({ ...rawState, topDiscardCard }, userId),
-        };
-        break;
-      }
-
-      default: {
-        throw new Error(
-          `Unexpected initial game stage: ${String((rawState as { gameStage: string }).gameStage)}`,
-        );
-      }
-    }
-
     const messageQueue: QueuedMessage[] = [];
+    let hasJoinedLobby = false;
 
     function lobbyHandler(message: unknown) {
+      if (!hasJoinedLobby) return;
+
       const emitContext = trace.getSpanContext(otelContext.active());
       const messageData = yanivLobbySchema.safeParse(message);
 
@@ -208,6 +162,60 @@ export const yanivStateSubscription = protectedProcedure
     emitter.on(emojiChannel, emojiHandler);
 
     try {
+      const rawState = await getGameState(code);
+
+      if (!rawState) {
+        yield { update: GameUpdate.GAME_NOT_FOUND };
+        return;
+      }
+
+      switch (rawState.gameStage) {
+        case GameStage.FINISHED: {
+          if (!rawState.players.some((player) => player.id === userId)) {
+            yield { update: GameUpdate.GAME_NOT_FOUND };
+            return;
+          }
+          yield {
+            update: GameUpdate.FINISHED,
+            state: toClientGameState(rawState, userId),
+          };
+          return;
+        }
+
+        case GameStage.LOBBY: {
+          const lobbyData = await joinGame({ code, userId });
+          hasJoinedLobby = true;
+
+          if (lobbyData.update === GameUpdate.LOBBY_FULL) {
+            yield { update: GameUpdate.LOBBY_FULL };
+            return;
+          }
+
+          yield {
+            update: lobbyData.update,
+            players: lobbyData.players,
+            settings: lobbyData.settings,
+          };
+
+          break;
+        }
+
+        case GameStage.IN_PROGRESS: {
+          const topDiscardCard = await yanivDiscard.peekDiscard(code);
+          yield {
+            update: GameUpdate.GAME_STATE_UPDATE,
+            state: toClientGameState({ ...rawState, topDiscardCard }, userId),
+          };
+          break;
+        }
+
+        default: {
+          throw new Error(
+            `Unexpected initial game stage: ${String((rawState as { gameStage: string }).gameStage)}`,
+          );
+        }
+      }
+
       while (!signal?.aborted) {
         if (messageQueue.length > 0) {
           const queued = messageQueue.shift();
