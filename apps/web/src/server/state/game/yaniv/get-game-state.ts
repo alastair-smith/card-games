@@ -1,12 +1,7 @@
 import { getYanivState } from '~/server/data/yaniv';
+import { withLock } from '~/server/state/lib/locks';
 import type { GameCode } from '~/types/game';
 import type { GameState } from '~/types/games/yaniv';
 
-export type { ClientGameState } from './to-client-game-state';
-export { toClientGameState } from './to-client-game-state';
-
-export const getGameState = async (
-  code: GameCode,
-): Promise<GameState | null> => {
-  return getYanivState({ code });
-};
+export const getGameState = async (code: GameCode): Promise<GameState | null> =>
+  withLock('yaniv', code, async () => getYanivState({ code }));

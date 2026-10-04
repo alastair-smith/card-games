@@ -136,6 +136,19 @@ need to be backwards compatible — games already in progress can break. Add new
 fields as required, not optional or defaulted, and don't add fallbacks for
 records written before the change.
 
+### State operations
+
+Every exported function in `server/state/**` that updates an existing store in
+Redis wraps its whole body in `withLock` from `~/server/state/lib/locks`, so
+concurrent requests can't overwrite each other:
+
+```ts
+withLock('yaniv', code, async () => { ... });
+```
+
+Creating a new store doesn't need a lock on that store — nothing else can be
+using it yet.
+
 ### Component prop naming
 
 Action callbacks: prop is `on<Action>`, the handler passed in is `handle<Noun><Action>`:

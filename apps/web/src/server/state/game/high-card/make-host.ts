@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import { getLobby, setLobby } from '~/server/data/lobby';
-import { withLobbyLock } from '~/server/data/lobby-lock';
 import emitter from '~/server/events/emitter';
 import { getLobbyChannel } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { logger } from '~/utils/logger';
@@ -16,7 +16,7 @@ export async function makeHost({
   target: UserId;
   actor: UserId;
 }) {
-  return withLobbyLock(gameCode, async () => {
+  return withLock('lobby', gameCode, async () => {
     // check game exists
     const lobby = await getLobby({ code: gameCode });
     if (!lobby) {

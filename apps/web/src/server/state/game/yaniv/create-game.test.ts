@@ -19,7 +19,7 @@ vi.mock('~/server/data/yaniv', () => ({
   setYanivState: mockSetYanivState,
 }));
 
-vi.mock('~/server/state/game/generate-lobby-code', () => ({
+vi.mock('~/server/state/lib/generate-lobby-code', () => ({
   generateLobbyCode: mockGenerateLobbyCode,
 }));
 

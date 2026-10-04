@@ -1,6 +1,6 @@
 import { lobbyExists, setLobby } from '~/server/data/lobby';
 import { setYanivState } from '~/server/data/yaniv';
-import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
+import { generateLobbyCode } from '~/server/state/lib/generate-lobby-code';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import { DEFAULT_SETTINGS, GameStage } from '~/types/games/yaniv';

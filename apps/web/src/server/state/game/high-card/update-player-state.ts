@@ -1,6 +1,6 @@
 import { getLobby, setLobby } from '~/server/data/lobby';
-import { withLobbyLock } from '~/server/data/lobby-lock';
 import { publishLobbyState } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 
@@ -13,7 +13,7 @@ export const updatePlayerState = async ({
   | { code: GameCode; userId: UserId; field: 'name'; value: string }
   | { code: GameCode; userId: UserId; field: 'color'; value: string }
   | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) =>
-  withLobbyLock(code, async () => {
+  withLock('lobby', code, async () => {
     const lobby = await getLobby({ code });
 
     if (!lobby) {

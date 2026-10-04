@@ -1,6 +1,6 @@
 import { getLobby, type Lobby, setLobby } from '~/server/data/lobby';
-import { withLobbyLock } from '~/server/data/lobby-lock';
 import { publishLobbyState } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, GameUpdate, type Player } from '~/types/game';
 import { MAX_PLAYERS, type Settings } from '~/types/games/yaniv';
@@ -37,7 +37,7 @@ export const joinGame = async ({
       settings: Settings;
     }
 > =>
-  withLobbyLock(code, async () => {
+  withLock('lobby', code, async () => {
     const lobby = await getLobby({ code });
 
     if (!lobby) {

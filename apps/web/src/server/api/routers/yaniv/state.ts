@@ -13,12 +13,12 @@ import emitter from '~/server/events/emitter';
 import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getYanivChannel } from '~/server/events/yaniv';
-import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
-import {
-  getGameState,
-  toClientGameState,
-} from '~/server/state/game/yaniv/get-game-state';
+import { getGameState } from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
+import {
+  type ClientGameState,
+  toClientGameState,
+} from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {

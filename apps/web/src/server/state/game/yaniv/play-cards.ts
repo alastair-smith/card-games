@@ -4,6 +4,7 @@ import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishEmoji } from '~/server/events/emoji';
 import { publishYanivState } from '~/server/events/yaniv';
+import { withLock } from '~/server/state/lib/locks';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
@@ -127,43 +128,44 @@ export const playCards = async (
   userId: UserId,
   cards: YanivPlayingCard[],
   direction?: 'ascending' | 'descending',
-) => {
-  const state = await getYanivState({ code });
-  if (!state) throw new Error('Game not found');
+) =>
+  withLock('yaniv', code, async () => {
+    const state = await getYanivState({ code });
+    if (!state) throw new Error('Game not found');
 
-  if (state.gameStage !== GameStage.IN_PROGRESS)
-    throw new Error('Game is not in progress');
-  if (
-    state.gameStep !== GameStep.PLAY_CARDS &&
-    state.gameStep !== GameStep.PROCEED
-  )
-    throw new Error('Cannot play cards in this game step');
-  if (state.currentPlayerId !== userId) throw new Error('Not your turn');
+    if (state.gameStage !== GameStage.IN_PROGRESS)
+      throw new Error('Game is not in progress');
+    if (
+      state.gameStep !== GameStep.PLAY_CARDS &&
+      state.gameStep !== GameStep.PROCEED
+    )
+      throw new Error('Cannot play cards in this game step');
+    if (state.currentPlayerId !== userId) throw new Error('Not your turn');
 
-  const currentPlayer = state.players.find((player) => player.id === userId);
-  if (!currentPlayer) throw new Error('Player not found');
+    const currentPlayer = state.players.find((player) => player.id === userId);
+    if (!currentPlayer) throw new Error('Player not found');
 
-  const isPlayingDrawnCard = state.gameStep === GameStep.PROCEED;
+    const isPlayingDrawnCard = state.gameStep === GameStep.PROCEED;
 
-  const newState = isPlayingDrawnCard
-    ? playDrawnCard(state, userId, currentPlayer.hand, cards)
-    : await playCardsOnTurn(
-        code,
-        state,
-        userId,
-        currentPlayer.hand,
-        cards,
-        direction,
-      );
+    const newState = isPlayingDrawnCard
+      ? playDrawnCard(state, userId, currentPlayer.hand, cards)
+      : await playCardsOnTurn(
+          code,
+          state,
+          userId,
+          currentPlayer.hand,
+          cards,
+          direction,
+        );
 
-  if (isPlayingDrawnCard) {
-    publishEmoji(code, {
-      emoji: '🍀',
-      targetPlayerId: userId,
-      id: randomUUID() as EmojiReactionId,
-    });
-  }
+    if (isPlayingDrawnCard) {
+      publishEmoji(code, {
+        emoji: '🍀',
+        targetPlayerId: userId,
+        id: randomUUID() as EmojiReactionId,
+      });
+    }
 
-  await setYanivState({ code }, newState);
-  await publishYanivState(code, newState);
-};
+    await setYanivState({ code }, newState);
+    await publishYanivState(code, newState);
+  });

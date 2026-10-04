@@ -7,7 +7,7 @@ import { useState } from 'react';
 import YanivGameController from '~/app/yaniv/_components/game-controller';
 import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
-import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
+import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
 import { recordClientError } from '~/telemetry/errors';
 import { api } from '~/trpc/react';
