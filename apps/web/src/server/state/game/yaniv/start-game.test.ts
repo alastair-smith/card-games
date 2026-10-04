@@ -10,6 +10,7 @@ import {
 } from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
+const mockSetLobby = vi.fn();
 const mockSetYanivState = vi.fn();
 const mockPublishYanivState = vi.fn();
 const mockCreateDeck = vi.fn();
@@ -18,7 +19,10 @@ const mockDrawCards = vi.fn();
 const mockCreateDiscard = vi.fn();
 const mockPushDiscard = vi.fn();
 
-vi.mock('~/server/data/lobby', () => ({ getLobby: mockGetLobby }));
+vi.mock('~/server/data/lobby', () => ({
+  getLobby: mockGetLobby,
+  setLobby: mockSetLobby,
+}));
 vi.mock('~/server/data/yaniv', () => ({ setYanivState: mockSetYanivState }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: mockPublishYanivState,
@@ -53,6 +57,7 @@ const makeLobby = (
   host: HOST,
   settings,
   players: players.map((id) => ({ id, name: `Player ${id}`, isReady: true })),
+  isGameStarted: false,
 });
 
 const makeCard = (i: number) => ({ suit: 'hearts', rank: i + 2 });
@@ -61,6 +66,7 @@ describe('startGame', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockGetLobby.mockResolvedValue(makeLobby());
+    mockSetLobby.mockResolvedValue(undefined);
     mockSetYanivState.mockResolvedValue(undefined);
     mockPublishYanivState.mockResolvedValue(undefined);
     mockCreateDeck.mockResolvedValue(undefined);
@@ -178,6 +184,15 @@ describe('startGame', () => {
         currentPlayerId: HOST,
         playedCards: [],
       }),
+    );
+  });
+
+  test('marks the lobby as started', async () => {
+    await startGame(CODE, HOST);
+    expect(mockSetLobby).toHaveBeenCalledOnce();
+    expect(mockSetLobby).toHaveBeenCalledWith(
+      { code: CODE },
+      expect.objectContaining({ isGameStarted: true }),
     );
   });
 

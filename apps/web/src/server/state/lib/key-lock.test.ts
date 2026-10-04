@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { createDeferred } from '~/test-utils/deferred';
 import { createKeyLock } from './key-lock';
-
-const createDeferred = () => {
-  let resolve: () => void = () => {};
-  const promise = new Promise<void>((resolvePromise) => {
-    resolve = resolvePromise;
-  });
-  return { promise, resolve };
-};
 
 describe('createKeyLock', () => {
   it('runs tasks for the same key one at a time in request order', async () => {

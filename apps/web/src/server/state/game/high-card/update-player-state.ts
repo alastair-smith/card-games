@@ -2,7 +2,7 @@ import { getLobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
 import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 
 export const updatePlayerState = async ({
   code,
@@ -18,6 +18,10 @@ export const updatePlayerState = async ({
 
     if (!lobby) {
       throw new Error('lobby not found');
+    }
+
+    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+      throw new Error('game has already started');
     }
 
     if (!lobby.players.some(({ id }) => id === userId)) {

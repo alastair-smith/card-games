@@ -70,6 +70,7 @@ describe('createGame', () => {
             isReady: false,
           },
         ],
+        isGameStarted: false,
       },
     );
   });

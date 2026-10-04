@@ -1,6 +1,6 @@
 import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
-import { getLobby } from '~/server/data/lobby';
+import { getLobby, setLobby } from '~/server/data/lobby';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import { withLock } from '~/server/state/lib/locks';
@@ -65,6 +65,7 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       playedCards: [],
     };
 
+    await setLobby({ code }, { ...lobby, isGameStarted: true });
     await setYanivState({ code }, state);
     await publishYanivState(code, state);
   });

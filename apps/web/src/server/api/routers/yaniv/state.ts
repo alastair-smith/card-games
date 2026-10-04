@@ -125,6 +125,8 @@ export const yanivStateSubscription = protectedProcedure
       if (messageData.success) {
         const emittedState = messageData.data;
         if (emittedState.gameStage === GameStage.LOBBY) return;
+        if (!emittedState.players.some((player) => player.id === userId))
+          return;
 
         const state = toClientGameState(emittedState, userId);
         const update =
@@ -186,8 +188,8 @@ export const yanivStateSubscription = protectedProcedure
           const lobbyData = await joinGame({ code, userId });
           hasJoinedLobby = true;
 
-          if (lobbyData.update === GameUpdate.LOBBY_FULL) {
-            yield { update: GameUpdate.LOBBY_FULL };
+          if (lobbyData.update !== GameUpdate.LOBBY_UPDATE) {
+            yield { update: lobbyData.update };
             return;
           }
 

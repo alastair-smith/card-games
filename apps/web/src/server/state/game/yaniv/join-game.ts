@@ -29,7 +29,7 @@ export const joinGame = async ({
   userId: UserId;
 }): Promise<
   | {
-      update: GameUpdate.LOBBY_FULL;
+      update: GameUpdate.LOBBY_FULL | GameUpdate.GAME_NOT_FOUND;
     }
   | {
       update: GameUpdate.LOBBY_UPDATE;
@@ -55,6 +55,11 @@ export const joinGame = async ({
         players: enrichPlayerData(lobby.players, lobby.host, userId),
         settings: lobby.settings,
       };
+    }
+
+    // already started
+    if (lobby.isGameStarted) {
+      return { update: GameUpdate.GAME_NOT_FOUND };
     }
 
     // full

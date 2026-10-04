@@ -30,6 +30,7 @@ export const createGame = async ({ host }: { host: UserId }) => {
             isReady: false,
           },
         ],
+        isGameStarted: false,
       },
     ),
     setYanivState({ code }, { gameStage: GameStage.LOBBY }),

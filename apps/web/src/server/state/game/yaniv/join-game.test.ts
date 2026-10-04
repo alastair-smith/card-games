@@ -45,6 +45,7 @@ const makeLobby = (
     name: `Player ${id}`,
     isReady: false,
   })),
+  isGameStarted: false,
 });
 
 describe('joinGame', () => {
@@ -95,6 +96,17 @@ describe('joinGame', () => {
     const result = await joinGame({ code: CODE, userId: USER_ID });
 
     expect(result).toMatchObject({ settings: { handSize: 7 } });
+  });
+
+  test('does not let a new player join once the game has started', async () => {
+    mockGetLobby.mockResolvedValue({
+      ...makeLobby([HOST_ID]),
+      isGameStarted: true,
+    });
+    const result = await joinGame({ code: CODE, userId: USER_ID });
+    expect(result).toEqual({ update: GameUpdate.GAME_NOT_FOUND });
+    expect(mockSetLobby).not.toHaveBeenCalled();
+    expect(mockPublishLobbyState).not.toHaveBeenCalled();
   });
 
   test('returns full indicator when at maximum player capacity', async () => {

@@ -122,9 +122,12 @@ export default function YanivClient({
                 }
               }
             } finally {
-              void setGameAttributes(span, code, userId).finally(() =>
-                span.end(),
-              );
+              void setGameAttributes(span, code, userId)
+                .catch((error: unknown) => {
+                  recordClientError(error, 'subscription.attributes.error');
+                  console.error(error);
+                })
+                .finally(() => span.end());
             }
           },
         );

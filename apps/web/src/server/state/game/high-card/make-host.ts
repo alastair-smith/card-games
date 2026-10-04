@@ -4,7 +4,7 @@ import emitter from '~/server/events/emitter';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import { logger } from '~/utils/logger';
 
 export async function makeHost({
@@ -24,6 +24,14 @@ export async function makeHost({
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Game not found.',
+      });
+    }
+
+    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+      logger.warn(`Lobby ${gameCode} has already started.`);
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'The game has already started.',
       });
     }
 

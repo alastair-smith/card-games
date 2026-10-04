@@ -25,6 +25,10 @@ export const updateSettings = async ({
       throw new Error('not a Yaniv lobby');
     }
 
+    if (lobby.isGameStarted) {
+      throw new Error('game has already started');
+    }
+
     if (lobby.host !== userId) {
       throw new Error('only the host can change the settings');
     }
