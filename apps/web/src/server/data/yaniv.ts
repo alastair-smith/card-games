@@ -5,6 +5,7 @@ import { dataLayer } from './redis';
 export const {
   get: getYanivState,
   set: setYanivState,
+  queueSet: queueSetYanivState,
   exists: yanivStateExists,
 } = dataLayer(
   ({ code }: { code: GameCode }) => `yaniv:${code}`,

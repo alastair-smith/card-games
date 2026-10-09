@@ -1,7 +1,8 @@
 import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
-import { getLobby, setLobby } from '~/server/data/lobby';
-import { setYanivState } from '~/server/data/yaniv';
+import { getLobby, queueSetLobby } from '~/server/data/lobby';
+import { runTransaction } from '~/server/data/redis';
+import { queueSetYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import { withLock } from '~/server/state/lib/locks';
 import { deckWithJokers } from '~/types/cards';
@@ -66,7 +67,9 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       playedCards: [],
     };
 
-    await setLobby({ code }, { ...lobby, isGameStarted: true });
-    await setYanivState({ code }, state);
+    await runTransaction((transaction) => {
+      queueSetLobby(transaction, { code }, { ...lobby, isGameStarted: true });
+      queueSetYanivState(transaction, { code }, state);
+    });
     await publishYanivState(code, state);
   });

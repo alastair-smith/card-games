@@ -43,5 +43,6 @@ export type YanivLobby = z.infer<typeof yanivLobbySchema>;
 export const {
   get: getLobby,
   set: setLobby,
+  queueSet: queueSetLobby,
   exists: lobbyExists,
 } = dataLayer(({ code }: { code: GameCode }) => `lobby:${code}`, lobbySchema);

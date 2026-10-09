@@ -9,9 +9,12 @@ import {
   MAX_PLAYERS,
 } from '~/types/games/yaniv';
 
+const TRANSACTION = { kind: 'transaction' };
+
 const mockGetLobby = vi.fn();
-const mockSetLobby = vi.fn();
-const mockSetYanivState = vi.fn();
+const mockQueueSetLobby = vi.fn();
+const mockQueueSetYanivState = vi.fn();
+const mockRunTransaction = vi.fn();
 const mockPublishYanivState = vi.fn();
 const mockCreateDeck = vi.fn();
 const mockDrawCard = vi.fn();
@@ -21,9 +24,12 @@ const mockPushDiscard = vi.fn();
 
 vi.mock('~/server/data/lobby', () => ({
   getLobby: mockGetLobby,
-  setLobby: mockSetLobby,
+  queueSetLobby: mockQueueSetLobby,
 }));
-vi.mock('~/server/data/yaniv', () => ({ setYanivState: mockSetYanivState }));
+vi.mock('~/server/data/yaniv', () => ({
+  queueSetYanivState: mockQueueSetYanivState,
+}));
+vi.mock('~/server/data/redis', () => ({ runTransaction: mockRunTransaction }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: mockPublishYanivState,
 }));
@@ -66,8 +72,10 @@ describe('startGame', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockGetLobby.mockResolvedValue(makeLobby());
-    mockSetLobby.mockResolvedValue(undefined);
-    mockSetYanivState.mockResolvedValue(undefined);
+    mockRunTransaction.mockImplementation(
+      async (queueWrites: (transaction: unknown) => void) =>
+        queueWrites(TRANSACTION),
+    );
     mockPublishYanivState.mockResolvedValue(undefined);
     mockCreateDeck.mockResolvedValue(undefined);
     mockCreateDiscard.mockResolvedValue(undefined);
@@ -95,7 +103,7 @@ describe('startGame', () => {
       'Game has already started',
     );
     expect(mockCreateDeck).not.toHaveBeenCalled();
-    expect(mockSetYanivState).not.toHaveBeenCalled();
+    expect(mockRunTransaction).not.toHaveBeenCalled();
   });
 
   test('throws when caller is not the host', async () => {
@@ -138,8 +146,8 @@ describe('startGame', () => {
 
   test('deals a full hand to each player', async () => {
     await startGame(CODE, HOST);
-    expect(mockSetYanivState).toHaveBeenCalledOnce();
-    const state = mockSetYanivState.mock.calls[0]?.[1] as {
+    expect(mockQueueSetYanivState).toHaveBeenCalledOnce();
+    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
       players: Array<{ id: string; hand: unknown[] }>;
     };
     for (const player of state.players) {
@@ -149,7 +157,7 @@ describe('startGame', () => {
 
   test('sets card count to the hand size for each player', async () => {
     await startGame(CODE, HOST);
-    const state = mockSetYanivState.mock.calls[0]?.[1] as {
+    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
       players: Array<{ cardCount: number }>;
     };
     for (const player of state.players) {
@@ -165,7 +173,9 @@ describe('startGame', () => {
     await startGame(CODE, HOST);
 
     expect(mockDrawCards).toHaveBeenCalledWith(CODE, 7);
-    const state = mockSetYanivState.mock.calls[0]?.[1] as { handSize: number };
+    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
+      handSize: number;
+    };
     expect(state.handSize).toBe(7);
   });
 
@@ -185,8 +195,9 @@ describe('startGame', () => {
 
   test('persists state as IN_PROGRESS with PLAY_CARDS step', async () => {
     await startGame(CODE, HOST);
-    expect(mockSetYanivState).toHaveBeenCalledOnce();
-    expect(mockSetYanivState).toHaveBeenCalledWith(
+    expect(mockQueueSetYanivState).toHaveBeenCalledOnce();
+    expect(mockQueueSetYanivState).toHaveBeenCalledWith(
+      TRANSACTION,
       { code: CODE },
       expect.objectContaining({
         gameStage: GameStage.IN_PROGRESS,
@@ -199,11 +210,34 @@ describe('startGame', () => {
 
   test('marks the lobby as started', async () => {
     await startGame(CODE, HOST);
-    expect(mockSetLobby).toHaveBeenCalledOnce();
-    expect(mockSetLobby).toHaveBeenCalledWith(
+    expect(mockQueueSetLobby).toHaveBeenCalledOnce();
+    expect(mockQueueSetLobby).toHaveBeenCalledWith(
+      TRANSACTION,
       { code: CODE },
       expect.objectContaining({ isGameStarted: true }),
     );
+  });
+
+  test('saves the started lobby and game state in one transaction', async () => {
+    await startGame(CODE, HOST);
+    expect(mockRunTransaction).toHaveBeenCalledOnce();
+    expect(mockQueueSetLobby).toHaveBeenCalledWith(
+      TRANSACTION,
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(mockQueueSetYanivState).toHaveBeenCalledWith(
+      TRANSACTION,
+      expect.anything(),
+      expect.anything(),
+    );
+  });
+
+  test('does not publish the state when saving fails', async () => {
+    mockRunTransaction.mockRejectedValue(new Error('Transaction failed'));
+
+    await expect(startGame(CODE, HOST)).rejects.toThrow('Transaction failed');
+    expect(mockPublishYanivState).not.toHaveBeenCalled();
   });
 
   test('publishes the state after persisting', async () => {
