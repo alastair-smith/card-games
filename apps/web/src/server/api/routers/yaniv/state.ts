@@ -19,7 +19,7 @@ import {
   type ClientGameState,
   toClientGameState,
 } from '~/server/state/game/yaniv/lib/to-client-game-state';
-import { setGameAttributes } from '~/telemetry/attributes';
+import { createGameAttributesSetter } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   GameUpdate,
@@ -79,6 +79,7 @@ export const yanivStateSubscription = protectedProcedure
     ctx: { userId, signal },
   }): AsyncGenerator<StateSubscription> {
     const messageQueue: QueuedMessage[] = [];
+    const setDeliverAttributes = createGameAttributesSetter(code, userId);
     let hasJoinedLobby = false;
 
     function lobbyHandler(message: unknown) {
@@ -235,7 +236,7 @@ export const yanivStateSubscription = protectedProcedure
               deliverParentCtx,
             );
             try {
-              await setGameAttributes(deliverSpan, code, userId);
+              await setDeliverAttributes(deliverSpan);
               const carrier: Record<string, string> = {};
               propagation.inject(
                 trace.setSpan(otelContext.active(), deliverSpan),

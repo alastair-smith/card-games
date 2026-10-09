@@ -3,12 +3,12 @@
 import { context as otelContext, propagation, trace } from '@opentelemetry/api';
 import { skipToken } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import YanivGameController from '~/app/yaniv/_components/game-controller';
 import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
-import { setGameAttributes } from '~/telemetry/attributes';
+import { createGameAttributesSetter } from '~/telemetry/attributes';
 import { recordClientError } from '~/telemetry/errors';
 import { api } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
@@ -46,6 +46,11 @@ export default function YanivClient({
   const [reactions, setReactions] = useState<
     Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }>
   >({});
+
+  const setReceiveAttributes = useMemo(
+    () => createGameAttributesSetter(code, userId),
+    [code, userId],
+  );
 
   api.yaniv.state.useSubscription(
     status === GameStatus.FINISHED ? skipToken : { code },
@@ -122,7 +127,7 @@ export default function YanivClient({
                 }
               }
             } finally {
-              void setGameAttributes(span, code, userId)
+              void setReceiveAttributes(span)
                 .catch((error: unknown) => {
                   recordClientError(error, 'subscription.attributes.error');
                   console.error(error);
