@@ -3,7 +3,9 @@ import { createKeyLock } from './key-lock';
 
 export type LockNamespace = 'lobby' | 'yaniv';
 
-const keyLock = createKeyLock();
+const LOCK_TIMEOUT_MS = 10_000;
+
+const keyLock = createKeyLock({ timeoutMs: LOCK_TIMEOUT_MS });
 
 /**
  * Serialises operations on a game's stored state so concurrent changes are not lost.
