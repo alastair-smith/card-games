@@ -1,5 +1,5 @@
 import type { Span } from '@opentelemetry/api';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
@@ -99,7 +99,12 @@ describe('setGameAttributes', () => {
 });
 
 describe('createGameAttributesSetter', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test('hashes the player id once across spans', async () => {
+    const expected = await hashField(USER_ID, GAME_CODE);
     const importKey = vi.spyOn(crypto.subtle, 'importKey');
     const setAttributes = createGameAttributesSetter(GAME_CODE, USER_ID);
     const firstSpan = makeSpan();
@@ -107,12 +112,11 @@ describe('createGameAttributesSetter', () => {
 
     await setAttributes(firstSpan);
     await setAttributes(secondSpan);
-    expect(importKey).toHaveBeenCalledOnce();
-    importKey.mockRestore();
 
+    expect(importKey).toHaveBeenCalledOnce();
     expect(secondSpan.setAttribute).toHaveBeenCalledWith(
       GAME_PLAYER_ID_ATTR,
-      await hashField(USER_ID, GAME_CODE),
+      expected,
     );
   });
 });
