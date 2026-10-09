@@ -88,6 +88,16 @@ describe('startGame', () => {
     await expect(startGame(CODE, HOST)).rejects.toThrow('Lobby not found');
   });
 
+  test('does not deal again when the game has already started', async () => {
+    mockGetLobby.mockResolvedValue({ ...makeLobby(), isGameStarted: true });
+
+    await expect(startGame(CODE, HOST)).rejects.toThrow(
+      'Game has already started',
+    );
+    expect(mockCreateDeck).not.toHaveBeenCalled();
+    expect(mockSetYanivState).not.toHaveBeenCalled();
+  });
+
   test('throws when caller is not the host', async () => {
     await expect(startGame(CODE, PLAYER_2)).rejects.toThrow(
       'Only the host can start the game',

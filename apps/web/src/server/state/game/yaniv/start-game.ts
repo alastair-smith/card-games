@@ -20,6 +20,7 @@ export const startGame = async (code: GameCode, userId: UserId) =>
     const lobby = await getLobby({ code });
     if (!lobby) throw new Error('Lobby not found');
     if (lobby.type !== GameType.YANIV) throw new Error('Not a Yaniv lobby');
+    if (lobby.isGameStarted) throw new Error('Game has already started');
     if (lobby.host !== userId)
       throw new Error('Only the host can start the game');
     if (lobby.players.length < MIN_PLAYERS)
