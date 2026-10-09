@@ -2,8 +2,12 @@ import Redis, { type ChainableCommander } from 'ioredis';
 import type { z } from 'zod';
 import { env } from '~/env';
 
+const REDIS_COMMAND_TIMEOUT_MS = 5_000;
+
 // data connection
-export const redis = new Redis(env.REDIS_CONNECTION_STRING);
+export const redis = new Redis(env.REDIS_CONNECTION_STRING, {
+  commandTimeout: REDIS_COMMAND_TIMEOUT_MS,
+});
 
 export const REDIS_EXPIRE_TIME_SECONDS = 60 * 60 * 24; // 24 hours
 
