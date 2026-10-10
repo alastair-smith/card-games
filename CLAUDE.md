@@ -152,15 +152,15 @@ code: GameCode
 
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
 
-Branded IDs are the only accepted `as` cast. Elsewhere, give values their type
-with an annotation or `satisfies`:
+### Type assertions
+
+Avoid `as` casts — they silence the compiler rather than prove the types line
+up. Casting a raw value to a branded type and `as const` are fine. Elsewhere,
+give values their type with an annotation or `satisfies`:
 
 ```ts
 const roundScores: RoundScore[] = [];
 ```
-
-Never use non-null assertions (`!`). Check for `undefined` and throw a
-descriptive error instead.
 
 ### Types and schemas
 
@@ -247,8 +247,9 @@ to an existing component.
 - Share test helpers from `~/test-utils/` rather than copying them between files
 
 ### Test data
-- Build Yaniv players and state with `buildPlayer`, `buildClientPlayer` and `buildInProgressState` from `~/test-utils/yaniv`, passing only the fields the test cares about
-- When a new field is added, give it a default in the builder rather than updating every test
+- Reuse the test data builders in `~/test-utils/` (e.g. `buildPlayer`, `buildInProgressState`) instead of writing full object literals, passing only the fields the test cares about
+- If a test needs a shape no builder covers, add or extend a builder there
+- When a new field is added, give the builder a default value for it rather than updating every test
 
 ### Mocking
 - Mock complex sub-components to test parent logic in isolation
