@@ -28,7 +28,8 @@ Every issue has exactly one type label and one area label.
 | `other` | Anything else, including dev tooling and infrastructure |
 
 Issues opened through the templates are labelled automatically. `gh issue
-create` skips the templates, so always pass both labels yourself.
+create` skips the templates, so always pass both labels yourself. Quote
+`home page` because of the space: `--label "home page"`.
 
 ## Finding issues
 
@@ -57,9 +58,10 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   are several parts. No headings for small issues.
 - **Labels:** one type and one area, as above.
 - **Milestone:** put it under the milestone it helps ship. Milestones are
-  outcome-named deliverables, e.g. "Play Yaniv games in person". If none
+  outcome-named deliverables, e.g. "📝 Play Yaniv games in person". If none
   fits, propose a new outcome-named milestone to the user. Don't create an
-  umbrella issue instead.
+  umbrella issue instead. `--milestone` needs the exact title, emoji
+  included, so copy it from the listing below.
 
 ```bash
 gh api repos/alastair-smith/card-games/milestones --jq '.[] | "\(.title) — \(.description)"'

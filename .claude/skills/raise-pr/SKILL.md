@@ -35,8 +35,8 @@ one of these emoji followed by a space and a capital letter.
 
 Fill in `.github/pull_request_template.md`:
 
-- **Summary:** one or two plain-language sentences on what the change does and
-  why. No file names, no technical breakdown.
+- **Summary:** one or two plain-language sentences, or a few bullet points, on
+  what the change does and why. No file names, no technical breakdown.
 - **Details:** bullet points with the technical detail for reviewers. Omit the
   whole section if there's nothing to add.
 - End with `Closes #123` for the issue it completes, or `Part of #123` if the
@@ -59,7 +59,11 @@ files for the user to drag into the PR description themselves.
 
 ## Create
 
+Push the branch first — `gh pr create` fails if it isn't on GitHub yet:
+
 ```bash
+git push -u origin HEAD
+
 gh pr create --base main --title "🔧 Add manage-issue skill" --body "$(cat <<'EOF'
 ### Summary
 
