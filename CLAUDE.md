@@ -115,7 +115,7 @@ players.map((player) => player.name);
 ### Comments
 
 Keep comments to a minimum and let names carry the meaning
-(`useWaitForServerValue`, `SERVER_VALUE_TIMEOUT_MS`).
+(`useWaitForServerValue`, `DEFAULT_HAND_SIZE`).
 
 - Do comment *why* when a decision isn't obvious from the code
 - Explain *how* only in code that is rarely touched but important, such as auth
