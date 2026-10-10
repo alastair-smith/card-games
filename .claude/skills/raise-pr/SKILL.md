@@ -31,6 +31,10 @@ Short and descriptive, under 70 characters, starting with one emoji:
 Example: `🚀 Create Yaniv components`. CI rejects titles that don't start with
 one of these emoji followed by a space and a capital letter.
 
+Put code names in backticks — functions, components, files, skills, commands:
+``🔧 Add `manage-issue` and `raise-pr` skills``. Wrap the title in single
+quotes when passing it to `gh`, so the shell doesn't run the backticked text.
+
 ## Body
 
 Fill in `.github/pull_request_template.md`:
@@ -64,7 +68,7 @@ Push the branch first — `gh pr create` fails if it isn't on GitHub yet:
 ```bash
 git push -u origin HEAD
 
-gh pr create --base main --title "🔧 Add manage-issue skill" --body "$(cat <<'EOF'
+gh pr create --base main --title '🔧 Add `manage-issue` skill' --body "$(cat <<'EOF'
 ### Summary
 
 ...
