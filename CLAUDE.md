@@ -98,6 +98,25 @@ Use the `raise-pr` skill when opening a PR or updating its title or description.
 
 ## Code conventions
 
+### Naming
+
+Use full, descriptive names — no single-character variables or abbreviations,
+including arrow function parameters and loop variables:
+
+```ts
+players.map((player) => player.name);
+```
+
+### Comments
+
+Keep comments to a minimum and let names carry the meaning
+(`useWaitForServerValue`, `SERVER_VALUE_TIMEOUT_MS`).
+
+- Do comment *why* when a decision isn't obvious from the code
+- Explain *how* only in code that is rarely touched but important, such as auth
+- Don't record history — no `// added to fix the issue in i-123`; that belongs
+  in the PR description
+
 ### Imports
 
 Use the `~` alias for all imports from `src/`:
@@ -132,6 +151,16 @@ code: GameCode
 ```
 
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
+
+Branded IDs are the only accepted `as` cast. Elsewhere, give values their type
+with an annotation or `satisfies`:
+
+```ts
+const roundScores: RoundScore[] = [];
+```
+
+Never use non-null assertions (`!`). Check for `undefined` and throw a
+descriptive error instead.
 
 ### Types and schemas
 
@@ -190,6 +219,9 @@ Components live in kebab-case directories with an `index.tsx` entry point:
 components/my-component/index.tsx
 ```
 
+Give new UI elements their own component file rather than adding JSX inline
+to an existing component.
+
 ## Testing
 
 ### Test naming
@@ -211,6 +243,12 @@ components/my-component/index.tsx
 - Group related tests in nested `describe` blocks by feature/stage, not by prop
 - Fresh `vi.fn()` instances per test when asserting a handler was called
 - Shared `vi.fn()` (e.g. `noop`) is fine for handlers that are not under test
+- Test only what the unit adds — don't re-test its dependencies or third-party libraries
+- Share test helpers from `~/test-utils/` rather than copying them between files
+
+### Test data
+- Build Yaniv players and state with `buildPlayer`, `buildClientPlayer` and `buildInProgressState` from `~/test-utils/yaniv`, passing only the fields the test cares about
+- When a new field is added, give it a default in the builder rather than updating every test
 
 ### Mocking
 - Mock complex sub-components to test parent logic in isolation
