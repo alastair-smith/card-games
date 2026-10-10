@@ -32,6 +32,7 @@ const makeLobby = () => ({
     name: `Player ${id}`,
     isReady: false,
   })),
+  isGameStarted: false,
 });
 
 describe('updateSettings', () => {
@@ -64,6 +65,20 @@ describe('updateSettings', () => {
         settings: { handSize: 7 },
       }),
     ).rejects.toThrow('only the host can change the settings');
+
+    expect(mockSetLobby).not.toHaveBeenCalled();
+  });
+
+  test('throws when the game has already started', async () => {
+    mockGetLobby.mockResolvedValue({ ...makeLobby(), isGameStarted: true });
+
+    await expect(
+      updateSettings({
+        code: CODE,
+        userId: HOST_ID,
+        settings: { handSize: 7 },
+      }),
+    ).rejects.toThrow('game has already started');
 
     expect(mockSetLobby).not.toHaveBeenCalled();
   });

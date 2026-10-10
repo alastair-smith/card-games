@@ -34,12 +34,12 @@ vi.mock('~/server/data/discard', () => ({
     popDiscard: vi.fn(),
   },
 }));
-vi.mock('./reshuffle-deck', () => ({
+vi.mock('./lib/reshuffle-deck', () => ({
   reshuffleDeck: vi.fn(),
 }));
 
 const { pickupCard } = await import('./pickup-card');
-const { reshuffleDeck } = await import('./reshuffle-deck');
+const { reshuffleDeck } = await import('./lib/reshuffle-deck');
 
 const CODE = 'ABCDEF' as GameCode;
 const USER_1 = 'user-1' as UserId;

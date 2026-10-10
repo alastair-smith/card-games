@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
 import { redis } from '~/server/data/redis';
-import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
+import { generateLobbyCode } from '~/server/state/lib/generate-lobby-code';
 import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';

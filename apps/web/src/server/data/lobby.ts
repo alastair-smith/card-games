@@ -22,6 +22,7 @@ export const yanivLobbySchema = z.object({
   ...lobbyFields,
   type: z.literal(GameType.YANIV),
   settings: yanivSettingsSchema,
+  isGameStarted: z.boolean(),
 });
 
 export const highCardLobbySchema = z.object({

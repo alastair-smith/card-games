@@ -7,7 +7,7 @@ import { useState } from 'react';
 import YanivGameController from '~/app/yaniv/_components/game-controller';
 import Lobby from '~/app/yaniv/_components/lobby';
 import { toast } from '~/components/ui/toast';
-import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
+import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
 import { recordClientError } from '~/telemetry/errors';
 import { api } from '~/trpc/react';
@@ -53,16 +53,14 @@ export default function YanivClient({
       onStarted: () => {
         console.log(`Subscription to game ${code} started`);
       },
-      onData: async (newGameState) => {
+      onData: (newGameState) => {
         const remoteCtx = remoteContextFromTraceparent(newGameState._trace);
-        await clientTracer.startActiveSpan(
+        clientTracer.startActiveSpan(
           'subscription.receive',
           {},
           remoteCtx,
-          async (span) => {
+          (span) => {
             try {
-              await setGameAttributes(span, code, userId);
-
               switch (newGameState.update) {
                 case GameUpdate.KICKED:
                   setStatus(GameStatus.FINISHED);
@@ -124,7 +122,12 @@ export default function YanivClient({
                 }
               }
             } finally {
-              span.end();
+              void setGameAttributes(span, code, userId)
+                .catch((error: unknown) => {
+                  recordClientError(error, 'subscription.attributes.error');
+                  console.error(error);
+                })
+                .finally(() => span.end());
             }
           },
         );

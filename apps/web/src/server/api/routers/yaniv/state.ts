@@ -13,12 +13,12 @@ import emitter from '~/server/events/emitter';
 import { getEmojiChannel } from '~/server/events/emoji';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { getYanivChannel } from '~/server/events/yaniv';
-import type { ClientGameState } from '~/server/state/game/yaniv/get-game-state';
-import {
-  getGameState,
-  toClientGameState,
-} from '~/server/state/game/yaniv/get-game-state';
+import { getGameState } from '~/server/state/game/yaniv/get-game-state';
 import { joinGame } from '~/server/state/game/yaniv/join-game';
+import {
+  type ClientGameState,
+  toClientGameState,
+} from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
@@ -78,58 +78,12 @@ export const yanivStateSubscription = protectedProcedure
     input: { code },
     ctx: { userId, signal },
   }): AsyncGenerator<StateSubscription> {
-    const rawState = await getGameState(code);
-
-    if (!rawState) {
-      return { update: GameUpdate.GAME_NOT_FOUND };
-    }
-
-    switch (rawState.gameStage) {
-      case GameStage.FINISHED: {
-        if (!rawState.players.some((player) => player.id === userId)) {
-          return { update: GameUpdate.GAME_NOT_FOUND };
-        }
-        return {
-          update: GameUpdate.FINISHED,
-          state: toClientGameState(rawState, userId),
-        };
-      }
-
-      case GameStage.LOBBY: {
-        const lobbyData = await joinGame({ code, userId });
-
-        if (lobbyData.update === GameUpdate.LOBBY_FULL) {
-          return { update: GameUpdate.LOBBY_FULL };
-        }
-
-        yield {
-          update: lobbyData.update,
-          players: lobbyData.players,
-          settings: lobbyData.settings,
-        };
-
-        break;
-      }
-
-      case GameStage.IN_PROGRESS: {
-        const topDiscardCard = await yanivDiscard.peekDiscard(code);
-        yield {
-          update: GameUpdate.GAME_STATE_UPDATE,
-          state: toClientGameState({ ...rawState, topDiscardCard }, userId),
-        };
-        break;
-      }
-
-      default: {
-        throw new Error(
-          `Unexpected initial game stage: ${String((rawState as { gameStage: string }).gameStage)}`,
-        );
-      }
-    }
-
     const messageQueue: QueuedMessage[] = [];
+    let hasJoinedLobby = false;
 
     function lobbyHandler(message: unknown) {
+      if (!hasJoinedLobby) return;
+
       const emitContext = trace.getSpanContext(otelContext.active());
       const messageData = yanivLobbySchema.safeParse(message);
 
@@ -171,6 +125,8 @@ export const yanivStateSubscription = protectedProcedure
       if (messageData.success) {
         const emittedState = messageData.data;
         if (emittedState.gameStage === GameStage.LOBBY) return;
+        if (!emittedState.players.some((player) => player.id === userId))
+          return;
 
         const state = toClientGameState(emittedState, userId);
         const update =
@@ -208,6 +164,60 @@ export const yanivStateSubscription = protectedProcedure
     emitter.on(emojiChannel, emojiHandler);
 
     try {
+      const rawState = await getGameState(code);
+
+      if (!rawState) {
+        yield { update: GameUpdate.GAME_NOT_FOUND };
+        return;
+      }
+
+      switch (rawState.gameStage) {
+        case GameStage.FINISHED: {
+          if (!rawState.players.some((player) => player.id === userId)) {
+            yield { update: GameUpdate.GAME_NOT_FOUND };
+            return;
+          }
+          yield {
+            update: GameUpdate.FINISHED,
+            state: toClientGameState(rawState, userId),
+          };
+          return;
+        }
+
+        case GameStage.LOBBY: {
+          const lobbyData = await joinGame({ code, userId });
+          hasJoinedLobby = true;
+
+          if (lobbyData.update !== GameUpdate.LOBBY_UPDATE) {
+            yield { update: lobbyData.update };
+            return;
+          }
+
+          yield {
+            update: lobbyData.update,
+            players: lobbyData.players,
+            settings: lobbyData.settings,
+          };
+
+          break;
+        }
+
+        case GameStage.IN_PROGRESS: {
+          const topDiscardCard = await yanivDiscard.peekDiscard(code);
+          yield {
+            update: GameUpdate.GAME_STATE_UPDATE,
+            state: toClientGameState({ ...rawState, topDiscardCard }, userId),
+          };
+          break;
+        }
+
+        default: {
+          throw new Error(
+            `Unexpected initial game stage: ${String((rawState as { gameStage: string }).gameStage)}`,
+          );
+        }
+      }
+
       while (!signal?.aborted) {
         if (messageQueue.length > 0) {
           const queued = messageQueue.shift();

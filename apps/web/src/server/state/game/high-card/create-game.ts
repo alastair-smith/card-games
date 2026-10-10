@@ -1,6 +1,6 @@
 import { setHighCardState } from '~/server/data/high-card';
 import { lobbyExists, setLobby } from '~/server/data/lobby';
-import { generateLobbyCode } from '~/server/state/game/generate-lobby-code';
+import { generateLobbyCode } from '~/server/state/lib/generate-lobby-code';
 import type { UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import { GameStage } from '~/types/games/high-card';

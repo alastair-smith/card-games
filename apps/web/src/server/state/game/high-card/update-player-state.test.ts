@@ -29,6 +29,7 @@ const makeLobby = () => ({
     { id: USER_ID, name: 'Player 1', color: 'red', isReady: false },
     { id: OTHER_ID, name: 'Player 2', color: 'cyan', isReady: false },
   ],
+  isGameStarted: false,
 });
 
 describe('updatePlayerState', () => {
@@ -49,6 +50,19 @@ describe('updatePlayerState', () => {
         value: 'Sam',
       }),
     ).rejects.toThrow('lobby not found');
+  });
+
+  test('throws when the game has already started', async () => {
+    mockGetLobby.mockResolvedValue({ ...makeLobby(), isGameStarted: true });
+    await expect(
+      updatePlayerState({
+        code: CODE,
+        userId: USER_ID,
+        field: 'isReady',
+        value: true,
+      }),
+    ).rejects.toThrow('game has already started');
+    expect(mockSetLobby).not.toHaveBeenCalled();
   });
 
   test('throws when the player is not in the lobby', async () => {

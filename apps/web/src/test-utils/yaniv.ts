@@ -1,4 +1,4 @@
-import type { ClientPlayer } from '~/server/state/game/yaniv/to-client-game-state';
+import type { ClientPlayer } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import type { PlayerName, UserId } from '~/types/entities';
 import {
   DEFAULT_HAND_SIZE,

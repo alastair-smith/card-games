@@ -1,5 +1,6 @@
 import { getLobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import type { Settings } from '~/types/games/yaniv';
@@ -12,24 +13,29 @@ export const updateSettings = async ({
   code: GameCode;
   userId: UserId;
   settings: Settings;
-}) => {
-  const lobby = await getLobby({ code });
+}) =>
+  withLock('lobby', code, async () => {
+    const lobby = await getLobby({ code });
 
-  if (!lobby) {
-    throw new Error('lobby not found');
-  }
+    if (!lobby) {
+      throw new Error('lobby not found');
+    }
 
-  if (lobby.type !== GameType.YANIV) {
-    throw new Error('not a Yaniv lobby');
-  }
+    if (lobby.type !== GameType.YANIV) {
+      throw new Error('not a Yaniv lobby');
+    }
 
-  if (lobby.host !== userId) {
-    throw new Error('only the host can change the settings');
-  }
+    if (lobby.isGameStarted) {
+      throw new Error('game has already started');
+    }
 
-  const updatedLobby = await setLobby({ code }, { ...lobby, settings });
+    if (lobby.host !== userId) {
+      throw new Error('only the host can change the settings');
+    }
 
-  await publishLobbyState(code, updatedLobby);
+    const updatedLobby = await setLobby({ code }, { ...lobby, settings });
 
-  return updatedLobby;
-};
+    await publishLobbyState(code, updatedLobby);
+
+    return updatedLobby;
+  });

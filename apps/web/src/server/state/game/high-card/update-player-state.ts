@@ -1,7 +1,8 @@
 import { getLobby, setLobby } from '~/server/data/lobby';
 import { publishLobbyState } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 
 export const updatePlayerState = async ({
   code,
@@ -11,36 +12,41 @@ export const updatePlayerState = async ({
 }:
   | { code: GameCode; userId: UserId; field: 'name'; value: string }
   | { code: GameCode; userId: UserId; field: 'color'; value: string }
-  | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) => {
-  const lobby = await getLobby({ code });
+  | { code: GameCode; userId: UserId; field: 'isReady'; value: boolean }) =>
+  withLock('lobby', code, async () => {
+    const lobby = await getLobby({ code });
 
-  if (!lobby) {
-    throw new Error('lobby not found');
-  }
+    if (!lobby) {
+      throw new Error('lobby not found');
+    }
 
-  if (!lobby.players.some(({ id }) => id === userId)) {
-    throw new Error('player not in game');
-  }
+    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+      throw new Error('game has already started');
+    }
 
-  if (
-    field === 'color' &&
-    lobby.players.some(
-      (player) => player.id !== userId && player.color === value,
-    )
-  ) {
-    throw new Error('colour already taken');
-  }
+    if (!lobby.players.some(({ id }) => id === userId)) {
+      throw new Error('player not in game');
+    }
 
-  const updatedPlayers = lobby.players.map((player) =>
-    player.id === userId ? { ...player, [field]: value } : player,
-  );
+    if (
+      field === 'color' &&
+      lobby.players.some(
+        (player) => player.id !== userId && player.color === value,
+      )
+    ) {
+      throw new Error('colour already taken');
+    }
 
-  const updatedLobby = await setLobby(
-    { code },
-    { ...lobby, players: updatedPlayers },
-  );
+    const updatedPlayers = lobby.players.map((player) =>
+      player.id === userId ? { ...player, [field]: value } : player,
+    );
 
-  await publishLobbyState(code, updatedLobby);
+    const updatedLobby = await setLobby(
+      { code },
+      { ...lobby, players: updatedPlayers },
+    );
 
-  return updatedLobby;
-};
+    await publishLobbyState(code, updatedLobby);
+
+    return updatedLobby;
+  });

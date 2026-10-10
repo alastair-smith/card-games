@@ -2,8 +2,9 @@ import { TRPCError } from '@trpc/server';
 import { getLobby, setLobby } from '~/server/data/lobby';
 import emitter from '~/server/events/emitter';
 import { getLobbyChannel } from '~/server/events/lobby';
+import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
-import type { GameCode } from '~/types/game';
+import { type GameCode, GameType } from '~/types/game';
 import { logger } from '~/utils/logger';
 
 export async function makeHost({
@@ -15,45 +16,55 @@ export async function makeHost({
   target: UserId;
   actor: UserId;
 }) {
-  // check game exists
-  const lobby = await getLobby({ code: gameCode });
-  if (!lobby) {
-    logger.warn(`Lobby with code ${gameCode} not found.`);
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Game not found.',
-    });
-  }
+  return withLock('lobby', gameCode, async () => {
+    // check game exists
+    const lobby = await getLobby({ code: gameCode });
+    if (!lobby) {
+      logger.warn(`Lobby with code ${gameCode} not found.`);
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Game not found.',
+      });
+    }
 
-  // check actor is host in game
-  if (lobby.host !== actor) {
-    logger.warn(`Actor ${actor} is not the host of lobby ${gameCode}.`);
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'Only the host can transfer host privileges.',
-    });
-  }
+    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+      logger.warn(`Lobby ${gameCode} has already started.`);
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'The game has already started.',
+      });
+    }
 
-  // check target is in game
-  const targetPlayer = lobby.players.find((player) => player.id === target);
-  if (!targetPlayer) {
-    logger.warn(`Target player ${target} not found in lobby ${gameCode}.`);
-    throw new TRPCError({
-      code: 'NOT_FOUND',
-      message: 'Target player not found in game.',
-    });
-  }
+    // check actor is host in game
+    if (lobby.host !== actor) {
+      logger.warn(`Actor ${actor} is not the host of lobby ${gameCode}.`);
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Only the host can transfer host privileges.',
+      });
+    }
 
-  // set target as host
-  const updatedLobby = { ...lobby, host: target };
+    // check target is in game
+    const targetPlayer = lobby.players.find((player) => player.id === target);
+    if (!targetPlayer) {
+      logger.warn(`Target player ${target} not found in lobby ${gameCode}.`);
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Target player not found in game.',
+      });
+    }
 
-  // store updated game state
-  await setLobby({ code: gameCode }, updatedLobby);
+    // set target as host
+    const updatedLobby = { ...lobby, host: target };
 
-  // publish lobby state update
-  emitter.emit(getLobbyChannel(gameCode), updatedLobby);
+    // store updated game state
+    await setLobby({ code: gameCode }, updatedLobby);
 
-  logger.info(
-    `Player ${target} is now the host of lobby ${gameCode}, transferred by ${actor}.`,
-  );
+    // publish lobby state update
+    emitter.emit(getLobbyChannel(gameCode), updatedLobby);
+
+    logger.info(
+      `Player ${target} is now the host of lobby ${gameCode}, transferred by ${actor}.`,
+    );
+  });
 }
