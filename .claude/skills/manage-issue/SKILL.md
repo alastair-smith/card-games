@@ -64,7 +64,7 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   included, so copy it from the listing below.
 
 ```bash
-gh api repos/alastair-smith/card-games/milestones --jq '.[] | "\(.title) — \(.description)"'
+./scripts/list-milestones.sh
 
 gh issue create \
   --title "Reconnect when connection drops" \
