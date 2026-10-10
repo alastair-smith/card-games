@@ -1,9 +1,8 @@
 import type { Span } from '@opentelemetry/api';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
-  createGameAttributesSetter,
   GAME_CODE_ATTR,
   GAME_PLAYER_ID_ATTR,
   hashField,
@@ -95,29 +94,6 @@ describe('setGameAttributes', () => {
     await setGameAttributes(span, GAME_CODE, USER_ID);
     const values = vi.mocked(span.setAttribute).mock.calls.map(([, v]) => v);
     expect(values).not.toContain(USER_ID);
-  });
-});
-
-describe('createGameAttributesSetter', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  test('hashes the player id once across spans', async () => {
-    const expected = await hashField(USER_ID, GAME_CODE);
-    const importKey = vi.spyOn(crypto.subtle, 'importKey');
-    const setAttributes = createGameAttributesSetter(GAME_CODE, USER_ID);
-    const firstSpan = makeSpan();
-    const secondSpan = makeSpan();
-
-    await setAttributes(firstSpan);
-    await setAttributes(secondSpan);
-
-    expect(importKey).toHaveBeenCalledOnce();
-    expect(secondSpan.setAttribute).toHaveBeenCalledWith(
-      GAME_PLAYER_ID_ATTR,
-      expected,
-    );
   });
 });
 

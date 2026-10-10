@@ -38,29 +38,17 @@ export async function hashField(
   return truncatedHmacSha256Hex(value, gameCode);
 }
 
-/** Hashes the player id once, on first use, and reuses it for every span. */
-export function createGameAttributesSetter(
-  gameCode: GameCode,
-  userId?: UserId,
-): (span: Span) => Promise<void> {
-  let hashedId: Promise<string> | undefined;
-
-  return async (span) => {
-    span.setAttribute(GAME_CODE_ATTR, gameCode);
-
-    if (userId) {
-      hashedId ??= hashField(userId, gameCode);
-      span.setAttribute(GAME_PLAYER_ID_ATTR, await hashedId);
-    }
-  };
-}
-
 export async function setGameAttributes(
   span: Span,
   gameCode: GameCode,
   userId?: UserId,
 ): Promise<void> {
-  await createGameAttributesSetter(gameCode, userId)(span);
+  span.setAttribute(GAME_CODE_ATTR, gameCode);
+
+  if (userId) {
+    const hashedId = await hashField(userId, gameCode);
+    span.setAttribute(GAME_PLAYER_ID_ATTR, hashedId);
+  }
 }
 
 export async function setInputAttributes(
