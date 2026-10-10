@@ -7,6 +7,11 @@ Multiplayer card game — server actions transmit state to clients.
 
 ## Commands
 
+### Running commands
+
+- Don't `cd` first; the shell already starts in the repo root
+- Use the scripts in `scripts/` for GitHub lookups rather than `gh api`
+
 ### Formatting
 
 Fix all lint and formatting issues (run from repo root):
