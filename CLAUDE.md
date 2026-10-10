@@ -165,7 +165,14 @@ give values their type with an annotation or `satisfies`:
 
 ```ts
 const roundScores: RoundScore[] = [];
+
+const PLAYER_COLORS = {
+  plum: { name: 'Plum', value: 'hsl(295 55% 50%)' },
+} as const satisfies Record<string, { name: string; value: string }>;
 ```
+
+Use `satisfies` when an annotation would widen the type and lose detail you
+need, such as an object's exact keys.
 
 ### Types and schemas
 
