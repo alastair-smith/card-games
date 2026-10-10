@@ -69,6 +69,18 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+## Branches
+
+Create branches for an issue with `gh issue develop`, so the branch is linked
+to the issue on GitHub. A branch created with plain `git checkout -b` and given
+the same name is not linked.
+
+Name branches `i-<issue number>/<short-description>`, branching from `main`:
+
+```bash
+gh issue develop 123 --name i-123/short-description --base main --checkout
+```
+
 ## Pull requests
 
 When raising a PR:
