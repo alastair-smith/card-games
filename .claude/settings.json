@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./scripts/create-branch.sh *)",
+      "Bash(./scripts/create-issue.sh *)",
+      "Bash(./scripts/create-pr.sh *)",
+      "Bash(./scripts/push-branch.sh)",
+      "Bash(./scripts/update-pr.sh *)",
+      "Bash(./scripts/list-board.sh --include-done)",
+      "Bash(./scripts/list-board.sh)",
+      "Bash(./scripts/list-milestones.sh)",
+      "Bash(./scripts/move-board-item.sh *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view *)",
+      "Bash(gh label list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh project field-list *)",
+      "Bash(gh project item-list *)",
+      "Bash(gh search issues *)",
+      "Bash(git commit *)",
+      "Bash(git pull *)",
+      "Bash(git switch *)",
+      "Bash(pnpm --filter @repo/web test *)",
+      "Bash(pnpm --filter @repo/web typecheck *)",
+      "Bash(pnpm format *)",
+      "Bash(pnpm format:check *)",
+      "Bash(pnpm format:fix *)",
+      "Bash(pnpm test *)",
+      "Bash(pnpm typecheck *)",
+      "Bash(SKIP_ENV_VALIDATION=1 pnpm --filter @repo/web build)",
+      "mcp__storybook__docs-list",
+      "mcp__storybook__docs-show",
+      "mcp__storybook__get-storybook-story-instructions",
+      "mcp__storybook__stories-preview",
+      "WebFetch(domain:ui.shadcn.com)"
+    ]
+  },
+  "enabledMcpjsonServers": ["storybook"]
+}
