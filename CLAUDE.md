@@ -76,14 +76,23 @@ pnpm test
 
 ## Branches
 
-Create branches for an issue with `gh issue develop`, so the branch is linked
-to the issue on GitHub. A branch created with plain `git checkout -b` and given
-the same name is not linked.
+All work that changes files happens on a branch for an issue. When a prompt
+asks for changes but doesn't reference an issue, before starting:
 
-Name branches `i-<issue number>/<short-description>`, branching from `main`:
+1. Search for an existing issue that covers the work, and file one with the
+   `manage-issue` skill if there isn't one
+2. Create a branch for it, as below — unless the issue already has an open PR,
+   in which case work on that PR's branch
+
+Create branches for an issue with `scripts/create-branch.sh`. It runs
+`gh issue develop`, so the branch is linked to the issue on GitHub. A branch
+created with plain `git checkout -b` and given the same name is not linked.
+
+It names the branch `i-<issue number>/<short-description>`, branches from
+`main` and checks it out:
 
 ```bash
-gh issue develop 123 --name i-123/short-description --base main --checkout
+./scripts/create-branch.sh 123 short-description
 ```
 
 ## Commits
