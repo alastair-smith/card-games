@@ -41,11 +41,12 @@ gh issue list --label yaniv --label bug
 gh issue list --milestone "📖 Overhaul documentation"
 ```
 
-To see board status alongside milestones:
+To see board status alongside milestones (Done items are left out unless you
+pass `--include-done`):
 
 ```bash
-gh project item-list 3 --owner alastair-smith --limit 200 --format json \
-  --jq '.items[] | {number: .content.number, title, status, milestone: .milestone.title}'
+./scripts/list-board.sh
+./scripts/list-board.sh --include-done
 ```
 
 Board columns: Triage, Backlog, Ready, In progress, In review, Done.
