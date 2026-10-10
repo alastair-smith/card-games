@@ -4,6 +4,7 @@ on:
   issues:
     types:
       - opened
+      - edited
 
 permissions:
   issues: write
@@ -11,9 +12,10 @@ permissions:
 jobs:
   area:
     name: Label by area
+    if: github.event.action == 'opened' || github.event.changes.body
     runs-on: ubuntu-latest
     steps:
-      - name: Add label from the area dropdown
+      - name: Set label from the area dropdown
         uses: actions/github-script@v8
         with:
           script: |
@@ -23,14 +25,25 @@ jobs:
               'Home page': 'home page',
               Other: 'other',
             };
-            const body = context.payload.issue.body ?? '';
-            const match = body.match(/### What does it relate to\?\s+(.+)/);
+            const { issue } = context.payload;
+            const match = (issue.body ?? '').match(/### What does it relate to\?\s+(.+)/);
             const label = match && labelsByArea[match[1].trim()];
             if (!label) {
               return;
             }
+            const areaLabels = Object.values(labelsByArea);
+            const staleLabels = issue.labels
+              .map(({ name }) => name)
+              .filter((name) => areaLabels.includes(name) && name !== label);
+            for (const name of staleLabels) {
+              await github.rest.issues.removeLabel({
+                ...context.repo,
+                issue_number: issue.number,
+                name,
+              });
+            }
             await github.rest.issues.addLabels({
               ...context.repo,
-              issue_number: context.issue.number,
+              issue_number: issue.number,
               labels: [label],
             });

@@ -1,5 +1,6 @@
 name: ❓ Support question
 description: Ask for help playing, running or contributing to the app
+labels: [question]
 body:
   - type: dropdown
     id: area
