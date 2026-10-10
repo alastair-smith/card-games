@@ -78,5 +78,13 @@ EOF
 )"
 ```
 
-When later commits change what the PR does, update its description to match
-with `gh pr edit 123 --body "..."`.
+Always pass the body through a quoted heredoc as above, so backticks in it
+aren't run by the shell. When later commits change what the PR does, update
+its description the same way:
+
+```bash
+gh pr edit 123 --body "$(cat <<'EOF'
+...
+EOF
+)"
+```

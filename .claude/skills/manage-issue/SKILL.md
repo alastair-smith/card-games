@@ -69,10 +69,16 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
 
 gh issue create \
   --title "Reconnect when connection drops" \
-  --body "..." \
   --label feature --label other \
-  --milestone "🔁 Seamless sessions"
+  --milestone "🔁 Seamless sessions" \
+  --body "$(cat <<'EOF'
+...
+EOF
+)"
 ```
+
+Pass the body through a quoted heredoc as above, so backticks in it aren't run
+by the shell.
 
 Show the user the title, labels and milestone before creating, unless they
 have already asked you to file it.
