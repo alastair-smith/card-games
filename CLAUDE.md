@@ -94,7 +94,7 @@ Don't add `Claude-Session:` trailers or any other Claude attribution lines.
 
 ## Pull requests
 
-Use the `raise-pr` skill when opening a PR.
+Use the `raise-pr` skill when opening a PR or updating its title or description.
 
 ## Code conventions
 
