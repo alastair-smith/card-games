@@ -50,5 +50,8 @@ dist
 # playwright mcp output
 .playwright-mcp/
 
+# screenshots to add to a PR by hand
+.pr-screenshots/
+
 *storybook.log
 storybook-static
