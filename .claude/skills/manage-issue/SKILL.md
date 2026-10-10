@@ -86,18 +86,7 @@ and to Done when it closes. Other moves, such as Triage to Backlog or into In
 progress, are manual:
 
 ```bash
-item_id=$(gh project item-list 3 --owner alastair-smith --limit 200 --format json \
-  --jq '.items[] | select(.content.number == 123) | .id')
-
-gh project item-edit --project-id PVT_kwHOAWNxLc4A7LCG --id "$item_id" \
-  --field-id PVTSSF_lAHOAWNxLc4A7LCGzgvjLoQ --single-select-option-id 47fc9ee4
+./scripts/move-board-item.sh 123 "In progress"
 ```
 
-| Status | Option id |
-|---|---|
-| Triage | `d29ed546` |
-| Backlog | `f75ad846` |
-| Ready | `61e4505c` |
-| In progress | `47fc9ee4` |
-| In review | `df73e18b` |
-| Done | `98236657` |
+The column must be one of the board columns listed above.
