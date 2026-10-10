@@ -12,8 +12,8 @@ import {
 const TRANSACTION = { kind: 'transaction' };
 
 const mockGetLobby = vi.fn();
-const mockQueueSetLobby = vi.fn();
-const mockQueueSetYanivState = vi.fn();
+const mockSetLobby = vi.fn();
+const mockSetYanivState = vi.fn();
 const mockRunTransaction = vi.fn();
 const mockPublishYanivState = vi.fn();
 const mockCreateDeck = vi.fn();
@@ -24,11 +24,9 @@ const mockPushDiscard = vi.fn();
 
 vi.mock('~/server/data/lobby', () => ({
   getLobby: mockGetLobby,
-  queueSetLobby: mockQueueSetLobby,
+  setLobby: mockSetLobby,
 }));
-vi.mock('~/server/data/yaniv', () => ({
-  queueSetYanivState: mockQueueSetYanivState,
-}));
+vi.mock('~/server/data/yaniv', () => ({ setYanivState: mockSetYanivState }));
 vi.mock('~/server/data/redis', () => ({ runTransaction: mockRunTransaction }));
 vi.mock('~/server/events/yaniv', () => ({
   publishYanivState: mockPublishYanivState,
@@ -73,9 +71,11 @@ describe('startGame', () => {
     vi.resetAllMocks();
     mockGetLobby.mockResolvedValue(makeLobby());
     mockRunTransaction.mockImplementation(
-      async (queueWrites: (transaction: unknown) => void) =>
+      (queueWrites: (transaction: unknown) => Promise<void>) =>
         queueWrites(TRANSACTION),
     );
+    mockSetLobby.mockResolvedValue(undefined);
+    mockSetYanivState.mockResolvedValue(undefined);
     mockPublishYanivState.mockResolvedValue(undefined);
     mockCreateDeck.mockResolvedValue(undefined);
     mockCreateDiscard.mockResolvedValue(undefined);
@@ -146,8 +146,8 @@ describe('startGame', () => {
 
   test('deals a full hand to each player', async () => {
     await startGame(CODE, HOST);
-    expect(mockQueueSetYanivState).toHaveBeenCalledOnce();
-    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
+    expect(mockSetYanivState).toHaveBeenCalledOnce();
+    const state = mockSetYanivState.mock.calls[0]?.[1] as {
       players: Array<{ id: string; hand: unknown[] }>;
     };
     for (const player of state.players) {
@@ -157,7 +157,7 @@ describe('startGame', () => {
 
   test('sets card count to the hand size for each player', async () => {
     await startGame(CODE, HOST);
-    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
+    const state = mockSetYanivState.mock.calls[0]?.[1] as {
       players: Array<{ cardCount: number }>;
     };
     for (const player of state.players) {
@@ -173,7 +173,7 @@ describe('startGame', () => {
     await startGame(CODE, HOST);
 
     expect(mockDrawCards).toHaveBeenCalledWith(CODE, 7);
-    const state = mockQueueSetYanivState.mock.calls[0]?.[2] as {
+    const state = mockSetYanivState.mock.calls[0]?.[1] as {
       handSize: number;
     };
     expect(state.handSize).toBe(7);
@@ -195,9 +195,8 @@ describe('startGame', () => {
 
   test('persists state as IN_PROGRESS with PLAY_CARDS step', async () => {
     await startGame(CODE, HOST);
-    expect(mockQueueSetYanivState).toHaveBeenCalledOnce();
-    expect(mockQueueSetYanivState).toHaveBeenCalledWith(
-      TRANSACTION,
+    expect(mockSetYanivState).toHaveBeenCalledOnce();
+    expect(mockSetYanivState).toHaveBeenCalledWith(
       { code: CODE },
       expect.objectContaining({
         gameStage: GameStage.IN_PROGRESS,
@@ -205,31 +204,32 @@ describe('startGame', () => {
         currentPlayerId: HOST,
         playedCards: [],
       }),
+      TRANSACTION,
     );
   });
 
   test('marks the lobby as started', async () => {
     await startGame(CODE, HOST);
-    expect(mockQueueSetLobby).toHaveBeenCalledOnce();
-    expect(mockQueueSetLobby).toHaveBeenCalledWith(
-      TRANSACTION,
+    expect(mockSetLobby).toHaveBeenCalledOnce();
+    expect(mockSetLobby).toHaveBeenCalledWith(
       { code: CODE },
       expect.objectContaining({ isGameStarted: true }),
+      TRANSACTION,
     );
   });
 
   test('saves the started lobby and game state in one transaction', async () => {
     await startGame(CODE, HOST);
     expect(mockRunTransaction).toHaveBeenCalledOnce();
-    expect(mockQueueSetLobby).toHaveBeenCalledWith(
+    expect(mockSetLobby).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
       TRANSACTION,
-      expect.anything(),
-      expect.anything(),
     );
-    expect(mockQueueSetYanivState).toHaveBeenCalledWith(
+    expect(mockSetYanivState).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
       TRANSACTION,
-      expect.anything(),
-      expect.anything(),
     );
   });
 

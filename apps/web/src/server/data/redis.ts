@@ -34,10 +34,10 @@ export class DataServiceError extends Error {
 
 /** Run the writes queued by `queueWrites` atomically in one MULTI. */
 export const runTransaction = async (
-  queueWrites: (transaction: ChainableCommander) => void,
+  queueWrites: (transaction: ChainableCommander) => Promise<void>,
 ): Promise<void> => {
   const transaction = redis.multi();
-  queueWrites(transaction);
+  await queueWrites(transaction);
   const results = await transaction.exec();
 
   const failure = results?.find(([error]) => error)?.[0];
@@ -101,12 +101,16 @@ export const dataLayer = <
       return parsed.data;
     },
 
-    /** Store in redis */
-    set: async (keyArgs: P, data: z.infer<T>): Promise<z.infer<T>> => {
+    /** Store in redis, or queue the store onto a transaction from `runTransaction` */
+    set: async (
+      keyArgs: P,
+      data: z.infer<T>,
+      transaction?: ChainableCommander,
+    ): Promise<z.infer<T>> => {
       const key = getKey(keyArgs);
       const validated = validate(key, data);
 
-      await redis.set(
+      await (transaction ?? redis).set(
         key,
         JSON.stringify(validated),
         'EX',
@@ -114,23 +118,6 @@ export const dataLayer = <
       );
 
       return validated;
-    },
-
-    /** Queue a store onto a transaction from `runTransaction` */
-    queueSet: (
-      transaction: ChainableCommander,
-      keyArgs: P,
-      data: z.infer<T>,
-    ): void => {
-      const key = getKey(keyArgs);
-      const validated = validate(key, data);
-
-      transaction.set(
-        key,
-        JSON.stringify(validated),
-        'EX',
-        REDIS_EXPIRE_TIME_SECONDS,
-      );
     },
   };
 };
