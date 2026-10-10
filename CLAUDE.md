@@ -81,19 +81,20 @@ Name branches `i-<issue number>/<short-description>`, branching from `main`:
 gh issue develop 123 --name i-123/short-description --base main --checkout
 ```
 
+## Commits
+
+Start the subject with the same emoji as PR titles:
+
+- 🚀 features, and any change to game rules or user-visible behaviour
+- 🔧 chores, maintenance, refactoring, tests, tooling
+- 📚 documentation only
+- 🐛 fixing something genuinely broken — not an intentional behaviour change
+
+Don't add `Claude-Session:` trailers or any other Claude attribution lines.
+
 ## Pull requests
 
-When raising a PR:
-- Use the `gh pr create` CLI tool to create the PR
-- Use the template at `.github/pull_request_template.md` for the PR body
-- Strip all HTML comments (`<!-- ... -->`) from the PR body before submitting — the PR description is used as the squash-merge commit message
-- Omit the Details section entirely if there is nothing to add
-- Title should be short and descriptive (under 70 characters), prefixed with one emoji:
-  - 🚀 feature
-  - 🔧 chore / maintenance
-  - 📚 documentation only
-  - 🐛 bug fix
-- Example: `🚀 Create Yaniv components`
+Use the `raise-pr` skill when opening a PR.
 
 ## Code conventions
 
