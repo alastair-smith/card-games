@@ -1,6 +1,6 @@
 ---
 name: raise-pr
-description: Raise a pull request for this repo — title emoji, PR body from the template, screenshots and gh pr create. Use whenever opening a PR or updating a PR's title or description.
+description: Raise a pull request for this repo — title emoji, PR body from the template, screenshots and the create-pr script. Use whenever opening a PR or updating a PR's title or description.
 ---
 
 # Raise a pull request
@@ -89,11 +89,13 @@ stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
 by the shell.
 
 When later commits change what the PR does, push them with
-`./scripts/push-branch.sh` and update the description:
+`./scripts/push-branch.sh` and update the current branch's PR. Pass a new
+title, a new body on stdin, or both:
 
 ```bash
-gh pr edit 123 --body "$(cat <<'EOF'
+./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
 ...
 EOF
-)"
+
+./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' </dev/null
 ```
