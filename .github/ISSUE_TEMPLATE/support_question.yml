@@ -1,0 +1,21 @@
+name: ❓ Support question
+description: Ask for help playing, running or contributing to the app
+labels: [question]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: What does it relate to?
+      options:
+        - Yaniv
+        - Lobby
+        - Home page
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: What's your question?
+    validations:
+      required: true
