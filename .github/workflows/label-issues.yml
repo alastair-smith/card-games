@@ -1,0 +1,36 @@
+name: Label issues
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+
+jobs:
+  area:
+    name: Label by area
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label from the area dropdown
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const labelsByArea = {
+              Yaniv: 'yaniv',
+              Lobby: 'lobby',
+              'Home page': 'home page',
+              Other: 'other',
+            };
+            const body = context.payload.issue.body ?? '';
+            const match = body.match(/### What does it relate to\?\s+(.+)/);
+            const label = match && labelsByArea[match[1].trim()];
+            if (!label) {
+              return;
+            }
+            await github.rest.issues.addLabels({
+              ...context.repo,
+              issue_number: context.issue.number,
+              labels: [label],
+            });

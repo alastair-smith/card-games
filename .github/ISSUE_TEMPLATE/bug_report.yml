@@ -1,0 +1,46 @@
+name: 🐛 Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: What does it relate to?
+      options:
+        - Yaniv
+        - Lobby
+        - Home page
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem. Please include screenshots if possible.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can someone else see the problem?
+      placeholder: |
+        1. Create a game with 3 players
+        2. Call Yaniv on the first turn
+        3. ...
+    validations:
+      required: false
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      placeholder: e.g. iPhone 15, Safari
+    validations:
+      required: false

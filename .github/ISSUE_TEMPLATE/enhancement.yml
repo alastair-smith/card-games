@@ -1,0 +1,36 @@
+name: 🚀 Enhancement
+description: Suggest a new feature or an improvement to an existing one
+labels: [feature]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: What does it relate to?
+      options:
+        - Yaniv
+        - Lobby
+        - Home page
+        - A new game
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe what's missing or frustrating today.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything else?
+      description: Alternatives you've considered, examples from other games, mockups.
+    validations:
+      required: false

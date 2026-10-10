@@ -1,0 +1,22 @@
+name: 📚 Documentation
+description: Missing, unclear or outdated documentation
+labels: [documentation]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: What does it relate to?
+      options:
+        - Yaniv
+        - Lobby
+        - Home page
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What should be documented or changed?
+      description: Link to the existing docs if there are any.
+    validations:
+      required: true
