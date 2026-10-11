@@ -20,6 +20,7 @@
       "Bash(gh project field-list *)",
       "Bash(gh project item-list *)",
       "Bash(gh search issues *)",
+      "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git pull *)",
       "Bash(git switch *)",

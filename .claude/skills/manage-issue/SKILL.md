@@ -41,6 +41,14 @@ gh issue list --label yaniv --label bug
 gh issue list --milestone "📖 Overhaul documentation"
 ```
 
+To read one issue in full, including its comments, use `--json`. Without a
+terminal, `gh issue view 123 --comments` prints only the comments, so an issue
+with none prints nothing:
+
+```bash
+gh issue view 123 --json number,title,state,labels,milestone,body,comments
+```
+
 To see board status alongside milestones (Done items are left out unless you
 pass `--include-done`):
 
