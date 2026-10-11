@@ -1,0 +1,38 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    # Waiting a week lets compromised or broken releases be pulled before we
+    # pick them up. Security updates ignore this and open straight away.
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: 🔧
+    labels:
+      - chore
+      - other
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: 🔧
+    labels:
+      - chore
+      - other
+    groups:
+      github-actions:
+        patterns:
+          - '*'
