@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set label from the area dropdown
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const labelsByArea = {

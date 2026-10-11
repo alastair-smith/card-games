@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Run lint
         run: pnpm lint
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Run test
         run: pnpm test
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Install Playwright browsers
         run: pnpm --filter @repo/web exec playwright install --with-deps chromium
@@ -66,7 +66,7 @@ jobs:
       REDIS_CONNECTION_STRING: redis://localhost:6379
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Run integration tests
         run: pnpm turbo run test:integration
@@ -76,14 +76,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Run build
         run: pnpm build
         env:
           SKIP_ENV_VALIDATION: "true"
       - name: Cache build output
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           key: next-build-${{ github.sha }}
           path: apps/web/.next
@@ -120,10 +120,10 @@ jobs:
       NODE_ENV: test
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Restore build output
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           key: next-build-${{ github.sha }}
           path: apps/web/.next
@@ -146,7 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Build Docker image
         run: docker build -t card-games:ci .
