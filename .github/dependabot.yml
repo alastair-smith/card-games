@@ -21,11 +21,42 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - version-update:semver-major
+    # A dependency joins the first group it matches, so minor and patch
+    # updates all land in one PR and the groups below only see majors. Those
+    # group packages that release in lockstep and must move together.
     groups:
       minor-and-patch:
         update-types:
           - minor
           - patch
+      vitest:
+        patterns:
+          - vitest
+          - '@vitest/*'
+      storybook:
+        patterns:
+          - storybook
+          - '@storybook/*'
+      react:
+        patterns:
+          - react
+          - react-dom
+          - '@types/react'
+          - '@types/react-dom'
+      trpc:
+        patterns:
+          - '@trpc/*'
+      opentelemetry:
+        patterns:
+          - '@opentelemetry/*'
+      playwright:
+        patterns:
+          - playwright
+          - '@playwright/test'
+      tailwind:
+        patterns:
+          - tailwindcss
+          - '@tailwindcss/*'
 
   - package-ecosystem: github-actions
     directory: /
