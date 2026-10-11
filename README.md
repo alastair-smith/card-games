@@ -47,7 +47,7 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 | API        | [tRPC](https://trpc.io) with server-sent events for game state updates                |
 | Styling    | [Tailwind CSS](https://tailwindcss.com)                                               |
 | Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)            |
-| Containers | [Docker](https://www.docker.com/) + [Caddy](https://caddyserver.com/) (reverse proxy) |
+| Containers | [Docker](https://www.docker.com/)                                                     |
 | Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E)    |
 | Linting    | [Biome](https://biomejs.dev/)                                                         |
 
