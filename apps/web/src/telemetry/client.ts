@@ -84,7 +84,6 @@ export function initClientTelemetry() {
 
   new FetchInstrumentation({
     propagateTraceHeaderCorsUrls: [window.location.origin],
-    semconvStabilityOptIn: 'http',
   }).enable();
 
   window.addEventListener('error', ({ error }) => {
