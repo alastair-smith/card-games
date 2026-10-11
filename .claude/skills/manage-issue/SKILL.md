@@ -92,6 +92,25 @@ have already asked you to file it.
 
 New issues are added to the board in Triage automatically.
 
+## Editing issues
+
+Pass the issue number, then only what changes. A new body replaces the old
+one in full, so read the current body first and pass the whole updated text
+through a quoted heredoc, as when creating:
+
+```bash
+./scripts/edit-issue.sh 123 \
+  --title "Reconnect when connection drops" \
+  --add-label bug --remove-label feature \
+  --milestone "🔁 Seamless sessions" <<'EOF'
+...
+EOF
+```
+
+Every flag is optional and the labels can repeat, but pass at least one change.
+Leave out the heredoc to keep the body as it is. Use the script rather than
+`gh issue edit`, which can target any repo.
+
 ## Changing status
 
 The board's built-in workflows move issues to In review when a PR is linked

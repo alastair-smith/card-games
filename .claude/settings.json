@@ -4,6 +4,7 @@
       "Bash(./scripts/create-branch.sh *)",
       "Bash(./scripts/create-issue.sh *)",
       "Bash(./scripts/create-pr.sh *)",
+      "Bash(./scripts/edit-issue.sh *)",
       "Bash(./scripts/push-branch.sh)",
       "Bash(./scripts/update-pr.sh *)",
       "Bash(./scripts/list-board.sh --include-done)",
