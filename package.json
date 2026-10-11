@@ -7,8 +7,6 @@
     "background-services": "docker compose up -d",
     "build": "turbo run build",
     "dev": "turbo run --log-prefix=none dev",
-    "dev:tmux": "./scripts/start-tmux.sh",
-    "dev:zellij": "./scripts/start-zellij.sh",
     "format:check": "biome check --error-on-warnings",
     "format:check:llm": "biome check --error-on-warnings --reporter=github",
     "format:fix": "biome check --write",
