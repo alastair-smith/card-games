@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+# Matches the Dependabot cooldown. Add a package to minimumReleaseAgeExclude
+# when an urgent security fix is newer than this.
+minimumReleaseAge: 10080
+
 onlyBuiltDependencies:
   - '@swc/core'
   - '@tailwindcss/oxide'
