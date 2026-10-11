@@ -11,6 +11,12 @@ Multiplayer card game — server actions transmit state to clients.
 
 - Don't `cd` first; the shell already starts in the repo root
 - Use the scripts in `scripts/` for GitHub lookups rather than `gh api`
+- Run one plain command per call, exactly as documented here or in a skill.
+  Read-only commands (`git status`, `git log`, `gh issue view`, `grep`, …) and
+  the commands in `.claude/settings.json` run without a permission prompt, but
+  extra shell around them can make them prompt: `cd … &&`, `2>&1`, `$?` and
+  other variables, unquoted globs, loops and inline `python3`. For several
+  independent commands, make parallel calls instead
 
 ### Formatting
 
