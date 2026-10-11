@@ -27,9 +27,9 @@ Every issue has exactly one type label and one area label.
 | `home page` | The home page |
 | `other` | Anything else, including dev tooling and infrastructure |
 
-Issues opened through the templates are labelled automatically. `gh issue
-create` skips the templates, so always pass both labels yourself. Quote
-`home page` because of the space: `--label "home page"`.
+Issues opened through the templates are labelled automatically.
+`scripts/create-issue.sh` skips the templates, so always pass both labels
+yourself. Quote `home page` because of the space: `--label "home page"`.
 
 ## Finding issues
 
@@ -67,18 +67,17 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
 ```bash
 ./scripts/list-milestones.sh
 
-gh issue create \
+./scripts/create-issue.sh \
   --title "Reconnect when connection drops" \
   --label feature --label other \
-  --milestone "🔁 Seamless sessions" \
-  --body "$(cat <<'EOF'
+  --milestone "🔁 Seamless sessions" <<'EOF'
 ...
 EOF
-)"
 ```
 
-Pass the body through a quoted heredoc as above, so backticks in it aren't run
-by the shell.
+The script always files in this repo and reads the body from stdin. Pass it
+through a quoted heredoc as above, so backticks in it aren't run by the shell.
+Use the script rather than `gh issue create`, which can target any repo.
 
 Show the user the title, labels and milestone before creating, unless they
 have already asked you to file it.

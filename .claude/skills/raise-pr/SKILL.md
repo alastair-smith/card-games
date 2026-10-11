@@ -1,6 +1,6 @@
 ---
 name: raise-pr
-description: Raise a pull request for this repo — title emoji, PR body from the template, screenshots and gh pr create. Use whenever opening a PR or updating a PR's title or description.
+description: Raise a pull request for this repo — title emoji, PR body from the template, screenshots and the create-pr script. Use whenever opening a PR or updating a PR's title or description.
 ---
 
 # Raise a pull request
@@ -33,7 +33,8 @@ one of these emoji followed by a space and a capital letter.
 
 Put code names in backticks — functions, components, files, skills, commands:
 ``🔧 Add `manage-issue` and `raise-pr` skills``. Wrap the title in single
-quotes when passing it to `gh`, so the shell doesn't run the backticked text.
+quotes when passing it on the command line, so the shell doesn't run the
+backticked text.
 
 ## Body
 
@@ -63,12 +64,12 @@ files for the user to drag into the PR description themselves.
 
 ## Create
 
-Push the branch first — `gh pr create` fails if it isn't on GitHub yet:
+Push the branch first — creating the PR fails if it isn't on GitHub yet:
 
 ```bash
-git push -u origin HEAD
+./scripts/push-branch.sh
 
-gh pr create --base main --title '🔧 Add `manage-issue` skill' --body "$(cat <<'EOF'
+./scripts/create-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
 ### Summary
 
 ...
@@ -79,16 +80,22 @@ gh pr create --base main --title '🔧 Add `manage-issue` skill' --body "$(cat <
 
 Closes #123
 EOF
-)"
 ```
 
-Always pass the body through a quoted heredoc as above, so backticks in it
-aren't run by the shell. When later commits change what the PR does, update
-its description the same way:
+Use these scripts rather than `git push` and `gh pr create`. They only push
+the current issue branch to this repo, never `main` and never with force, and
+only open PRs against this repo's `main`. `create-pr.sh` reads the body from
+stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
+by the shell.
+
+When later commits change what the PR does, push them with
+`./scripts/push-branch.sh` and update the current branch's PR. Pass a new
+title, a new body on stdin, or both:
 
 ```bash
-gh pr edit 123 --body "$(cat <<'EOF'
+./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
 ...
 EOF
-)"
+
+./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' </dev/null
 ```
