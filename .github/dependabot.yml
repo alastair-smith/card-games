@@ -15,6 +15,12 @@ updates:
     labels:
       - chore
       - other
+    # Node types must match the Node runtime major in .node-version, so they
+    # only move when the runtime does.
+    ignore:
+      - dependency-name: '@types/node'
+        update-types:
+          - version-update:semver-major
     groups:
       minor-and-patch:
         update-types:

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------
 # Stage 1: Install all dependencies
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS deps
+FROM node:24.21.0-alpine AS deps
 WORKDIR /repo
 
 RUN corepack enable
@@ -21,7 +21,7 @@ RUN pnpm install --frozen-lockfile
 # ---------------------------------------------------------------------------
 # Stage 2: Build the Next.js app + extract production dependencies
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS builder
+FROM node:24.21.0-alpine AS builder
 WORKDIR /repo
 
 RUN corepack enable
@@ -43,7 +43,7 @@ RUN pnpm --filter @repo/web deploy --prod --legacy /prod-deps
 # ---------------------------------------------------------------------------
 # Stage 3: Minimal production runtime image
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS runner
+FROM node:24.21.0-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
