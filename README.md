@@ -56,9 +56,9 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 
 ### Prerequisites
 
-Exact versions are specified in the [tool-versions](./.tool-versions) file. Tools like [asdf](https://asdf-vm.com/guide/getting-started.html) can help with managing the versions.
+Exact versions are specified in the [node-version](./.node-version) and [tool-versions](./.tool-versions) files. Tools like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com/guide/getting-started.html) can help with managing the versions.
 
-- [Node.js](https://nodejs.org/) v22
+- [Node.js](https://nodejs.org/) v24
 - [pnpm](https://pnpm.io/) v10
 - [Docker](https://www.docker.com/)
 
