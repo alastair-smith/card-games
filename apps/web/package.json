@@ -77,7 +77,7 @@
     "@trpc/server": "^11.19.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.26",
-    "@types/node": "^25.9.9",
+    "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
