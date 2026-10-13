@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash(./scripts/close-issue.sh *)",
       "Bash(./scripts/create-branch.sh *)",
       "Bash(./scripts/create-issue.sh *)",
       "Bash(./scripts/create-pr.sh *)",
