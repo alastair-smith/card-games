@@ -1,6 +1,6 @@
 ---
 name: manage-issue
-description: Find, create or update GitHub issues for this repo, including labels, milestones and project board status. Use whenever filing an issue (even a quick follow-up in the middle of other work), looking up existing issues, or checking what's on the board.
+description: Find, create, update or close GitHub issues for this repo, including labels, milestones and project board status. Use whenever filing an issue (even a quick follow-up in the middle of other work), looking up existing issues, closing one that was done without a linked PR, or checking what's on the board.
 ---
 
 # Manage issues
@@ -71,6 +71,10 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   fits, propose a new outcome-named milestone to the user. Don't create an
   umbrella issue instead. `--milestone` needs the exact title, emoji
   included, so copy it from the listing below.
+- **Bugs** don't need a milestone, since they often don't belong to any
+  deliverable. Only add one when an existing milestone clearly fits, e.g. a
+  bug in a feature that milestone is still delivering. Never propose a new
+  milestone just to hold a bug.
 
 ```bash
 ./scripts/list-milestones.sh
@@ -122,3 +126,21 @@ progress, are manual:
 ```
 
 The column must be one of the board columns listed above.
+
+## Closing issues
+
+A PR that says `Closes #123` closes its issue when it merges. Close one by
+hand only when the work was merged without that link, e.g. a Dependabot PR
+that does what an issue describes.
+
+Every closed issue gets a comment saying which PR did the work. The script
+requires it, reading it from stdin, and refuses to close the issue without one:
+
+```bash
+./scripts/close-issue.sh 123 <<'EOF'
+Done in #456, which bumps ioredis to 6.0.0.
+EOF
+```
+
+The script always targets this repo. Use it rather than `gh issue close`,
+which can target any repo and doesn't need a comment.
