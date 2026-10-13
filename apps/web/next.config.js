@@ -42,13 +42,11 @@ const config = {
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   poweredByHeader: false,
   serverExternalPackages: [
-    'sequelize',
     'pino',
     'pino-pretty',
     'ioredis',
     '@opentelemetry/api',
     '@opentelemetry/sdk-node',
-    '@opentelemetry/sdk-trace-node',
     '@opentelemetry/exporter-trace-otlp-http',
     '@opentelemetry/instrumentation-ioredis',
     '@opentelemetry/instrumentation-http',
