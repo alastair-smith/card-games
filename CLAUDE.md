@@ -117,6 +117,8 @@ TypeScript and run directly by Node. They're allowlisted, so each one must:
   doesn't declare, and validate every value
 - Read bodies and comments from stdin, never from arguments
 - Run commands with zx's `$`, which quotes each value as a single argument
+- Read JSON output with `fetchJson` and a Zod schema, then work with it in
+  TypeScript rather than with jq
 - Hard-code the repo or project each `gh` command acts on, e.g.
   `--repo ${REPO}`, so no argument can point it elsewhere
 - Never push to `main` or force-push
