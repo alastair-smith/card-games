@@ -11,7 +11,9 @@ services:
       retries: 3
 
   jaeger:
-    image: jaegertracing/jaeger:latest
+    # 2.22.0 or later serves the MCP server at /api/ai/mcp/ that the
+    # local-telemetry skill queries
+    image: jaegertracing/jaeger:2.22.0
     ports:
       - "16686:16686" # UI
       - "4317:4317" # gRPC OTLP

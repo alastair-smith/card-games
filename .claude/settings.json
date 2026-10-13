@@ -11,6 +11,7 @@
       "Bash(./scripts/list-board.sh)",
       "Bash(./scripts/list-milestones.sh)",
       "Bash(./scripts/move-board-item.sh *)",
+      "Bash(docker compose ps *)",
       "Bash(gh issue list *)",
       "Bash(gh issue view *)",
       "Bash(gh label list *)",
@@ -33,6 +34,15 @@
       "Bash(pnpm test *)",
       "Bash(pnpm typecheck *)",
       "Bash(SKIP_ENV_VALIDATION=1 pnpm --filter @repo/web build)",
+      "mcp__jaeger__get_critical_path",
+      "mcp__jaeger__get_service_dependencies",
+      "mcp__jaeger__get_services",
+      "mcp__jaeger__get_span_details",
+      "mcp__jaeger__get_span_names",
+      "mcp__jaeger__get_trace_errors",
+      "mcp__jaeger__get_trace_topology",
+      "mcp__jaeger__read_skill",
+      "mcp__jaeger__search_traces",
       "mcp__storybook__docs-list",
       "mcp__storybook__docs-show",
       "mcp__storybook__get-storybook-story-instructions",
@@ -40,5 +50,5 @@
       "WebFetch(domain:ui.shadcn.com)"
     ]
   },
-  "enabledMcpjsonServers": ["storybook"]
+  "enabledMcpjsonServers": ["jaeger", "storybook"]
 }
