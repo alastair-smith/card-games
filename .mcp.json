@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "jaeger": {
+      "type": "http",
+      "url": "http://localhost:16686/api/ai/mcp/"
+    },
     "storybook": {
       "type": "http",
       "url": "http://localhost:6006/mcp"
