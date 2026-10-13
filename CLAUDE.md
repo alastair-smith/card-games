@@ -82,19 +82,18 @@ pnpm test
 
 ### CI logs
 
-Find the run, then its jobs and their IDs:
+Find the run for a branch:
 
 ```bash
 gh run list --branch i-123/short-description
-gh run view 456 --json jobs --jq '.jobs[] | [.databaseId, .name, .status, .conclusion] | @tsv'
 ```
 
-`gh run view 456 --log-failed` shows failed job logs, but only once the whole
-run has finished. To read a finished job while others are still running, use
-its job ID:
+Logs are only available once the whole run has finished, even for jobs that
+finished earlier. Wait for the run in the background, then read the failures:
 
 ```bash
-./scripts/view-job-log.sh 789
+gh run watch 456 --compact --exit-status
+gh run view 456 --log-failed
 ```
 
 ## Branches
