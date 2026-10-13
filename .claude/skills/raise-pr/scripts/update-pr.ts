@@ -6,38 +6,35 @@ import {
   getIssueBranch,
   parseArguments,
   REPO,
-  readOptionalStdin,
+  readStdin,
 } from '../../lib/script-helpers.ts';
-import { assertPrTitle } from './pr-title.ts';
+import { exitUnlessValidPrTitle } from './pr-title.ts';
 
-const usage = 'Usage: update-pr.ts [--title <title>] [< body]';
+const usage = 'Usage: update-pr.ts [--title <title>] [--body < body]';
 
-const { title } = parseArguments(usage, {
-  options: { title: { type: 'string' } },
+const { title, body: isBodyPiped = false } = parseArguments(usage, {
+  options: { title: { type: 'string' }, body: { type: 'boolean' } },
 }).values;
 
-if (title === '') {
+if (title === '' || (!title && !isBodyPiped)) {
   exitWithUsage(usage);
 }
 
 if (title) {
-  assertPrTitle(title);
+  exitUnlessValidPrTitle(title);
 }
 
 const branch = await getIssueBranch('have a PR');
-const body = await readOptionalStdin();
+const body = isBodyPiped ? await readStdin('PR body', usage) : '';
 
-const editArgs = [
+const editArguments = [
   ...(title ? [`--title=${title}`] : []),
   ...(body ? ['--body-file', '-'] : []),
 ];
 
-if (editArgs.length === 0) {
-  console.error('Pass a new title, a new body on stdin, or both.');
-  exitWithUsage(usage);
-}
-
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(
-  await $passthrough(body)`gh pr edit ${branch} --repo ${REPO} ${editArgs}`,
+  await $passthrough(
+    body,
+  )`gh pr edit ${branch} --repo ${REPO} ${editArguments}`,
 );

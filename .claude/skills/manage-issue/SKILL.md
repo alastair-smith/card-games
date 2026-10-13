@@ -98,27 +98,21 @@ New issues are added to the board in Triage automatically.
 
 ## Editing issues
 
-Pass the issue number, then only what changes. A new body replaces the old
-one in full, so read the current body first and pass the whole updated text
-through a quoted heredoc, as when creating:
+Pass the issue number, then only what changes. To change the body, pass
+`--body` and the new body through a quoted heredoc, as when creating. It
+replaces the old body in full, so read the current body first and pass the
+whole updated text:
 
 ```bash
 ./.claude/skills/manage-issue/scripts/edit-issue.ts 123 \
   --title "Reconnect when connection drops" \
   --add-label bug --remove-label feature \
-  --milestone "🔁 Seamless sessions" <<'EOF'
+  --milestone "🔁 Seamless sessions" --body <<'EOF'
 ...
 EOF
 ```
 
 Every flag is optional and the labels can repeat, but pass at least one change.
-To keep the body as it is, redirect stdin from `/dev/null` instead of passing
-a heredoc, so the script doesn't wait for a body:
-
-```bash
-./.claude/skills/manage-issue/scripts/edit-issue.ts 123 --add-label bug </dev/null
-```
-
 Use the script rather than `gh issue edit`, which can target any repo.
 
 ## Changing status

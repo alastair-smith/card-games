@@ -1,23 +1,17 @@
 import { type ParseArgsConfig, parseArgs } from 'node:util';
 import { z } from 'zod';
 import { $, type ProcessOutput } from 'zx';
-import type { Branded } from '../../../apps/web/src/types/brand.ts';
-
-export type { Branded };
 
 /**
  * A GitHub issue number, digits only. Kept as a string so `0123` reaches
  * `gh` as typed rather than as `123`.
  */
-export type IssueNumber = Branded<string, 'IssueNumber'>;
-
 export const issueNumberSchema = z
   .string()
   .regex(/^[0-9]+$/)
-  .transform((value) => value as IssueNumber);
+  .brand<'IssueNumber'>();
 
-/** The checked-out branch, known not to be `main` or a detached HEAD. */
-export type IssueBranch = Branded<string, 'IssueBranch'>;
+export type IssueNumber = z.infer<typeof issueNumberSchema>;
 
 export const REPO_OWNER = 'alastair-smith';
 export const REPO_NAME = 'card-games';
@@ -60,13 +54,18 @@ export function isIssueNumber(value: string | undefined): value is IssueNumber {
 }
 
 /**
- * Reads all of stdin, or returns an empty string if nothing is piped in.
- * Strips trailing newlines only, as `$(cat)` does in bash, so a Markdown
- * line break at the end (two trailing spaces) survives.
+ * Reads all of stdin, exiting with the usage line if stdin is a terminal and
+ * with an error naming `description` if it's empty. Only call it when the
+ * caller is expected to pipe something in, since it waits for the end of
+ * stdin. Strips trailing newlines only, as `$(cat)` does in bash, so a
+ * Markdown line break at the end (two trailing spaces) survives.
  */
-export async function readOptionalStdin(): Promise<string> {
+export async function readStdin(
+  description: string,
+  usage: string,
+): Promise<string> {
   if (process.stdin.isTTY) {
-    return '';
+    exitWithUsage(usage);
   }
 
   // Streaming rather than readFileSync(0), which throws EAGAIN when stdin is
@@ -76,23 +75,7 @@ export async function readOptionalStdin(): Promise<string> {
   for await (const chunk of process.stdin) {
     text += chunk;
   }
-
-  return text.replace(/\n+$/, '');
-}
-
-/**
- * Reads all of stdin, exiting with the usage line if nothing is piped in and
- * with an error naming `description` if what's piped in is empty.
- */
-export async function readRequiredStdin(
-  description: string,
-  usage: string,
-): Promise<string> {
-  if (process.stdin.isTTY) {
-    exitWithUsage(usage);
-  }
-
-  const text = await readOptionalStdin();
+  text = text.replace(/\n+$/, '');
 
   if (!text) {
     console.error(`The ${description} (read from stdin) is empty.`);
@@ -107,33 +90,35 @@ export async function readRequiredStdin(
  * when it fails. Pass the result to `exitWithResult`.
  *
  * @param input sent to the command's stdin, e.g. for `--body-file -`. Without
- * it the command inherits this script's stdin, since zx leaves a piped stdin
- * open when there's nothing to write, and a command that reads it would hang.
+ * it the command gets no stdin, so it can never wait on one.
  */
 export function $passthrough(input = '') {
   return $({
     input: input || undefined,
-    stdio: [input ? 'pipe' : 'inherit', 'inherit', 'inherit'],
+    stdio: [input ? 'pipe' : 'ignore', 'inherit', 'inherit'],
     nothrow: true,
   });
 }
 
 /**
  * zx's `$`, set up to capture the command's output and not throw when it
- * fails. Its stderr still prints. Pass the result to `exitIfFailed` before
- * using its output.
+ * fails. Its stderr still prints, and it gets no stdin. Pass the result to
+ * `exitIfFailed` before using its output.
  */
-export const $capture = $({ nothrow: true });
+export const $capture = $({
+  stdio: ['ignore', 'pipe', 'pipe'],
+  nothrow: true,
+});
 
 /** Exits with the command's exit code, or 1 if it was killed by a signal. */
-export function exitWithResult(result: ProcessOutput): void {
-  process.exitCode = result.exitCode ?? 1;
+export function exitWithResult(result: ProcessOutput): never {
+  process.exit(result.exitCode ?? 1);
 }
 
 /** Exits with the command's exit code if it didn't succeed. */
 export function exitIfFailed(result: ProcessOutput): void {
   if (result.exitCode !== 0) {
-    process.exit(result.exitCode ?? 1);
+    exitWithResult(result);
   }
 }
 
@@ -152,7 +137,9 @@ export async function fetchJson<Schema extends z.ZodType>(
 
   let json: unknown;
   try {
-    json = result.json();
+    // Not result.json(), which parses stdout and stderr together, so a
+    // warning from gh on stderr would break it
+    json = JSON.parse(result.stdout);
   } catch {
     console.error('The command printed something other than JSON.');
     process.exit(1);
@@ -178,7 +165,7 @@ export async function fetchJson<Schema extends z.ZodType>(
  */
 export async function getIssueBranch(
   action: 'have a PR' | 'be pushed',
-): Promise<IssueBranch> {
+): Promise<string> {
   const result = await $capture`git branch --show-current`;
   exitIfFailed(result);
   const branch = result.stdout.trim();
@@ -190,5 +177,5 @@ export async function getIssueBranch(
     process.exit(1);
   }
 
-  return branch as IssueBranch;
+  return branch;
 }

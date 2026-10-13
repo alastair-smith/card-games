@@ -6,9 +6,9 @@ import {
   getIssueBranch,
   parseArguments,
   REPO,
-  readRequiredStdin,
+  readStdin,
 } from '../../lib/script-helpers.ts';
-import { assertPrTitle } from './pr-title.ts';
+import { exitUnlessValidPrTitle } from './pr-title.ts';
 
 const usage = 'Usage: create-pr.ts --title <title> < body';
 
@@ -20,9 +20,9 @@ if (!title) {
   exitWithUsage(usage);
 }
 
-assertPrTitle(title);
+exitUnlessValidPrTitle(title);
 const branch = await getIssueBranch('have a PR');
-const body = await readRequiredStdin('PR body', usage);
+const body = await readStdin('PR body', usage);
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(

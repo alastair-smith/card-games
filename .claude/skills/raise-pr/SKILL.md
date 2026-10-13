@@ -91,13 +91,12 @@ by the shell.
 
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new
-title, a new body on stdin, or both. To change only the title, redirect stdin
-from `/dev/null`, as below, so the script doesn't wait for a body:
+title, `--body` with a new body on stdin, or both:
 
 ```bash
-./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' --body <<'EOF'
 ...
 EOF
 
-./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' </dev/null
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill'
 ```

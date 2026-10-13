@@ -11,11 +11,6 @@
       "dependsOn": ["^typecheck"],
       "outputs": []
     },
-    "@repo/skills#typecheck": {
-      "dependsOn": ["^typecheck"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/apps/web/src/types/brand.ts"],
-      "outputs": []
-    },
     "typecheck:watch": {
       "dependsOn": ["^typecheck:watch"],
       "outputs": []

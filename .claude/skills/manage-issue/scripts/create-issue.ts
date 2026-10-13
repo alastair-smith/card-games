@@ -5,7 +5,7 @@ import {
   exitWithUsage,
   parseArguments,
   REPO,
-  readRequiredStdin,
+  readStdin,
 } from '../../lib/script-helpers.ts';
 
 const usage =
@@ -24,13 +24,13 @@ if (!title || labels.length === 0 || labels.includes('') || milestone === '') {
   exitWithUsage(usage);
 }
 
-const body = await readRequiredStdin('issue body', usage);
-const labelArgs = labels.map((label) => `--label=${label}`);
-const milestoneArgs = milestone ? [`--milestone=${milestone}`] : [];
+const body = await readStdin('issue body', usage);
+const labelArguments = labels.map((label) => `--label=${label}`);
+const milestoneArguments = milestone ? [`--milestone=${milestone}`] : [];
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(
   await $passthrough(
     body,
-  )`gh issue create --repo ${REPO} --title=${title} --body-file - ${labelArgs} ${milestoneArgs}`,
+  )`gh issue create --repo ${REPO} --title=${title} --body-file - ${labelArguments} ${milestoneArguments}`,
 );

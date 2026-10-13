@@ -6,11 +6,11 @@ import {
   isIssueNumber,
   parseArguments,
   REPO,
-  readOptionalStdin,
+  readStdin,
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: edit-issue.ts <issue number> [--title <title>] [--add-label <label>]... [--remove-label <label>]... [--milestone <milestone>] [< body]';
+  'Usage: edit-issue.ts <issue number> [--title <title>] [--add-label <label>]... [--remove-label <label>]... [--milestone <milestone>] [--body < body]';
 
 const { values, positionals } = parseArguments(usage, {
   allowPositionals: true,
@@ -19,6 +19,7 @@ const { values, positionals } = parseArguments(usage, {
     'add-label': { type: 'string', multiple: true },
     'remove-label': { type: 'string', multiple: true },
     milestone: { type: 'string' },
+    body: { type: 'boolean' },
   },
 });
 const [issueNumber, ...extraPositionals] = positionals;
@@ -27,6 +28,7 @@ const {
   'add-label': addLabels = [],
   'remove-label': removeLabels = [],
   milestone,
+  body: isBodyPiped = false,
 } = values;
 
 if (
@@ -40,9 +42,9 @@ if (
   exitWithUsage(usage);
 }
 
-const body = await readOptionalStdin();
+const body = isBodyPiped ? await readStdin('issue body', usage) : '';
 
-const editArgs = [
+const editArguments = [
   ...(title ? [`--title=${title}`] : []),
   ...addLabels.map((label) => `--add-label=${label}`),
   ...removeLabels.map((label) => `--remove-label=${label}`),
@@ -50,8 +52,8 @@ const editArgs = [
   ...(body ? ['--body-file', '-'] : []),
 ];
 
-if (editArgs.length === 0) {
-  console.error('Pass at least one change: a flag, or a new body on stdin.');
+if (editArguments.length === 0) {
+  console.error('Pass at least one change: a flag, or --body with a new body.');
   exitWithUsage(usage);
 }
 
@@ -59,5 +61,5 @@ if (editArgs.length === 0) {
 exitWithResult(
   await $passthrough(
     body,
-  )`gh issue edit ${issueNumber} --repo ${REPO} ${editArgs}`,
+  )`gh issue edit ${issueNumber} --repo ${REPO} ${editArguments}`,
 );
