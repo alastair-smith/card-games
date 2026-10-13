@@ -70,17 +70,16 @@ export function isStdinPiped(): boolean {
 }
 
 /**
- * Reads all of stdin, exiting with the usage line if stdin is a terminal and
- * with an error naming `description` if it's empty. Only call it when the
- * caller is expected to pipe something in, since it waits for the end of
- * stdin. Strips trailing newlines only, as `$(cat)` does in bash, so a
- * Markdown line break at the end (two trailing spaces) survives.
+ * Reads all of stdin, exiting with the usage line if nothing is piped in and
+ * with an error naming `description` if it's empty. Strips trailing newlines
+ * only, as `$(cat)` does in bash, so a Markdown line break at the end (two
+ * trailing spaces) survives.
  */
 export async function readStdin(
   description: string,
   usage: string,
 ): Promise<string> {
-  if (process.stdin.isTTY) {
+  if (!isStdinPiped()) {
     exitWithUsage(usage);
   }
 
@@ -98,6 +97,29 @@ export async function readStdin(
   }
 
   return text;
+}
+
+/**
+ * Reads the body from stdin if `--body` was passed, or returns an empty
+ * string if it wasn't. Exits if a body is piped in without `--body`, rather
+ * than silently dropping it.
+ */
+export async function readBodyIfPassed(
+  isBodyPassed: boolean,
+  description: string,
+  usage: string,
+): Promise<string> {
+  if (isBodyPassed) {
+    return readStdin(description, usage);
+  }
+
+  if (isStdinPiped()) {
+    exitWithError(
+      `A body is piped in. Pass --body to replace the ${description}.`,
+    );
+  }
+
+  return '';
 }
 
 /**

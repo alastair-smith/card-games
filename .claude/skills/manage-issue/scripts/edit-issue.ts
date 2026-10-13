@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 import {
   $passthrough,
-  exitWithError,
   exitWithResult,
   exitWithUsage,
   isIssueNumber,
-  isStdinPiped,
   parseArguments,
   REPO,
-  readStdin,
+  readBodyIfPassed,
 } from '../../lib/script-helpers.ts';
 
 const usage =
@@ -30,7 +28,7 @@ const {
   'add-label': addLabels = [],
   'remove-label': removeLabels = [],
   milestone,
-  body: isBodyPiped = false,
+  body: isBodyPassed = false,
 } = values;
 
 if (
@@ -44,11 +42,7 @@ if (
   exitWithUsage(usage);
 }
 
-if (!isBodyPiped && isStdinPiped()) {
-  exitWithError('A body is piped in. Pass --body to replace the issue body.');
-}
-
-const body = isBodyPiped ? await readStdin('issue body', usage) : '';
+const body = await readBodyIfPassed(isBodyPassed, 'issue body', usage);
 
 const editArguments = [
   ...(title ? [`--title=${title}`] : []),

@@ -1,37 +1,31 @@
 #!/usr/bin/env node
 import {
   $passthrough,
-  exitWithError,
   exitWithResult,
   exitWithUsage,
   getIssueBranch,
-  isStdinPiped,
   parseArguments,
   REPO,
-  readStdin,
+  readBodyIfPassed,
 } from '../../lib/script-helpers.ts';
 import { exitUnlessValidPrTitle } from './pr-title.ts';
 
 const usage = 'Usage: update-pr.ts [--title <title>] [--body < body]';
 
-const { title, body: isBodyPiped = false } = parseArguments(usage, {
+const { title, body: isBodyPassed = false } = parseArguments(usage, {
   options: { title: { type: 'string' }, body: { type: 'boolean' } },
 }).values;
 
-if (title === '' || (!title && !isBodyPiped)) {
+if (title === '' || (!title && !isBodyPassed)) {
   exitWithUsage(usage);
-}
-
-if (!isBodyPiped && isStdinPiped()) {
-  exitWithError('A body is piped in. Pass --body to replace the PR body.');
 }
 
 if (title) {
   exitUnlessValidPrTitle(title);
 }
 
+const body = await readBodyIfPassed(isBodyPassed, 'PR body', usage);
 const branch = await getIssueBranch('have a PR');
-const body = isBodyPiped ? await readStdin('PR body', usage) : '';
 
 const editArguments = [
   ...(title ? [`--title=${title}`] : []),
