@@ -68,6 +68,10 @@ Start with `search_traces` or `get_span_names`, then use a trace ID to look at
 one trace. `get_trace_topology` leaves out attributes, so only fetch
 `get_span_details` for the spans you need.
 
+tRPC subscriptions hold a `GET /api/trpc/[trpc]` request open for as long as a
+page is open, so those traces can last minutes or hours. That's not a slow
+request. Leave them out when looking for slow traces, e.g. with `duration_max`.
+
 ## Logs
 
 The server also sends OTLP logs, but Jaeger only stores traces. Server logs
