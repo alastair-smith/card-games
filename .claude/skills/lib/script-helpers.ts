@@ -1,3 +1,4 @@
+import { fstatSync } from 'node:fs';
 import { type ParseArgsConfig, parseArgs } from 'node:util';
 import { z } from 'zod';
 import { $, type ProcessOutput } from 'zx';
@@ -22,10 +23,15 @@ export const REPO_FULL_NAME = `${REPO_OWNER}/${REPO_NAME}`;
 /** The repo every script targets, so `gh` never acts on another one. */
 export const REPO = `github.com/${REPO_FULL_NAME}`;
 
+/** Prints the message to stderr and exits with status 1. */
+export function exitWithError(message: string): never {
+  console.error(message);
+  process.exit(1);
+}
+
 /** Prints the usage line to stderr and exits with status 1. */
 export function exitWithUsage(usage: string): never {
-  console.error(usage);
-  process.exit(1);
+  exitWithError(usage);
 }
 
 /**
@@ -54,6 +60,16 @@ export function isIssueNumber(value: string | undefined): value is IssueNumber {
 }
 
 /**
+ * Whether something such as a heredoc is piped into stdin, found from what
+ * stdin is rather than by reading it, so it can't wait. `/dev/null` and a
+ * terminal don't count.
+ */
+export function isStdinPiped(): boolean {
+  const stdin = fstatSync(0);
+  return stdin.isFIFO() || stdin.isFile();
+}
+
+/**
  * Reads all of stdin, exiting with the usage line if stdin is a terminal and
  * with an error naming `description` if it's empty. Only call it when the
  * caller is expected to pipe something in, since it waits for the end of
@@ -78,8 +94,7 @@ export async function readStdin(
   text = text.replace(/\n+$/, '');
 
   if (!text) {
-    console.error(`The ${description} (read from stdin) is empty.`);
-    process.exit(1);
+    exitWithError(`The ${description} (read from stdin) is empty.`);
   }
 
   return text;
@@ -141,16 +156,14 @@ export async function fetchJson<Schema extends z.ZodType>(
     // warning from gh on stderr would break it
     json = JSON.parse(result.stdout);
   } catch {
-    console.error('The command printed something other than JSON.');
-    process.exit(1);
+    exitWithError('The command printed something other than JSON.');
   }
 
   const parsed = schema.safeParse(json);
   if (!parsed.success) {
-    console.error(
+    exitWithError(
       `The command's JSON wasn't in the expected shape:\n${z.prettifyError(parsed.error)}`,
     );
-    process.exit(1);
   }
 
   return parsed.data;
@@ -171,10 +184,9 @@ export async function getIssueBranch(
   const branch = result.stdout.trim();
 
   if (!branch || branch === 'main') {
-    console.error(
+    exitWithError(
       `Only issue branches can ${action}, not '${branch || 'detached HEAD'}'.`,
     );
-    process.exit(1);
   }
 
   return branch;

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import {
   $passthrough,
+  exitWithError,
   exitWithResult,
   exitWithUsage,
   isIssueNumber,
+  isStdinPiped,
   parseArguments,
   REPO,
   readStdin,
@@ -40,6 +42,10 @@ if (
   removeLabels.includes('')
 ) {
   exitWithUsage(usage);
+}
+
+if (!isBodyPiped && isStdinPiped()) {
+  exitWithError('A body is piped in. Pass --body to replace the issue body.');
 }
 
 const body = isBodyPiped ? await readStdin('issue body', usage) : '';

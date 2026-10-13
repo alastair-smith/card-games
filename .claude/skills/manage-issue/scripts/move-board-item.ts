@@ -2,6 +2,7 @@
 import {
   $capture,
   exitIfFailed,
+  exitWithError,
   exitWithUsage,
   isIssueNumber,
   parseArguments,
@@ -34,8 +35,7 @@ const item = (await fetchProjectItems()).find((projectItem) =>
 );
 
 if (!item) {
-  console.error(`Issue #${issueNumber} isn't on the board.`);
-  process.exit(1);
+  exitWithError(`Issue #${issueNumber} isn't on the board.`);
 }
 
 exitIfFailed(

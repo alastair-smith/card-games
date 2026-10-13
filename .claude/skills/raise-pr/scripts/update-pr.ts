@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import {
   $passthrough,
+  exitWithError,
   exitWithResult,
   exitWithUsage,
   getIssueBranch,
+  isStdinPiped,
   parseArguments,
   REPO,
   readStdin,
@@ -18,6 +20,10 @@ const { title, body: isBodyPiped = false } = parseArguments(usage, {
 
 if (title === '' || (!title && !isBodyPiped)) {
   exitWithUsage(usage);
+}
+
+if (!isBodyPiped && isStdinPiped()) {
+  exitWithError('A body is piped in. Pass --body to replace the PR body.');
 }
 
 if (title) {
