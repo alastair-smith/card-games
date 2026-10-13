@@ -80,6 +80,22 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+### CI logs
+
+Find the run for a branch:
+
+```bash
+gh run list --branch i-123/short-description
+```
+
+Logs are only available once the whole run has finished, even for jobs that
+finished earlier. Wait for the run in the background, then read the failures:
+
+```bash
+gh run watch 456 --compact --exit-status
+gh run view 456 --log-failed
+```
+
 ## Branches
 
 All work that changes files happens on a branch for an issue. When a prompt
