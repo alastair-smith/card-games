@@ -80,6 +80,23 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+### CI logs
+
+Find the run, then its jobs and their IDs:
+
+```bash
+gh run list --branch i-123/short-description
+gh run view 456 --json jobs --jq '.jobs[] | [.databaseId, .name, .status, .conclusion] | @tsv'
+```
+
+`gh run view 456 --log-failed` shows failed job logs, but only once the whole
+run has finished. To read a finished job while others are still running, use
+its job ID:
+
+```bash
+./scripts/view-job-log.sh 789
+```
+
 ## Branches
 
 All work that changes files happens on a branch for an issue. When a prompt
