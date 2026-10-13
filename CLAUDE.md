@@ -10,7 +10,7 @@ Multiplayer card game — server actions transmit state to clients.
 ### Running commands
 
 - Don't `cd` first; the shell already starts in the repo root
-- Use the scripts in `scripts/` for GitHub lookups rather than `gh api`
+- Use the skills' scripts for GitHub lookups rather than `gh api`
 - Run one plain command per call, exactly as documented here or in a skill.
   Read-only commands (`git status`, `git log`, `gh issue view`, `grep`, …) and
   the commands in `.claude/settings.json` run without a permission prompt, but
@@ -103,19 +103,26 @@ asks for changes but doesn't reference an issue, before starting:
 
 1. Search for an existing issue that covers the work, and file one with the
    `manage-issue` skill if there isn't one
-2. Create a branch for it, as below — unless the issue already has an open PR,
-   in which case work on that PR's branch
+2. Create a branch for it with the `manage-branch` skill — unless the issue
+   already has an open PR, in which case work on that PR's branch
 
-Create branches for an issue with `scripts/create-branch.sh`. It runs
-`gh issue develop`, so the branch is linked to the issue on GitHub. A branch
-created with plain `git checkout -b` and given the same name is not linked.
+## Skill scripts
 
-It names the branch `i-<issue number>/<short-description>`, branches from
-`main` and checks it out:
+Scripts that skills run live in `.claude/skills/<skill>/scripts/`, written in
+TypeScript and run directly by Node. They're allowlisted, so each one must:
 
-```bash
-./scripts/create-branch.sh 123 short-description
-```
+- Parse arguments with `parseArguments` from
+  `.claude/skills/lib/script-helpers.ts`, which rejects any option the script
+  doesn't declare, and validate every value
+- Read bodies and comments from stdin, never from arguments
+- Run commands with zx's `$`, which quotes each value as a single argument
+- Hard-code the repo or project each `gh` command acts on, e.g.
+  `--repo ${REPO}`, so no argument can point it elsewhere
+- Never push to `main` or force-push
+
+Start each script with `#!/usr/bin/env node`, make it executable and add it
+to the allowlist in `.claude/settings.json`. Node only strips types, so use
+erasable syntax only: no enums or parameter properties.
 
 ## Commits
 

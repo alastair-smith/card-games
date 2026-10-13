@@ -28,7 +28,7 @@ Every issue has exactly one type label and one area label.
 | `other` | Anything else, including dev tooling and infrastructure |
 
 Issues opened through the templates are labelled automatically.
-`scripts/create-issue.sh` skips the templates, so always pass both labels
+`create-issue.ts` skips the templates, so always pass both labels
 yourself. Quote `home page` because of the space: `--label "home page"`.
 
 ## Finding issues
@@ -53,8 +53,8 @@ To see board status alongside milestones (Done items are left out unless you
 pass `--include-done`):
 
 ```bash
-./scripts/list-board.sh
-./scripts/list-board.sh --include-done
+./.claude/skills/manage-issue/scripts/list-board.ts
+./.claude/skills/manage-issue/scripts/list-board.ts --include-done
 ```
 
 Board columns: Triage, Backlog, Ready, In progress, In review, Done.
@@ -77,9 +77,9 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   milestone just to hold a bug.
 
 ```bash
-./scripts/list-milestones.sh
+./.claude/skills/manage-issue/scripts/list-milestones.ts
 
-./scripts/create-issue.sh \
+./.claude/skills/manage-issue/scripts/create-issue.ts \
   --title "Reconnect when connection drops" \
   --label feature --label other \
   --milestone "🔁 Seamless sessions" <<'EOF'
@@ -103,7 +103,7 @@ one in full, so read the current body first and pass the whole updated text
 through a quoted heredoc, as when creating:
 
 ```bash
-./scripts/edit-issue.sh 123 \
+./.claude/skills/manage-issue/scripts/edit-issue.ts 123 \
   --title "Reconnect when connection drops" \
   --add-label bug --remove-label feature \
   --milestone "🔁 Seamless sessions" <<'EOF'
@@ -122,7 +122,7 @@ and to Done when it closes. Other moves, such as Triage to Backlog or into In
 progress, are manual:
 
 ```bash
-./scripts/move-board-item.sh 123 "In progress"
+./.claude/skills/manage-issue/scripts/move-board-item.ts 123 "In progress"
 ```
 
 The column must be one of the board columns listed above.
@@ -137,7 +137,7 @@ Every closed issue gets a comment saying which PR did the work. The script
 requires it, reading it from stdin, and refuses to close the issue without one:
 
 ```bash
-./scripts/close-issue.sh 123 <<'EOF'
+./.claude/skills/manage-issue/scripts/close-issue.ts 123 <<'EOF'
 Done in #456, which bumps ioredis to 6.0.0.
 EOF
 ```

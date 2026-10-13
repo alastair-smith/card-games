@@ -64,12 +64,13 @@ files for the user to drag into the PR description themselves.
 
 ## Create
 
-Push the branch first — creating the PR fails if it isn't on GitHub yet:
+Push the branch first with the `manage-branch` skill's script — creating the
+PR fails if it isn't on GitHub yet:
 
 ```bash
-./scripts/push-branch.sh
+./.claude/skills/manage-branch/scripts/push-branch.ts
 
-./scripts/create-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/create-pr.ts --title '🔧 Add `manage-issue` skill' <<'EOF'
 ### Summary
 
 ...
@@ -89,13 +90,13 @@ stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
 by the shell.
 
 When later commits change what the PR does, push them with
-`./scripts/push-branch.sh` and update the current branch's PR. Pass a new
+`push-branch.ts` and update the current branch's PR. Pass a new
 title, a new body on stdin, or both:
 
 ```bash
-./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' <<'EOF'
 ...
 EOF
 
-./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' </dev/null
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' </dev/null
 ```
