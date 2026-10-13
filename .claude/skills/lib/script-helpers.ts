@@ -66,7 +66,7 @@ export function isIssueNumber(value: string | undefined): value is IssueNumber {
  */
 export function isStdinPiped(): boolean {
   const stdin = fstatSync(0);
-  return stdin.isFIFO() || stdin.isFile();
+  return stdin.isFIFO() || stdin.isFile() || stdin.isSocket();
 }
 
 /**
