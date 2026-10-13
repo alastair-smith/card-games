@@ -8,13 +8,15 @@ import {
 } from '../../lib/script-helpers.ts';
 import {
   fetchProjectItems,
+  isRepoIssue,
   isStatus,
   PROJECT_ID,
   STATUS_FIELD_ID,
   STATUS_OPTION_IDS,
+  statusSchema,
 } from './project-board.ts';
 
-const usage = `Usage: move-board-item.ts <issue number> <${Object.keys(STATUS_OPTION_IDS).join('|')}>`;
+const usage = `Usage: move-board-item.ts <issue number> <${statusSchema.options.join('|')}>`;
 
 const { positionals } = parseArguments(usage, { allowPositionals: true });
 const [issueNumber, status, ...extraPositionals] = positionals;
@@ -27,8 +29,8 @@ if (
   exitWithUsage(usage);
 }
 
-const item = (await fetchProjectItems()).find(
-  (projectItem) => projectItem.content.number === Number(issueNumber),
+const item = (await fetchProjectItems()).find((projectItem) =>
+  isRepoIssue(projectItem, issueNumber),
 );
 
 if (!item) {

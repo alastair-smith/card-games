@@ -11,5 +11,5 @@ parseArguments('Usage: push-branch.ts', {});
 const branch = await getIssueBranch('be pushed');
 
 exitWithResult(
-  await $passthrough`git push --set-upstream origin ${`HEAD:refs/heads/${branch}`}`,
+  await $passthrough()`git push --set-upstream origin ${`HEAD:refs/heads/${branch}`}`,
 );

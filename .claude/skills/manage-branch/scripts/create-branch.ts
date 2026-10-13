@@ -24,5 +24,5 @@ if (
 }
 
 exitWithResult(
-  await $passthrough`gh issue develop ${issueNumber} --repo ${REPO} --name ${`i-${issueNumber}/${shortDescription}`} --base main --checkout`,
+  await $passthrough()`gh issue develop ${issueNumber} --repo ${REPO} --name ${`i-${issueNumber}/${shortDescription}`} --base main --checkout`,
 );

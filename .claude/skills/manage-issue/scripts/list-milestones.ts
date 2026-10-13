@@ -4,19 +4,18 @@ import {
   $capture,
   fetchJson,
   parseArguments,
-  REPO_NAME,
-  REPO_OWNER,
+  REPO_FULL_NAME,
 } from '../../lib/script-helpers.ts';
 
 const milestoneListSchema = z.array(
-  z.object({ title: z.string(), description: z.string().nullable() }),
+  z.object({ title: z.string(), description: z.string().nullish() }),
 );
 
 parseArguments('Usage: list-milestones.ts', {});
 
 const milestones = await fetchJson(
   milestoneListSchema,
-  $capture`gh api ${`repos/${REPO_OWNER}/${REPO_NAME}/milestones`}`,
+  $capture`gh api ${`repos/${REPO_FULL_NAME}/milestones`}`,
 );
 
 for (const milestone of milestones) {

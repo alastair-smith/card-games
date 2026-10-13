@@ -30,7 +30,7 @@ const milestoneArgs = milestone ? [`--milestone=${milestone}`] : [];
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(
-  await $passthrough({
-    input: body,
-  })`gh issue create --repo ${REPO} --title=${title} --body-file - ${labelArgs} ${milestoneArgs}`,
+  await $passthrough(
+    body,
+  )`gh issue create --repo ${REPO} --title=${title} --body-file - ${labelArgs} ${milestoneArgs}`,
 );

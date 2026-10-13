@@ -22,5 +22,5 @@ const comment = await readRequiredStdin('closing comment', usage);
 
 // The --flag=value form stops a comment that starts with a dash from being read as another flag
 exitWithResult(
-  await $passthrough`gh issue close ${issueNumber} --repo ${REPO} --comment=${comment}`,
+  await $passthrough()`gh issue close ${issueNumber} --repo ${REPO} --comment=${comment}`,
 );

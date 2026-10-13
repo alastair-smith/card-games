@@ -39,7 +39,5 @@ if (editArgs.length === 0) {
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(
-  await $passthrough({
-    input: body,
-  })`gh pr edit ${branch} --repo ${REPO} ${editArgs}`,
+  await $passthrough(body)`gh pr edit ${branch} --repo ${REPO} ${editArgs}`,
 );

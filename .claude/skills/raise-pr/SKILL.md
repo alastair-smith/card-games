@@ -5,8 +5,8 @@ description: Raise a pull request for this repo — title emoji, PR body from th
 
 # Raise a pull request
 
-Branches and commit messages are covered in CLAUDE.md. This skill picks up
-once the work is committed on an issue branch.
+Branches are covered by the `manage-branch` skill and commit messages by
+CLAUDE.md. This skill picks up once the work is committed on an issue branch.
 
 ## Check for an existing PR
 
@@ -85,13 +85,14 @@ EOF
 
 Use these scripts rather than `git push` and `gh pr create`. They only push
 the current issue branch to this repo, never `main` and never with force, and
-only open PRs against this repo's `main`. `create-pr.sh` reads the body from
+only open PRs against this repo's `main`. `create-pr.ts` reads the body from
 stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
 by the shell.
 
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new
-title, a new body on stdin, or both:
+title, a new body on stdin, or both. To change only the title, redirect stdin
+from `/dev/null`, as below, so the script doesn't wait for a body:
 
 ```bash
 ./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' <<'EOF'

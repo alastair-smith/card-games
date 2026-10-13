@@ -112,8 +112,14 @@ EOF
 ```
 
 Every flag is optional and the labels can repeat, but pass at least one change.
-Leave out the heredoc to keep the body as it is. Use the script rather than
-`gh issue edit`, which can target any repo.
+To keep the body as it is, redirect stdin from `/dev/null` instead of passing
+a heredoc, so the script doesn't wait for a body:
+
+```bash
+./.claude/skills/manage-issue/scripts/edit-issue.ts 123 --add-label bug </dev/null
+```
+
+Use the script rather than `gh issue edit`, which can target any repo.
 
 ## Changing status
 

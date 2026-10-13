@@ -1,5 +1,5 @@
 import { type ParseArgsConfig, parseArgs } from 'node:util';
-import type { z } from 'zod';
+import { z } from 'zod';
 import { $, type ProcessOutput } from 'zx';
 import type { Branded } from '../../../apps/web/src/types/brand.ts';
 
@@ -11,14 +11,22 @@ export type { Branded };
  */
 export type IssueNumber = Branded<string, 'IssueNumber'>;
 
+export const issueNumberSchema = z
+  .string()
+  .regex(/^[0-9]+$/)
+  .transform((value) => value as IssueNumber);
+
 /** The checked-out branch, known not to be `main` or a detached HEAD. */
 export type IssueBranch = Branded<string, 'IssueBranch'>;
 
 export const REPO_OWNER = 'alastair-smith';
 export const REPO_NAME = 'card-games';
 
+/** The repo as `owner/name`, as GitHub's API and project items name it. */
+export const REPO_FULL_NAME = `${REPO_OWNER}/${REPO_NAME}`;
+
 /** The repo every script targets, so `gh` never acts on another one. */
-export const REPO = `github.com/${REPO_OWNER}/${REPO_NAME}`;
+export const REPO = `github.com/${REPO_FULL_NAME}`;
 
 /** Prints the usage line to stderr and exits with status 1. */
 export function exitWithUsage(usage: string): never {
@@ -48,7 +56,7 @@ export function parseArguments<const Config extends ParseArgsConfig>(
 
 /** Whether `value` is an issue number: present and digits only. */
 export function isIssueNumber(value: string | undefined): value is IssueNumber {
-  return value !== undefined && /^[0-9]+$/.test(value);
+  return issueNumberSchema.safeParse(value).success;
 }
 
 /**
@@ -97,11 +105,18 @@ export async function readRequiredStdin(
 /**
  * zx's `$`, set up to print the command's output as it runs and not throw
  * when it fails. Pass the result to `exitWithResult`.
+ *
+ * @param input sent to the command's stdin, e.g. for `--body-file -`. Without
+ * it the command inherits this script's stdin, since zx leaves a piped stdin
+ * open when there's nothing to write, and a command that reads it would hang.
  */
-export const $passthrough = $({
-  stdio: ['pipe', 'inherit', 'inherit'],
-  nothrow: true,
-});
+export function $passthrough(input = '') {
+  return $({
+    input: input || undefined,
+    stdio: [input ? 'pipe' : 'inherit', 'inherit', 'inherit'],
+    nothrow: true,
+  });
+}
 
 /**
  * zx's `$`, set up to capture the command's output and not throw when it
@@ -125,7 +140,8 @@ export function exitIfFailed(result: ProcessOutput): void {
 /**
  * Runs a command that prints JSON, such as `gh … --format json`, and returns
  * its output checked against `schema`. Exits with the command's exit code if
- * it fails.
+ * it fails, or with 1 and a short error if its output isn't what `schema`
+ * expects.
  */
 export async function fetchJson<Schema extends z.ZodType>(
   schema: Schema,
@@ -133,7 +149,24 @@ export async function fetchJson<Schema extends z.ZodType>(
 ): Promise<z.infer<Schema>> {
   const result = await command;
   exitIfFailed(result);
-  return schema.parse(result.json());
+
+  let json: unknown;
+  try {
+    json = result.json();
+  } catch {
+    console.error('The command printed something other than JSON.');
+    process.exit(1);
+  }
+
+  const parsed = schema.safeParse(json);
+  if (!parsed.success) {
+    console.error(
+      `The command's JSON wasn't in the expected shape:\n${z.prettifyError(parsed.error)}`,
+    );
+    process.exit(1);
+  }
+
+  return parsed.data;
 }
 
 /**

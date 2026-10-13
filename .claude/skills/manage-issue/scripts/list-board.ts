@@ -1,6 +1,19 @@
 #!/usr/bin/env node
-import { parseArguments } from '../../lib/script-helpers.ts';
-import { fetchProjectItems } from './project-board.ts';
+import { parseArguments, REPO_FULL_NAME } from '../../lib/script-helpers.ts';
+import { fetchProjectItems, type ProjectItem } from './project-board.ts';
+
+/** `#123` for this repo's issues, `owner/name#123` for another repo's. */
+function formatReference(item: ProjectItem): string {
+  const { number, repository } = item.content;
+
+  if (number === undefined || number === null) {
+    return 'draft';
+  }
+
+  return repository && repository !== REPO_FULL_NAME
+    ? `${repository}#${number}`
+    : `#${number}`;
+}
 
 const { values } = parseArguments('Usage: list-board.ts [--include-done]', {
   options: { 'include-done': { type: 'boolean' } },
@@ -12,8 +25,9 @@ const items = (await fetchProjectItems()).filter(
 );
 
 for (const item of items) {
-  const number = item.content.number ?? 'draft';
   const status = item.status ?? 'no status';
   const milestone = item.milestone?.title ?? 'no milestone';
-  console.log(`#${number} [${status}] ${item.title} — ${milestone}`);
+  console.log(
+    `${formatReference(item)} [${status}] ${item.title} — ${milestone}`,
+  );
 }
