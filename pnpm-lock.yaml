@@ -11,15 +11,21 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.15
         version: 2.5.15
-      '@types/node':
-        specifier: ^24.19.2
-        version: 24.19.2
       turbo:
         specifier: ^2.11.7
         version: 2.11.7
+
+  .claude/skills:
+    devDependencies:
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.5
       zx:
         specifier: ^8.8.5
         version: 8.8.5

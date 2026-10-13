@@ -22,7 +22,7 @@ if (!title) {
 
 assertPrTitle(title);
 const branch = await getIssueBranch('have a PR');
-const body = readRequiredStdin('PR body', usage);
+const body = await readRequiredStdin('PR body', usage);
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
 exitWithResult(

@@ -40,7 +40,7 @@ if (
   exitWithUsage(usage);
 }
 
-const body = readOptionalStdin();
+const body = await readOptionalStdin();
 
 const editArgs = [
   ...(title ? [`--title=${title}`] : []),

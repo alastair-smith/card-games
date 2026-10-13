@@ -52,10 +52,11 @@ Check types across all packages (run from repo root):
 pnpm typecheck
 ```
 
-Or just the web app:
+Or just the web app, or just the skill scripts:
 
 ```bash
 pnpm --filter @repo/web typecheck
+pnpm --filter @repo/skills typecheck
 ```
 
 ### Tests

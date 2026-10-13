@@ -24,7 +24,7 @@ if (!title || labels.length === 0 || labels.includes('') || milestone === '') {
   exitWithUsage(usage);
 }
 
-const body = readRequiredStdin('issue body', usage);
+const body = await readRequiredStdin('issue body', usage);
 const labelArgs = labels.map((label) => `--label=${label}`);
 const milestoneArgs = milestone ? [`--milestone=${milestone}`] : [];
 

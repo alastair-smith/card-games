@@ -31,6 +31,8 @@
       "Bash(git pull *)",
       "Bash(git switch *)",
       "Bash(pnpm --filter @repo/web test *)",
+      "Bash(pnpm --filter @repo/skills typecheck *)",
+      "Bash(pnpm --filter @repo/skills typecheck)",
       "Bash(pnpm --filter @repo/web typecheck *)",
       "Bash(pnpm format *)",
       "Bash(pnpm format:check *)",

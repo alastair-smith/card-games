@@ -1,17 +1,19 @@
 #!/usr/bin/env node
-import {
-  $passthrough,
-  exitWithResult,
-  parseArguments,
-} from '../../lib/script-helpers.ts';
+import { parseArguments } from '../../lib/script-helpers.ts';
+import { fetchProjectItems } from './project-board.ts';
 
 const { values } = parseArguments('Usage: list-board.ts [--include-done]', {
   options: { 'include-done': { type: 'boolean' } },
 });
-const statusFilter = values['include-done'] ? '.' : 'select(.status != "Done")';
-const itemFormat =
-  '"#\\(.content.number) [\\(.status)] \\(.title) — \\(.milestone.title // "no milestone")"';
+const isDoneIncluded = values['include-done'] ?? false;
 
-exitWithResult(
-  await $passthrough`gh project item-list 3 --owner alastair-smith --limit 500 --format json --jq ${`.items[] | ${statusFilter} | ${itemFormat}`}`,
+const items = (await fetchProjectItems()).filter(
+  (item) => isDoneIncluded || item.status !== 'Done',
 );
+
+for (const item of items) {
+  const number = item.content.number ?? 'draft';
+  const status = item.status ?? 'no status';
+  const milestone = item.milestone?.title ?? 'no milestone';
+  console.log(`#${number} [${status}] ${item.title} — ${milestone}`);
+}

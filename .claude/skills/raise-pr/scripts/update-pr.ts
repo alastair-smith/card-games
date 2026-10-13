@@ -25,7 +25,7 @@ if (title) {
 }
 
 const branch = await getIssueBranch('have a PR');
-const body = readOptionalStdin();
+const body = await readOptionalStdin();
 
 const editArgs = [
   ...(title ? [`--title=${title}`] : []),

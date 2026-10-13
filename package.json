@@ -12,8 +12,7 @@
     "format:fix": "biome check --write",
     "format:fix:llm": "biome check --write --reporter=github",
     "lint": "pnpm format:check && pnpm typecheck",
-    "typecheck": "turbo run typecheck && pnpm typecheck:scripts",
-    "typecheck:scripts": "tsc --project .claude/skills",
+    "typecheck": "turbo run typecheck",
     "typecheck:watch": "turbo run typecheck:watch",
     "predev": "pnpm run background-services",
     "test": "turbo run test",
@@ -23,10 +22,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
-    "@types/node": "^24.19.2",
-    "turbo": "^2.11.7",
-    "typescript": "^7.0.2",
-    "zx": "^8.8.5"
+    "turbo": "^2.11.7"
   },
   "packageManager": "pnpm@10.16.0",
   "engines": {

@@ -18,7 +18,7 @@ if (!isIssueNumber(issueNumber) || extraPositionals.length > 0) {
   exitWithUsage(usage);
 }
 
-const comment = readRequiredStdin('closing comment', usage);
+const comment = await readRequiredStdin('closing comment', usage);
 
 // The --flag=value form stops a comment that starts with a dash from being read as another flag
 exitWithResult(
