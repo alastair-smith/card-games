@@ -24,8 +24,8 @@ if (title) {
   exitUnlessValidPrTitle(title);
 }
 
-const body = isBodyPassed ? await readStdin('PR body', usage) : '';
 const branch = await getIssueBranch('have a PR');
+const body = isBodyPassed ? await readStdin('PR body', usage) : '';
 
 const editArguments = [
   ...(title ? [`--title=${title}`] : []),

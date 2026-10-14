@@ -3,12 +3,12 @@ import { z } from 'zod';
 import { $, type ProcessOutput } from 'zx';
 
 /**
- * A GitHub issue number, digits only. Kept as a string so `0123` reaches
- * `gh` as typed rather than as `123`.
+ * A GitHub issue number: digits with no leading zero, so it reads the same
+ * in a branch name (`i-123/…`) as it does on GitHub.
  */
 export const issueNumberSchema = z
   .string()
-  .regex(/^[0-9]+$/)
+  .regex(/^[1-9][0-9]*$/)
   .brand<'IssueNumber'>();
 
 export type IssueNumber = z.infer<typeof issueNumberSchema>;
@@ -53,7 +53,7 @@ export function parseArguments<const Config extends ParseArgsConfig>(
   }
 }
 
-/** Whether `value` is an issue number: present and digits only. */
+/** Whether `value` is an issue number: present, digits, no leading zero. */
 export function isIssueNumber(value: string | undefined): value is IssueNumber {
   return issueNumberSchema.safeParse(value).success;
 }
