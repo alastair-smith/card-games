@@ -70,7 +70,7 @@ PR fails if it isn't on GitHub yet:
 ```bash
 ./.claude/skills/manage-branch/scripts/push-branch.ts
 
-./.claude/skills/raise-pr/scripts/create-pr.ts --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/create-pr.ts --title '🔧 Add `manage-issue` skill' --body <<'EOF'
 ### Summary
 
 ...
@@ -85,9 +85,9 @@ EOF
 
 Use these scripts rather than `git push` and `gh pr create`. They only push
 the current issue branch to this repo, never `main` and never with force, and
-only open PRs against this repo's `main`. `create-pr.ts` reads the body from
-stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
-by the shell.
+only open PRs against this repo's `main`. `--body` tells `create-pr.ts` to
+read the body from stdin. Pass it through a quoted heredoc as above, so
+backticks in it aren't run by the shell.
 
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new

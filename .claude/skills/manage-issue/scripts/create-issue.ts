@@ -9,18 +9,30 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: create-issue.ts --title <title> --label <label>... [--milestone <milestone>] < body';
+  'Usage: create-issue.ts --title <title> --label <label>... [--milestone <milestone>] --body < body';
 
 const { values } = parseArguments(usage, {
   options: {
     title: { type: 'string' },
     label: { type: 'string', multiple: true },
     milestone: { type: 'string' },
+    body: { type: 'boolean' },
   },
 });
-const { title, label: labels = [], milestone } = values;
+const {
+  title,
+  label: labels = [],
+  milestone,
+  body: isBodyPassed = false,
+} = values;
 
-if (!title || labels.length === 0 || labels.includes('') || milestone === '') {
+if (
+  !title ||
+  labels.length === 0 ||
+  labels.includes('') ||
+  milestone === '' ||
+  !isBodyPassed
+) {
   exitWithUsage(usage);
 }
 

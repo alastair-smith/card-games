@@ -9,12 +9,19 @@ import {
   readStdin,
 } from '../../lib/script-helpers.ts';
 
-const usage = 'Usage: close-issue.ts <issue number> < comment';
+const usage = 'Usage: close-issue.ts <issue number> --comment < comment';
 
-const { positionals } = parseArguments(usage, { allowPositionals: true });
+const { values, positionals } = parseArguments(usage, {
+  allowPositionals: true,
+  options: { comment: { type: 'boolean' } },
+});
 const [issueNumber, ...extraPositionals] = positionals;
 
-if (!isIssueNumber(issueNumber) || extraPositionals.length > 0) {
+if (
+  !isIssueNumber(issueNumber) ||
+  extraPositionals.length > 0 ||
+  !values.comment
+) {
   exitWithUsage(usage);
 }
 

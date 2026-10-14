@@ -1,4 +1,3 @@
-import { fstatSync } from 'node:fs';
 import { type ParseArgsConfig, parseArgs } from 'node:util';
 import { z } from 'zod';
 import { $, type ProcessOutput } from 'zx';
@@ -60,26 +59,17 @@ export function isIssueNumber(value: string | undefined): value is IssueNumber {
 }
 
 /**
- * Whether something such as a heredoc is piped into stdin, found from what
- * stdin is rather than by reading it, so it can't wait. `/dev/null` and a
- * terminal don't count.
- */
-export function isStdinPiped(): boolean {
-  const stdin = fstatSync(0);
-  return stdin.isFIFO() || stdin.isFile() || stdin.isSocket();
-}
-
-/**
- * Reads all of stdin, exiting with the usage line if nothing is piped in and
- * with an error naming `description` if it's empty. Strips trailing newlines
- * only, as `$(cat)` does in bash, so a Markdown line break at the end (two
- * trailing spaces) survives.
+ * Reads all of stdin. Only call it when a flag such as `--body` says
+ * something is piped in, since it waits for the end of stdin. Exits with the
+ * usage line if stdin is a terminal, and with an error naming `description`
+ * if it's empty. Strips trailing newlines only, as `$(cat)` does in bash, so
+ * a Markdown line break at the end (two trailing spaces) survives.
  */
 export async function readStdin(
   description: string,
   usage: string,
 ): Promise<string> {
-  if (!isStdinPiped()) {
+  if (process.stdin.isTTY) {
     exitWithUsage(usage);
   }
 
@@ -97,29 +87,6 @@ export async function readStdin(
   }
 
   return text;
-}
-
-/**
- * Reads the body from stdin if `--body` was passed, or returns an empty
- * string if it wasn't. Exits if a body is piped in without `--body`, rather
- * than silently dropping it.
- */
-export async function readBodyIfPassed(
-  isBodyPassed: boolean,
-  description: string,
-  usage: string,
-): Promise<string> {
-  if (isBodyPassed) {
-    return readStdin(description, usage);
-  }
-
-  if (isStdinPiped()) {
-    exitWithError(
-      `A body is piped in. Pass --body to replace the ${description}.`,
-    );
-  }
-
-  return '';
 }
 
 /**

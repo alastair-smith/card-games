@@ -82,13 +82,14 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
 ./.claude/skills/manage-issue/scripts/create-issue.ts \
   --title "Reconnect when connection drops" \
   --label feature --label other \
-  --milestone "🔁 Seamless sessions" <<'EOF'
+  --milestone "🔁 Seamless sessions" --body <<'EOF'
 ...
 EOF
 ```
 
-The script always files in this repo and reads the body from stdin. Pass it
-through a quoted heredoc as above, so backticks in it aren't run by the shell.
+The script always files in this repo. `--body` tells it to read the body from
+stdin, which it only does when that flag is passed. Pass the body through a
+quoted heredoc as above, so backticks in it aren't run by the shell.
 Use the script rather than `gh issue create`, which can target any repo.
 
 Show the user the title, labels and milestone before creating, unless they
@@ -134,10 +135,11 @@ hand only when the work was merged without that link, e.g. a Dependabot PR
 that does what an issue describes.
 
 Every closed issue gets a comment saying which PR did the work. The script
-requires it, reading it from stdin, and refuses to close the issue without one:
+requires `--comment` and reads the comment from stdin, and refuses to close
+the issue without one:
 
 ```bash
-./.claude/skills/manage-issue/scripts/close-issue.ts 123 <<'EOF'
+./.claude/skills/manage-issue/scripts/close-issue.ts 123 --comment <<'EOF'
 Done in #456, which bumps ioredis to 6.0.0.
 EOF
 ```

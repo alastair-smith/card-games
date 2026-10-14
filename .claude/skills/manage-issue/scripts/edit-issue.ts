@@ -6,7 +6,7 @@ import {
   isIssueNumber,
   parseArguments,
   REPO,
-  readBodyIfPassed,
+  readStdin,
 } from '../../lib/script-helpers.ts';
 
 const usage =
@@ -42,7 +42,7 @@ if (
   exitWithUsage(usage);
 }
 
-const body = await readBodyIfPassed(isBodyPassed, 'issue body', usage);
+const body = isBodyPassed ? await readStdin('issue body', usage) : '';
 
 const editArguments = [
   ...(title ? [`--title=${title}`] : []),

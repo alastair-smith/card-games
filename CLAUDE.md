@@ -115,7 +115,9 @@ TypeScript and run directly by Node. They're allowlisted, so each one must:
 - Parse arguments with `parseArguments` from
   `.claude/skills/lib/script-helpers.ts`, which rejects any option the script
   doesn't declare, and validate every value
-- Read bodies and comments from stdin, never from arguments
+- Read bodies and comments from stdin, never from arguments, and only when a
+  flag such as `--body` says one is piped in, so a script never has to guess
+  what stdin is
 - Run commands with zx's `$`, which quotes each value as a single argument
 - Read JSON output with `fetchJson` and a Zod schema, then work with it in
   TypeScript rather than with jq

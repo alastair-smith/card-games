@@ -6,7 +6,7 @@ import {
   getIssueBranch,
   parseArguments,
   REPO,
-  readBodyIfPassed,
+  readStdin,
 } from '../../lib/script-helpers.ts';
 import { exitUnlessValidPrTitle } from './pr-title.ts';
 
@@ -24,7 +24,7 @@ if (title) {
   exitUnlessValidPrTitle(title);
 }
 
-const body = await readBodyIfPassed(isBodyPassed, 'PR body', usage);
+const body = isBodyPassed ? await readStdin('PR body', usage) : '';
 const branch = await getIssueBranch('have a PR');
 
 const editArguments = [

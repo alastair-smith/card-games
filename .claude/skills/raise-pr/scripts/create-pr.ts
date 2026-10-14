@@ -10,13 +10,13 @@ import {
 } from '../../lib/script-helpers.ts';
 import { exitUnlessValidPrTitle } from './pr-title.ts';
 
-const usage = 'Usage: create-pr.ts --title <title> < body';
+const usage = 'Usage: create-pr.ts --title <title> --body < body';
 
-const { title } = parseArguments(usage, {
-  options: { title: { type: 'string' } },
+const { title, body: isBodyPassed = false } = parseArguments(usage, {
+  options: { title: { type: 'string' }, body: { type: 'boolean' } },
 }).values;
 
-if (!title) {
+if (!title || !isBodyPassed) {
   exitWithUsage(usage);
 }
 
