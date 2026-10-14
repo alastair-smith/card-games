@@ -161,20 +161,15 @@ export async function fetchJson<Schema extends z.ZodType>(
 /**
  * Returns the checked-out branch, exiting with an error if it's `main` or a
  * detached HEAD.
- *
- * @param action what only issue branches can do, finishing the sentence
- * "Only issue branches can …"
  */
-export async function getIssueBranch(
-  action: 'have a PR' | 'be pushed',
-): Promise<string> {
+export async function getIssueBranch(): Promise<string> {
   const result = await $capture`git branch --show-current`;
   exitIfFailed(result);
   const branch = result.stdout.trim();
 
   if (!branch || branch === 'main') {
     exitWithError(
-      `Only issue branches can ${action}, not '${branch || 'detached HEAD'}'.`,
+      `This only works on an issue branch, not '${branch || 'detached HEAD'}'.`,
     );
   }
 

@@ -21,7 +21,7 @@ if (!title || !isBodyPassed) {
 }
 
 exitUnlessValidPrTitle(title);
-const branch = await getIssueBranch('have a PR');
+const branch = await getIssueBranch();
 const body = await readStdin('PR body', usage);
 
 // The --flag=value form stops a value that starts with a dash from being read as another flag
