@@ -5,8 +5,8 @@ description: Raise a pull request for this repo — title emoji, PR body from th
 
 # Raise a pull request
 
-Branches and commit messages are covered in CLAUDE.md. This skill picks up
-once the work is committed on an issue branch.
+Branches are covered by the `manage-branch` skill and commit messages by
+CLAUDE.md. This skill picks up once the work is committed on an issue branch.
 
 ## Check for an existing PR
 
@@ -64,12 +64,13 @@ files for the user to drag into the PR description themselves.
 
 ## Create
 
-Push the branch first — creating the PR fails if it isn't on GitHub yet:
+Push the branch first with the `manage-branch` skill's script — creating the
+PR fails if it isn't on GitHub yet:
 
 ```bash
-./scripts/push-branch.sh
+./.claude/skills/manage-branch/scripts/push-branch.ts
 
-./scripts/create-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/create-pr.ts --title '🔧 Add `manage-issue` skill' --body <<'EOF'
 ### Summary
 
 ...
@@ -84,18 +85,18 @@ EOF
 
 Use these scripts rather than `git push` and `gh pr create`. They only push
 the current issue branch to this repo, never `main` and never with force, and
-only open PRs against this repo's `main`. `create-pr.sh` reads the body from
-stdin. Pass it through a quoted heredoc as above, so backticks in it aren't run
-by the shell.
+only open PRs against this repo's `main`. `--body` tells `create-pr.ts` to
+read the body from stdin. Pass it through a quoted heredoc as above, so
+backticks in it aren't run by the shell.
 
 When later commits change what the PR does, push them with
-`./scripts/push-branch.sh` and update the current branch's PR. Pass a new
-title, a new body on stdin, or both:
+`push-branch.ts` and update the current branch's PR. Pass a new
+title, `--body` with a new body on stdin, or both:
 
 ```bash
-./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' <<'EOF'
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' --body <<'EOF'
 ...
 EOF
 
-./scripts/update-pr.sh --title '🔧 Add `manage-issue` skill' </dev/null
+./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill'
 ```

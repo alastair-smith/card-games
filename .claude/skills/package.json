@@ -1,0 +1,16 @@
+{
+  "name": "@repo/skills",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.5",
+    "zx": "^8.8.5"
+  }
+}

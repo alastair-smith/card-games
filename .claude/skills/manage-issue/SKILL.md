@@ -28,7 +28,7 @@ Every issue has exactly one type label and one area label.
 | `other` | Anything else, including dev tooling and infrastructure |
 
 Issues opened through the templates are labelled automatically.
-`scripts/create-issue.sh` skips the templates, so always pass both labels
+`create-issue.ts` skips the templates, so always pass both labels
 yourself. Quote `home page` because of the space: `--label "home page"`.
 
 ## Finding issues
@@ -53,8 +53,8 @@ To see board status alongside milestones (Done items are left out unless you
 pass `--include-done`):
 
 ```bash
-./scripts/list-board.sh
-./scripts/list-board.sh --include-done
+./.claude/skills/manage-issue/scripts/list-board.ts
+./.claude/skills/manage-issue/scripts/list-board.ts --include-done
 ```
 
 Board columns: Triage, Backlog, Ready, In progress, In review, Done.
@@ -77,18 +77,19 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   milestone just to hold a bug.
 
 ```bash
-./scripts/list-milestones.sh
+./.claude/skills/manage-issue/scripts/list-milestones.ts
 
-./scripts/create-issue.sh \
+./.claude/skills/manage-issue/scripts/create-issue.ts \
   --title "Reconnect when connection drops" \
   --label feature --label other \
-  --milestone "🔁 Seamless sessions" <<'EOF'
+  --milestone "🔁 Seamless sessions" --body <<'EOF'
 ...
 EOF
 ```
 
-The script always files in this repo and reads the body from stdin. Pass it
-through a quoted heredoc as above, so backticks in it aren't run by the shell.
+The script always files in this repo. `--body` tells it to read the body from
+stdin, which it only does when that flag is passed. Pass the body through a
+quoted heredoc as above, so backticks in it aren't run by the shell.
 Use the script rather than `gh issue create`, which can target any repo.
 
 Show the user the title, labels and milestone before creating, unless they
@@ -98,22 +99,22 @@ New issues are added to the board in Triage automatically.
 
 ## Editing issues
 
-Pass the issue number, then only what changes. A new body replaces the old
-one in full, so read the current body first and pass the whole updated text
-through a quoted heredoc, as when creating:
+Pass the issue number, then only what changes. To change the body, pass
+`--body` and the new body through a quoted heredoc, as when creating. It
+replaces the old body in full, so read the current body first and pass the
+whole updated text:
 
 ```bash
-./scripts/edit-issue.sh 123 \
+./.claude/skills/manage-issue/scripts/edit-issue.ts 123 \
   --title "Reconnect when connection drops" \
   --add-label bug --remove-label feature \
-  --milestone "🔁 Seamless sessions" <<'EOF'
+  --milestone "🔁 Seamless sessions" --body <<'EOF'
 ...
 EOF
 ```
 
 Every flag is optional and the labels can repeat, but pass at least one change.
-Leave out the heredoc to keep the body as it is. Use the script rather than
-`gh issue edit`, which can target any repo.
+Use the script rather than `gh issue edit`, which can target any repo.
 
 ## Changing status
 
@@ -122,7 +123,7 @@ and to Done when it closes. Other moves, such as Triage to Backlog or into In
 progress, are manual:
 
 ```bash
-./scripts/move-board-item.sh 123 "In progress"
+./.claude/skills/manage-issue/scripts/move-board-item.ts 123 "In progress"
 ```
 
 The column must be one of the board columns listed above.
@@ -134,10 +135,11 @@ hand only when the work was merged without that link, e.g. a Dependabot PR
 that does what an issue describes.
 
 Every closed issue gets a comment saying which PR did the work. The script
-requires it, reading it from stdin, and refuses to close the issue without one:
+requires `--comment` and reads the comment from stdin, and refuses to close
+the issue without one:
 
 ```bash
-./scripts/close-issue.sh 123 <<'EOF'
+./.claude/skills/manage-issue/scripts/close-issue.ts 123 --comment <<'EOF'
 Done in #456, which bumps ioredis to 6.0.0.
 EOF
 ```
