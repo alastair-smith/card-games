@@ -32,8 +32,46 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
+  changes:
+    name: Detect App Changes
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Check for app changes
+        id: filter
+        # Pull request runs check out the merge commit, so its first parent is the base branch
+        run: |
+          app_paths=(
+            apps/web/
+            packages/
+            package.json
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            turbo.json
+            Dockerfile
+            docker-compose.test.yml
+            .github/workflows/
+            .github/actions/
+          )
+          changed_files=$(git diff --name-only HEAD^1 HEAD -- "${app_paths[@]}")
+          if [[ -n "$changed_files" ]]; then
+            echo "App changes:"
+            echo "$changed_files"
+            echo "app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No app changes"
+            echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
   test:
     name: Test
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,6 +82,8 @@ jobs:
 
   test-stories:
     name: Story Tests
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,6 +96,8 @@ jobs:
 
   test-integration:
     name: Integration Tests
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     services:
       redis:
@@ -73,6 +115,8 @@ jobs:
 
   build:
     name: Build
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -90,7 +134,8 @@ jobs:
 
   test-e2e:
     name: E2E Tests (${{ matrix.project }})
-    needs: build
+    needs: [changes, build]
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -143,6 +188,8 @@ jobs:
 
   docker-smoke:
     name: Docker Smoke Test
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
