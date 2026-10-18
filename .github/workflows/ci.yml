@@ -53,8 +53,6 @@ jobs:
             pnpm-lock.yaml
             pnpm-workspace.yaml
             turbo.json
-            Dockerfile
-            docker-compose.test.yml
             .github/workflows/
             .github/actions/
           )
@@ -185,54 +183,3 @@ jobs:
           path: apps/web/test-results
           if-no-files-found: ignore
           retention-days: 1
-
-  docker-smoke:
-    name: Docker Smoke Test
-    needs: changes
-    if: needs.changes.outputs.app == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Build Docker image
-        run: docker build -t card-games:ci .
-
-      - name: Start services
-        run: docker compose -f docker-compose.test.yml up -d
-
-      - name: Wait for app to be healthy
-        run: |
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:3000/api/healthcheck; then
-              echo "App is healthy"
-              exit 0
-            fi
-            sleep 2
-          done
-          echo "App did not become healthy in time"
-          docker compose -f docker-compose.test.yml logs
-          exit 1
-
-      - uses: ./.github/actions/setup
-
-      - name: Install Playwright browsers
-        run: pnpm --filter @repo/web exec playwright install --with-deps chromium
-
-      - name: Run smoke test
-        run: pnpm --filter @repo/web exec playwright test --config=playwright.smoke.config.ts
-        env:
-          BASE_URL: http://localhost:3000
-
-      - name: Upload Playwright traces
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-smoke-traces
-          path: apps/web/test-results
-          if-no-files-found: ignore
-          retention-days: 1
-
-      - name: Stop services
-        if: always()
-        run: docker compose -f docker-compose.test.yml down

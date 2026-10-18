@@ -1,6 +1,5 @@
 /**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
+ * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation, e.g. for CI builds.
  */
 import './src/env.js';
 
@@ -39,7 +38,6 @@ const config = {
       },
     ],
   },
-  output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   poweredByHeader: false,
   serverExternalPackages: [
     'pino',
