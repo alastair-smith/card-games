@@ -1,11 +1,4 @@
 import {
-  CodeIcon,
-  MessageCircleQuestionMarkIcon,
-  UserLockIcon,
-} from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '~/components/ui/button';
-import {
   Card,
   CardContent,
   CardFooter,
@@ -13,7 +6,6 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { cn } from '~/utils/cn';
-import { SOURCE_CODE_URL } from '~/utils/constants';
 import { TelemetryToggle } from './telemetry-toggle';
 
 export function About({ className }: { className?: string }) {
@@ -33,27 +25,8 @@ export function About({ className }: { className?: string }) {
         </div>
       </CardContent>
 
-      <CardFooter className='gap-3 justify-end flex-wrap'>
-        <TelemetryToggle className='mr-auto' />
-        <Button asChild variant='secondary'>
-          <Link href='/privacy-policy'>
-            <UserLockIcon /> Privacy Policy
-          </Link>
-        </Button>
-        <Button asChild variant='secondary'>
-          <Link href='/contact'>
-            <MessageCircleQuestionMarkIcon /> Contact Us
-          </Link>
-        </Button>
-        <Button asChild variant='secondary'>
-          <Link
-            href={SOURCE_CODE_URL}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <CodeIcon /> Source Code
-          </Link>
-        </Button>
+      <CardFooter>
+        <TelemetryToggle />
       </CardFooter>
     </Card>
   );
