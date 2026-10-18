@@ -47,7 +47,7 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 | API        | [tRPC](https://trpc.io) with server-sent events for game state updates                |
 | Styling    | [Tailwind CSS](https://tailwindcss.com)                                               |
 | Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)            |
-| Containers | [Docker](https://www.docker.com/)                                                     |
+| Hosting    | [Render](https://render.com/)                                                         |
 | Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E)    |
 | Linting    | [Biome](https://biomejs.dev/)                                                         |
 
@@ -84,7 +84,6 @@ Exact versions are specified in the [node-version](./.node-version) and [tool-ve
 |:--------------------------------------|:-----------------------------------------------------|
 | `pnpm build`                          | Make a production build                              |
 | `pnpm start`                          | Start the production server (requires a `.env` file) |
-| `docker build -t card-games .`        | Make a production docker build                       |
 | `pnpm test`                           | Run unit tests                                       |
 | `pnpm test:integration`               | Run integration tests                                |
 | `pnpm --filter @repo/web test:e2e`    | Run E2E tests (headless)                             |
