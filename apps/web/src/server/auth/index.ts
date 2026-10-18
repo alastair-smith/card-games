@@ -48,7 +48,7 @@ export const getSession = async (
     const userId = userIdSchema.parse(jwt.payload.sub);
 
     return jwt.payload.sub && jwt.payload.exp
-      ? { userId, expiry: jwt.payload.exp }
+      ? { userId, expiry: jwt.payload.exp * 1000 }
       : null;
   } catch {
     return null;
