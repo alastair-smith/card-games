@@ -16,6 +16,9 @@ afterEach(() => {
 
 describe('auth tokens', () => {
   test('reads back the expiry the token was issued with', async () => {
+    // jose reads the clock separately, so a second ticking over between the
+    // two reads would put the token's expiry after the cookie's
+    vi.useFakeTimers({ toFake: ['Date'] });
     const { signedJWT, expiry } = await createAuthToken();
 
     const session = await getSession(signedJWT);
