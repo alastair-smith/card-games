@@ -1,7 +1,6 @@
 // @ts-check
 
 import { createServer } from 'node:http';
-import { parse } from 'node:url';
 import next from 'next';
 import { env } from './env.js';
 
@@ -31,8 +30,7 @@ const startServer = async () => {
   await app.prepare();
 
   const server = createServer((req, res) => {
-    const parsedUrl = parse(req.url ?? '', true);
-    void handle(req, res, parsedUrl);
+    void handle(req, res);
   });
 
   server.listen(port, () => {
