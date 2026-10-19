@@ -1,0 +1,33 @@
+name: 'E2E Tests'
+description: 'Run the Playwright E2E tests for one project against the cached build'
+inputs:
+  project:
+    description: 'Playwright project to run, e.g. chromium-desktop'
+    required: true
+  browser:
+    description: 'Browser the project needs installed, e.g. chromium'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: ./.github/actions/setup
+    - name: Restore build output
+      uses: actions/cache/restore@v6
+      with:
+        key: next-build-${{ github.sha }}
+        path: apps/web/.next
+        fail-on-cache-miss: true
+    - name: Install Playwright browsers
+      shell: bash
+      run: pnpm --filter @repo/web exec playwright install --with-deps ${{ inputs.browser }}
+    - name: Run E2E tests
+      shell: bash
+      run: pnpm --filter @repo/web test:e2e --project=${{ inputs.project }}
+    - name: Upload Playwright trace
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: playwright-traces-${{ inputs.project }}
+        path: apps/web/test-results
+        if-no-files-found: ignore
+        retention-days: 1
