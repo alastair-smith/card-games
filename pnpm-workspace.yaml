@@ -11,8 +11,10 @@ onlyBuiltDependencies:
   - protobufjs
   - sharp
 
-# Dependabot's cooldown only holds back the direct dependencies it bumps, so
-# this makes pnpm skip any version under a week old, indirect ones included.
+# Waiting a week lets compromised or broken releases be pulled before we pick
+# them up. Dependabot's cooldown only holds back the direct dependencies it
+# bumps, so this makes pnpm skip any version under a week old, indirect ones
+# included.
 #
 # To take an urgent security fix sooner, list the package under
 # minimumReleaseAgeExclude and update it. If it's an indirect dependency, also
