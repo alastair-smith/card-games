@@ -130,56 +130,71 @@ jobs:
           key: next-build-${{ github.sha }}
           path: apps/web/.next
 
-  test-e2e:
-    name: E2E Tests (${{ matrix.project }})
+  # Separate jobs rather than a matrix, so each check has the same name whether
+  # it runs or is skipped and can be required on main
+  test-e2e-chromium-desktop:
+    name: E2E Tests (chromium-desktop)
     needs: [changes, build]
     if: needs.changes.outputs.app == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        project:
-          - chromium-desktop
-          - chromium-mobile
-          - firefox-desktop
-          - firefox-mobile
-        include:
-          - project: chromium-desktop
-            browser: chromium
-          - project: chromium-mobile
-            browser: chromium
-          - project: firefox-desktop
-            browser: firefox
-          - project: firefox-mobile
-            browser: firefox
-    services:
+    services: &e2e-services
       redis:
         image: redis:alpine
         ports:
           - 6379:6379
-    env:
+    env: &e2e-env
       REDIS_CONNECTION_STRING: redis://localhost:6379
       AUTH_SECRET: "test-secret-at-least-32-characters-long!!"
       NODE_ENV: test
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - name: Restore build output
-        uses: actions/cache/restore@v6
+      - uses: ./.github/actions/e2e
         with:
-          key: next-build-${{ github.sha }}
-          path: apps/web/.next
-          fail-on-cache-miss: true
-      - name: Install Playwright browsers
-        run: pnpm --filter @repo/web exec playwright install --with-deps ${{ matrix.browser }}
-      - name: Run E2E tests
-        run: pnpm --filter @repo/web test:e2e --project=${{ matrix.project }}
-      - name: Upload Playwright trace
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+          project: chromium-desktop
+          browser: chromium
+
+  test-e2e-chromium-mobile:
+    name: E2E Tests (chromium-mobile)
+    needs: [changes, build]
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    services: *e2e-services
+    env: *e2e-env
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/e2e
         with:
-          name: playwright-traces-${{ matrix.project }}
-          path: apps/web/test-results
-          if-no-files-found: ignore
-          retention-days: 1
+          project: chromium-mobile
+          browser: chromium
+
+  test-e2e-firefox-desktop:
+    name: E2E Tests (firefox-desktop)
+    needs: [changes, build]
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    services: *e2e-services
+    env: *e2e-env
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/e2e
+        with:
+          project: firefox-desktop
+          browser: firefox
+
+  test-e2e-firefox-mobile:
+    name: E2E Tests (firefox-mobile)
+    needs: [changes, build]
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    services: *e2e-services
+    env: *e2e-env
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/e2e
+        with:
+          project: firefox-mobile
+          browser: firefox
