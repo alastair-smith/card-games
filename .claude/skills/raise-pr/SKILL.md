@@ -52,15 +52,49 @@ Fill in `.github/pull_request_template.md`:
 
 ## Screenshots
 
-For visual changes, save screenshots under `.pr-screenshots/<branch name>/`
-at the repo root (gitignored), with descriptive names:
+For visual changes, take screenshots at desktop and mobile sizes, of a page
+on the dev server (port 3000) or of a single story in Storybook (port 6006).
+Both are usually already running:
 
 ```bash
-.pr-screenshots/i-182/show-running-scores/round-summary-mobile.png
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
 ```
 
+It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
+under `.pr-screenshots/<branch name>/` at the repo root (gitignored), and
+prints their paths. `--name` is lowercase kebab-case, describing what's
+shown.
+
+- **Page:** the visible screen by default. Pass `--scroll-to-bottom` when the
+  change is at the foot of the page, or `--full-page` for the whole page
+- **Story:** just the component, framed by the felt background. The story ID
+  follows `?path=/story/` in Storybook's URL. Prefer a story when the change
+  is to one component, since it needs no game set up
+
 Screenshots can't be uploaded with `gh`, so after creating the PR, list the
-files for the user to drag into the PR description themselves.
+files for the user to drag into the PR description themselves. Once they
+have, read the description back with `gh pr view --json body` and arrange the
+`<img>` tags they added into a table under a `### Screenshots` heading.
+
+When something changed, show it before and after. Take the previous
+screenshots on `main` first, named `<name>-previous`:
+
+```md
+| Description | Previous | Updated |
+|:-|-|-|
+| Full lobby, desktop | <img …> | <img …> |
+```
+
+Otherwise, list them:
+
+```md
+| Description | Image |
+|:-|-|
+| Full lobby, desktop | <img …> |
+```
 
 ## Create
 

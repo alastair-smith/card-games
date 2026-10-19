@@ -11,6 +11,7 @@
       "Bash(./.claude/skills/manage-issue/scripts/list-milestones.ts)",
       "Bash(./.claude/skills/manage-issue/scripts/move-board-item.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/create-pr.ts *)",
+      "Bash(./.claude/skills/raise-pr/scripts/take-screenshots.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/update-pr.ts *)",
       "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts *)",
       "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts)",
