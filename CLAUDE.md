@@ -81,6 +81,19 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+E2E tests play a full game in Playwright, one browser setup per project.
+They reuse the dev server on port 3000, which is usually already running, so
+they test whichever branch is checked out. Run them in the background, as a
+project takes a few minutes:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop
+```
+
+The projects are `chromium-desktop`, `chromium-mobile`, `firefox-desktop`
+and `firefox-mobile`. Firefox may not be installed locally, so use the
+Chromium ones unless asked; CI runs all four.
+
 ### CI logs
 
 Find the run for a branch:
@@ -189,6 +202,9 @@ import { cn } from '~/utils/cn';
 <div className={cn('base-class', condition && 'conditional-class', className)} />
 ```
 
+Write classes inline on the element, not in constants such as
+`LINK_CLASS_NAME`.
+
 ### Branded types
 
 Primitive IDs and constrained strings use branded types — avoid using plain `string`:
@@ -279,6 +295,10 @@ components/my-component/index.tsx
 Give new UI elements their own component file rather than adding JSX inline
 to an existing component.
 
+`~/components/ui/` holds the base components: buttons, links, inputs, cards
+and so on. Build standard elements from these rather than styling raw
+elements or `next/link` directly.
+
 ## Testing
 
 ### Test naming
@@ -300,6 +320,9 @@ to an existing component.
 - Group related tests in nested `describe` blocks by feature/stage, not by prop
 - Fresh `vi.fn()` instances per test when asserting a handler was called
 - Shared `vi.fn()` (e.g. `noop`) is fine for handlers that are not under test
+- Freeze the clock with `vi.useFakeTimers({ toFake: ['Date'] })` in tests
+  that compare timestamps, so two clock reads can't land either side of a
+  second
 - Test only what the unit adds — don't re-test its dependencies or third-party libraries
 - Share test helpers from `~/test-utils/` rather than copying them between files
 
