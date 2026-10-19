@@ -52,12 +52,22 @@ Fill in `.github/pull_request_template.md`:
 
 ## Screenshots
 
-For visual changes, save screenshots under `.pr-screenshots/<branch name>/`
-at the repo root (gitignored), with descriptive names:
+For visual changes, take screenshots of a page on the dev server (already
+running on port 3000) at desktop and mobile sizes:
 
 ```bash
-.pr-screenshots/i-182/show-running-scores/round-summary-mobile.png
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path /yaniv --name lobby
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home --scroll-to-bottom
 ```
+
+It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
+under `.pr-screenshots/<branch name>/` at the repo root (gitignored), and
+prints their paths. `--name` is lowercase kebab-case, describing what's
+shown. Pass `--scroll-to-bottom` when the change is at the foot of the page.
+
+It takes viewport screenshots, not full-page ones. During a full-page capture
+the scrollbar disappears and the page reflows wider than the image, cropping
+its right edge.
 
 Screenshots can't be uploaded with `gh`, so after creating the PR, list the
 files for the user to drag into the PR description themselves.

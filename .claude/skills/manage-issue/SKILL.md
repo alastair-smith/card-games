@@ -65,6 +65,8 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   when connection drops".
 - **Body:** a sentence or two on what and why, then bullet points if there
   are several parts. No headings for small issues.
+- **Links:** `#123` links to this repo, so write issues, PRs and discussions
+  in other repos as full URLs.
 - **Labels:** one type and one area, as above.
 - **Milestone:** put it under the milestone it helps ship. Milestones are
   outcome-named deliverables, e.g. "📝 Play Yaniv games in person". If none
