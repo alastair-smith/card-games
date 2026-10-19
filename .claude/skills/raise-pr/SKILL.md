@@ -75,7 +75,26 @@ shown.
   is to one component, since it needs no game set up
 
 Screenshots can't be uploaded with `gh`, so after creating the PR, list the
-files for the user to drag into the PR description themselves.
+files for the user to drag into the PR description themselves. Once they
+have, read the description back with `gh pr view --json body` and arrange the
+`<img>` tags they added into a table under a `### Screenshots` heading.
+
+When something changed, show it before and after. Take the previous
+screenshots on `main` first, named `<name>-previous`:
+
+```md
+| Description | Previous | Updated |
+|:-|-|-|
+| Full lobby, desktop | <img …> | <img …> |
+```
+
+Otherwise, list them:
+
+```md
+| Description | Image |
+|:-|-|
+| Full lobby, desktop | <img …> |
+```
 
 ## Create
 
