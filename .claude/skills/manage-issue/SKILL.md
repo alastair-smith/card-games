@@ -72,6 +72,10 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   agree, create it with `create-milestone.ts` (below). Don't create an
   umbrella issue instead. `--milestone` needs the exact title, emoji
   included, so copy it from the listing below.
+- **Completed milestones:** don't add new work to a milestone whose issues
+  are all closed, even if the milestone itself is still open. Propose a new
+  milestone for the next outcome instead. Delivering in slices is fine; a
+  milestone that keeps growing never finishes.
 - **Bugs** don't need a milestone, since they often don't belong to any
   deliverable. Only add one when an existing milestone clearly fits, e.g. a
   bug in a feature that milestone is still delivering. Never propose a new
