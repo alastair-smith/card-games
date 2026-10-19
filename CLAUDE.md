@@ -126,7 +126,9 @@ TypeScript and run directly by Node. They're allowlisted, so each one must:
 - Never push to `main` or force-push
 
 Start each script with `#!/usr/bin/env node`, make it executable and add it
-to the allowlist in `.claude/settings.json`. Node only strips types, so use
+to the allowlist in `.claude/settings.json`. The exception is a script for
+something rare enough that each run should ask for approval, such as
+`create-milestone.ts`. Node only strips types, so use
 erasable syntax only: no enums or parameter properties.
 
 ## Commits
