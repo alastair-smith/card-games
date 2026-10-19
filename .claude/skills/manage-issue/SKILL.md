@@ -68,9 +68,14 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
 - **Labels:** one type and one area, as above.
 - **Milestone:** put it under the milestone it helps ship. Milestones are
   outcome-named deliverables, e.g. "📝 Play Yaniv games in person". If none
-  fits, propose a new outcome-named milestone to the user. Don't create an
+  fits, propose a new outcome-named milestone to the user, and once they
+  agree, create it with `create-milestone.ts` (below). Don't create an
   umbrella issue instead. `--milestone` needs the exact title, emoji
   included, so copy it from the listing below.
+- **Completed milestones:** don't add new work to a milestone whose issues
+  are all closed, even if the milestone itself is still open. Propose a new
+  milestone for the next outcome instead. Delivering in slices is fine; a
+  milestone that keeps growing never finishes.
 - **Bugs** don't need a milestone, since they often don't belong to any
   deliverable. Only add one when an existing milestone clearly fits, e.g. a
   bug in a feature that milestone is still delivering. Never propose a new
@@ -96,6 +101,21 @@ Show the user the title, labels and milestone before creating, unless they
 have already asked you to file it.
 
 New issues are added to the board in Triage automatically.
+
+## Creating milestones
+
+Only once the user has agreed the title and description:
+
+```bash
+./.claude/skills/manage-issue/scripts/create-milestone.ts \
+  --title "🔁 Seamless sessions" --description <<'EOF'
+Let a group keep playing together without rejoining or re-entering their details.
+EOF
+```
+
+It creates the milestone in this repo and prints its URL. It isn't
+allowlisted, so it asks the user for approval each time; new milestones are
+rare enough to warrant that.
 
 ## Editing issues
 
