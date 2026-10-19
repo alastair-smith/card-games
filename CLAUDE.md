@@ -81,6 +81,19 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+E2E tests play a full game in Playwright, one browser setup per project.
+They reuse the dev server on port 3000, which is usually already running, so
+they test whichever branch is checked out. Run them in the background, as a
+project takes a few minutes:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop
+```
+
+The projects are `chromium-desktop`, `chromium-mobile`, `firefox-desktop`
+and `firefox-mobile`. Firefox may not be installed locally, so use the
+Chromium ones unless asked; CI runs all four.
+
 ### CI logs
 
 Find the run for a branch:

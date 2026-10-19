@@ -31,6 +31,7 @@
       "Bash(git pull *)",
       "Bash(git switch *)",
       "Bash(pnpm --filter @repo/web test *)",
+      "Bash(pnpm --filter @repo/web test:e2e *)",
       "Bash(pnpm --filter @repo/skills typecheck *)",
       "Bash(pnpm --filter @repo/skills typecheck)",
       "Bash(pnpm --filter @repo/web typecheck *)",
@@ -53,6 +54,8 @@
       "mcp__storybook__docs-show",
       "mcp__storybook__get-storybook-story-instructions",
       "mcp__storybook__stories-preview",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:docs.github.com)",
       "WebFetch(domain:ui.shadcn.com)"
     ]
   },
