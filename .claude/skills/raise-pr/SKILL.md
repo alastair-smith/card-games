@@ -52,22 +52,27 @@ Fill in `.github/pull_request_template.md`:
 
 ## Screenshots
 
-For visual changes, take screenshots of a page on the dev server (already
-running on port 3000) at desktop and mobile sizes:
+For visual changes, take screenshots at desktop and mobile sizes, of a page
+on the dev server (port 3000) or of a single story in Storybook (port 6006).
+Both are usually already running:
 
 ```bash
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --path /yaniv --name lobby
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home --scroll-to-bottom
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
 ```
 
 It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
 under `.pr-screenshots/<branch name>/` at the repo root (gitignored), and
 prints their paths. `--name` is lowercase kebab-case, describing what's
-shown. Pass `--scroll-to-bottom` when the change is at the foot of the page.
+shown.
 
-It takes viewport screenshots, not full-page ones. During a full-page capture
-the scrollbar disappears and the page reflows wider than the image, cropping
-its right edge.
+- **Page:** the visible screen by default. Pass `--scroll-to-bottom` when the
+  change is at the foot of the page, or `--full-page` for the whole page
+- **Story:** just the component, framed by the felt background. The story ID
+  follows `?path=/story/` in Storybook's URL. Prefer a story when the change
+  is to one component, since it needs no game set up
 
 Screenshots can't be uploaded with `gh`, so after creating the PR, list the
 files for the user to drag into the PR description themselves.
