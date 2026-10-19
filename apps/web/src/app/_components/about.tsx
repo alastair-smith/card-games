@@ -1,6 +1,3 @@
-import { MessageCircleQuestionMarkIcon, UserLockIcon } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
@@ -28,18 +25,8 @@ export function About({ className }: { className?: string }) {
         </div>
       </CardContent>
 
-      <CardFooter className='gap-3 justify-end flex-wrap'>
-        <TelemetryToggle className='mr-auto' />
-        <Button asChild variant='secondary'>
-          <Link href='/privacy-policy'>
-            <UserLockIcon /> Privacy Policy
-          </Link>
-        </Button>
-        <Button asChild variant='secondary'>
-          <Link href='/contact'>
-            <MessageCircleQuestionMarkIcon /> Contact Us
-          </Link>
-        </Button>
+      <CardFooter>
+        <TelemetryToggle />
       </CardFooter>
     </Card>
   );

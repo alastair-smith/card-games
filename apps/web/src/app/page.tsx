@@ -1,6 +1,7 @@
 import { connection } from 'next/server';
 import { PageHeader, PageRoot } from '~/components/layout/page';
 import { About } from './_components/about';
+import { HomeFooter } from './_components/home-footer';
 import { JoinGame } from './_components/join-game';
 import { NewGame } from './_components/new-game';
 
@@ -8,7 +9,7 @@ export default async function Home() {
   await connection();
 
   return (
-    <PageRoot className='pb-8'>
+    <PageRoot>
       <PageHeader breadcrumbs={[{ text: 'PlayCards.Games' }]} />
 
       <main className='flex-1 w-full flex flex-col gap-6'>
@@ -19,6 +20,8 @@ export default async function Home() {
 
         <NewGame />
       </main>
+
+      <HomeFooter />
     </PageRoot>
   );
 }
