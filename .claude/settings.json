@@ -12,6 +12,8 @@
       "Bash(./.claude/skills/manage-issue/scripts/move-board-item.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/create-pr.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/update-pr.ts *)",
+      "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts *)",
+      "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts)",
       "Bash(docker compose ps *)",
       "Bash(gh issue list *)",
       "Bash(gh issue view *)",
