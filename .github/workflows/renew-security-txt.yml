@@ -1,0 +1,109 @@
+name: Renew security.txt
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  renew:
+    name: Open a PR to renew security.txt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open a PR when security.txt is about to expire
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const path = 'apps/web/public/.well-known/security.txt';
+            const branchPrefix = 'renew-security-txt/';
+            const dayInMilliseconds = 24 * 60 * 60 * 1000;
+            const renewWithinDays = 30;
+            // RFC 9116 says Expires should be less than a year ahead
+            const renewForDays = 360;
+
+            const { data: repository } = await github.rest.repos.get(context.repo);
+            const base = repository.default_branch;
+
+            const { data: file } = await github.rest.repos.getContent({
+              ...context.repo,
+              path,
+              ref: base,
+            });
+            const content = Buffer.from(file.content, 'base64').toString('utf8');
+            const expiresMatch = content.match(/^Expires: (.+)$/m);
+            if (!expiresMatch) {
+              core.setFailed(`No Expires field found in ${path}`);
+              return;
+            }
+
+            const expires = new Date(expiresMatch[1].trim());
+            const now = new Date();
+            const daysUntilExpiry = Math.floor((expires.getTime() - now.getTime()) / dayInMilliseconds);
+            if (daysUntilExpiry > renewWithinDays) {
+              core.info(`security.txt expires in ${daysUntilExpiry} days, so it doesn't need renewing yet`);
+              return;
+            }
+
+            const openPullRequests = await github.paginate(github.rest.pulls.list, {
+              ...context.repo,
+              state: 'open',
+              base,
+            });
+            const existingPullRequest = openPullRequests.find((pullRequest) =>
+              pullRequest.head.ref.startsWith(branchPrefix),
+            );
+            if (existingPullRequest) {
+              core.info(`A PR to renew security.txt is already open: ${existingPullRequest.html_url}`);
+              return;
+            }
+
+            const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+            const renewedExpires = new Date(today.getTime() + renewForDays * dayInMilliseconds).toISOString();
+            const renewedContent = content.replace(/^Expires: .+$/m, `Expires: ${renewedExpires}`);
+            const branch = `${branchPrefix}${today.toISOString().slice(0, 10)}`;
+
+            const { data: baseRef } = await github.rest.git.getRef({
+              ...context.repo,
+              ref: `heads/${base}`,
+            });
+            await github.rest.git.createRef({
+              ...context.repo,
+              ref: `refs/heads/${branch}`,
+              sha: baseRef.object.sha,
+            });
+            await github.rest.repos.createOrUpdateFileContents({
+              ...context.repo,
+              path,
+              branch,
+              sha: file.sha,
+              message: '🔧 Renew `security.txt` expiry',
+              content: Buffer.from(renewedContent, 'utf8').toString('base64'),
+            });
+
+            const expiryStatus =
+              daysUntilExpiry < 0
+                ? `expired ${-daysUntilExpiry} days ago`
+                : `expires in ${daysUntilExpiry} days`;
+            const { data: pullRequest } = await github.rest.pulls.create({
+              ...context.repo,
+              base,
+              head: branch,
+              title: '🔧 Renew `security.txt` expiry',
+              body: [
+                '### Summary',
+                '',
+                `\`security.txt\` ${expiryStatus}, after which scanners treat it as stale. This moves its expiry to ${renewedExpires.slice(0, 10)}.`,
+                '',
+                'Before merging, check that the contact address and policy URL in it are still correct.',
+                '',
+                '### Details',
+                '',
+                '- Opened by the `Renew security.txt` workflow',
+                '- CI doesn\'t run on PRs opened by a workflow, so close and reopen this PR to run it',
+              ].join('\n'),
+            });
+            core.info(`Opened ${pullRequest.html_url}`);
