@@ -103,7 +103,6 @@ jobs:
                 '### Details',
                 '',
                 '- Opened by the `Renew security.txt` workflow',
-                '- CI doesn\'t run on PRs opened by a workflow, so close and reopen this PR to run it',
               ].join('\n'),
             });
             core.info(`Opened ${pullRequest.html_url}`);
