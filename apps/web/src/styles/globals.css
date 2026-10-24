@@ -1,6 +1,7 @@
 /* tailwind setup */
 
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 @theme {
   /* base colors */
