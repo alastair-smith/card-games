@@ -90,9 +90,9 @@ pnpm test
 ```
 
 E2E tests play a full game in Playwright, one browser setup per project.
-They reuse the dev server on port 3000, which is usually already running, so
-they test whichever branch is checked out. Run them in the background, as a
-project takes a few minutes:
+They reuse the dev server on port 3000, so start it first if it isn't running
+(see Dev servers), and they test whichever branch is checked out. Run them in
+the background, as a project takes a few minutes:
 
 ```bash
 pnpm --filter @repo/web test:e2e --project=chromium-desktop
@@ -101,6 +101,23 @@ pnpm --filter @repo/web test:e2e --project=chromium-desktop
 The projects are `chromium-desktop`, `chromium-mobile`, `firefox-desktop`
 and `firefox-mobile`. Firefox may not be installed locally, so use the
 Chromium ones unless asked; CI runs all four.
+
+### Dev servers
+
+Start the app or Storybook yourself when you need one, in the background, and
+stop it when you're done:
+
+```bash
+pnpm dev
+pnpm --filter @repo/web dev:stories
+```
+
+The app runs on port 3000 and Storybook on 6006. If a port is already in use,
+the server is running, so use it rather than starting another. `pnpm dev`
+starts the Docker services (Redis, Jaeger) first; restarting Jaeger wipes its
+traces.
+
+When linking the user to a story, use the `link-stories` skill.
 
 ### CI logs
 
@@ -120,13 +137,20 @@ gh run view 456 --log-failed
 
 ## Branches
 
-All work that changes files happens on a branch for an issue. When a prompt
-asks for changes but doesn't reference an issue, before starting:
+All work that changes files happens on a branch for an issue. Before starting:
 
-1. Search for an existing issue that covers the work, and file one with the
-   `manage-issue` skill if there isn't one
+1. If the prompt doesn't reference an issue, search for an existing issue
+   that covers the work, and file one with the `manage-issue` skill if there
+   isn't one
 2. Create a branch for it with the `manage-branch` skill — unless the issue
    already has an open PR, in which case work on that PR's branch
+3. Before changing anything, refine the issue, unless it was filed in this
+   session after the same checks:
+   - Confirm the problem in the code or the app, so you understand its cause,
+     not just its symptoms
+   - Check any fix it suggests is still right, including that a dependency it
+     names is maintained and meant for the versions we use
+   - Raise anything that's changed with the user before going ahead
 
 When an issue marks part of the work as optional, or says it "could be its
 own PR", look into it first: try it to see how big the change is and how well
@@ -173,6 +197,19 @@ Don't add `Claude-Session:` trailers or any other Claude attribution lines.
 Use the `raise-pr` skill when opening a PR or updating its title or description.
 
 ## Code conventions
+
+### Progressive enhancement
+
+Build each piece in layers, starting from the least the player might have:
+
+1. Semantic HTML, ARIA and keyboard navigation, so it works without seeing
+   the screen
+2. Mobile layout, as the unprefixed classes
+3. Larger screens, with `sm:`, `lg:` and so on, rather than `max-*` variants
+4. Extras for players who haven't asked for less: `motion-safe:` for
+   animations and transitions, and the same for translucency once there's a
+   variant for it. Motion driven from JavaScript checks
+   `matchMedia('(prefers-reduced-motion: no-preference)')`
 
 ### Naming
 

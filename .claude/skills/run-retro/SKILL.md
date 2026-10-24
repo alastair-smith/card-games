@@ -23,6 +23,10 @@ allowlist. This lists every tool call the user approved or rejected by hand
 ./.claude/skills/run-retro/scripts/list-llm-approvals.ts
 ```
 
+Then read `watch-list.md` next to this file. For each pattern on it, check
+whether it happened again this session. If it did, make it a point and
+propose a fix. If it didn't, add one to its count of retros without it.
+
 ## 2. Sort into categories
 
 1. **Corrections** worth turning into a rule
@@ -45,9 +49,9 @@ only by the Code Review service, not by `/code-review`.
 | Code, testing or workflow rule for the whole repo | `CLAUDE.md`, kept short: no one-off review notes |
 | How a workflow such as raising a PR runs | That skill's `SKILL.md` |
 | A command that's repeated or needs approval | A skill script, allowlisted unless each run should ask |
-| A read-only command or docs site that's always safe | The allowlist in `.claude/settings.json` |
+| A read-only command that's always safe, or a docs site whose content only its maintainers publish (not GitHub, npm or other hosts of anyone's content) | The allowlist in `.claude/settings.json` |
 | Context about one piece of code | A comment there |
-| The user's preferences, or anything not about this repo | Memory |
+| A short-term learning, or a personal preference that isn't about how this repo works | Memory, as a last resort: prefer `CLAUDE.md` or a skill wherever the fix fits there |
 
 Draft rules as the general principle, not as a description of the incident
 that prompted them.
@@ -61,14 +65,20 @@ whether it was left out without being looked at, rather than drafting
 
 List the points, one line each, then detail one at a time. Give each point's
 items as a checklist, and don't move on until every item has a decision: do
-it, skip it or leave it for later. Changes follow the usual issue and branch
+it, skip it, leave it for later, or watch it. Watch suits a pattern seen once
+that would only be worth a rule if it recurs: it goes on `watch-list.md`
+rather than into a rule. Changes follow the usual issue and branch
 rules; group small doc changes into one PR. Before filing the issue for them,
 show its title, labels and milestone, as the `manage-issue` skill asks.
 
 ## 5. Recap
 
 End with a table of every item, its decision, and where it landed: a PR or
-issue number, memory, or dropped.
+issue number, memory, the watch list, or dropped.
+
+Update `watch-list.md` in the retro's PR: add the patterns being watched,
+remove any that got a fix, and propose dropping any that have gone 5 retros
+without recurring.
 
 ## 6. Retro of the retro
 

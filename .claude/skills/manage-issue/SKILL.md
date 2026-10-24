@@ -63,8 +63,10 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
 
 - **Title:** short, plain-language, sentence case, no emoji, e.g. "Reconnect
   when connection drops".
-- **Body:** a sentence or two on what and why, then bullet points if there
-  are several parts. No headings for small issues.
+- **Body:** a sentence or two on what and why, then bullet points if the
+  change has several parts. No headings for small issues. Changes that are
+  only loosely related get an issue each, linked to one another where it
+  helps.
 - **Links:** `#123` links to this repo, so write issues, PRs and discussions
   in other repos as full URLs.
 - **Labels:** one type and one area, as above.

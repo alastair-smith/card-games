@@ -19,7 +19,8 @@ GitHub. A branch created with plain `git checkout -b` and given the same name
 is not linked.
 
 It names the branch `i-<issue number>/<short-description>`, branches from
-`main` and checks it out. The description must be lowercase kebab-case.
+`main` and checks it out. The description must be lowercase kebab-case. It
+then moves the issue to In progress on the project board.
 
 If the issue already has an open PR, don't create a branch. Switch to that
 PR's branch instead.

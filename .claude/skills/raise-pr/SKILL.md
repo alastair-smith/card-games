@@ -54,7 +54,8 @@ Fill in `.github/pull_request_template.md`:
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
 on the dev server (port 3000) or of a single story in Storybook (port 6006).
-Both are usually already running:
+Start the one you need if it isn't running, as CLAUDE.md's "Dev servers"
+describes:
 
 ```bash
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home
