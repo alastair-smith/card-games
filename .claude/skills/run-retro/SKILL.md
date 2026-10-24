@@ -52,12 +52,18 @@ only by the Code Review service, not by `/code-review`.
 Draft rules as the general principle, not as a description of the incident
 that prompted them.
 
+Before drafting, find what actually went wrong, not only what the user saw.
+For example, if work was left out and the user then asked for it, check
+whether it was left out without being looked at, rather than drafting
+"ask first".
+
 ## 4. Go through it with the user
 
 List the points, one line each, then detail one at a time. Give each point's
 items as a checklist, and don't move on until every item has a decision: do
 it, skip it or leave it for later. Changes follow the usual issue and branch
-rules; group small doc changes into one PR.
+rules; group small doc changes into one PR. Before filing the issue for them,
+show its title, labels and milestone, as the `manage-issue` skill asks.
 
 ## 5. Recap
 
