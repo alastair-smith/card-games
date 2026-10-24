@@ -43,6 +43,8 @@
       "Bash(pnpm format:fix *)",
       "Bash(pnpm test *)",
       "Bash(pnpm typecheck *)",
+      "Bash(pnpm view *)",
+      "Bash(pnpm why *)",
       "Bash(SKIP_ENV_VALIDATION=1 pnpm --filter @repo/web build)",
       "mcp__jaeger__get_critical_path",
       "mcp__jaeger__get_service_dependencies",
