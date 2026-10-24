@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import {
   $capture,
+  exitIfFailed,
+  exitWithError,
   fetchJson,
   type IssueNumber,
   REPO_FULL_NAME,
@@ -86,4 +88,27 @@ export function isRepoIssue(
     item.content.repository === REPO_FULL_NAME &&
     item.content.number === Number(issueNumber)
   );
+}
+
+/**
+ * Moves this repo's issue to a board column, exiting with an error if it
+ * isn't on the board or with `gh`'s exit code if the move fails.
+ */
+export async function moveBoardItem(
+  issueNumber: IssueNumber,
+  status: Status,
+): Promise<void> {
+  const item = (await fetchProjectItems()).find((projectItem) =>
+    isRepoIssue(projectItem, issueNumber),
+  );
+
+  if (!item) {
+    exitWithError(`Issue #${issueNumber} isn't on the board.`);
+  }
+
+  exitIfFailed(
+    await $capture`gh project item-edit --project-id ${PROJECT_ID} --id ${item.id} --field-id ${STATUS_FIELD_ID} --single-select-option-id ${STATUS_OPTION_IDS[status]}`,
+  );
+
+  console.log(`Moved #${issueNumber} to ${status}.`);
 }
