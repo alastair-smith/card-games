@@ -11,6 +11,8 @@ Multiplayer card game — server actions transmit state to clients.
 
 - Don't `cd` first; the shell already starts in the repo root
 - Use the skills' scripts for GitHub lookups rather than `gh api`
+- To read an issue, use the `--json` form in the `manage-issue` skill;
+  `--comments` alone prints nothing for an issue without comments
 - Run one plain command per call, exactly as documented here or in a skill.
   Read-only commands (`git status`, `git log`, `gh issue view`, `grep`, …) and
   the commands in `.claude/settings.json` run without a permission prompt, but
@@ -57,6 +59,12 @@ Or just the web app, or just the skill scripts:
 ```bash
 pnpm --filter @repo/web typecheck
 pnpm --filter @repo/skills typecheck
+```
+
+Pass `tsc` flags through the script, e.g. `--pretty false` for one line per error:
+
+```bash
+pnpm --filter @repo/web typecheck --pretty false
 ```
 
 ### Tests
@@ -119,6 +127,11 @@ asks for changes but doesn't reference an issue, before starting:
    `manage-issue` skill if there isn't one
 2. Create a branch for it with the `manage-branch` skill — unless the issue
    already has an open PR, in which case work on that PR's branch
+
+When an issue marks part of the work as optional, or says it "could be its
+own PR", look into it first: try it to see how big the change is and how well
+it fits. Then recommend including or splitting it, with the reason, before
+raising the PR. Don't leave it out without looking.
 
 ## Skill scripts
 
