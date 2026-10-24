@@ -13,7 +13,7 @@ type ScoreCardProps = {
   score: number;
   isYanivCalled: boolean;
   isPlayersTurn?: boolean;
-  reactionEmoji?: { emoji: string; id: EmojiReactionId };
+  reactionEmoji?: { emoji: string; id: EmojiReactionId } | undefined;
 };
 
 export default function ScoreCard({

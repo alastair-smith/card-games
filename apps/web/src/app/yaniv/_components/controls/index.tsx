@@ -20,7 +20,7 @@ type ControlsProps = {
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
-  isRunSelected?: boolean;
+  isRunSelected?: boolean | undefined;
   playerTakingTurn?: PlayerName;
   stage: GameViewStage;
 };

@@ -450,7 +450,7 @@ function SlideDeck({
   className,
   lastSlideAction,
 }: {
-  className?: string;
+  className?: string | undefined;
   lastSlideAction?: React.ReactNode;
 }) {
   return (

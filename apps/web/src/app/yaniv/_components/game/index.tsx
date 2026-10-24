@@ -35,7 +35,7 @@ type BaseGameProps = {
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
   isRunSelected?: boolean;
-  drawnCard?: YanivPlayingCard;
+  drawnCard?: YanivPlayingCard | undefined;
   canAutoPlay?: boolean;
   onAutoPlayDrawnCard?: () => void;
   players: {
@@ -48,7 +48,9 @@ type BaseGameProps = {
     score: number;
     roundScores: RoundScore[];
     isYanivCalled: boolean;
-    emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId };
+    emojiReaction?:
+      | { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }
+      | undefined;
     isPlayersTurn?: boolean;
   }[];
   userId: UserId;
@@ -109,9 +111,10 @@ export default function Game({
     () =>
       cards.map((card) => ({
         ...card,
-        selected: selectedCards?.some(
-          ({ suit, rank }) => rank === card.rank && suit === card.suit,
-        ),
+        selected:
+          selectedCards?.some(
+            ({ suit, rank }) => rank === card.rank && suit === card.suit,
+          ) ?? false,
         hidden:
           isShownInOverlay &&
           drawnCard?.rank === card.rank &&

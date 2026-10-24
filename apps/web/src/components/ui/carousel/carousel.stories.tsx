@@ -70,7 +70,7 @@ function StoryFrame({
   className,
 }: {
   children: ReactNode;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <div className={cn('flex justify-center px-16 py-10', className)}>

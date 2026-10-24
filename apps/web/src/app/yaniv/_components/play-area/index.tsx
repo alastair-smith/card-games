@@ -17,12 +17,12 @@ type PlayAreaProps = {
   color: PlayerColor;
   discardCard: PlayingCardValue | null;
   playedCards: PlayingCardValue[];
-  onDiscardClick?: () => void;
-  onDeckClick?: () => void;
+  onDiscardClick?: (() => void) | undefined;
+  onDeckClick?: (() => void) | undefined;
   isActive?: boolean;
-  drawnCard?: YanivPlayingCard;
-  canAutoPlay?: boolean;
-  onAutoPlayDrawnCard?: () => void;
+  drawnCard?: YanivPlayingCard | undefined;
+  canAutoPlay?: boolean | undefined;
+  onAutoPlayDrawnCard?: (() => void) | undefined;
   onDrawnCardDismissed?: () => void;
 };
 

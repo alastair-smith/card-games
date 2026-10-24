@@ -24,7 +24,7 @@ const initLogger = () => {
         }
       : undefined;
 
-  return pino({ level, base, transport });
+  return pino({ level, base, ...(transport && { transport }) });
 };
 
 export const logger = initLogger();

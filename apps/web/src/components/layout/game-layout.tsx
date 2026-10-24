@@ -7,7 +7,7 @@ type GameLayoutProps = {
   gameType: GameType;
   children: ReactNode;
   actions?: ReactNode;
-  className?: string;
+  className?: string | undefined;
 };
 
 export default function GameLayout({

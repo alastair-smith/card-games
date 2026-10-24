@@ -21,11 +21,18 @@ import { observable } from '@trpc/server/observable';
 // synchronous, which is the default).
 const pendingMutationContexts = new Map<string, Context[]>();
 
+// tRPC passes `signal: undefined` when there's no signal, which RequestInit
+// doesn't allow.
+type MutationRequestInit = Omit<RequestInit, 'signal'> & {
+  signal?: AbortSignal | null | undefined;
+};
+
 export function createMutationFetch(
   trpcUrl: string,
-): (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> {
+): (input: RequestInfo | URL, init?: MutationRequestInit) => Promise<Response> {
   const trpcPathPrefix = `${new URL(trpcUrl).pathname}/`;
-  return (input, init) => {
+  return (input, mutationInit) => {
+    const init = { ...mutationInit, signal: mutationInit?.signal ?? null };
     const href =
       input instanceof URL
         ? input.href

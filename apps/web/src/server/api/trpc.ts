@@ -34,7 +34,7 @@ import { gameCodeSchema } from '~/types/game';
 export const createTRPCContext = async (opts: {
   signal?: AbortSignal; // not available when calling trpc from the server
   headers: Headers;
-  authCookie?: string;
+  authCookie: string | undefined;
 }) => {
   return {
     ...opts,

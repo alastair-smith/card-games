@@ -35,7 +35,7 @@ export default function YanivClient({
   userId,
 }: {
   code: GameCode;
-  userId?: UserId;
+  userId: UserId | undefined;
 }) {
   const router = useRouter();
 

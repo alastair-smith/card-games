@@ -64,14 +64,14 @@ export function PlayingCard({
   ariaLabel,
 }: {
   card: PlayingCardValue | null;
-  className?: string;
-  cardClassName?: string;
-  onClick?: () => void;
-  selected?: boolean;
-  highlighted?: boolean;
-  design?: 'default' | 'simple';
-  border?: boolean;
-  ariaLabel?: string;
+  className?: string | undefined;
+  cardClassName?: string | undefined;
+  onClick?: (() => void) | undefined;
+  selected?: boolean | undefined;
+  highlighted?: boolean | undefined;
+  design?: 'default' | 'simple' | undefined;
+  border?: boolean | undefined;
+  ariaLabel?: string | undefined;
 }) {
   const highlightedClass = highlighted
     ? 'bg-highlighted-playing-card-background'
@@ -143,7 +143,7 @@ function PlayingCardFace({
 }: {
   className?: string;
   card: PlayingCardValue | null;
-  design?: 'default' | 'simple';
+  design: 'default' | 'simple' | undefined;
 }) {
   if (!card)
     return (

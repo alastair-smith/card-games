@@ -9,12 +9,12 @@ import { cn } from '~/utils/cn';
 
 type PlayingCardDeckProps = {
   className?: string;
-  onClick?: () => void;
-  drawnCardDisplay?: PlayingCardValue | null;
+  onClick?: (() => void) | undefined;
+  drawnCardDisplay?: PlayingCardValue | null | undefined;
   onDrawnCardClick?: () => void;
   drawnCardClassName?: string;
   ariaLabel?: string;
-  topCardHighlighted?: boolean;
+  topCardHighlighted?: boolean | undefined;
 };
 
 export function PlayingCardDeck({

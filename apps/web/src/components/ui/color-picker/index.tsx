@@ -23,9 +23,9 @@ export function ColorSwatch({
 type ColorPickerProps = {
   colors: readonly ColorOption[];
   /** Key of the currently selected colour. */
-  value?: string;
+  value?: string | undefined;
   /** Colour keys that cannot be selected (e.g. already taken by other players). */
-  disabledColors?: string[];
+  disabledColors?: string[] | undefined;
   /** Accessible label for the trigger button. */
   label?: string;
   onColorSelect: (color: string) => void;
