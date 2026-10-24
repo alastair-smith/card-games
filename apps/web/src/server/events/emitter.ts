@@ -28,7 +28,7 @@ class MonitoredEventEmitter<
   // biome-ignore lint/suspicious/noExplicitAny: specifics set by generic TEvents
   TEvents extends Record<string, any[]>,
 > extends EventEmitter {
-  public on<TEvent extends keyof TEvents & string>(
+  public override on<TEvent extends keyof TEvents & string>(
     event: TEvent,
     listener: (...args: TEvents[TEvent]) => void,
   ): this {
@@ -42,7 +42,7 @@ class MonitoredEventEmitter<
     return this;
   }
 
-  public off<TEvent extends keyof TEvents & string>(
+  public override off<TEvent extends keyof TEvents & string>(
     event: TEvent,
     listener: (...args: TEvents[TEvent]) => void,
   ): this {
@@ -56,7 +56,7 @@ class MonitoredEventEmitter<
     return this;
   }
 
-  public emit<TEvent extends keyof TEvents & string>(
+  public override emit<TEvent extends keyof TEvents & string>(
     event: TEvent,
     ...args: TEvents[TEvent]
   ) {
