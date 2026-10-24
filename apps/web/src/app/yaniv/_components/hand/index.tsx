@@ -18,7 +18,9 @@ type HandProps = {
   handTotal: number;
   isFiftyScoreHalved: boolean;
   totalScore: number;
-  onCardClick?: (card: YanivPlayingCard & { selected?: boolean }) => void;
+  onCardClick?:
+    | ((card: YanivPlayingCard & { selected?: boolean }) => void)
+    | undefined;
   isActive?: boolean;
 };
 

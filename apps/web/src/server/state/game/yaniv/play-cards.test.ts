@@ -13,7 +13,7 @@ import {
   GameStep,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
-import { isValidYanivPlay } from '~/utils/yaniv/validation';
+import { isValidYanivPlay, type PlayResult } from '~/utils/yaniv/validation';
 
 type State = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
@@ -67,10 +67,10 @@ const makeValidPlay = (
   orderedCards: YanivPlayingCard[],
   isPickupRequired = true,
   isPickupDeckOnly?: boolean,
-) => ({
+): PlayResult => ({
   isValid: true,
   isPickupRequired,
-  isPickupDeckOnly,
+  ...(isPickupDeckOnly !== undefined && { isPickupDeckOnly }),
   orderedCards,
 });
 

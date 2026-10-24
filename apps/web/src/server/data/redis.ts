@@ -18,7 +18,7 @@ export enum DataServiceErrorCode {
 }
 
 export class DataServiceError extends Error {
-  static name: 'DataServiceError';
+  override name = 'DataServiceError';
 
   code: DataServiceErrorCode;
 

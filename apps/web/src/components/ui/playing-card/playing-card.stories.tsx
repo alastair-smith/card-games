@@ -236,7 +236,7 @@ const deck = SUITS.flatMap((suit) => {
   });
 });
 
-const DeckGrid = ({ className }: { className?: string }) => {
+const DeckGrid = ({ className }: { className: string | undefined }) => {
   return (
     <div className='p-10 flex flex-wrap gap-4'>
       <PlayingCard card={null} className={className} />

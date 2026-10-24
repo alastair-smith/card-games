@@ -14,7 +14,9 @@
     },
     "typecheck:watch": {
       "dependsOn": ["^typecheck:watch"],
-      "outputs": []
+      "outputs": [],
+      "persistent": true,
+      "cache": false
     },
     "dev": {
       "persistent": true,

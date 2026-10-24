@@ -166,7 +166,7 @@ function PlayerColour({
   color: PlayerColor;
   isUser: boolean;
   takenColors?: PlayerColor[];
-  handleColorChange?: (color: string) => void;
+  handleColorChange?: ((color: string) => void) | undefined;
 }) {
   if (!isUser || !handleColorChange) {
     return (

@@ -4,7 +4,9 @@ import type { ReactionEmoji, SystemEmoji } from '~/types/game';
 
 type Player = {
   id: UserId;
-  emojiReaction?: { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId };
+  emojiReaction?:
+    | { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }
+    | undefined;
 };
 
 type PageReaction = { emoji: string; id: EmojiReactionId };

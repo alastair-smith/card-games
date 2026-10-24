@@ -15,9 +15,9 @@ type ColorSwatchesProps = {
   className?: string;
   colors: readonly ColorOption[];
   /** Key of the currently selected colour. */
-  value?: string;
+  value?: string | undefined;
   /** Colour keys that cannot be selected (e.g. already taken by other players). */
-  disabledColors?: string[];
+  disabledColors?: string[] | undefined;
   onColorSelect: (color: string) => void;
 };
 

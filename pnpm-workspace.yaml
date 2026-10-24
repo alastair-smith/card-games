@@ -11,6 +11,12 @@ onlyBuiltDependencies:
   - protobufjs
   - sharp
 
+# Storybook's Next plugin skips vite-tsconfig-paths, and with it tsconfck, on
+# Vite 8, so tsconfck's TypeScript 5 peer requirement doesn't matter.
+peerDependencyRules:
+  allowedVersions:
+    tsconfck>typescript: '7'
+
 # Waiting a week lets compromised or broken releases be pulled before we pick
 # them up. Dependabot's cooldown only holds back the direct dependencies it
 # bumps, so this makes pnpm skip any version under a week old, indirect ones

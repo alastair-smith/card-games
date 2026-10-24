@@ -9,10 +9,9 @@ export async function proxy(request: NextRequest) {
     request,
   );
 
+  const { requestHeaders } = authBeforeContext;
   const response = NextResponse.next({
-    request: {
-      headers: authBeforeContext.requestHeaders,
-    },
+    request: requestHeaders ? { headers: requestHeaders } : {},
   });
 
   const authAfterContext = await authMiddleware.after(

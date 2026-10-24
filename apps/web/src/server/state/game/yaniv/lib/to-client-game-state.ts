@@ -2,27 +2,19 @@ import type { UserId } from '~/types/entities';
 import {
   GameStage,
   type GameState,
-  type GameStep,
-  type HandSize,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
-type Player = Extract<
+type InProgressGameState = Extract<
   GameState,
   { gameStage: GameStage.IN_PROGRESS }
->['players'][number];
+>;
+
+type Player = InProgressGameState['players'][number];
 
 export type ClientPlayer = Omit<Player, 'hand'> & { isUser: boolean };
 
-type ClientInProgressGameState = {
-  gameStage: GameStage.IN_PROGRESS;
-  gameStep: GameStep;
-  handSize: HandSize;
-  playedCards: YanivPlayingCard[];
-  topDiscardCard?: YanivPlayingCard | null;
-  currentPlayerId: UserId;
-  drawnCard?: YanivPlayingCard;
-  deckOnlyPickup?: boolean;
+type ClientInProgressGameState = Omit<InProgressGameState, 'players'> & {
   hand: YanivPlayingCard[];
   players: ClientPlayer[];
 };
