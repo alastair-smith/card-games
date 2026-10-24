@@ -1,6 +1,7 @@
 /* tailwind setup */
 
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme {
   /* base colors */
@@ -57,31 +58,11 @@
   --color-joker-black: var(--color-spades);
   --color-joker-red: var(--color-hearts);
 
-  --animate-accoridion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-rain: rain 10s linear forwards;
   --animate-celebration-rain: celebration-rain 6s linear forwards;
   --animate-reaction-emoji: reaction-emoji 5s ease-out forwards;
   --animate-pulse-bg: pulse-bg 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-marquee: marquee 10s linear infinite;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
 
   @keyframes rain {
     0% {
