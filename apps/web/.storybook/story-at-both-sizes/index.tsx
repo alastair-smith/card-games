@@ -23,10 +23,10 @@ export const StoryAtBothSizes = ({
   story,
   isPrimary = false,
 }: StoryAtBothSizesProps) => {
-  const mobileSectionRef = useRef<HTMLElement>(null);
-  const desktopSectionRef = useRef<HTMLElement>(null);
-  const mobileSize = useRenderedSize(mobileSectionRef, 'iframe');
-  const desktopSize = useRenderedSize(desktopSectionRef, '[data-story-block]');
+  const mobileGroupRef = useRef<HTMLDivElement>(null);
+  const desktopGroupRef = useRef<HTMLDivElement>(null);
+  const mobileSize = useRenderedSize(mobileGroupRef, 'iframe');
+  const desktopSize = useRenderedSize(desktopGroupRef, '[data-story-block]');
 
   return (
     <Anchor storyId={isPrimary ? `primary--${story.id}` : story.id}>
@@ -37,11 +37,7 @@ export const StoryAtBothSizes = ({
         </>
       )}
       <div className='flex flex-col gap-6 lg:flex-row lg:items-start'>
-        <section
-          ref={mobileSectionRef}
-          aria-label='Mobile'
-          className='shrink-0'
-        >
+        <div ref={mobileGroupRef} className='shrink-0'>
           <ScreenSizeLink
             story={story}
             screenName='Mobile'
@@ -50,12 +46,8 @@ export const StoryAtBothSizes = ({
             viewport={PHONE_VIEWPORT_KEY}
           />
           <MobileStoryFrame story={story} isFollowingControls={isPrimary} />
-        </section>
-        <section
-          ref={desktopSectionRef}
-          aria-label='Desktop'
-          className='min-w-0 flex-1'
-        >
+        </div>
+        <div ref={desktopGroupRef} className='min-w-0 flex-1'>
           <ScreenSizeLink
             story={story}
             screenName='Desktop'
@@ -74,7 +66,7 @@ export const StoryAtBothSizes = ({
             }}
             source={{ __forceInitialArgs: !isPrimary }}
           />
-        </section>
+        </div>
       </div>
     </Anchor>
   );
