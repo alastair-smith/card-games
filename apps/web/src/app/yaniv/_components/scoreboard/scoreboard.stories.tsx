@@ -141,7 +141,7 @@ export const LongGameAllRoundsShown: Story = {
       canvas.getByRole('button', { name: /show all rounds/i }),
     );
     await expect(
-      canvas.getByRole('columnheader', { name: 'Round 1' }),
-    ).toBeInTheDocument();
+      canvas.getByRole('button', { name: /hide earlier rounds/i }),
+    ).toHaveAttribute('aria-expanded', 'true');
   },
 };
