@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { expect } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 import { Card, CardContent } from '~/components/ui/card';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import {
@@ -140,8 +140,12 @@ export const LongGameAllRoundsShown: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: /show all rounds/i }),
     );
+    // Phones show the scoreboard as a list, larger screens as a table
+    const scoreboardList = canvas.queryByRole('list', { name: 'Scoreboard' });
     await expect(
-      canvas.getByRole('columnheader', { name: 'Round 1' }),
+      scoreboardList
+        ? within(scoreboardList).getAllByText('Round 1:')[0]
+        : canvas.getByRole('columnheader', { name: 'Round 1' }),
     ).toBeInTheDocument();
   },
 };

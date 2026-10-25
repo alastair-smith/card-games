@@ -1,7 +1,10 @@
 import type { Preview } from '@storybook/nextjs-vite';
+import { MINIMAL_VIEWPORTS } from 'storybook/viewport';
 import '~/styles/globals.css';
 import { Toaster } from '~/components/ui/toast';
 import { cn } from '~/utils/cn';
+import { DocsPage } from './docs-page';
+import { PHONE_VIEWPORT, PHONE_VIEWPORT_KEY } from './phone-viewport';
 import { getSystemTheme } from './theme';
 
 const preview: Preview = {
@@ -10,12 +13,19 @@ const preview: Preview = {
     layout: 'fullscreen',
     docs: {
       theme: getSystemTheme(),
+      page: DocsPage,
     },
     controls: {
       disableSaveFromUI: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    viewport: {
+      options: {
+        [PHONE_VIEWPORT_KEY]: PHONE_VIEWPORT,
+        ...MINIMAL_VIEWPORTS,
       },
     },
     a11y: {
