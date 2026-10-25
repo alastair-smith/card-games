@@ -6,7 +6,7 @@ description: Give the user links to Storybook stories on their own page, optiona
 # Link to stories
 
 Both scripts ask Storybook's MCP server over HTTP, so Storybook must be
-running (see "Dev servers" in CLAUDE.md), but the session's `storybook` MCP
+running (see the `dev-servers` skill), but the session's `storybook` MCP
 connection doesn't need to be. They print links to the story on its own page
 (`iframe.html`), outside Storybook's UI.
 

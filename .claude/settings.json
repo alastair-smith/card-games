@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(./.claude/skills/check-css/scripts/show-compiled-css.ts *)",
+      "Bash(./.claude/skills/dev-servers/scripts/wait-for-server.ts *)",
       "Bash(./.claude/skills/link-stories/scripts/find-stories.ts *)",
       "Bash(./.claude/skills/link-stories/scripts/story-url.ts *)",
       "Bash(./.claude/skills/manage-branch/scripts/create-branch.ts *)",
@@ -39,6 +40,7 @@
       "Bash(pnpm --filter @repo/web dev:stories)",
       "Bash(pnpm --filter @repo/web test *)",
       "Bash(pnpm --filter @repo/web test:e2e *)",
+      "Bash(pnpm --filter @repo/web test:stories *)",
       "Bash(pnpm --filter @repo/skills typecheck *)",
       "Bash(pnpm --filter @repo/skills typecheck)",
       "Bash(pnpm --filter @repo/web typecheck *)",
@@ -60,6 +62,11 @@
       "mcp__jaeger__get_trace_topology",
       "mcp__jaeger__read_skill",
       "mcp__jaeger__search_traces",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_wait_for",
       "mcp__storybook__docs-list",
       "mcp__storybook__docs-show",
       "mcp__storybook__get-storybook-story-instructions",

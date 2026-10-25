@@ -56,6 +56,10 @@ only by the Code Review service, not by `/code-review`.
 Draft rules as the general principle, not as a description of the incident
 that prompted them.
 
+When a correction says something was too much or too little, aim the rule at
+the specific excess or gap the user named, not at its opposite. A rule against
+unimportant facts shouldn't become a rule against detail.
+
 Before drafting, find what actually went wrong, not only what the user saw.
 For example, if work was left out and the user then asked for it, check
 whether it was left out without being looked at, rather than drafting

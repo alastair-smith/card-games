@@ -19,17 +19,10 @@ gh pr view --json number,url
 
 ## Title
 
-Short and descriptive, under 70 characters, starting with one emoji:
-
-| Emoji | For |
-|---|---|
-| 🚀 | Features, and any change to game rules or user-visible behaviour |
-| 🔧 | Chores, maintenance, refactoring, tests, tooling |
-| 📚 | Documentation only |
-| 🐛 | Fixing something genuinely broken — not an intentional behaviour change |
-
-Example: `🚀 Create Yaniv components`. CI rejects titles that don't start with
-one of these emoji followed by a space and a capital letter.
+Short and descriptive, under 70 characters, starting with one emoji from the
+list in CLAUDE.md's "Commits" section. Example: `🚀 Create Yaniv components`.
+CI rejects titles that don't start with one of those emoji followed by a space
+and a capital letter.
 
 Put code names in backticks — functions, components, files, skills, commands:
 ``🔧 Add `manage-issue` and `raise-pr` skills``. Wrap the title in single
@@ -42,8 +35,13 @@ Fill in `.github/pull_request_template.md`:
 
 - **Summary:** one or two plain-language sentences, or a few bullet points, on
   what the change does and why. No file names, no technical breakdown.
-- **Details:** bullet points with the technical detail for reviewers. Omit the
-  whole section if there's nothing to add.
+- **Details:** bullet points on what a reviewer needs to follow the change:
+  the approach and why, anything that relies on undocumented behaviour, and
+  changes to existing behaviour or tests. Leave out small facts the diff
+  already shows, such as sizes, constants or where files live. Omit the
+  section if there's nothing to add.
+- Don't list manual follow-up steps, such as changing repo settings after
+  merge. They aren't part of the PR.
 - End with `Closes #123` for the issue it completes, or `Part of #123` if the
   issue has more work left.
 - Strip every HTML comment (`<!-- ... -->`). The PR description becomes the
@@ -54,8 +52,7 @@ Fill in `.github/pull_request_template.md`:
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
 on the dev server (port 3000) or of a single story in Storybook (port 6006).
-Start the one you need if it isn't running, as CLAUDE.md's "Dev servers"
-describes:
+Start the one you need if it isn't running, with the `dev-servers` skill:
 
 ```bash
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home
@@ -74,6 +71,9 @@ shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+
+Look at each screenshot before listing it for the user, and retake any that
+shows a loading or empty state.
 
 Screenshots can't be uploaded with `gh`, so after creating the PR, list the
 files for the user to drag into the PR description themselves. Once they
