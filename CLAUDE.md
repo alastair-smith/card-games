@@ -89,9 +89,16 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+Story tests run each story's `play` function in a browser. Run one story file
+the same way:
+
+```bash
+pnpm --filter @repo/web test:stories --reporter=dot src/path/to/file.stories.tsx
+```
+
 E2E tests play a full game in Playwright, one browser setup per project.
 They reuse the dev server on port 3000, so start it first if it isn't running
-(see Dev servers), and they test whichever branch is checked out. Run them in
+(see the `dev-servers` skill), and they test whichever branch is checked out. Run them in
 the background, as a project takes a few minutes:
 
 ```bash
@@ -104,18 +111,8 @@ Chromium ones unless asked; CI runs all four.
 
 ### Dev servers
 
-Start the app or Storybook yourself when you need one, in the background, and
-stop it when you're done:
-
-```bash
-pnpm dev
-pnpm --filter @repo/web dev:stories
-```
-
-The app runs on port 3000 and Storybook on 6006. If a port is already in use,
-the server is running, so use it rather than starting another. `pnpm dev`
-starts the Docker services (Redis, Jaeger) first; restarting Jaeger wipes its
-traces.
+Use the `dev-servers` skill to start, wait for and stop the app (port 3000) or
+Storybook (port 6006).
 
 When linking the user to a story, use the `link-stories` skill.
 
@@ -183,7 +180,7 @@ erasable syntax only: no enums or parameter properties.
 
 ## Commits
 
-Start the subject with the same emoji as PR titles:
+Start the subject with one of these emoji, which PR titles use too:
 
 - 🚀 features, and any change to game rules or user-visible behaviour
 - 🔧 chores, maintenance, refactoring, tests, tooling
