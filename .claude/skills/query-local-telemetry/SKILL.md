@@ -11,9 +11,8 @@ MCP server, `jaeger`, on the same port as its UI, so query it with the
 
 ## When Jaeger isn't available
 
-The dev server is usually already running, and `pnpm dev` starts Jaeger
-before it, so the `jaeger` tools are normally there. Don't start or restart
-the dev server to get them.
+`pnpm dev` starts Jaeger before the dev server, so the `jaeger` tools are
+normally there while it runs.
 
 If the tools are missing, check whether Jaeger is running:
 

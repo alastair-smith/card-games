@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 import {
   $passthrough,
-  exitWithResult,
+  exitIfFailed,
   exitWithUsage,
   isIssueNumber,
   parseArguments,
   REPO,
 } from '../../lib/script-helpers.ts';
+import { moveBoardItem } from '../../manage-issue/scripts/project-board.ts';
 
 const usage =
   'Usage: create-branch.ts <issue number> <short-description in kebab-case>';
@@ -23,6 +24,8 @@ if (
   exitWithUsage(usage);
 }
 
-exitWithResult(
+exitIfFailed(
   await $passthrough()`gh issue develop ${issueNumber} --repo ${REPO} --name ${`i-${issueNumber}/${shortDescription}`} --base main --checkout`,
 );
+
+await moveBoardItem(issueNumber, 'In progress');

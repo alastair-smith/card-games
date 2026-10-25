@@ -1,6 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Bash(./.claude/skills/check-css/scripts/show-compiled-css.ts *)",
+      "Bash(./.claude/skills/link-stories/scripts/find-stories.ts *)",
+      "Bash(./.claude/skills/link-stories/scripts/story-url.ts *)",
       "Bash(./.claude/skills/manage-branch/scripts/create-branch.ts *)",
       "Bash(./.claude/skills/manage-branch/scripts/push-branch.ts)",
       "Bash(./.claude/skills/manage-issue/scripts/close-issue.ts *)",
@@ -33,11 +36,13 @@
       "Bash(git commit *)",
       "Bash(git pull *)",
       "Bash(git switch *)",
+      "Bash(pnpm --filter @repo/web dev:stories)",
       "Bash(pnpm --filter @repo/web test *)",
       "Bash(pnpm --filter @repo/web test:e2e *)",
       "Bash(pnpm --filter @repo/skills typecheck *)",
       "Bash(pnpm --filter @repo/skills typecheck)",
       "Bash(pnpm --filter @repo/web typecheck *)",
+      "Bash(pnpm dev)",
       "Bash(pnpm format *)",
       "Bash(pnpm format:check *)",
       "Bash(pnpm format:fix *)",
@@ -61,7 +66,10 @@
       "mcp__storybook__stories-preview",
       "WebFetch(domain:code.claude.com)",
       "WebFetch(domain:docs.github.com)",
-      "WebFetch(domain:ui.shadcn.com)"
+      "WebFetch(domain:storybook.js.org)",
+      "WebFetch(domain:tailwindcss.com)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebSearch"
     ]
   },
   "enabledMcpjsonServers": ["jaeger", "storybook"]
