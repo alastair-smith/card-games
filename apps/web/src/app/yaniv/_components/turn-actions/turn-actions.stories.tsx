@@ -1,35 +1,31 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
-import type { PlayerName } from '~/types/entities';
 import { GameViewStage } from '~/types/games/yaniv';
-import Controls from '.';
+import { TurnActions } from '.';
 
 const meta = {
-  title: 'Yaniv / Controls',
-  component: Controls,
+  title: 'Yaniv / Turn Actions',
+  component: TurnActions,
   args: {
-    onEmojiClick: fn(),
+    stage: GameViewStage.PICKING_CARDS,
+    isRunSelected: false,
     onEndTurnClick: fn(),
     onYanivClick: fn(),
     onPlayCards: fn(),
-    stage: GameViewStage.WAITING_FOR_PLAYER,
+    onStartNewRoundClick: fn(),
   },
   argTypes: {
     stage: { control: 'select', options: Object.values(GameViewStage) },
   },
-} satisfies Meta<typeof Controls>;
+} satisfies Meta<typeof TurnActions>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const WaitForPlayers: Story = {
-  args: { playerTakingTurn: 'Kevin' as PlayerName },
-};
+export const PlayCards: Story = {};
 
-export const PickCards: Story = {
-  args: { stage: GameViewStage.PICKING_CARDS },
-};
+export const RunSelected: Story = { args: { isRunSelected: true } };
 
 export const EndTurn: Story = { args: { stage: GameViewStage.END_TURN } };
 

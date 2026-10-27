@@ -24,21 +24,23 @@ export function ScoreboardList({
         <li
           key={id}
           className={cn(
-            'flex flex-col gap-1 border-b border-current/15 py-2 last:border-0',
+            // One line per player where it fits; a long name keeps its full
+            // width and moves the points to a second line
+            'flex flex-wrap items-baseline gap-x-2 gap-y-1 border-b border-current/15 py-2.5 last:border-0',
             isUser && 'font-bold',
           )}
         >
-          <span className='truncate'>
+          <span className='shrink-0'>
             {name}
             {isUser && ' (You)'}
           </span>
 
-          <div className='flex items-start justify-between gap-3 text-sm'>
+          <div className='flex flex-1 items-start justify-between gap-2 text-sm'>
             <ul className='flex flex-wrap gap-x-1.5 gap-y-1'>
               {roundNumbers.map((roundNumber, index) => {
                 const roundScore = roundScores[roundNumber - 1];
                 return (
-                  <li key={roundNumber}>
+                  <li key={roundNumber} className='whitespace-nowrap'>
                     {index > 0 && (
                       <span aria-hidden='true' className='mr-1.5 opacity-50'>
                         ·

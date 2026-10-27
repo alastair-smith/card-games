@@ -1,22 +1,34 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { stubBrowserApis } from '~/test-utils/browser';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
-import { DEFAULT_HAND_SIZE, GameViewStage } from '~/types/games/yaniv';
+import { GameStep, GameViewStage } from '~/types/games/yaniv';
 import Game from '.';
 
 vi.mock('~/components/layout/game-layout', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+  default: ({
+    children,
+    actions,
+  }: {
+    children: React.ReactNode;
+    actions: React.ReactNode;
+  }) => (
+    <div>
+      {actions}
+      {children}
+    </div>
   ),
 }));
 
 vi.mock('~/components/ui/playing-card', () => ({
-  PLAYING_CARD_PROPORTIONS: 'w-[3.75em] h-[5.25em]',
-  PlayingCard: ({ card }: { card: { suit: string; rank: string } }) => (
-    <div data-testid={`card-${card.suit}-${card.rank}`}>{card.rank}</div>
-  ),
+  PlayingCard: ({ card }: { card: { suit: string; rank: string } | null }) =>
+    card ? (
+      <div data-testid={`card-${card.suit}-${card.rank}`}>{card.rank}</div>
+    ) : (
+      <div data-testid='card-face-down' />
+    ),
 }));
 
 vi.mock('~/components/ui/playing-card-stacks', () => ({
@@ -56,12 +68,19 @@ vi.mock('../how-to', () => ({
   HowToDialog: () => null,
 }));
 
-vi.mock('../round-summary', () => ({
-  RoundSummary: () => <div data-testid='round-summary' />,
+vi.mock('../scores-dialog', () => ({
+  ScoresDialog: () => null,
 }));
 
+vi.mock('../round-summary', () => ({
+  RoundSummary: ({ isRoundOver }: { isRoundOver: boolean }) => (
+    <div data-testid={isRoundOver ? 'round-summary' : 'scores'} />
+  ),
+}));
+
+const LARGE_SCREEN_QUERY = '(min-width: 1024px)';
+
 const baseProps = {
-  handSize: DEFAULT_HAND_SIZE,
   onEmojiClick: vi.fn(),
   onEndTurnClick: vi.fn(),
   onYanivClick: vi.fn(),
@@ -89,18 +108,30 @@ const baseProps = {
   playedCards: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
   discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
   stage: GameViewStage.PICKING_CARDS,
+  step: GameStep.PLAY_CARDS,
 };
 
+const getPanel = (name: string) => screen.getByRole('tabpanel', { name });
+const getTab = (name: RegExp) => screen.getByRole('tab', { name });
+
 describe('Game', () => {
-  test('renders without crashing', () => {
-    const { container } = render(<Game {...baseProps} />);
-    expect(container).toBeInTheDocument();
+  beforeEach(() => stubBrowserApis());
+  afterEach(() => vi.unstubAllGlobals());
+
+  test('shows a tag for each player', () => {
+    render(<Game {...baseProps} />);
+    const playerList = screen.getByRole('list', { name: 'Players' });
+    expect(within(playerList).getByText('Alice')).toBeInTheDocument();
+    expect(within(playerList).getByText('Bob')).toBeInTheDocument();
   });
 
-  test('shows a scorecard for each player', () => {
+  test('announces what to do on your turn', () => {
     render(<Game {...baseProps} />);
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('Bob')).toBeInTheDocument();
+    expect(
+      screen.getByText('Your turn: choose what to play', {
+        selector: '[role="status"]',
+      }),
+    ).toBeInTheDocument();
   });
 
   test('shows the play area during an active round', () => {
@@ -108,28 +139,213 @@ describe('Game', () => {
     expect(screen.getByTestId('deck')).toBeInTheDocument();
   });
 
-  test('shows the round summary at the end of a round', () => {
-    render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
-    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
-  });
-
-  test('shows the round summary when waiting for new round', () => {
-    render(<Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />);
-    expect(screen.getByTestId('round-summary')).toBeInTheDocument();
-  });
-
-  describe('turn announcement', () => {
-    test('announces your turn when it is the current user turn', () => {
-      render(<Game {...baseProps} />);
-      expect(screen.getByText("It's your turn")).toHaveAttribute(
-        'aria-live',
-        'polite',
-      );
+  describe('end of round', () => {
+    test('shows the round summary in the Scores tab', () => {
+      render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
+      expect(
+        within(getPanel('Scores')).getByTestId('round-summary'),
+      ).toBeInTheDocument();
     });
 
-    test('says nothing when it is another player turn', () => {
-      render(<Game {...baseProps} userId={'2' as UserId} />);
-      expect(screen.queryByText("It's your turn")).not.toBeInTheDocument();
+    test('shows the round summary in place of the play area on larger screens', () => {
+      render(<Game {...baseProps} stage={GameViewStage.END_OF_ROUND} />);
+      expect(
+        within(getPanel('Table')).getByTestId('round-summary'),
+      ).toBeInTheDocument();
+    });
+
+    test('shows the round summary when waiting for the new round', () => {
+      render(
+        <Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />,
+      );
+      expect(
+        within(getPanel('Scores')).getByTestId('round-summary'),
+      ).toBeInTheDocument();
+    });
+
+    test('shows the scores so far mid-round', () => {
+      render(<Game {...baseProps} />);
+      expect(
+        within(getPanel('Scores')).getByTestId('scores'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('tabs', () => {
+    test('opens your hand when it is your turn to play', () => {
+      render(<Game {...baseProps} />);
+      expect(getTab(/Your hand/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('opens the table on another player’s turn', () => {
+      render(
+        <Game
+          {...baseProps}
+          userId={'2' as UserId}
+          stage={GameViewStage.WAITING_FOR_PLAYER}
+        />,
+      );
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switches to the table when you need to pick up', () => {
+      const { rerender } = render(<Game {...baseProps} />);
+      rerender(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.DRAWING_CARDS}
+          step={GameStep.PICKUP_CARD}
+        />,
+      );
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switches everyone to the scores when the round ends', () => {
+      const props = {
+        ...baseProps,
+        userId: '2' as UserId,
+        stage: GameViewStage.WAITING_FOR_PLAYER,
+      };
+      const { rerender } = render(<Game {...props} />);
+      rerender(
+        <Game
+          {...props}
+          stage={GameViewStage.WAITING_FOR_NEW_ROUND}
+          step={GameStep.REDEAL}
+        />,
+      );
+      expect(getTab(/Scores/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('marks the tab with your next move when you switch away from it', () => {
+      render(<Game {...baseProps} />);
+      fireEvent.mouseDown(getTab(/Table/));
+      expect(getTab(/Your hand/)).toHaveTextContent('your move');
+    });
+
+    test('does not mark the tab you are on', () => {
+      render(<Game {...baseProps} />);
+      expect(getTab(/Your hand/)).not.toHaveTextContent('your move');
+    });
+
+    test('keeps the panels you are not on out of reach', () => {
+      render(<Game {...baseProps} />);
+      expect(getPanel('Table')).toHaveAttribute('inert');
+      expect(getPanel('Your hand')).not.toHaveAttribute('inert');
+    });
+  });
+
+  describe('turn buttons', () => {
+    test('puts Play Cards on the hand tab', () => {
+      render(<Game {...baseProps} />);
+      expect(
+        within(getPanel('Your hand')).getByRole('button', {
+          name: /Play Cards/,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('puts Yaniv and End Turn on the table tab', () => {
+      render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      const table = within(getPanel('Table'));
+      expect(table.getByRole('button', { name: /Yaniv!/ })).toBeInTheDocument();
+      expect(
+        table.getByRole('button', { name: /End Turn/ }),
+      ).toBeInTheDocument();
+    });
+
+    test('puts Start new round on the scores tab', () => {
+      render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.END_OF_ROUND}
+          step={GameStep.REDEAL}
+        />,
+      );
+      expect(
+        within(getPanel('Scores')).getByRole('button', {
+          name: /Start new round/,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('shows no turn buttons on another player’s turn', () => {
+      render(
+        <Game
+          {...baseProps}
+          userId={'2' as UserId}
+          stage={GameViewStage.WAITING_FOR_PLAYER}
+        />,
+      );
+      expect(
+        screen.queryByRole('button', { name: /Play Cards/ }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('face down on larger screens', () => {
+    const drawnCard = { suit: Suit.HEARTS, rank: Rank.FIVE };
+    const cards = [
+      { suit: Suit.CLUBS, rank: Rank.ACE },
+      { suit: Suit.HEARTS, rank: Rank.FIVE },
+    ];
+
+    beforeEach(() =>
+      stubBrowserApis({ matchingQueries: [LARGE_SCREEN_QUERY] }),
+    );
+
+    const turnFaceDown = () =>
+      fireEvent.click(
+        screen.getByRole('button', { name: /Toggle visibility/ }),
+      );
+
+    test('turns your cards face down', () => {
+      render(<Game {...baseProps} cards={cards} />);
+      turnFaceDown();
+      expect(screen.getAllByTestId('card-face-down')).toHaveLength(2);
+    });
+
+    test('hides Play Cards while your cards are face down', () => {
+      render(<Game {...baseProps} />);
+      turnFaceDown();
+      // Phones' copy sits in the hand tab; larger screens' is beside the hand
+      const largeScreenPlayCards = screen
+        .getAllByRole('button', { name: /Play Cards/ })
+        .find((button) => !getPanel('Your hand').contains(button));
+      expect(largeScreenPlayCards?.parentElement).toHaveClass('invisible');
+    });
+
+    test('hides the card you picked up from the deck', () => {
+      render(
+        <Game
+          {...baseProps}
+          cards={cards}
+          drawnCard={drawnCard}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      turnFaceDown();
+      expect(
+        screen.queryByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
+      ).not.toBeInTheDocument();
+      expect(screen.getAllByTestId('card-face-down')).toHaveLength(2);
+    });
+  });
+
+  describe('face down on phones', () => {
+    test('keeps your cards face up, as the hand has its own tab', () => {
+      render(<Game {...baseProps} />);
+      fireEvent.click(
+        screen.getByRole('button', { name: /Toggle visibility/ }),
+      );
+      expect(screen.queryByTestId('card-face-down')).not.toBeInTheDocument();
     });
   });
 
