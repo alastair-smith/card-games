@@ -65,7 +65,7 @@ import { sortYanivHand } from '~/utils/yaniv/sort';
 import type Game from './game';
 import { HowToDialog } from './how-to';
 import PlayArea from './play-area';
-import { RoundSummary } from './round-summary';
+import { getRoundMessage } from './round-summary/round-message';
 import { getRoundCount, Scoreboard } from './scoreboard';
 
 type MockPlayer = ComponentProps<typeof Game>['players'][number];
@@ -583,6 +583,47 @@ function ScoresDialog({
   );
 }
 
+/**
+ * The scores mid-round and the round summary at the end of one, in the same
+ * compact panel. The real build would make these changes in RoundSummary and
+ * ScoreboardList; here the list is restyled from outside.
+ */
+function ScoresPanel({
+  players,
+  userId,
+  isRoundOver,
+}: {
+  players: MockPlayer[];
+  userId: UserId;
+  isRoundOver: boolean;
+}) {
+  const roundNumber = getRoundCount(players);
+
+  return (
+    <Card variant='panel' className='w-full max-w-xl self-center'>
+      <CardHeader className='items-center text-center space-y-1'>
+        <CardDescription>
+          {isRoundOver ? `Round ${roundNumber}` : `After round ${roundNumber}`}
+        </CardDescription>
+        <CardTitle className='text-xl'>
+          {isRoundOver ? getRoundMessage(players, userId) : 'Scores'}
+        </CardTitle>
+      </CardHeader>
+      {/* Narrower sides than the header, so a max-length name fits beside
+          its points on a phone */}
+      <CardContent className='px-3'>
+        <Scoreboard
+          players={players}
+          userId={userId}
+          // Each player on one line: name, then round points and total. A long
+          // name keeps its full width and moves the points to a second line
+          className='[&_ol>li]:flex-row [&_ol>li]:flex-wrap [&_ol>li]:items-baseline [&_ol>li]:gap-x-2 [&_ol>li]:gap-y-1 [&_ol>li]:py-2.5 [&_ol>li>div]:flex-1 [&_ol>li>div]:gap-2 [&_ol>li>span]:shrink-0 [&_ol>li>div>ul>li]:whitespace-nowrap'
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /* Full game                                                                  */
 /* -------------------------------------------------------------------------- */
@@ -692,6 +733,8 @@ type MockGameProps = {
   /** What another player is doing on their turn; the user's comes from the stage. */
   otherPlayerStep: GameStep;
   yanivStyle: YanivStyle;
+  /** The tab phones open on, before any switch to the next move. */
+  initialTab?: GameTab;
   onEmojiClick: ComponentProps<typeof EmojiReactions>['onEmojiClick'];
   onEndTurnClick: () => void;
   onYanivClick: () => void;
@@ -708,13 +751,14 @@ function MockGame({
   drawnCard,
   otherPlayerStep,
   yanivStyle,
+  initialTab = 'table',
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
 }: MockGameProps) {
   const [selectedCards, setSelectedCards] = useState<YanivPlayingCard[]>([]);
-  const [activeTab, setActiveTab] = useState('table');
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
   // Only the large-screen layout has the toggle, so phones never set this
   const [isFaceDown, setIsFaceDown] = useState(false);
   const [userReaction, setUserReaction] =
@@ -802,6 +846,20 @@ function MockGame({
     />
   );
 
+  // On phones the turn buttons only appear on the tab they belong to, pinned
+  // to its bottom so they slide with it rather than taking space on every tab
+  const panelTurnActions = (tab: GameTab) =>
+    actionTab === tab && (
+      <TurnActions
+        className='pt-3 lg:hidden'
+        stage={stage}
+        onEndTurnClick={onEndTurnClick}
+        onYanivClick={onYanivClick}
+        onPlayCards={handlePlayCards}
+        onStartNewRoundClick={onPlayCards}
+      />
+    );
+
   return (
     <GameLayout
       gameType={GameType.YANIV}
@@ -828,41 +886,50 @@ function MockGame({
         {/* On phones the panels stay mounted and slide sideways in tab order;
             inactive ones turn invisible once off screen, so they can't be
             focused */}
+        {/* Each panel scrolls inside itself, above a footer that's pinned to
+            its bottom */}
         <div className='relative flex-1 min-h-0 overflow-hidden lg:contents'>
           <TabsContent
             value='table'
             forceMount
             className={cn(
-              'absolute inset-0 overflow-y-auto flex flex-col gap-3',
+              'absolute inset-0 flex flex-col',
               'data-[state=inactive]:-translate-x-full data-[state=inactive]:invisible',
               'motion-safe:transition-[translate,visibility] motion-safe:duration-300 motion-safe:ease-in-out',
               'lg:static lg:min-h-0 lg:data-[state=inactive]:translate-x-0 lg:data-[state=inactive]:visible',
             )}
           >
-            {playerStrip}
-            <div className='flex-1 grid place-items-center'>
-              {/* Phones show the round summary in the Scores tab instead */}
-              {isRoundOver ? (
-                <>
-                  <div className='lg:hidden'>{playArea}</div>
-                  <div className='hidden w-full lg:flex lg:justify-center'>
-                    <RoundSummary players={players} userId={userId} />
-                  </div>
-                </>
-              ) : (
-                playArea
-              )}
+            <div className='flex-1 min-h-0 overflow-y-auto flex flex-col gap-3'>
+              {playerStrip}
+              <div className='flex-1 grid place-items-center'>
+                {/* Phones show the round summary in the Scores tab instead */}
+                {isRoundOver ? (
+                  <>
+                    <div className='lg:hidden'>{playArea}</div>
+                    <div className='hidden w-full lg:flex lg:justify-center'>
+                      <ScoresPanel
+                        players={players}
+                        userId={userId}
+                        isRoundOver
+                      />
+                    </div>
+                  </>
+                ) : (
+                  playArea
+                )}
+              </div>
+              <EmojiReactions
+                onEmojiClick={handleEmojiClick}
+                className='self-center lg:hidden'
+              />
             </div>
-            <EmojiReactions
-              onEmojiClick={handleEmojiClick}
-              className='self-center lg:hidden'
-            />
+            {panelTurnActions('table')}
           </TabsContent>
           <TabsContent
             value='hand'
             forceMount
             className={cn(
-              'absolute inset-0 overflow-y-auto flex flex-col gap-3',
+              'absolute inset-0 flex flex-col',
               activeTab === 'scores'
                 ? 'data-[state=inactive]:-translate-x-full'
                 : 'data-[state=inactive]:translate-x-full',
@@ -871,57 +938,44 @@ function MockGame({
               'lg:static lg:flex-none lg:order-last lg:data-[state=inactive]:translate-x-0 lg:data-[state=inactive]:visible',
             )}
           >
-            {/* Fills the tab on phones rather than floating in the middle */}
-            <HandView {...handProps} className='flex-1 lg:flex-none' />
+            <div className='flex-1 min-h-0 overflow-y-auto flex flex-col'>
+              {/* Fills the tab on phones rather than floating in the middle */}
+              <HandView {...handProps} className='flex-1 lg:flex-none' />
+            </div>
+            {panelTurnActions('hand')}
           </TabsContent>
           <TabsContent
             value='scores'
             forceMount
             className={cn(
-              'absolute inset-0 overflow-y-auto flex flex-col gap-3',
+              'absolute inset-0 flex flex-col',
               'data-[state=inactive]:translate-x-full data-[state=inactive]:invisible',
               'motion-safe:transition-[translate,visibility] motion-safe:duration-300 motion-safe:ease-in-out',
               'lg:hidden',
             )}
           >
-            {/* The same panel as the round summary, so the scores look the
-                same mid-round and at the end of a round */}
-            {isRoundOver ? (
-              <RoundSummary players={players} userId={userId} />
-            ) : (
-              <Card variant='panel' className='w-full max-w-xl self-center'>
-                <CardHeader className='items-center text-center'>
-                  <CardDescription>
-                    After round {getRoundCount(players)}
-                  </CardDescription>
-                  <CardTitle>Scores</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Scoreboard players={players} userId={userId} />
-                </CardContent>
-              </Card>
-            )}
+            <div className='flex-1 min-h-0 overflow-y-auto flex flex-col'>
+              <ScoresPanel
+                players={players}
+                userId={userId}
+                isRoundOver={isRoundOver}
+              />
+            </div>
+            {panelTurnActions('scores')}
           </TabsContent>
         </div>
         {/* Large screens share this row with the emoji reactions, like the
-            current Controls; phones keep the reactions in the Table view */}
-        <div className='contents lg:grid lg:grid-cols-2 lg:items-center lg:gap-2'>
-          <EmojiReactions
-            onEmojiClick={handleEmojiClick}
-            className='hidden lg:flex'
-          />
+            current Controls */}
+        <div className='hidden lg:grid lg:grid-cols-2 lg:items-center lg:gap-2'>
+          <EmojiReactions onEmojiClick={handleEmojiClick} />
           {actionTab && (
             <TurnActions
-              // Keeps its space on every tab, so switching tabs never moves
-              // the panels, but only shows its buttons on the tab they belong
-              // to. Face-down cards can't be played, so Play Cards hides with
-              // them
+              // Face-down cards can't be played, so Play Cards hides with them
               className={cn(
-                activeTab !== actionTab && 'invisible',
-                'lg:visible lg:justify-end',
+                'justify-end',
                 isFaceDown &&
                   stage === GameViewStage.PICKING_CARDS &&
-                  'lg:invisible',
+                  'invisible',
               )}
               stage={stage}
               onEndTurnClick={onEndTurnClick}
@@ -1245,6 +1299,14 @@ export const FullGameTwoPlayers: Story = {
 
 export const FullGameEndOfRound: Story = {
   args: { stage: GameViewStage.END_OF_ROUND },
+};
+
+export const FullGameScoresFivePlayers: Story = {
+  args: {
+    players: withTurn(2).slice(0, 5),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    initialTab: 'scores',
+  },
 };
 
 export const FullGameWaitingForNewRound: Story = {
