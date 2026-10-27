@@ -1,5 +1,7 @@
-// Throwaway mockups for the Yaniv layout redesign (#162, #167). Delete before
-// raising a PR.
+// Prototype of the agreed Yaniv layout redesign, kept as the reference for
+// building it. The design and build notes are in issue #162. The Full Game
+// stories show the finished layout; the other option props (yanivStyle and
+// so on) are left over from comparing options.
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import useEmblaCarousel from 'embla-carousel-react';
 import {
