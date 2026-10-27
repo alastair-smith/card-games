@@ -1,6 +1,5 @@
 // Throwaway mockups for the Yaniv layout redesign (#162, #167). Delete before
 // raising a PR.
-import { Drawer } from '@base-ui/react/drawer';
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import {
   ArrowRightCircleIcon,
@@ -25,6 +24,13 @@ import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import { Button } from '~/components/ui/button';
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -37,6 +43,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import {
+  type EmojiReactionId,
   MAX_NAME_LENGTH,
   type PlayerName,
   type UserId,
@@ -58,11 +65,11 @@ import { sortYanivHand } from '~/utils/yaniv/sort';
 import type Game from './game';
 import { HowToDialog } from './how-to';
 import PlayArea from './play-area';
-import { Scoreboard } from './scoreboard';
+import { RoundSummary } from './round-summary';
+import { getRoundCount, Scoreboard } from './scoreboard';
 
 type MockPlayer = ComponentProps<typeof Game>['players'][number];
 type YanivStyle = 'black' | 'sticker' | 'marquee' | 'stripes' | 'status-only';
-type ScoresAccess = 'header-dialog' | 'strip-drawer';
 type SelectableCard = YanivPlayingCard & { selected?: boolean };
 
 const YANIV_STYLES = [
@@ -181,7 +188,7 @@ function CardCount({ count }: { count: number }) {
     <>
       <span
         aria-hidden='true'
-        className='grid place-items-center w-[1.1rem] h-[1.5rem] rounded-[3px] bg-true-white border border-black/40 text-slate text-xs font-bold'
+        className='grid place-items-center w-[1.4em] h-[1.9em] rounded-[3px] bg-true-white border border-black/40 text-slate font-bold'
       >
         {count}
       </span>
@@ -232,7 +239,14 @@ function PlayerTag({
   isUser: boolean;
   yanivStyle: YanivStyle;
 }) {
-  const { name, color, cardCount, isPlayersTurn, isYanivCalled } = player;
+  const {
+    name,
+    color,
+    cardCount,
+    isPlayersTurn,
+    isYanivCalled,
+    emojiReaction,
+  } = player;
   const isMegaphoneShown =
     isYanivCalled && yanivStyle !== 'sticker' && yanivStyle !== 'marquee';
 
@@ -244,13 +258,13 @@ function PlayerTag({
             ? yanivTagBackground(color, yanivStyle)
             : { backgroundColor: playerColorValue(color) }
         }
-        className='relative flex flex-col rounded border-2 border-white text-sm overflow-visible'
+        className='relative flex flex-col rounded border-2 border-white text-xs sm:text-sm overflow-visible'
       >
-        <div className='flex items-center gap-1.5 px-2 py-1'>
+        <div className='flex items-center gap-1 px-1.5 py-0.5 sm:gap-1.5 sm:px-2 sm:py-1'>
           {isUser && (
             <>
               <UserRoundIcon
-                size={16}
+                size='1.15em'
                 strokeWidth={3}
                 aria-hidden='true'
                 className='shrink-0 text-white icon-outline-black'
@@ -263,7 +277,7 @@ function PlayerTag({
           </span>
           {isMegaphoneShown && (
             <MegaphoneIcon
-              size={16}
+              size='1.15em'
               strokeWidth={3}
               aria-hidden='true'
               className='shrink-0 text-white icon-outline-black'
@@ -284,6 +298,17 @@ function PlayerTag({
         )}
 
         {isYanivCalled && <span className='sr-only'>, has called Yaniv</span>}
+
+        {emojiReaction && (
+          <span
+            // A new key per reaction remounts it, restarting the animation
+            key={emojiReaction.id}
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-3xl animate-reaction-emoji'
+          >
+            {emojiReaction.emoji}
+          </span>
+        )}
       </div>
     </TurnBrackets>
   );
@@ -310,7 +335,7 @@ function PlayerStrip({
       <div className='flex items-start gap-2'>
         <ol
           aria-label='Players'
-          className='flex-1 flex flex-wrap justify-center gap-3 list-none m-0 p-1.5'
+          className='flex-1 flex flex-wrap justify-evenly gap-3 list-none m-0 p-1.5 lg:justify-center'
         >
           {players.map((player) => (
             <li
@@ -346,7 +371,9 @@ type HandProps = {
   totalScore: number;
   isFiftyScoreHalved: boolean;
   isActive: boolean;
+  isFaceDown: boolean;
   onCardClick: (card: SelectableCard) => void;
+  onToggleVisibility: () => void;
 };
 
 function getScoreNote(totalScore: number, isFiftyScoreHalved: boolean) {
@@ -358,11 +385,13 @@ function getScoreNote(totalScore: number, isFiftyScoreHalved: boolean) {
 function HandInfo({
   className,
   handTotal,
+  isHandTotalHidden,
   totalScore,
   isFiftyScoreHalved,
 }: {
   className?: string;
   handTotal: number;
+  isHandTotalHidden: boolean;
   totalScore: number;
   isFiftyScoreHalved: boolean;
 }) {
@@ -376,7 +405,26 @@ function HandInfo({
     >
       <div className='flex items-baseline gap-1'>
         <dt>Hand</dt>
-        <dd className='m-0 text-2xl/none font-extrabold'>{handTotal}</dd>
+        {/* Both stay in the same grid cell, so hiding the total doesn't move
+            the text around it */}
+        <dd className='m-0 grid text-2xl/none font-extrabold'>
+          <span
+            className={cn(
+              '[grid-area:1/1] text-center',
+              isHandTotalHidden && 'invisible',
+            )}
+          >
+            {handTotal}
+          </span>
+          <span
+            className={cn(
+              '[grid-area:1/1] text-center',
+              !isHandTotalHidden && 'invisible',
+            )}
+          >
+            ?<span className='sr-only'>, hidden</span>
+          </span>
+        </dd>
       </div>
       <div className='flex items-baseline'>
         <dt className='sr-only'>Until halving</dt>
@@ -392,25 +440,27 @@ function HandInfo({
   );
 }
 
-function HideHandButton({
+function ToggleVisibilityButton({
   className,
-  isHidden,
+  isFaceDown,
   onClick,
 }: {
   className?: string;
-  isHidden: boolean;
+  isFaceDown: boolean;
   onClick: () => void;
 }) {
   return (
     <Button
       size='sm'
       variant='secondary'
-      aria-pressed={isHidden}
       onClick={onClick}
       className={cn('shrink-0', className)}
     >
-      {isHidden ? <EyeIcon /> : <EyeOffIcon />}
-      Hide hand
+      {isFaceDown ? <EyeIcon /> : <EyeOffIcon />}
+      Toggle visibility
+      <span className='sr-only'>
+        , your cards are {isFaceDown ? 'face down' : 'face up'}
+      </span>
     </Button>
   );
 }
@@ -430,16 +480,14 @@ function HandCards({
     <ol
       aria-label='Your hand'
       className={cn(
-        // Same sizes as the play area, so hand and table cards match
-        'flex flex-wrap justify-center gap-2 list-none m-0 p-0 pt-[0.4em] sm:text-lg md:text-2xl',
+        // A step up from the play area's cards on phones, where the hand has
+        // its own tab to fill; the same as the play area from md up
+        'flex flex-wrap justify-center gap-2 list-none m-0 p-0 pt-[0.4em] text-lg md:text-2xl',
         className,
       )}
     >
       {sortYanivHand(cards).map((card) => (
-        <li
-          key={`${card.suit}-${card.rank}`}
-          className='flex justify-center shrink-0 basis-[calc((100%-1rem)/3)] lg:basis-auto'
-        >
+        <li key={`${card.suit}-${card.rank}`} className='flex'>
           <PlayingCard
             card={isFaceDown ? null : card}
             highlighted={card.selected && !isFaceDown}
@@ -463,11 +511,10 @@ function HandView({
   totalScore,
   isFiftyScoreHalved,
   isActive,
+  isFaceDown,
   onCardClick,
+  onToggleVisibility,
 }: HandProps) {
-  // Only the large-screen layout has the button, so phones never set this
-  const [isFaceDown, setIsFaceDown] = useState(false);
-
   return (
     <section
       aria-label='Your hand'
@@ -481,22 +528,17 @@ function HandView({
       )}
     >
       <div className='flex items-center justify-between gap-2'>
-        {isFaceDown ? (
-          <span className='text-sm text-dark-text-disabled'>
-            Hand total hidden
-          </span>
-        ) : (
-          <HandInfo
-            className='flex-1'
-            handTotal={handTotal}
-            totalScore={totalScore}
-            isFiftyScoreHalved={isFiftyScoreHalved}
-          />
-        )}
-        <HideHandButton
+        <HandInfo
+          className='flex-1'
+          handTotal={handTotal}
+          isHandTotalHidden={isFaceDown}
+          totalScore={totalScore}
+          isFiftyScoreHalved={isFiftyScoreHalved}
+        />
+        <ToggleVisibilityButton
           className='hidden lg:flex'
-          isHidden={isFaceDown}
-          onClick={() => setIsFaceDown((previous) => !previous)}
+          isFaceDown={isFaceDown}
+          onClick={onToggleVisibility}
         />
       </div>
       <HandCards
@@ -522,7 +564,8 @@ function ScoresDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size='sm' variant='secondary'>
+        {/* Phones have a Scores tab instead */}
+        <Button size='sm' variant='secondary' className='hidden lg:flex'>
           <TrophyIcon />
           Scores
         </Button>
@@ -540,47 +583,52 @@ function ScoresDialog({
   );
 }
 
-function ScoresDrawer({
-  players,
-  userId,
-}: {
-  players: MockPlayer[];
-  userId: UserId;
-}) {
-  return (
-    <Drawer.Root>
-      <Drawer.Trigger
-        render={
-          <Button size='icon' variant='secondary' className='shrink-0 mt-1.5' />
-        }
-      >
-        <TrophyIcon />
-        <span className='sr-only'>Scores</span>
-      </Drawer.Trigger>
-      <Drawer.Portal>
-        <Drawer.Backdrop className='fixed inset-0 bg-black/50 opacity-[calc(1-var(--drawer-swipe-progress))] motion-safe:transition-opacity motion-safe:duration-300 data-starting-style:opacity-0 data-ending-style:opacity-0' />
-        <Drawer.Viewport className='fixed inset-0 flex items-end justify-center'>
-          <Drawer.Popup className='not-prose w-full max-w-3xl max-h-[85dvh] overflow-y-auto rounded-t-xl border-2 border-b-0 border-white/30 bg-panel-background text-dark-text outline-none [transform:translateY(var(--drawer-swipe-movement-y))] motion-safe:transition-transform motion-safe:duration-300 data-swiping:duration-0 data-starting-style:[transform:translateY(100%)] data-ending-style:[transform:translateY(100%)]'>
-            <div
-              aria-hidden='true'
-              className='mx-auto mt-2 h-1 w-12 rounded-full bg-white/40'
-            />
-            <Drawer.Content className='flex flex-col gap-3 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]'>
-              <Drawer.Title className='text-lg font-semibold text-center'>
-                Scores
-              </Drawer.Title>
-              <Scoreboard players={players} userId={userId} />
-            </Drawer.Content>
-          </Drawer.Popup>
-        </Drawer.Viewport>
-      </Drawer.Portal>
-    </Drawer.Root>
-  );
-}
-
 /* -------------------------------------------------------------------------- */
 /* Full game                                                                  */
 /* -------------------------------------------------------------------------- */
+
+type GameTab = 'table' | 'hand' | 'scores';
+
+const ACTION_TAB_BY_STAGE = {
+  [GameViewStage.PICKING_CARDS]: 'hand',
+  [GameViewStage.DRAWING_CARDS]: 'table',
+  [GameViewStage.END_TURN]: 'table',
+  [GameViewStage.END_OF_ROUND]: 'scores',
+  [GameViewStage.WAITING_FOR_NEW_ROUND]: null,
+  [GameViewStage.WAITING_FOR_PLAYER]: null,
+} as const satisfies Record<GameViewStage, GameTab | null>;
+
+/** A tab that pulses in the player's colour when their next move is on it. */
+function GameTabTrigger({
+  value,
+  color,
+  isActionNeeded,
+  children,
+}: {
+  value: GameTab;
+  color: PlayerColor;
+  isActionNeeded: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <TabsTrigger
+      value={value}
+      className={cn('h-full', isActionNeeded && 'motion-safe:animate-pulse-bg')}
+    >
+      {children}
+      {isActionNeeded && (
+        <>
+          <span
+            aria-hidden='true'
+            style={{ backgroundColor: playerColorValue(color) }}
+            className='size-2.5 rounded-full border border-white'
+          />
+          <span className='sr-only'>, your move</span>
+        </>
+      )}
+    </TabsTrigger>
+  );
+}
 
 /** The turn buttons from Controls, without its emoji reactions or status. */
 function TurnActions({
@@ -589,12 +637,14 @@ function TurnActions({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
+  onStartNewRoundClick,
 }: {
   className?: string;
   stage: GameViewStage;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: () => void;
+  onStartNewRoundClick: () => void;
 }) {
   return (
     <div
@@ -620,6 +670,12 @@ function TurnActions({
           </Button>
         </>
       )}
+      {stage === GameViewStage.END_OF_ROUND && (
+        <Button onClick={onStartNewRoundClick}>
+          Start new round
+          <ArrowRightCircleIcon />
+        </Button>
+      )}
     </div>
   );
 }
@@ -631,10 +687,11 @@ type MockGameProps = {
   stage: GameViewStage;
   playedCards: YanivPlayingCard[];
   discardCard: YanivPlayingCard | null;
+  /** The card the user just picked up from the deck, shown over the deck. */
+  drawnCard?: YanivPlayingCard;
   /** What another player is doing on their turn; the user's comes from the stage. */
   otherPlayerStep: GameStep;
   yanivStyle: YanivStyle;
-  scoresAccess: ScoresAccess;
   onEmojiClick: ComponentProps<typeof EmojiReactions>['onEmojiClick'];
   onEndTurnClick: () => void;
   onYanivClick: () => void;
@@ -648,9 +705,9 @@ function MockGame({
   stage,
   playedCards,
   discardCard,
+  drawnCard,
   otherPlayerStep,
   yanivStyle,
-  scoresAccess,
   onEmojiClick,
   onEndTurnClick,
   onYanivClick,
@@ -658,6 +715,16 @@ function MockGame({
 }: MockGameProps) {
   const [selectedCards, setSelectedCards] = useState<YanivPlayingCard[]>([]);
   const [activeTab, setActiveTab] = useState('table');
+  // Only the large-screen layout has the toggle, so phones never set this
+  const [isFaceDown, setIsFaceDown] = useState(false);
+  const [userReaction, setUserReaction] =
+    useState<MockPlayer['emojiReaction']>();
+
+  const playersWithReactions = players.map((player) =>
+    player.id === userId && userReaction
+      ? { ...player, emojiReaction: userReaction }
+      : player,
+  );
 
   const userPlayer = players.find((player) => player.id === userId);
   const playerTakingTurn = players.find((player) => player.isPlayersTurn);
@@ -665,13 +732,28 @@ function MockGame({
     throw new Error('Mock needs the user and a player taking their turn');
   }
   const isUserTakingTurn = userPlayer.id === playerTakingTurn.id;
+  const isRoundOver =
+    stage === GameViewStage.END_OF_ROUND ||
+    stage === GameViewStage.WAITING_FOR_NEW_ROUND;
 
-  // Switch to whichever view the next action happens in
+  const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
+
+  // Switch to whichever view the next action happens in, and to the scores for
+  // everyone when the round summary comes up
   useEffect(() => {
-    if (!isUserTakingTurn) return;
-    if (stage === GameViewStage.PICKING_CARDS) setActiveTab('hand');
-    if (stage === GameViewStage.DRAWING_CARDS) setActiveTab('table');
-  }, [isUserTakingTurn, stage]);
+    if (isRoundOver) setActiveTab('scores');
+    else if (actionTab) setActiveTab(actionTab);
+  }, [actionTab, isRoundOver]);
+
+  const handleEmojiClick: MockGameProps['onEmojiClick'] = (emoji) => {
+    setUserReaction({ emoji, id: crypto.randomUUID() as EmojiReactionId });
+    onEmojiClick(emoji);
+  };
+
+  const handlePlayCards = () => {
+    setActiveTab('table');
+    onPlayCards();
+  };
 
   const isSameCard = (first: YanivPlayingCard, second: YanivPlayingCard) =>
     first.suit === second.suit && first.rank === second.rank;
@@ -693,20 +775,17 @@ function MockGame({
     totalScore: userPlayer.score,
     isFiftyScoreHalved: userPlayer.isFiftyScoreHalved,
     isActive: stage === GameViewStage.PICKING_CARDS && isUserTakingTurn,
+    isFaceDown,
     onCardClick: handleCardClick,
+    onToggleVisibility: () => setIsFaceDown((previous) => !previous),
   };
 
   const playerStrip = (
     <PlayerStrip
-      players={players}
+      players={playersWithReactions}
       userId={userId}
       step={isUserTakingTurn ? USER_STEP_BY_STAGE[stage] : otherPlayerStep}
       yanivStyle={yanivStyle}
-      action={
-        scoresAccess === 'strip-drawer' && (
-          <ScoresDrawer players={players} userId={userId} />
-        )
-      }
     />
   );
 
@@ -716,6 +795,9 @@ function MockGame({
       playedCards={playedCards}
       discardCard={discardCard}
       isActive={stage === GameViewStage.DRAWING_CARDS && isUserTakingTurn}
+      // Face down means someone may be looking, so keep the picked-up card
+      // private too
+      drawnCard={isFaceDown ? undefined : drawnCard}
       className='sm:text-lg md:text-2xl'
     />
   );
@@ -725,9 +807,7 @@ function MockGame({
       gameType={GameType.YANIV}
       actions={
         <div className='flex gap-2'>
-          {scoresAccess === 'header-dialog' && (
-            <ScoresDialog players={players} userId={userId} />
-          )}
+          <ScoresDialog players={players} userId={userId} />
           <HowToDialog />
         </div>
       }
@@ -737,15 +817,17 @@ function MockGame({
     >
       {isUserTakingTurn && <ScreenEdgeHighlight color={userPlayer.color} />}
 
-      {/* Phones switch between the table and hand with tabs; larger screens
-          show both, with the hand last and no tab list */}
+      {/* Phones switch between the table, hand and scores with tabs; larger
+          screens show the table and hand together, with no tab list, and
+          open the scores from the header */}
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className='flex-1 min-h-0 gap-3'
       >
-        {/* On phones both panels stay mounted and slide sideways; the inactive
-            one turns invisible once it's off screen, so it can't be focused */}
+        {/* On phones the panels stay mounted and slide sideways in tab order;
+            inactive ones turn invisible once off screen, so they can't be
+            focused */}
         <div className='relative flex-1 min-h-0 overflow-hidden lg:contents'>
           <TabsContent
             value='table'
@@ -758,51 +840,121 @@ function MockGame({
             )}
           >
             {playerStrip}
-            <div className='flex-1 grid place-items-center'>{playArea}</div>
+            <div className='flex-1 grid place-items-center'>
+              {/* Phones show the round summary in the Scores tab instead */}
+              {isRoundOver ? (
+                <>
+                  <div className='lg:hidden'>{playArea}</div>
+                  <div className='hidden w-full lg:flex lg:justify-center'>
+                    <RoundSummary players={players} userId={userId} />
+                  </div>
+                </>
+              ) : (
+                playArea
+              )}
+            </div>
             <EmojiReactions
-              onEmojiClick={onEmojiClick}
-              className='self-center'
+              onEmojiClick={handleEmojiClick}
+              className='self-center lg:hidden'
             />
           </TabsContent>
           <TabsContent
             value='hand'
             forceMount
             className={cn(
-              'absolute inset-0 overflow-y-auto flex flex-col gap-3 justify-center-safe',
-              'data-[state=inactive]:translate-x-full data-[state=inactive]:invisible',
+              'absolute inset-0 overflow-y-auto flex flex-col gap-3',
+              activeTab === 'scores'
+                ? 'data-[state=inactive]:-translate-x-full'
+                : 'data-[state=inactive]:translate-x-full',
+              'data-[state=inactive]:invisible',
               'motion-safe:transition-[translate,visibility] motion-safe:duration-300 motion-safe:ease-in-out',
               'lg:static lg:flex-none lg:order-last lg:data-[state=inactive]:translate-x-0 lg:data-[state=inactive]:visible',
             )}
           >
-            <HandView {...handProps} />
-            {/* Lives in the hand panel so it slides with the cards rather
-                than resizing the panels mid-slide */}
-            {isUserTakingTurn && stage === GameViewStage.PICKING_CARDS && (
-              <TurnActions
-                className='lg:order-first'
-                stage={stage}
-                onEndTurnClick={onEndTurnClick}
-                onYanivClick={onYanivClick}
-                onPlayCards={onPlayCards}
-              />
+            {/* Fills the tab on phones rather than floating in the middle */}
+            <HandView {...handProps} className='flex-1 lg:flex-none' />
+          </TabsContent>
+          <TabsContent
+            value='scores'
+            forceMount
+            className={cn(
+              'absolute inset-0 overflow-y-auto flex flex-col gap-3',
+              'data-[state=inactive]:translate-x-full data-[state=inactive]:invisible',
+              'motion-safe:transition-[translate,visibility] motion-safe:duration-300 motion-safe:ease-in-out',
+              'lg:hidden',
+            )}
+          >
+            {/* The same panel as the round summary, so the scores look the
+                same mid-round and at the end of a round */}
+            {isRoundOver ? (
+              <RoundSummary players={players} userId={userId} />
+            ) : (
+              <Card variant='panel' className='w-full max-w-xl self-center'>
+                <CardHeader className='items-center text-center'>
+                  <CardDescription>
+                    After round {getRoundCount(players)}
+                  </CardDescription>
+                  <CardTitle>Scores</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Scoreboard players={players} userId={userId} />
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
         </div>
-        {isUserTakingTurn && stage !== GameViewStage.PICKING_CARDS && (
-          <TurnActions
-            stage={stage}
-            onEndTurnClick={onEndTurnClick}
-            onYanivClick={onYanivClick}
-            onPlayCards={onPlayCards}
+        {/* Large screens share this row with the emoji reactions, like the
+            current Controls; phones keep the reactions in the Table view */}
+        <div className='contents lg:grid lg:grid-cols-2 lg:items-center lg:gap-2'>
+          <EmojiReactions
+            onEmojiClick={handleEmojiClick}
+            className='hidden lg:flex'
           />
-        )}
-        <TabsList className='w-full h-11 shrink-0 mb-[env(safe-area-inset-bottom)] lg:hidden'>
-          <TabsTrigger value='table' className='h-full'>
-            Table
-          </TabsTrigger>
-          <TabsTrigger value='hand' className='h-full'>
-            Your hand
-          </TabsTrigger>
+          {actionTab && (
+            <TurnActions
+              // Keeps its space on every tab, so switching tabs never moves
+              // the panels, but only shows its buttons on the tab they belong
+              // to. Face-down cards can't be played, so Play Cards hides with
+              // them
+              className={cn(
+                activeTab !== actionTab && 'invisible',
+                'lg:visible lg:justify-end',
+                isFaceDown &&
+                  stage === GameViewStage.PICKING_CARDS &&
+                  'lg:invisible',
+              )}
+              stage={stage}
+              onEndTurnClick={onEndTurnClick}
+              onYanivClick={onYanivClick}
+              onPlayCards={handlePlayCards}
+              onStartNewRoundClick={onPlayCards}
+            />
+          )}
+        </div>
+        <TabsList
+          style={
+            {
+              '--color-highlight': playerColorHighlight(userPlayer.color),
+            } as CSSProperties
+          }
+          className='w-full h-11 shrink-0 mb-[env(safe-area-inset-bottom)] lg:hidden'
+        >
+          {(
+            [
+              ['table', 'Table'],
+              ['hand', 'Your hand'],
+              ['scores', 'Scores'],
+            ] as const
+          ).map(([tab, label]) => (
+            <GameTabTrigger
+              key={tab}
+              value={tab}
+              color={userPlayer.color}
+              isActionNeeded={actionTab === tab && activeTab !== tab}
+            >
+              {label}
+            </GameTabTrigger>
+          ))}
         </TabsList>
       </Tabs>
     </GameLayout>
@@ -926,7 +1078,6 @@ const meta = {
     discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
     otherPlayerStep: GameStep.PLAY_CARDS,
     yanivStyle: 'sticker',
-    scoresAccess: 'header-dialog',
     onEmojiClick: fn(),
     onEndTurnClick: fn(),
     onYanivClick: fn(),
@@ -936,10 +1087,6 @@ const meta = {
     stage: { control: 'select', options: Object.values(GameViewStage) },
     otherPlayerStep: { control: 'select', options: Object.values(GameStep) },
     yanivStyle: { control: 'inline-radio', options: YANIV_STYLES },
-    scoresAccess: {
-      control: 'inline-radio',
-      options: ['header-dialog', 'strip-drawer'],
-    },
   },
 } satisfies Meta<typeof MockGame>;
 
@@ -1044,16 +1191,6 @@ export const PlayerTagsYanivCalled: Story = {
   ),
 };
 
-/* Scores ------------------------------------------------------------------ */
-
-export const ScoresFromHeader: Story = {
-  args: { scoresAccess: 'header-dialog' },
-};
-
-export const ScoresFromPlayerStrip: Story = {
-  args: { scoresAccess: 'strip-drawer' },
-};
-
 /* Full game --------------------------------------------------------------- */
 
 export const FullGameYourTurnToPlay: Story = {};
@@ -1062,7 +1199,7 @@ export const FullGameFiveCardHand: Story = {
   args: { cards: userCards.slice(0, 5) },
 };
 
-export const FullGameLargeHand: Story = {
+export const FullGameThirteenCardHand: Story = {
   args: {
     cards: [
       ...userCards,
@@ -1071,6 +1208,7 @@ export const FullGameLargeHand: Story = {
       { suit: Suit.HEARTS, rank: Rank.FOUR },
       { suit: Suit.CLUBS, rank: Rank.FIVE },
       { suit: Suit.DIAMONDS, rank: Rank.SIX },
+      { suit: Suit.SPADES, rank: Rank.SEVEN },
     ],
   },
 };
@@ -1105,6 +1243,23 @@ export const FullGameTwoPlayers: Story = {
   args: { players: withTurn(0).slice(0, 2) },
 };
 
+export const FullGameEndOfRound: Story = {
+  args: { stage: GameViewStage.END_OF_ROUND },
+};
+
+export const FullGameWaitingForNewRound: Story = {
+  args: {
+    players: withTurn(2),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    otherPlayerStep: GameStep.REDEAL,
+  },
+};
+
+/** Fills the window, so resizing it shows where the layout changes. */
+export const FullGameAnyWidth: Story = {
+  globals: { viewport: { value: undefined } },
+};
+
 export const FullGameDesktop: Story = {
   globals: { viewport: { value: undefined } },
 };
@@ -1113,6 +1268,14 @@ export const FullGameDesktopOtherPlayersTurn: Story = {
   args: {
     players: withTurn(4),
     stage: GameViewStage.WAITING_FOR_PLAYER,
+  },
+  globals: { viewport: { value: undefined } },
+};
+
+export const FullGameDesktopPickedUpCard: Story = {
+  args: {
+    stage: GameViewStage.END_TURN,
+    drawnCard: { suit: Suit.SPADES, rank: Rank.ACE },
   },
   globals: { viewport: { value: undefined } },
 };
