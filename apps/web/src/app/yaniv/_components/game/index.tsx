@@ -3,11 +3,12 @@ import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import {
-  SwipeableTabs,
-  SwipeableTabsContent,
-  SwipeableTabsViewport,
-} from '~/components/ui/swipeable-tabs';
-import { TabsList, TabsTrigger } from '~/components/ui/tabs';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  TabsViewport,
+} from '~/components/ui/tabs';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import {
@@ -38,8 +39,6 @@ const GAME_TABS = [
   { value: 'hand', label: 'Your hand' },
   { value: 'scores', label: 'Scores' },
 ] as const satisfies { value: GameTab; label: string }[];
-
-const TAB_ORDER = GAME_TABS.map((tab) => tab.value);
 
 /** Where the table and hand show together and the tabs go away. */
 const LARGE_SCREEN_QUERY = '(min-width: 1024px)';
@@ -230,21 +229,20 @@ export default function Game({
         className='flex min-h-0 flex-1 flex-col'
       >
         {/* Larger screens show the table and hand together, with no tabs */}
-        <SwipeableTabs
-          values={TAB_ORDER}
+        <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
           staticQuery={LARGE_SCREEN_QUERY}
           className='min-h-0 flex-1 gap-3'
         >
-          <SwipeableTabsViewport
+          <TabsViewport
             // Reaches the screen edges, and each panel takes the page's side
             // padding (px-3 on PageRoot plus px-2 on main) itself, so there's
             // a gap between panels while swiping
             className='-mx-5 lg:contents'
             trackClassName='lg:contents'
           >
-            <SwipeableTabsContent
+            <TabsContent
               value='table'
               className='flex flex-col px-5 lg:h-auto lg:min-h-0 lg:flex-1 lg:px-0'
             >
@@ -277,9 +275,9 @@ export default function Game({
                 onEmojiClick={onEmojiClick}
                 className='mt-3 shrink-0 self-center lg:hidden'
               />
-            </SwipeableTabsContent>
+            </TabsContent>
 
-            <SwipeableTabsContent
+            <TabsContent
               value='hand'
               className='flex flex-col px-5 lg:order-last lg:h-auto lg:flex-none lg:px-0'
             >
@@ -303,9 +301,9 @@ export default function Game({
                 />
               </div>
               {panelTurnActions('hand')}
-            </SwipeableTabsContent>
+            </TabsContent>
 
-            <SwipeableTabsContent
+            <TabsContent
               value='scores'
               className='flex flex-col px-5 lg:hidden'
             >
@@ -318,8 +316,8 @@ export default function Game({
                 />
               </div>
               {panelTurnActions('scores')}
-            </SwipeableTabsContent>
-          </SwipeableTabsViewport>
+            </TabsContent>
+          </TabsViewport>
 
           {/* Larger screens share this row between the table and hand. It
               keeps the turn buttons' height when they're gone, so the play
@@ -357,7 +355,7 @@ export default function Game({
               </TabsTrigger>
             ))}
           </TabsList>
-        </SwipeableTabs>
+        </Tabs>
       </PageEmojiRain>
     </GameLayout>
   );
