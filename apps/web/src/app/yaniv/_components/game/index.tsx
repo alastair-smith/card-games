@@ -8,7 +8,6 @@ import {
   SwipeableTabsViewport,
 } from '~/components/ui/swipeable-tabs';
 import { TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { useMediaQuery } from '~/hooks/use-media-query';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import {
@@ -119,11 +118,9 @@ export default function Game({
   const { isShownInOverlay, onOverlayDismissed } =
     useDrawnCardVisibility(drawnCard);
 
-  // Phones keep the hand private in its own tab, so only larger screens have
-  // the button to turn the cards face down
-  const isLargeScreen = useMediaQuery(LARGE_SCREEN_QUERY);
-  const [isFaceDownChosen, setIsFaceDownChosen] = useState(false);
-  const isFaceDown = isFaceDownChosen && isLargeScreen;
+  // Only larger screens show the button; phones keep the hand private in its
+  // own tab
+  const [isFaceDown, setIsFaceDown] = useState(false);
 
   const userPlayer = players.find((player) => player.id === userId);
   const playerTakingTurn = players.find((player) => player.isPlayersTurn);
@@ -301,7 +298,7 @@ export default function Game({
                   }
                   isFaceDown={isFaceDown}
                   onVisibilityToggle={() =>
-                    setIsFaceDownChosen((previous) => !previous)
+                    setIsFaceDown((previous) => !previous)
                   }
                 />
               </div>

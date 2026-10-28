@@ -78,8 +78,6 @@ vi.mock('../round-summary', () => ({
   ),
 }));
 
-const LARGE_SCREEN_QUERY = '(min-width: 1024px)';
-
 const baseProps = {
   onEmojiClick: vi.fn(),
   onEndTurnClick: vi.fn(),
@@ -233,6 +231,13 @@ describe('Game', () => {
       expect(getPanel('Table')).toHaveAttribute('inert');
       expect(getPanel('Your hand')).not.toHaveAttribute('inert');
     });
+
+    test('keeps every panel in reach on larger screens, which show them together', () => {
+      stubBrowserApis({ matchingQueries: ['(min-width: 1024px)'] });
+      render(<Game {...baseProps} />);
+      expect(getPanel('Table')).not.toHaveAttribute('inert');
+      expect(getPanel('Your hand')).not.toHaveAttribute('inert');
+    });
   });
 
   describe('turn buttons', () => {
@@ -289,16 +294,12 @@ describe('Game', () => {
     });
   });
 
-  describe('face down on larger screens', () => {
+  describe('face down', () => {
     const drawnCard = { suit: Suit.HEARTS, rank: Rank.FIVE };
     const cards = [
       { suit: Suit.CLUBS, rank: Rank.ACE },
       { suit: Suit.HEARTS, rank: Rank.FIVE },
     ];
-
-    beforeEach(() =>
-      stubBrowserApis({ matchingQueries: [LARGE_SCREEN_QUERY] }),
-    );
 
     const turnFaceDown = () =>
       fireEvent.click(
@@ -336,16 +337,6 @@ describe('Game', () => {
         screen.queryByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
       ).not.toBeInTheDocument();
       expect(screen.getAllByTestId('card-face-down')).toHaveLength(2);
-    });
-  });
-
-  describe('face down on phones', () => {
-    test('keeps your cards face up, as the hand has its own tab', () => {
-      render(<Game {...baseProps} />);
-      fireEvent.click(
-        screen.getByRole('button', { name: /Toggle visibility/ }),
-      );
-      expect(screen.queryByTestId('card-face-down')).not.toBeInTheDocument();
     });
   });
 

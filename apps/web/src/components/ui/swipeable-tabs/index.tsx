@@ -7,9 +7,9 @@ import {
   type ReactNode,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import { Tabs, TabsContent } from '~/components/ui/tabs';
-import { useMediaQuery } from '~/hooks/use-media-query';
 import { cn } from '~/utils/cn';
 
 type SwipeableTabsContextValue = {
@@ -60,11 +60,24 @@ function SwipeableTabs({
   children,
   ...props
 }: SwipeableTabsProps) {
-  const isStatic = useMediaQuery(staticQuery);
   const [carouselRef, carouselApi] = useEmblaCarousel({
     startIndex: Math.max(values.indexOf(value), 0),
     breakpoints: { [staticQuery]: { active: false } },
   });
+  const [isSwipeable, setIsSwipeable] = useState(true);
+
+  // The carousel applies staticQuery itself, so ask it whether it's swiping
+  // rather than matching the query again
+  useEffect(() => {
+    if (!carouselApi) return;
+    const updateIsSwipeable = () =>
+      setIsSwipeable(carouselApi.internalEngine().options.active);
+    updateIsSwipeable();
+    carouselApi.on('reInit', updateIsSwipeable);
+    return () => {
+      carouselApi.off('reInit', updateIsSwipeable);
+    };
+  }, [carouselApi]);
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -95,9 +108,7 @@ function SwipeableTabs({
   }, [carouselApi, values, value, onValueChange]);
 
   return (
-    <SwipeableTabsContext.Provider
-      value={{ carouselRef, value, isSwipeable: !isStatic }}
-    >
+    <SwipeableTabsContext.Provider value={{ carouselRef, value, isSwipeable }}>
       <Tabs value={value} onValueChange={onValueChange} {...props}>
         {children}
       </Tabs>
