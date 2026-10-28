@@ -71,11 +71,15 @@ export function TurnStatus({ className, ...props }: TurnStatusProps) {
       aria-hidden='true'
       className={cn('flex flex-col items-center text-center', className)}
     >
-      {status.yanivText && (
+      {status.yanivText ? (
         <span className='flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-dark-text-disabled'>
           <MegaphoneIcon size={12} />
           {status.yanivText}
         </span>
+      ) : (
+        // Larger screens keep the Yaniv line's space, so the table doesn't
+        // shift when it appears. Phones need the room for the play area
+        <span className='hidden text-xs lg:block'>&nbsp;</span>
       )}
       <span className='flex flex-wrap items-center justify-center gap-x-2 font-semibold text-balance'>
         {status.turnText}
