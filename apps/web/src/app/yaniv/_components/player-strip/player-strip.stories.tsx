@@ -41,7 +41,6 @@ const withTurn = (turnIndex: number, yanivCallerIndex?: number) =>
 const meta = {
   title: 'Yaniv / Player Strip',
   component: PlayerStrip,
-  globals: { viewport: { value: 'phone' } },
   args: {
     players: withTurn(1),
     userId: '1' as UserId,

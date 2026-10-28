@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { fn } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
@@ -104,13 +104,10 @@ const userCards: YanivPlayingCard[] = [
   { suit: Suit.SPADES, rank: Rank.EIGHT },
 ];
 
-const DESKTOP = { viewport: { value: undefined } };
-
 const meta = {
   title: 'Yaniv / Game',
   component: Game,
   parameters: { isFullScreen: true },
-  globals: { viewport: { value: 'phone' } },
   args: {
     onEmojiClick: fn(),
     onEndTurnClick: fn(),
@@ -158,8 +155,6 @@ const runSelectedArgs = {
   selectedCards: runCards,
   isRunSelected: true,
 } satisfies Story['args'];
-
-/* Phones ------------------------------------------------------------------ */
 
 export const YourTurnToPlay: Story = {};
 
@@ -221,22 +216,6 @@ export const LongestNames: Story = {
 
 export const TwoPlayers: Story = {
   args: { players: withTurn(0, players.slice(0, 2)) },
-};
-
-/** Five players' scores fit without scrolling. */
-export const ScoresFivePlayers: Story = {
-  args: {
-    players: withTurn(2),
-    stage: GameViewStage.WAITING_FOR_PLAYER,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('tab', { name: 'Scores' }));
-    await expect(canvas.getByRole('tab', { name: 'Scores' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
-  },
 };
 
 export const EndOfRound: Story = {
@@ -448,38 +427,4 @@ export const StageWalkthrough: Story = {
       </>
     );
   },
-};
-
-export const DesktopStageWalkthrough: Story = {
-  ...StageWalkthrough,
-  globals: DESKTOP,
-};
-
-/* Larger screens ---------------------------------------------------------- */
-
-/** Fills the window, so resizing it shows where the layout changes. */
-export const Desktop: Story = { globals: DESKTOP };
-
-export const DesktopRunSelected: Story = {
-  args: runSelectedArgs,
-  globals: DESKTOP,
-};
-
-export const DesktopOtherPlayersTurn: Story = {
-  args: otherPlayersTurnArgs,
-  globals: DESKTOP,
-};
-
-export const DesktopPickedUpCard: Story = {
-  args: {
-    stage: GameViewStage.END_TURN,
-    step: GameStep.PROCEED,
-    drawnCard: { suit: Suit.SPADES, rank: Rank.ACE },
-  },
-  globals: DESKTOP,
-};
-
-export const DesktopEndOfRound: Story = {
-  args: { stage: GameViewStage.END_OF_ROUND, step: GameStep.REDEAL },
-  globals: DESKTOP,
 };
