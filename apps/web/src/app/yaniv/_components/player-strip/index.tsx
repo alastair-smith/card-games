@@ -30,7 +30,9 @@ export function PlayerStrip({
       <TurnStatus players={players} userId={userId} step={step} />
       <ol
         aria-label='Players'
-        className='m-0 flex list-none flex-wrap justify-evenly gap-3 p-1.5 lg:justify-center'
+        // Wide enough that a Yaniv sticker, which overhangs its tag, stays
+        // clear of the turn brackets around the next one
+        className='m-0 flex list-none flex-wrap justify-evenly gap-x-6 gap-y-5 p-1.5 lg:justify-center'
       >
         {players.map((player) => (
           <li

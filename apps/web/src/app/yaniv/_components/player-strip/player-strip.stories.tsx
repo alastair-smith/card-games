@@ -66,6 +66,14 @@ export const YanivCalled: Story = {
   args: { players: withTurn(3, 2), step: GameStep.PLAY_CARDS },
 };
 
+/** The worst case for overlaps: a sticker on every tag. */
+export const EveryoneCalledYaniv: Story = {
+  args: {
+    players: withTurn(3).map((player) => ({ ...player, isYanivCalled: true })),
+    step: GameStep.PLAY_CARDS,
+  },
+};
+
 export const LongestNames: Story = {
   args: {
     players: withTurn(2).map((player, index) => ({

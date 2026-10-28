@@ -57,7 +57,8 @@ export function PlayerTag({
           <>
             <span
               aria-hidden='true'
-              className='absolute -top-3 -right-4 rotate-12 rounded-sm border-2 border-black bg-true-white px-1 text-xs font-black uppercase text-slate'
+              // Above the turn brackets of the tag next to it
+              className='absolute -top-3 -right-4 z-10 rotate-12 rounded-sm border-2 border-black bg-true-white px-1 text-xs font-black uppercase text-slate'
             >
               Yaniv!
             </span>
@@ -70,7 +71,7 @@ export function PlayerTag({
             // A new key per reaction remounts it, restarting the animation
             key={emojiReaction.id}
             aria-hidden='true'
-            className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-3xl animate-reaction-emoji'
+            className='pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-3xl animate-reaction-emoji'
           >
             {emojiReaction.emoji}
           </span>
