@@ -75,28 +75,26 @@ shown.
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
 
-Screenshots can't be uploaded with `gh`, so after creating the PR, list the
-files for the user to drag into the PR description themselves. Once they
-have, read the description back with `gh pr view --json body` and arrange the
-`<img>` tags they added into a table under a `### Screenshots` heading.
-
-When something changed, show it before and after. Take the previous
-screenshots on `main` first, named `<name>-previous`:
-
-```md
-| Description | Previous | Updated |
-|:-|-|-|
-| Full lobby, desktop | <img …> | <img …> |
-```
-
-Otherwise, list them:
+Put them in a table under a `### Screenshots` heading at the end of the body,
+above `Closes #123`. Reference each one by the path the script printed, and
+pass that same path to `--attach` (below), which uploads it and points the
+reference at the upload. Write the alt text in the reference:
 
 ```md
 | Description | Image |
 |:-|-|
-| Full lobby, desktop | <img …> |
+| Full lobby, desktop | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) |
 ```
 
+When something changed, show it before and after. Take the previous
+screenshots on the issue branch before changing anything, since the script
+doesn't run on `main`, named `<name>-previous`:
+
+```md
+| Description | Previous | Updated |
+|:-|-|-|
+| Full lobby, desktop | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-desktop.png) |
+```
 ## Create
 
 Push the branch first with the `manage-branch` skill's script — creating the
@@ -124,9 +122,27 @@ only open PRs against this repo's `main`. `--body` tells `create-pr.ts` to
 read the body from stdin. Pass it through a quoted heredoc as above, so
 backticks in it aren't run by the shell.
 
+Pass `--attach` once per screenshot the body references. It only takes PNGs
+from this branch's `.pr-screenshots/` folder, so no other local file can be
+uploaded:
+
+```bash
+./.claude/skills/raise-pr/scripts/create-pr.ts --title '🚀 Show the lobby' \
+  --attach .pr-screenshots/i-123/lobby/lobby-desktop.png \
+  --attach .pr-screenshots/i-123/lobby/lobby-mobile.png --body <<'EOF'
+...
+EOF
+```
+
+Read the description back with `gh pr view --json body` and check every
+reference now points at a `github.com/user-attachments` URL.
+
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new
-title, `--body` with a new body on stdin, or both:
+title, `--body` with a new body on stdin, or both, plus `--attach` for any
+screenshots the new body references. A body that keeps screenshots already
+uploaded keeps their `github.com/user-attachments` URLs, so read it back
+first rather than writing the old paths again:
 
 ```bash
 ./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill' --body <<'EOF'
