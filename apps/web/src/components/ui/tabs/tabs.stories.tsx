@@ -30,3 +30,20 @@ export const TwoTabs: Story = {
     </Tabs>
   ),
 };
+
+/** The Board tab holds your next move, so it pulses in your colour. */
+export const ActionNeeded: Story = {
+  render: (args) => (
+    <Tabs {...args}>
+      <TabsContent value='hand'>View your cards</TabsContent>
+      <TabsContent value='board'>View the table</TabsContent>
+
+      <TabsList>
+        <TabsTrigger value='hand'>Hand</TabsTrigger>
+        <TabsTrigger value='board' actionColor='purple'>
+          Board
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  ),
+};

@@ -7,7 +7,7 @@ import {
   SwipeableTabsContent,
   SwipeableTabsViewport,
 } from '~/components/ui/swipeable-tabs';
-import { TabsList } from '~/components/ui/tabs';
+import { TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useMediaQuery } from '~/hooks/use-media-query';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
@@ -20,7 +20,6 @@ import {
 import { cn } from '~/utils/cn';
 import type { PlayerColor } from '~/utils/player-color';
 import { sumYanivHand } from '~/utils/yaniv';
-import { GameTabTrigger } from '../game-tab-trigger';
 import { Hand } from '../hand';
 import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
@@ -346,16 +345,19 @@ export default function Game({
 
           <TabsList className='mb-[env(safe-area-inset-bottom)] h-11 w-full shrink-0 lg:hidden'>
             {GAME_TABS.map((tab) => (
-              <GameTabTrigger
+              <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                color={userPlayer.color}
-                isActionNeeded={
+                // Marks where your next move is when you're on another tab
+                actionColor={
                   actionTab === tab.value && activeTab !== tab.value
+                    ? userPlayer.color
+                    : undefined
                 }
+                className='h-full'
               >
                 {tab.label}
-              </GameTabTrigger>
+              </TabsTrigger>
             ))}
           </TabsList>
         </SwipeableTabs>
