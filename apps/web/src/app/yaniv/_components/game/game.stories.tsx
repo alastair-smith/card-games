@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import {
@@ -348,6 +350,120 @@ export const NotInstaPlayCard: Story = {
     onAutoPlayDrawnCard: fn(),
     canAutoPlay: false,
   },
+};
+
+/* Stage walkthrough ------------------------------------------------------- */
+
+const withYanivCalledByKevin = (turnIndex: number) =>
+  withYanivCalledBy(1, turnIndex);
+
+const WALKTHROUGH_STAGES = [
+  {
+    label: 'Your turn: play',
+    players: withTurn(0),
+    stage: GameViewStage.PICKING_CARDS,
+    step: GameStep.PLAY_CARDS,
+  },
+  {
+    label: 'Your turn: pick up',
+    players: withTurn(0),
+    stage: GameViewStage.DRAWING_CARDS,
+    step: GameStep.PICKUP_CARD,
+  },
+  {
+    label: 'Your turn: end turn',
+    players: withTurn(0),
+    stage: GameViewStage.END_TURN,
+    step: GameStep.PROCEED,
+  },
+  {
+    label: 'Kevin plays',
+    players: withTurn(1),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    step: GameStep.PLAY_CARDS,
+  },
+  {
+    label: 'Kevin picks up',
+    players: withTurn(1),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    step: GameStep.PICKUP_CARD,
+  },
+  {
+    label: 'Kevin called Yaniv, Paul plays',
+    players: withYanivCalledByKevin(2),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    step: GameStep.PLAY_CARDS,
+  },
+  {
+    label: 'Your last turn: play',
+    players: withYanivCalledByKevin(0),
+    stage: GameViewStage.PICKING_CARDS,
+    step: GameStep.PLAY_CARDS,
+  },
+  {
+    label: 'End of round: you deal',
+    players: withYanivCalledByKevin(0),
+    stage: GameViewStage.END_OF_ROUND,
+    step: GameStep.REDEAL,
+  },
+  {
+    label: 'Waiting for Kevin to deal',
+    players: withYanivCalledByKevin(1),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    step: GameStep.REDEAL,
+  },
+] as const satisfies (Pick<GameProps, 'players' | 'stage' | 'step'> & {
+  label: string;
+})[];
+
+/**
+ * Steps through a round with the buttons over the header, keeping the game
+ * mounted so its tabs switch as they would in play. Use it to check nothing
+ * shifts between stages.
+ */
+export const StageWalkthrough: Story = {
+  render: function Render(args) {
+    const [stageIndex, setStageIndex] = useState(0);
+    const stageCount = WALKTHROUGH_STAGES.length;
+    const { label, ...stage } =
+      WALKTHROUGH_STAGES[stageIndex] ?? WALKTHROUGH_STAGES[0];
+
+    const moveBy = (offset: number) =>
+      setStageIndex((index) => (index + offset + stageCount) % stageCount);
+
+    return (
+      <>
+        <Game {...args} {...stage} />
+        {/* Fixed over the header, so it takes no space in the layout */}
+        <div className='fixed top-1 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-lg bg-black/80 p-1 text-xs text-white'>
+          <Button
+            size='sm'
+            variant='secondary'
+            onClick={() => moveBy(-1)}
+            aria-label='Previous stage'
+          >
+            <ArrowLeftIcon />
+          </Button>
+          <span className='w-36 text-center' aria-live='polite'>
+            {stageIndex + 1}/{stageCount}: {label}
+          </span>
+          <Button
+            size='sm'
+            variant='secondary'
+            onClick={() => moveBy(1)}
+            aria-label='Next stage'
+          >
+            <ArrowRightIcon />
+          </Button>
+        </div>
+      </>
+    );
+  },
+};
+
+export const DesktopStageWalkthrough: Story = {
+  ...StageWalkthrough,
+  globals: DESKTOP,
 };
 
 /* Larger screens ---------------------------------------------------------- */
