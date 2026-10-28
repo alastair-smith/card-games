@@ -321,8 +321,10 @@ export default function Game({
             </SwipeableTabsContent>
           </SwipeableTabsViewport>
 
-          {/* Larger screens share this row between the table and hand */}
-          <div className='hidden lg:grid lg:grid-cols-2 lg:items-center lg:gap-2'>
+          {/* Larger screens share this row between the table and hand. It
+              keeps the turn buttons' height when they're gone, so the play
+              area above doesn't shift as you play and pick up */}
+          <div className='hidden lg:grid lg:h-10 lg:grid-cols-2 lg:items-center lg:gap-2'>
             <EmojiReactions onEmojiClick={onEmojiClick} />
             {actionTab && (
               <TurnActions
