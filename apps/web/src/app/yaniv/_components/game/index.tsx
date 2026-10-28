@@ -40,9 +40,6 @@ const GAME_TABS = [
   { value: 'scores', label: 'Scores' },
 ] as const satisfies { value: GameTab; label: string }[];
 
-/** Where the table and hand show together and the tabs go away. */
-const LARGE_SCREEN_QUERY = '(min-width: 1024px)';
-
 /** The tab your next move happens in, on your turn. */
 const ACTION_TAB_BY_STAGE = {
   [GameViewStage.PICKING_CARDS]: 'hand',
@@ -232,7 +229,8 @@ export default function Game({
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          staticQuery={LARGE_SCREEN_QUERY}
+          // Matches the lg: classes, where the table and hand show together
+          staticQuery='(min-width: 1024px)'
           className='min-h-0 flex-1 gap-3'
         >
           <TabsViewport
