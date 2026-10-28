@@ -21,6 +21,7 @@ import Game from '.';
 type GameProps = React.ComponentProps<typeof Game>;
 type Player = GameProps['players'][number];
 
+// As many players as a game allows
 const players: Player[] = [
   buildClientPlayer({
     id: '1' as UserId,
@@ -69,17 +70,6 @@ const players: Player[] = [
   }),
   buildClientPlayer({
     id: '5' as UserId,
-    color: 'indigo',
-    cardCount: 7,
-    name: 'Duncan' as PlayerName,
-    score: 13,
-    roundScores: [
-      buildRoundScore({ original: 2, adjusted: 0 }),
-      buildRoundScore({ original: 13 }),
-    ],
-  }),
-  buildClientPlayer({
-    id: '6' as UserId,
     color: 'fuchsia',
     cardCount: 4,
     name: Array.from({ length: MAX_NAME_LENGTH }, () => 'W').join(
@@ -221,7 +211,6 @@ export const LongestNames: Story = {
             'WWWWWWWWWWWW',
             'Maximiliana',
             'MMMMMMMMMMMM',
-            'Bartholomew',
           ] as const
         )[index] as PlayerName,
       })),
@@ -237,7 +226,7 @@ export const TwoPlayers: Story = {
 /** Five players' scores fit without scrolling. */
 export const ScoresFivePlayers: Story = {
   args: {
-    players: withTurn(2, players.slice(0, 5)),
+    players: withTurn(2),
     stage: GameViewStage.WAITING_FOR_PLAYER,
   },
   play: async ({ canvasElement }) => {

@@ -36,7 +36,7 @@ export function RoundSummary({
 
   return (
     <Card variant='panel' className={cn('w-full max-w-xl', className)}>
-      <CardHeader className='items-center space-y-1 text-center'>
+      <CardHeader className='items-center space-y-1 pb-2 text-center'>
         <CardDescription>
           {isRoundOver ? `Round ${roundNumber}` : scoresDescription}
         </CardDescription>
