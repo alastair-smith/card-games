@@ -4,7 +4,17 @@ import * as TabsPrimitive from '@radix-ui/react-tabs';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type CSSProperties,
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { cn } from '~/utils/cn';
 import {
   type PlayerColor,
@@ -20,14 +30,14 @@ type TabsContextValue = {
   isSwipeable: boolean;
 };
 
-const TabsContext = React.createContext<TabsContextValue>({
+const TabsContext = createContext<TabsContextValue>({
   carouselRef: () => {},
   value: undefined,
   isSwipeable: false,
 });
 
 /** Whether a panel sits in a TabsViewport, so it slides rather than swaps. */
-const TabsViewportContext = React.createContext(false);
+const TabsViewportContext = createContext(false);
 
 // Never matches, for tabs that swipe at every size
 const NO_MEDIA_QUERY = 'not all';
@@ -52,7 +62,7 @@ function Tabs({
   onValueChange,
   staticQuery = NO_MEDIA_QUERY,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root> & {
+}: ComponentProps<typeof TabsPrimitive.Root> & {
   /**
    * A media query at which the panels in a TabsViewport stop swiping, so the
    * caller can lay them out together instead, e.g. with `lg:contents` on the
@@ -60,13 +70,12 @@ function Tabs({
    */
   staticQuery?: string | undefined;
 }) {
-  const [uncontrolledValue, setUncontrolledValue] =
-    React.useState(defaultValue);
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const currentValue = value ?? uncontrolledValue;
-  const currentValueRef = React.useRef(currentValue);
+  const currentValueRef = useRef(currentValue);
   currentValueRef.current = currentValue;
 
-  const handleValueChange = React.useCallback(
+  const handleValueChange = useCallback(
     (nextValue: string) => {
       setUncontrolledValue(nextValue);
       onValueChange?.(nextValue);
@@ -77,13 +86,13 @@ function Tabs({
   const [carouselRef, carouselApi] = useEmblaCarousel({
     breakpoints: { [staticQuery]: { active: false } },
   });
-  const [isSwipeable, setIsSwipeable] = React.useState(true);
+  const [isSwipeable, setIsSwipeable] = useState(true);
 
   // Starts on the current tab, and catches up when swiping starts again
   // after being static, when the carousel doesn't follow the tabs. The
   // carousel applies staticQuery itself, so ask it whether it's swiping
   // rather than matching the query again
-  React.useEffect(() => {
+  useEffect(() => {
     if (!carouselApi) return;
     const handleInit = () => {
       setIsSwipeable(carouselApi.internalEngine().options.active);
@@ -99,7 +108,7 @@ function Tabs({
     };
   }, [carouselApi]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!carouselApi) return;
     const index = getSlideIndex(carouselApi, currentValue);
     if (index === carouselApi.selectedScrollSnap()) return;
@@ -109,7 +118,7 @@ function Tabs({
     carouselApi.scrollTo(index, !isMotionAllowed);
   }, [carouselApi, currentValue]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!carouselApi) return;
     const handleSelect = () => {
       const selectedValue =
@@ -146,9 +155,9 @@ function TabsViewport({
 }: {
   className?: string;
   trackClassName?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const { carouselRef } = React.useContext(TabsContext);
+  const { carouselRef } = useContext(TabsContext);
 
   return (
     <TabsViewportContext.Provider value>
@@ -171,7 +180,7 @@ function TabsViewport({
 function TabsList({
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.List>) {
+}: ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
       data-slot='tabs-list'
@@ -190,7 +199,7 @@ function TabsTrigger({
   children,
   actionColor,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger> & {
+}: ComponentProps<typeof TabsPrimitive.Trigger> & {
   /**
    * Marks the tab as holding the player's next move: it pulses in this
    * colour, with a dot beside its label.
@@ -205,7 +214,7 @@ function TabsTrigger({
           ? ({
               '--color-highlight': playerColorHighlight(actionColor),
               ...style,
-            } as React.CSSProperties)
+            } as CSSProperties)
           : style
       }
       className={cn(
@@ -234,9 +243,9 @@ function TabsContent({
   className,
   value,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Content>) {
-  const isInViewport = React.useContext(TabsViewportContext);
-  const { value: activeValue, isSwipeable } = React.useContext(TabsContext);
+}: ComponentProps<typeof TabsPrimitive.Content>) {
+  const isInViewport = useContext(TabsViewportContext);
+  const { value: activeValue, isSwipeable } = useContext(TabsContext);
 
   if (!isInViewport) {
     return (
