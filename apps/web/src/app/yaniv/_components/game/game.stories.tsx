@@ -208,10 +208,13 @@ export const YanivCalled: Story = {
   },
 };
 
-/** The worst case for the player tags: a Yaniv sticker on every one. */
-export const EveryoneCalledYaniv: Story = {
+/** The worst case for the player tags: a Yaniv sticker on all but yours. */
+export const EveryoneElseCalledYaniv: Story = {
   args: {
-    players: withTurn(3).map((player) => ({ ...player, isYanivCalled: true })),
+    players: withTurn(3).map((player, index) => ({
+      ...player,
+      isYanivCalled: index !== 0,
+    })),
     stage: GameViewStage.WAITING_FOR_PLAYER,
   },
 };
