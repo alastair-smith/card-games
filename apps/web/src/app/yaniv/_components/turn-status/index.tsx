@@ -77,9 +77,9 @@ export function TurnStatus({ className, ...props }: TurnStatusProps) {
           {status.yanivText}
         </span>
       ) : (
-        // Larger screens keep the Yaniv line's space, so the table doesn't
-        // shift when it appears. Phones need the room for the play area
-        <span className='hidden text-xs lg:block'>&nbsp;</span>
+        // Keeps the Yaniv line's space, so the table doesn't shift when it
+        // appears
+        <span className='text-xs'>&nbsp;</span>
       )}
       <span className='flex flex-wrap items-center justify-center gap-x-2 font-semibold text-balance'>
         {status.turnText}

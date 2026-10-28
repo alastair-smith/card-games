@@ -271,12 +271,16 @@ export default function Game({
                     playArea
                   )}
                 </div>
-                <EmojiReactions
-                  onEmojiClick={onEmojiClick}
-                  className='self-center lg:hidden'
-                />
               </div>
-              {panelTurnActions('table')}
+              {/* Phones keep the turn buttons' space on the table, so the
+                  play area doesn't shift as they come and go */}
+              <div className='mt-3 h-10 shrink-0 lg:hidden'>
+                {actionTab === 'table' && <TurnActions {...turnActionsProps} />}
+              </div>
+              <EmojiReactions
+                onEmojiClick={onEmojiClick}
+                className='mt-3 shrink-0 self-center lg:hidden'
+              />
             </SwipeableTabsContent>
 
             <SwipeableTabsContent
