@@ -17,7 +17,6 @@ export default function GameLayout({
   className,
 }: GameLayoutProps) {
   return (
-    // Fits the screen so the header stays in view, and main scrolls instead
     <PageRoot isScreenHeight>
       <PageHeader
         breadcrumbs={[
