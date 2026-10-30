@@ -29,7 +29,6 @@ export default function GameLayout({
 
       <main
         className={cn(
-          // Safe centring starts tall content at the top, so none is cut off
           'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto',
           className,
         )}
