@@ -41,8 +41,10 @@ Skip one-offs that won't recur.
 
 ## 3. Decide where each fix belongs
 
-Check what reads a file before proposing it. For example, `REVIEW.md` is read
-only by the Code Review service, not by `/code-review`.
+Check what reads a file, and when, before proposing it. For example,
+`REVIEW.md` is read only by the Code Review service, not by `/code-review`,
+and a skill is read only when its workflow starts, so a rule about how to
+build something belongs in `CLAUDE.md`, not in `raise-pr`.
 
 Before proposing a fix, search open issues for one that already covers it,
 and before proposing a script for a command, check whether the allowlist
@@ -76,9 +78,11 @@ whether it was left out without being looked at, rather than drafting
 List the points, one line each, then detail one at a time. Give each point's
 items as a checklist, and don't move on until every item has a decision: do
 it, skip it, leave it for later, or watch it. Ask for the decisions with the
-AskUserQuestion tool, offering those as options. Its questions show apart
-from your message, so put the problem and the proposed change in plain words
-in the question itself. Watch suits a pattern seen once
+AskUserQuestion tool, offering those as options plus "Explain this point
+further". Its questions show apart from your message, so put the problem and
+the proposed change in plain words in the question itself. When asked to
+explain further, explain again more simply; don't drop a point because it was
+hard to explain. Watch suits a pattern seen once
 that would only be worth a rule if it recurs: it goes on `watch-list.md`
 rather than into a rule. Changes follow the usual issue and branch
 rules; group small doc changes into one PR. Before filing the issue for them,
