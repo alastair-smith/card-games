@@ -94,10 +94,11 @@ export async function callStorybookTool<Schema extends z.ZodType>(
 }
 
 /**
- * The story on its own page, outside Storybook's UI. `args` is the `args`
- * parameter as Storybook encodes it, e.g. `user.name:Roz;user.isReady:!true`.
+ * The story in Storybook's UI, where the toolbar can change the viewport.
+ * `args` is the `args` parameter as Storybook encodes it, e.g.
+ * `user.name:Roz;user.isReady:!true`.
  */
-export function getStandaloneUrl(storyId: string, args?: string): string {
-  const url = `${STORYBOOK_ORIGIN}/iframe.html?id=${storyId}&viewMode=story`;
+export function getStoryUrl(storyId: string, args?: string): string {
+  const url = `${STORYBOOK_ORIGIN}/?path=/story/${storyId}`;
   return args ? `${url}&args=${args}` : url;
 }

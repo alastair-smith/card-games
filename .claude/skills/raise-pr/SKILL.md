@@ -77,6 +77,9 @@ shown.
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
 
+If the script can't capture the state you need, say what's missing and
+suggest an issue to add it, rather than taking the screenshot another way.
+
 Put them in a table under a `### Screenshots` heading at the end of the body,
 above `Closes #123`. Reference each one by the path the script printed, and
 pass that same path to `--attach` (below), which uploads it and points the

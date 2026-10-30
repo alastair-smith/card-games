@@ -154,6 +154,10 @@ own PR", look into it first: try it to see how big the change is and how well
 it fits. Then recommend including or splitting it, with the reason, before
 raising the PR. Don't leave it out without looking.
 
+Only state how the game or app behaves, in issues, commits, PRs or replies,
+once you've checked it in the code or the running app. Give a change's reason
+as what the user asked for or what was measured, not a reason you've inferred.
+
 ## Skill scripts
 
 Scripts that skills run live in `.claude/skills/<skill>/scripts/`, written in
@@ -208,6 +212,17 @@ Build each piece in layers, starting from the least the player might have:
    variant for it. Motion driven from JavaScript checks
    `matchMedia('(prefers-reduced-motion: no-preference)')`
 
+Handle screen sizes with breakpoint classes, not JavaScript that reads the
+screen size. Use JavaScript only for what CSS can't do, such as setting an
+attribute, and then reuse a value a library already tracks rather than
+matching the media query again.
+
+While building a layout change, check every state it affects at smaller and
+larger screen sizes. Look for layout shift between states (measure where key
+elements sit in each), overlap, and content cut off at the worst case: the
+most players, the longest names, and every optional element showing, such as
+a Yaniv sticker on every tag.
+
 ### Naming
 
 Use full, descriptive names — no single-character variables or abbreviations,
@@ -226,6 +241,10 @@ Keep comments to a minimum and let names carry the meaning
 - Explain *how* only in code that is rarely touched but important, such as auth
 - Don't record history — no `// added to fix the issue in i-123`; that belongs
   in the PR description
+- Keep a comment to the reason in a few words. Leave out anything a class
+  name, prop or component name already says
+- Say smaller and larger screens, not phones or desktop: layouts change with
+  screen width, not device
 
 ### Imports
 
@@ -235,6 +254,10 @@ Use the `~` alias for all imports from `src/`:
 import { Button } from '~/components/ui/button';
 import { cn } from '~/utils/cn';
 ```
+
+Import React's hooks, functions and types by name
+(`import { useEffect, type ReactNode } from 'react'`), not through a `React`
+namespace.
 
 ### Quotes
 
@@ -249,8 +272,10 @@ import { cn } from '~/utils/cn';
 <div className={cn('base-class', condition && 'conditional-class', className)} />
 ```
 
-Write classes inline on the element, not in constants such as
-`LINK_CLASS_NAME`.
+Write classes, and other values used once in JSX such as a media query string,
+inline where they're used, not in constants such as `LINK_CLASS_NAME`. Keep
+constants for values that are shared, are domain rules such as `MAX_PLAYERS`,
+or drive logic such as a lookup table.
 
 ### Branded types
 
@@ -344,7 +369,9 @@ to an existing component.
 
 `~/components/ui/` holds the base components: buttons, links, inputs, cards
 and so on. Build standard elements from these rather than styling raw
-elements or `next/link` directly.
+elements or `next/link` directly. When one needs more behaviour that other
+games could use, add it to that component as a prop or part, rather than
+wrapping it in a game-specific component or adding a second version beside it.
 
 ## Testing
 
@@ -377,6 +404,11 @@ elements or `next/link` directly.
 - Reuse the test data builders in `~/test-utils/` (e.g. `buildPlayer`, `buildInProgressState`) instead of writing full object literals, passing only the fields the test cares about
 - If a test needs a shape no builder covers, add or extend a builder there
 - When a new field is added, give the builder a default value for it rather than updating every test
+- Keep test data within the game's limits, such as `MAX_PLAYERS`, so tests and stories only show states a real game can reach
+
+### Stories
+- Stories don't set a viewport or come in per-size copies; the viewport toolbar picks the size
+- A `play` function can't rely on an element that only exists at one size, as story tests render at one size
 
 ### Mocking
 - Mock complex sub-components to test parent logic in isolation

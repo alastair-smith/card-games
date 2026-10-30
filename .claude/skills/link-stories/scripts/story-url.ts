@@ -6,11 +6,7 @@ import {
   parseArguments,
   readStdin,
 } from '../../lib/script-helpers.ts';
-import {
-  callStorybookTool,
-  getStandaloneUrl,
-  STORY_ID,
-} from './storybook-mcp.ts';
+import { callStorybookTool, getStoryUrl, STORY_ID } from './storybook-mcp.ts';
 
 const usage = 'Usage: story-url.ts --story <story id> [--props]';
 
@@ -85,4 +81,4 @@ if ('error' in preview) {
 const args = /[?&]args=([^&]*)/.exec(preview.previewUrl)?.[1];
 
 console.log(`${preview.title}: ${preview.name}`);
-console.log(getStandaloneUrl(story, args));
+console.log(getStoryUrl(story, args));
