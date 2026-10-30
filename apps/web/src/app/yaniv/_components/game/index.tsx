@@ -114,8 +114,8 @@ export default function Game({
   const { isShownInOverlay, onOverlayDismissed } =
     useDrawnCardVisibility(drawnCard);
 
-  // Only larger screens show the button; phones keep the hand private in its
-  // own tab
+  // Only larger screens show the button; smaller screens keep the hand private
+  // in its own tab
   const [isFaceDown, setIsFaceDown] = useState(false);
 
   const userPlayer = players.find((player) => player.id === userId);
@@ -195,8 +195,8 @@ export default function Game({
     onStartNewRoundClick: () => onPlayCards(),
   };
 
-  // On phones each tab's turn buttons are pinned to its bottom, so they slide
-  // with it rather than taking space on every tab
+  // On smaller screens each tab's turn buttons are pinned to its bottom, so
+  // they slide with it rather than taking space on every tab
   const panelTurnActions = (tab: GameTab) =>
     actionTab === tab && (
       <TurnActions className='pt-3 lg:hidden' {...turnActionsProps} />
@@ -207,7 +207,7 @@ export default function Game({
       gameType={GameType.YANIV}
       actions={
         <div className='flex gap-2'>
-          {/* Phones have a Scores tab instead */}
+          {/* Smaller screens have a Scores tab instead */}
           <ScoresDialog
             className='hidden lg:flex'
             players={players}
@@ -246,7 +246,8 @@ export default function Game({
                 <div className='grid flex-1 place-items-center'>
                   {isRoundOver ? (
                     <>
-                      {/* Phones show the round summary in the Scores tab */}
+                      {/* Smaller screens show the round summary in the
+                          Scores tab */}
                       <div className='lg:hidden'>{playArea}</div>
                       <div className='hidden w-full lg:flex lg:justify-center'>
                         <RoundSummary
@@ -261,8 +262,8 @@ export default function Game({
                   )}
                 </div>
               </div>
-              {/* Phones keep the turn buttons' space on the table, so the
-                  play area doesn't shift as they come and go */}
+              {/* Smaller screens keep the turn buttons' space on the table,
+                  so the play area doesn't shift as they come and go */}
               <div className='mt-3 h-10 shrink-0 lg:hidden'>
                 {actionTab === 'table' && <TurnActions {...turnActionsProps} />}
               </div>
@@ -278,7 +279,8 @@ export default function Game({
             >
               <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>
                 <Hand
-                  // Fills the tab on phones rather than floating in the middle
+                  // Fills the tab on smaller screens rather than floating in
+                  // the middle
                   className='flex-1 lg:flex-none'
                   color={userPlayer.color}
                   cards={cardsWithSelection}

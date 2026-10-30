@@ -31,8 +31,8 @@ export function PlayerStrip({
       <ol
         aria-label='Players'
         // Wide enough that a Yaniv sticker, which overhangs its tag, stays
-        // clear of the turn brackets around the next one. Phones keep the
-        // rows tighter to leave room for the play area
+        // clear of the turn brackets around the next one. Smaller screens
+        // keep the rows tighter to leave room for the play area
         className='m-0 flex list-none flex-wrap justify-evenly gap-x-6 gap-y-4 p-1.5 lg:justify-center lg:gap-y-5'
       >
         {players.map((player) => (

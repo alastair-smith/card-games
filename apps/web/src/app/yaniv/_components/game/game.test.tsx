@@ -315,7 +315,8 @@ describe('Game', () => {
     test('hides Play Cards while your cards are face down', () => {
       render(<Game {...baseProps} />);
       turnFaceDown();
-      // Phones' copy sits in the hand tab; larger screens' is beside the hand
+      // Smaller screens' copy sits in the hand tab; larger screens' is beside
+      // the hand
       const largeScreenPlayCards = screen
         .getAllByRole('button', { name: /Play Cards/ })
         .find((button) => !getPanel('Your hand').contains(button));

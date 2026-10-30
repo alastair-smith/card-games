@@ -45,7 +45,7 @@ export function RoundSummary({
         </CardTitle>
       </CardHeader>
       {/* Narrower sides than the header, so a max-length name fits beside
-          its points on a phone */}
+          its points on smaller screens */}
       <CardContent className='px-3'>
         <Scoreboard players={players} userId={userId} />
       </CardContent>

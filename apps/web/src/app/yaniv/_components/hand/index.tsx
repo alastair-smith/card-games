@@ -23,9 +23,9 @@ type HandProps = {
 };
 
 /**
- * Your cards and where you stand. Phones show it in its own tab, which keeps
- * it private; larger screens show it under the table, with a button to turn
- * the cards face down.
+ * Your cards and where you stand. Smaller screens show it in its own tab,
+ * which keeps it private; larger screens show it under the table, with a
+ * button to turn the cards face down.
  */
 export function Hand({
   className,
@@ -68,8 +68,8 @@ export function Hand({
       </div>
       <ol
         aria-label='Your hand'
-        // A step up from the play area's cards on phones, where the hand has
-        // its own tab to fill; the same as the play area from md up
+        // A step up from the play area's cards on smaller screens, where the
+        // hand has its own tab to fill; the same as the play area from md up
         className='m-0 flex list-none flex-wrap justify-center gap-2 p-0 pt-[0.4em] text-lg md:text-2xl'
       >
         {sortedCards.map((card) => (
