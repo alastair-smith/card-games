@@ -145,6 +145,19 @@ afterEach(() => {
 });
 
 describe('YanivGameController', () => {
+  test('passes on what the player taking their turn needs to do', () => {
+    render(
+      <YanivGameController
+        {...baseProps}
+        gameState={inProgressState({
+          currentPlayerId: OPPONENT_ID,
+          gameStep: GameStep.PICKUP_CARD,
+        })}
+      />,
+    );
+    expect(capturedGameProps.step).toBe(GameStep.PICKUP_CARD);
+  });
+
   describe('stage derivation', () => {
     test('derives waiting for player stage when it is not your turn', () => {
       render(

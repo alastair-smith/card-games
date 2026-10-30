@@ -2,16 +2,15 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { Rank, Suit } from '~/types/cards';
-import { DEFAULT_HAND_SIZE, type YanivPlayingCard } from '~/types/games/yaniv';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { PLAYER_COLOR_OPTIONS } from '~/utils/player-color';
-import Hand from '.';
+import { Hand } from '.';
 
 const meta = {
   title: 'Yaniv / Hand',
   component: Hand,
   args: {
     color: 'cyan',
-    handSize: DEFAULT_HAND_SIZE,
     cards: [
       { suit: Suit.CLUBS, rank: Rank.ACE, selected: false },
       { suit: Suit.HEARTS, rank: Rank.KING, selected: false },
@@ -22,16 +21,18 @@ const meta = {
       { suit: Suit.SPADES, rank: Rank.EIGHT, selected: false },
     ],
     isFiftyScoreHalved: false,
-    totalScore: 0,
+    totalScore: 23,
+    handTotal: 59,
+    isActive: false,
+    isFaceDown: false,
     onCardClick: fn(),
-    handTotal: 0,
+    onVisibilityToggle: fn(),
   },
   argTypes: {
     color: {
       control: 'select',
       options: PLAYER_COLOR_OPTIONS.map((option) => option.key),
     },
-    handSize: { control: 'inline-radio', options: [5, 7] },
   },
 } satisfies Meta<typeof Hand>;
 
@@ -60,3 +61,8 @@ export const FullHand: Story = {
     return <Hand {...args} cards={cards} onCardClick={updateCard} />;
   },
 };
+
+export const YourTurn: Story = { args: { isActive: true } };
+
+/** Larger screens only: the toggle shows from 1024px wide. */
+export const FaceDown: Story = { args: { isFaceDown: true } };

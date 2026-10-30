@@ -15,13 +15,23 @@ type PageRootProps = {
   children: React.ReactNode;
   className?: string;
   fullscreen?: boolean;
+  /** Fits the page to the screen, for pages whose content scrolls inside it. */
+  isScreenHeight?: boolean | undefined;
 };
 
-export function PageRoot({ children, className, fullscreen }: PageRootProps) {
+export function PageRoot({
+  children,
+  className,
+  fullscreen,
+  isScreenHeight,
+}: PageRootProps) {
+  const heightClassName = isScreenHeight ? 'h-dvh' : 'min-h-dvh';
+
   return (
     <div
       className={cn(
-        'min-h-dvh flex flex-col gap-3 px-3',
+        'flex flex-col gap-3 px-3',
+        heightClassName,
         fullscreen ? '' : 'items-center',
         className,
       )}
@@ -29,7 +39,12 @@ export function PageRoot({ children, className, fullscreen }: PageRootProps) {
       {fullscreen ? (
         children
       ) : (
-        <div className='w-7xl max-w-full min-h-dvh flex flex-col gap-3'>
+        <div
+          className={cn(
+            'w-7xl max-w-full flex flex-col gap-3',
+            heightClassName,
+          )}
+        >
           {children}
         </div>
       )}

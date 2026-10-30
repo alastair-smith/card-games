@@ -75,6 +75,13 @@ async function getHandTotal(page: Page): Promise<number> {
   return Number(text?.trim() ?? '0');
 }
 
+/** The tag of the player whose turn it is. */
+function getCurrentPlayerTag(page: Page) {
+  return page
+    .getByRole('list', { name: 'Players' })
+    .locator('[aria-current="step"]');
+}
+
 async function getErrorToastMessage(page: Page): Promise<string | null> {
   try {
     const toast = page.locator('[data-sonner-toast][data-type="error"]');
@@ -107,14 +114,9 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
     lines.push('    Top discard: (none)');
   }
 
-  // Whose turn (from "is thinking" or controls)
-  const thinkingEl = page.getByText('is thinking');
-  if (await thinkingEl.isVisible()) {
-    const text = await thinkingEl.textContent();
-    lines.push(`    Waiting for: ${text?.trim()}`);
-  } else {
-    lines.push("    Waiting for: (this player's turn)");
-  }
+  // Whose turn it is
+  const currentPlayer = await getCurrentPlayerTag(page).textContent();
+  lines.push(`    Turn: ${currentPlayer?.trim()}`);
 
   // Visible action buttons
   const buttonNames = [
@@ -135,12 +137,14 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
   }
   lines.push(`    Visible buttons: [${visibleButtons.join(', ')}]`);
 
-  // All player scores and card counts from scorecards
-  // Scorecards render: card count, "Score: N", and player name
-  const scoreTexts = await page.locator('text=/Score: \\d+/').allTextContents();
-  if (scoreTexts.length > 0) {
+  // Every player's name and card count from their tags
+  const playerTags = await page
+    .getByRole('list', { name: 'Players' })
+    .getByRole('listitem')
+    .allTextContents();
+  if (playerTags.length > 0) {
     lines.push(
-      `    Scoreboard: ${scoreTexts.map((text) => text.trim()).join(' | ')}`,
+      `    Players: ${playerTags.map((text) => text.trim()).join(' | ')}`,
     );
   }
 
@@ -196,8 +200,7 @@ const shouldPickupWorst: PickupStrategy = (card) =>
 
 /** Returns true if this page is waiting for another player (i.e. it's not our turn). */
 async function isWaitingForOtherPlayer(page: Page): Promise<boolean> {
-  if (await page.getByText('is thinking').isVisible()) return true;
-  return page.getByText('to deal').isVisible();
+  return !(await getCurrentPlayerTag(page).getByText('You:').count());
 }
 
 /** Attempts to perform one full turn for the given page.

@@ -78,7 +78,6 @@ export default function YanivGameController({
   const {
     gameStep,
     hand,
-    handSize,
     playedCards,
     topDiscardCard,
     currentPlayerId,
@@ -207,8 +206,8 @@ export default function YanivGameController({
   return (
     <Game
       stage={stage}
+      step={gameStep}
       cards={hand}
-      handSize={handSize}
       selectedCards={selectedCards}
       onCardToggle={toggleCard}
       onPickupFromDeck={handlePickupFromDeck}

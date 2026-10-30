@@ -12,6 +12,7 @@ const meta = {
   component: RoundSummary,
   args: {
     userId: '2' as UserId,
+    isRoundOver: true,
     players: [
       buildClientPlayer({
         id: '1' as UserId,
@@ -77,6 +78,21 @@ export const OtherPlayerWon: Story = {};
 
 export const UserWon: Story = {
   args: { userId: '1' as UserId },
+};
+
+/** The scores so far, in the Scores tab mid-round. */
+export const MidRound: Story = {
+  args: { isRoundOver: false },
+};
+
+export const BeforeFirstRound: Story = {
+  args: {
+    isRoundOver: false,
+    players: [
+      buildClientPlayer({ id: '1' as UserId, name: 'Kevin' as PlayerName }),
+      buildClientPlayer({ id: '2' as UserId, name: 'Paul' as PlayerName }),
+    ],
+  },
 };
 
 export const TiedRound: Story = {

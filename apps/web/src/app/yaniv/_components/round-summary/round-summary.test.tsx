@@ -35,18 +35,51 @@ const players = [
 ];
 
 describe('RoundSummary', () => {
-  test('shows which round has just finished', () => {
-    render(<RoundSummary players={players} userId={'2' as UserId} />);
-    expect(screen.getByText('Round 2')).toBeInTheDocument();
+  describe('at the end of a round', () => {
+    test('shows which round has just finished', () => {
+      render(
+        <RoundSummary players={players} userId={'2' as UserId} isRoundOver />,
+      );
+      expect(screen.getByText('Round 2')).toBeInTheDocument();
+    });
+
+    test('announces who won the round', () => {
+      render(
+        <RoundSummary players={players} userId={'2' as UserId} isRoundOver />,
+      );
+      expect(screen.getByText('Alice won the round!')).toBeInTheDocument();
+    });
+
+    test('shows the scoreboard for every player', () => {
+      render(
+        <RoundSummary players={players} userId={'2' as UserId} isRoundOver />,
+      );
+      expect(screen.getByTestId('scoreboard')).toHaveTextContent('Alice, Bob');
+    });
   });
 
-  test('announces who won the round', () => {
-    render(<RoundSummary players={players} userId={'2' as UserId} />);
-    expect(screen.getByText('Alice won the round!')).toBeInTheDocument();
-  });
+  describe('mid-round', () => {
+    test('shows the scores after the last round played', () => {
+      render(
+        <RoundSummary
+          players={players}
+          userId={'2' as UserId}
+          isRoundOver={false}
+        />,
+      );
+      expect(screen.getByText('After round 2')).toBeInTheDocument();
+      expect(screen.getByText('Scores')).toBeInTheDocument();
+    });
 
-  test('shows the scoreboard for every player', () => {
-    render(<RoundSummary players={players} userId={'2' as UserId} />);
-    expect(screen.getByTestId('scoreboard')).toHaveTextContent('Alice, Bob');
+    test('says no rounds have been played before the first one ends', () => {
+      render(
+        <RoundSummary
+          players={[buildClientPlayer({ id: '1' as UserId })]}
+          userId={'1' as UserId}
+          isRoundOver={false}
+        />,
+      );
+      expect(screen.getByText('No rounds played yet')).toBeInTheDocument();
+    });
   });
 });

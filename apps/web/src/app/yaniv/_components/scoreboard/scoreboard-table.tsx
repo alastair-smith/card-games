@@ -82,9 +82,11 @@ export function ScoreboardTable({
               isUser && 'font-bold',
             )}
           >
+            {/* Compact rows, so a full game's summary fits between the
+                player tags and the hand on desktop */}
             <TableCell
               className={cn(
-                'px-2 py-2 whitespace-nowrap',
+                'px-2 py-1 whitespace-nowrap',
                 pinnedStartClassName,
               )}
             >
@@ -94,14 +96,14 @@ export function ScoreboardTable({
             {roundNumbers.map((roundNumber) => {
               const roundScore = roundScores[roundNumber - 1];
               return (
-                <TableCell key={roundNumber} className='px-2 py-2 text-center'>
+                <TableCell key={roundNumber} className='px-2 py-1 text-center'>
                   {roundScore && <RoundPoints roundScore={roundScore} />}
                 </TableCell>
               );
             })}
             <TableCell
               className={cn(
-                'px-2 py-2 text-right text-base font-extrabold',
+                'px-2 py-1 text-right text-base font-extrabold',
                 pinnedEndClassName,
               )}
             >

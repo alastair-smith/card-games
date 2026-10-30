@@ -17,7 +17,7 @@ export default function GameLayout({
   className,
 }: GameLayoutProps) {
   return (
-    <PageRoot>
+    <PageRoot isScreenHeight>
       <PageHeader
         breadcrumbs={[
           { text: 'PlayCards.Games', href: '/' },
@@ -28,7 +28,10 @@ export default function GameLayout({
       </PageHeader>
 
       <main
-        className={cn('flex-1 w-full flex flex-col justify-center', className)}
+        className={cn(
+          'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto',
+          className,
+        )}
       >
         {children}
       </main>

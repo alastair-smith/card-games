@@ -1,81 +1,89 @@
 import type { CSSProperties } from 'react';
-import {
-  PLAYING_CARD_PROPORTIONS,
-  PlayingCard,
-} from '~/components/ui/playing-card';
-import type { HandSize, YanivPlayingCard } from '~/types/games/yaniv';
+import { PlayingCard } from '~/components/ui/playing-card';
+import type { YanivPlayingCard } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 import { type PlayerColor, playerColorHighlight } from '~/utils/player-color';
 import { sortYanivHand } from '~/utils/yaniv/sort';
-import HandTotal from '../hand-total';
+import { HandSummary } from '../hand-summary';
+import { ToggleVisibilityButton } from '../toggle-visibility-button';
+
+type HandCard = YanivPlayingCard & { selected?: boolean; hidden?: boolean };
 
 type HandProps = {
   className?: string;
   color: PlayerColor;
-  cards: (YanivPlayingCard & { selected?: boolean; hidden?: boolean })[];
-  /** Cards dealt at the start of a round, used to reserve space in the hand. */
-  handSize: HandSize;
+  cards: HandCard[];
   handTotal: number;
   isFiftyScoreHalved: boolean;
   totalScore: number;
-  onCardClick?:
-    | ((card: YanivPlayingCard & { selected?: boolean }) => void)
-    | undefined;
-  isActive?: boolean;
+  isActive: boolean;
+  isFaceDown: boolean;
+  onCardClick?: ((card: HandCard) => void) | undefined;
+  onVisibilityToggle: () => void;
 };
 
-export default function Hand({
+/**
+ * Your cards and where you stand. Smaller screens show it in its own tab,
+ * which keeps it private; larger screens show it under the table, with a
+ * button to turn the cards face down.
+ */
+export function Hand({
   className,
   color,
   cards,
-  handSize,
   handTotal,
   isFiftyScoreHalved,
   totalScore,
-  onCardClick,
   isActive,
+  isFaceDown,
+  onCardClick,
+  onVisibilityToggle,
 }: HandProps) {
   const sortedCards = sortYanivHand(cards.filter((card) => !card.hidden));
 
   return (
-    <div className={cn('flex gap-2 justify-between items-start', className)}>
+    <div
+      style={
+        { '--color-highlight': playerColorHighlight(color) } as CSSProperties
+      }
+      className={cn(
+        'flex flex-col gap-2 rounded-lg border-2 border-white/30 bg-black/20 p-2',
+        isActive && 'animate-pulse-bg',
+        className,
+      )}
+    >
+      <div className='flex items-center justify-between gap-2'>
+        <HandSummary
+          className='flex-1'
+          handTotal={handTotal}
+          isHandTotalHidden={isFaceDown}
+          totalScore={totalScore}
+          isFiftyScoreHalved={isFiftyScoreHalved}
+        />
+        <ToggleVisibilityButton
+          className='hidden lg:flex'
+          isFaceDown={isFaceDown}
+          onClick={onVisibilityToggle}
+        />
+      </div>
       <ol
         aria-label='Your hand'
-        style={
-          { '--color-highlight': playerColorHighlight(color) } as CSSProperties
-        }
-        className={cn(
-          'flex flex-row flex-wrap gap-2 rounded-lg p-2 list-none',
-          isActive ? 'animate-pulse-bg' : '',
-        )}
+        // A step up from the play area's cards on smaller screens, where the
+        // hand has its own tab to fill; the same as the play area from md up
+        className='m-0 flex list-none flex-wrap justify-center gap-2 p-0 pt-[0.4em] text-lg md:text-2xl'
       >
         {sortedCards.map((card) => (
           <li key={`${card.suit}-${card.rank}`} className='flex'>
             <PlayingCard
-              card={card}
-              highlighted={card.selected}
-              onClick={onCardClick ? () => onCardClick(card) : undefined}
+              card={isFaceDown ? null : card}
+              highlighted={card.selected && !isFaceDown}
+              onClick={
+                onCardClick && !isFaceDown ? () => onCardClick(card) : undefined
+              }
             />
           </li>
         ))}
-        {Array.from({ length: Math.max(handSize - sortedCards.length, 0) }).map(
-          (_, index) => (
-            <li
-              // biome-ignore lint/suspicious/noArrayIndexKey: invisible placeholders
-              key={`placeholder-${index}`}
-              className={cn(PLAYING_CARD_PROPORTIONS, 'invisible')}
-              aria-hidden='true'
-            />
-          ),
-        )}
       </ol>
-
-      <HandTotal
-        color={color}
-        handTotal={handTotal}
-        isFiftyScoreHalved={isFiftyScoreHalved}
-        totalScore={totalScore}
-      />
     </div>
   );
 }
