@@ -2,7 +2,7 @@
 import path from 'node:path';
 import { z } from 'zod';
 import { exitWithUsage, parseArguments } from '../../lib/script-helpers.ts';
-import { callStorybookTool, getStandaloneUrl } from './storybook-mcp.ts';
+import { callStorybookTool, getStoryUrl } from './storybook-mcp.ts';
 
 const usage =
   'Usage: find-stories.ts --component <path> [--component <path> ...]';
@@ -60,7 +60,7 @@ for (const result of results) {
   // 1 imports it directly, higher numbers reach it through other components
   for (const match of result.matches) {
     console.log(
-      `${match.distance}  ${match.title}: ${match.name}\n   ${getStandaloneUrl(match.storyId)}`,
+      `${match.distance}  ${match.title}: ${match.name}\n   ${getStoryUrl(match.storyId)}`,
     );
   }
   console.log('');
