@@ -8,8 +8,6 @@ type GameLayoutProps = {
   children: ReactNode;
   actions?: ReactNode;
   className?: string | undefined;
-  /** Fits the page to the screen, so only panels inside `main` scroll. */
-  isScreenHeight?: boolean;
 };
 
 export default function GameLayout({
@@ -17,10 +15,10 @@ export default function GameLayout({
   children,
   actions,
   className,
-  isScreenHeight,
 }: GameLayoutProps) {
   return (
-    <PageRoot isScreenHeight={isScreenHeight}>
+    // Fits the screen so the header stays in view, and main scrolls instead
+    <PageRoot isScreenHeight>
       <PageHeader
         breadcrumbs={[
           { text: 'PlayCards.Games', href: '/' },
@@ -32,8 +30,8 @@ export default function GameLayout({
 
       <main
         className={cn(
-          'flex-1 w-full flex flex-col justify-center',
-          isScreenHeight && 'min-h-0',
+          // Safe centring starts tall content at the top, so none is cut off
+          'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto',
           className,
         )}
       >

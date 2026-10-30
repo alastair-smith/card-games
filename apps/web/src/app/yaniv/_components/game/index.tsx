@@ -205,7 +205,6 @@ export default function Game({
   return (
     <GameLayout
       gameType={GameType.YANIV}
-      isScreenHeight
       actions={
         <div className='flex gap-2'>
           {/* Phones have a Scores tab instead */}

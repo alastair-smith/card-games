@@ -42,10 +42,7 @@ export default function LobbyView({
   );
 
   return (
-    <GameLayout
-      gameType={GameType.YANIV}
-      className='flex flex-col justify-center pb-8'
-    >
+    <GameLayout gameType={GameType.YANIV} className='pb-8'>
       <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
         <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
