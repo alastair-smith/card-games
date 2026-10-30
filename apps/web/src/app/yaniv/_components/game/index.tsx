@@ -233,9 +233,7 @@ export default function Game({
           className='min-h-0 flex-1 gap-3'
         >
           <TabsViewport
-            // Reaches the screen edges, and each panel takes the page's side
-            // padding (px-3 on PageRoot plus px-2 on main) itself, so there's
-            // a gap between panels while swiping
+            // Leave a gap between tabs
             className='-mx-5 lg:contents'
             trackClassName='lg:contents'
           >
