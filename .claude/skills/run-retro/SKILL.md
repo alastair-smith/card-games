@@ -44,6 +44,10 @@ Skip one-offs that won't recur.
 Check what reads a file before proposing it. For example, `REVIEW.md` is read
 only by the Code Review service, not by `/code-review`.
 
+Before proposing a fix, search open issues for one that already covers it,
+and before proposing a script for a command, check whether the allowlist
+already allows that command or another that does the same job.
+
 | Fix | Where |
 |---|---|
 | Code, testing or workflow rule for the whole repo | `CLAUDE.md`, kept short: no one-off review notes |
@@ -54,7 +58,9 @@ only by the Code Review service, not by `/code-review`.
 | A short-term learning, or a personal preference that isn't about how this repo works | Memory, as a last resort: prefer `CLAUDE.md` or a skill wherever the fix fits there |
 
 Draft rules as the general principle, not as a description of the incident
-that prompted them.
+that prompted them. Add a concrete example only where the rule would
+otherwise be unclear, and say what it doesn't cover where it could be read
+too widely.
 
 When a correction says something was too much or too little, aim the rule at
 the specific excess or gap the user named, not at its opposite. A rule against
@@ -69,7 +75,10 @@ whether it was left out without being looked at, rather than drafting
 
 List the points, one line each, then detail one at a time. Give each point's
 items as a checklist, and don't move on until every item has a decision: do
-it, skip it, leave it for later, or watch it. Watch suits a pattern seen once
+it, skip it, leave it for later, or watch it. Ask for the decisions with the
+AskUserQuestion tool, offering those as options. Its questions show apart
+from your message, so put the problem and the proposed change in plain words
+in the question itself. Watch suits a pattern seen once
 that would only be worth a rule if it recurs: it goes on `watch-list.md`
 rather than into a rule. Changes follow the usual issue and branch
 rules; group small doc changes into one PR. Before filing the issue for them,
