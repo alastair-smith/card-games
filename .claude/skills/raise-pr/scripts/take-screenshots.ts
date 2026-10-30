@@ -82,6 +82,33 @@ function getUrl(): URL {
   return url;
 }
 
+// Game pages fit the screen and scroll inside main rather than the window.
+// Returns how far main's content overflows it, or 0 when the window scrolls
+// or main doesn't
+const MAIN_OVERFLOW_SCRIPT = `(() => {
+  const scrollingElement = document.scrollingElement ?? document.documentElement;
+  if (scrollingElement.scrollHeight > scrollingElement.clientHeight) {
+    return 0;
+  }
+  const main = document.querySelector('main');
+  if (!main || !['auto', 'scroll'].includes(getComputedStyle(main).overflowY)) {
+    return 0;
+  }
+  return Math.max(main.scrollHeight - main.clientHeight, 0);
+})()`;
+
+const SCROLL_TO_BOTTOM_SCRIPT = `(() => {
+  const mainOverflow = ${MAIN_OVERFLOW_SCRIPT};
+  if (mainOverflow > 0) {
+    const main = document.querySelector('main');
+    main.scrollTo(0, main.scrollHeight);
+  } else {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  }
+})()`;
+
+const mainOverflowSchema = z.number().nonnegative();
+
 async function capturePage(page: Page, file: string) {
   // Lets client components finish hydrating. Game pages keep a
   // subscription open and never go idle, so the timeout isn't an error
@@ -91,9 +118,25 @@ async function capturePage(page: Page, file: string) {
   await page.evaluate(`document.querySelector('nextjs-portal')?.remove()`);
 
   if (isScrollingToBottom) {
-    await page.evaluate(
-      'window.scrollTo(0, document.documentElement.scrollHeight)',
+    await page.evaluate(SCROLL_TO_BOTTOM_SCRIPT);
+  }
+
+  if (isFullPage) {
+    const mainOverflow = mainOverflowSchema.parse(
+      await page.evaluate(MAIN_OVERFLOW_SCRIPT),
     );
+    // Playwright's full-page capture only grows to the window's scroll height.
+    // A screen-height page grows with the viewport instead, so main fits all
+    // of its content without changing the page's styles
+    if (mainOverflow > 0) {
+      const viewport = page.viewportSize();
+      if (viewport) {
+        await page.setViewportSize({
+          width: viewport.width,
+          height: viewport.height + Math.ceil(mainOverflow),
+        });
+      }
+    }
   }
 
   await page.screenshot({ path: file, fullPage: isFullPage });
