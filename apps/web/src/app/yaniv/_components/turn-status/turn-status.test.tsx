@@ -43,7 +43,7 @@ describe('TurnStatus', () => {
     test.each([
       [GameStep.PLAY_CARDS, 'Bob is choosing what to play'],
       [GameStep.PICKUP_CARD, 'Bob needs to pick up'],
-      [GameStep.PROCEED, 'Bob is deciding whether to call Yaniv'],
+      [GameStep.PROCEED, 'Bob might call Yaniv'],
       [GameStep.REDEAL, 'Waiting for Bob to deal'],
     ])('says what they are doing when they need to %s', (step, text) => {
       render(
