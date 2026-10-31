@@ -61,6 +61,10 @@ export const YourTurn: Story = {
   args: { players: withTurn(0), step: GameStep.PLAY_CARDS },
 };
 
+export const MightCallYaniv: Story = {
+  args: { step: GameStep.PROCEED },
+};
+
 export const YanivCalled: Story = {
   args: { players: withTurn(3, 2), step: GameStep.PLAY_CARDS },
 };
