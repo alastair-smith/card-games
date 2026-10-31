@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import type { UserId } from '~/types/entities';
-import type { GameStep } from '~/types/games/yaniv';
+import type { GameStep, PickupSource } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 import { PlayerTag } from '../player-tag';
 import { TurnStatus } from '../turn-status';
@@ -16,6 +16,7 @@ type PlayerStripProps = {
   })[];
   userId: UserId;
   step: GameStep;
+  pickupSource: PickupSource | null;
 };
 
 /** Every player's tag, under a line saying what's happening. */
@@ -24,10 +25,16 @@ export function PlayerStrip({
   players,
   userId,
   step,
+  pickupSource,
 }: PlayerStripProps) {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <TurnStatus players={players} userId={userId} step={step} />
+      <TurnStatus
+        players={players}
+        userId={userId}
+        step={step}
+        pickupSource={pickupSource}
+      />
       <ol
         aria-label='Players'
         // Wide enough that a Yaniv sticker, which overhangs its tag, stays

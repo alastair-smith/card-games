@@ -56,5 +56,6 @@ export const buildInProgressState = (
   gameStep: GameStep.PLAY_CARDS,
   handSize: DEFAULT_HAND_SIZE,
   playedCards: [],
+  pickupSource: null,
   ...overrides,
 });

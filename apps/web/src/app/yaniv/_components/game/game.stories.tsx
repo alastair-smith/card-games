@@ -14,6 +14,7 @@ import {
 import {
   GameStep,
   GameViewStage,
+  pickupSourceSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import Game from '.';
@@ -118,6 +119,7 @@ const meta = {
     onPickupFromDiscard: fn(),
     stage: GameViewStage.PICKING_CARDS,
     step: GameStep.PLAY_CARDS,
+    pickupSource: null,
     players: withTurn(0),
     cards: userCards,
     userId: '1' as UserId,
@@ -131,6 +133,10 @@ const meta = {
   argTypes: {
     stage: { control: 'select', options: Object.values(GameViewStage) },
     step: { control: 'select', options: Object.values(GameStep) },
+    pickupSource: {
+      control: 'select',
+      options: [null, ...pickupSourceSchema.options],
+    },
   },
 } satisfies Meta<typeof Game>;
 

@@ -57,6 +57,7 @@ const makeState = (overrides: Partial<State> = {}): State =>
     ],
     playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
     drawnCard: undefined,
+    pickupSource: 'discard',
     ...overrides,
   });
 
@@ -332,6 +333,14 @@ describe('callYaniv', () => {
       'drawnCard',
       undefined,
     );
+  });
+
+  test('forgets where the caller picked up from', async () => {
+    await callYaniv(CODE, USER_1);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      pickupSource: null,
+    });
   });
 
   test('persists and publishes the updated state', async () => {
