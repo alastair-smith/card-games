@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
@@ -47,19 +47,6 @@ const ACTION_TAB_BY_STAGE = {
   [GameViewStage.END_TURN]: 'table',
   [GameViewStage.END_OF_ROUND]: 'scores',
   [GameViewStage.WAITING_FOR_NEW_ROUND]: null,
-  [GameViewStage.WAITING_FOR_PLAYER]: null,
-} as const satisfies Record<GameViewStage, GameTab | null>;
-
-/**
- * The tab to switch to as each stage starts. Your turn starts on the table,
- * so you see what was last played before choosing your cards.
- */
-const OPENING_TAB_BY_STAGE = {
-  [GameViewStage.PICKING_CARDS]: 'table',
-  [GameViewStage.DRAWING_CARDS]: 'table',
-  [GameViewStage.END_TURN]: 'table',
-  [GameViewStage.END_OF_ROUND]: 'scores',
-  [GameViewStage.WAITING_FOR_NEW_ROUND]: 'scores',
   [GameViewStage.WAITING_FOR_PLAYER]: null,
 } as const satisfies Record<GameViewStage, GameTab | null>;
 
@@ -142,13 +129,22 @@ export default function Game({
 
   const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
   const [activeTab, setActiveTab] = useState<string>(
-    OPENING_TAB_BY_STAGE[stage] ?? 'table',
+    isRoundOver ? 'scores' : 'table',
   );
 
-  useEffect(() => {
-    const openingTab = OPENING_TAB_BY_STAGE[stage];
-    if (openingTab) setActiveTab(openingTab);
-  }, [stage]);
+  // Players pick their own tab, except that playing cards moves you to the
+  // table, the round ending moves everyone to the scores, and dealing the
+  // next round moves everyone back to the table
+  const [previousStage, setPreviousStage] = useState(stage);
+  if (stage !== previousStage) {
+    setPreviousStage(stage);
+    const wasRoundOver =
+      previousStage === GameViewStage.END_OF_ROUND ||
+      previousStage === GameViewStage.WAITING_FOR_NEW_ROUND;
+    if (isRoundOver) setActiveTab('scores');
+    else if (wasRoundOver || previousStage === GameViewStage.PICKING_CARDS)
+      setActiveTab('table');
+  }
 
   const cardsWithSelection = useMemo(
     () =>
