@@ -27,7 +27,13 @@ export const PlayCards: Story = {};
 
 export const RunSelected: Story = { args: { isRunSelected: true } };
 
-export const EndTurn: Story = { args: { stage: GameViewStage.END_TURN } };
+export const EndTurn: Story = {
+  args: { stage: GameViewStage.END_TURN, handTotal: 7 },
+};
+
+export const EndTurnHandTotalHidden: Story = {
+  args: { stage: GameViewStage.END_TURN },
+};
 
 export const EndOfRound: Story = {
   args: { stage: GameViewStage.END_OF_ROUND },

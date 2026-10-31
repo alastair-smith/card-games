@@ -196,6 +196,8 @@ export default function Game({
   const turnActionsProps = {
     stage,
     isRunSelected,
+    // Face-down cards hide the total, so the Yaniv button does too
+    handTotal: isFaceDown ? undefined : handTotal,
     onEndTurnClick,
     onYanivClick,
     onPlayCards,
