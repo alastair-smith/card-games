@@ -50,6 +50,19 @@ const ACTION_TAB_BY_STAGE = {
   [GameViewStage.WAITING_FOR_PLAYER]: null,
 } as const satisfies Record<GameViewStage, GameTab | null>;
 
+/**
+ * The tab to switch to as each stage starts. Your turn starts on the table,
+ * so you see what was last played before choosing your cards.
+ */
+const OPENING_TAB_BY_STAGE = {
+  [GameViewStage.PICKING_CARDS]: 'table',
+  [GameViewStage.DRAWING_CARDS]: 'table',
+  [GameViewStage.END_TURN]: 'table',
+  [GameViewStage.END_OF_ROUND]: 'scores',
+  [GameViewStage.WAITING_FOR_NEW_ROUND]: 'scores',
+  [GameViewStage.WAITING_FOR_PLAYER]: null,
+} as const satisfies Record<GameViewStage, GameTab | null>;
+
 type GameProps = {
   cards: YanivPlayingCard[];
   selectedCards?: YanivPlayingCard[];
@@ -129,15 +142,13 @@ export default function Game({
 
   const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
   const [activeTab, setActiveTab] = useState<string>(
-    isRoundOver ? 'scores' : (actionTab ?? 'table'),
+    OPENING_TAB_BY_STAGE[stage] ?? 'table',
   );
 
-  // Switch to wherever your next move is, and everyone to the scores when
-  // the round ends
   useEffect(() => {
-    if (isRoundOver) setActiveTab('scores');
-    else if (actionTab) setActiveTab(actionTab);
-  }, [actionTab, isRoundOver]);
+    const openingTab = OPENING_TAB_BY_STAGE[stage];
+    if (openingTab) setActiveTab(openingTab);
+  }, [stage]);
 
   const cardsWithSelection = useMemo(
     () =>
