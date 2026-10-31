@@ -87,3 +87,7 @@ export const LongestNames: Story = {
     })),
   },
 };
+
+export const LongestNameMightCallYaniv: Story = {
+  args: { ...LongestNames.args, step: GameStep.PROCEED },
+};
