@@ -188,6 +188,14 @@ describe('pickupCard', () => {
       });
     });
 
+    test('records that the card came from the deck', async () => {
+      await pickupCard(CODE, USER_1, 'deck');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        pickupSource: 'deck',
+      });
+    });
+
     test('does not clear played cards', async () => {
       await pickupCard(CODE, USER_1, 'deck');
 
@@ -281,6 +289,14 @@ describe('pickupCard', () => {
         'drawnCard',
         undefined,
       );
+    });
+
+    test('records that the card came from the discard', async () => {
+      await pickupCard(CODE, USER_1, 'discard');
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        pickupSource: 'discard',
+      });
     });
 
     test('persists and publishes the updated state', async () => {

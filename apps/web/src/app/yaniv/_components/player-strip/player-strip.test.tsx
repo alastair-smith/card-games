@@ -20,6 +20,7 @@ describe('PlayerStrip', () => {
         players={players}
         userId={'1' as UserId}
         step={GameStep.PLAY_CARDS}
+        pickupSource={null}
       />,
     );
     const items = within(
@@ -34,6 +35,7 @@ describe('PlayerStrip', () => {
         players={players}
         userId={'1' as UserId}
         step={GameStep.PLAY_CARDS}
+        pickupSource={null}
       />,
     );
     const currentPlayer = screen
@@ -49,8 +51,9 @@ describe('PlayerStrip', () => {
         players={players}
         userId={'1' as UserId}
         step={GameStep.PICKUP_CARD}
+        pickupSource={null}
       />,
     );
-    expect(screen.getByText('Bob needs to pick up')).toBeInTheDocument();
+    expect(screen.getByText('Bob is picking up')).toBeInTheDocument();
   });
 });

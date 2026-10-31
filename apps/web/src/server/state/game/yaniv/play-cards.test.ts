@@ -371,6 +371,23 @@ describe('playCards', () => {
       );
     });
 
+    test('keeps the record that the card came from the deck', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({
+          gameStep: GameStep.PROCEED,
+          drawnCard: CARD_1,
+          playedCards: [PREVIOUSLY_PLAYED],
+          pickupSource: 'deck',
+        }),
+      );
+
+      await playCards(CODE, USER_1, [CARD_1]);
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        pickupSource: 'deck',
+      });
+    });
+
     test('persists and publishes the updated state', async () => {
       await playCards(CODE, USER_1, [CARD_1]);
 
