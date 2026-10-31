@@ -217,6 +217,10 @@ async function tryTakeTurn(
     const discard = await getDiscardCard(page);
     const cardsToPlay = movePicker(hand, discard);
 
+    // Smaller screens start your turn on the table, with your hand in its own tab
+    const handTab = page.getByRole('tab', { name: /Your hand/ });
+    if (await handTab.isVisible()) await handTab.click();
+
     const handGroup = page.getByRole('list', { name: 'Your hand' });
     for (const card of cardsToPlay) {
       const rankDisplay = RANK_FULL_NAME[card.rank];

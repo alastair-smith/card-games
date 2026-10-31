@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
@@ -129,15 +129,22 @@ export default function Game({
 
   const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
   const [activeTab, setActiveTab] = useState<string>(
-    isRoundOver ? 'scores' : (actionTab ?? 'table'),
+    isRoundOver ? 'scores' : 'table',
   );
 
-  // Switch to wherever your next move is, and everyone to the scores when
-  // the round ends
-  useEffect(() => {
+  // Players pick their own tab, except that playing cards moves you to the
+  // table, the round ending moves everyone to the scores, and dealing the
+  // next round moves everyone back to the table
+  const [previousStage, setPreviousStage] = useState(stage);
+  if (stage !== previousStage) {
+    setPreviousStage(stage);
+    const wasRoundOver =
+      previousStage === GameViewStage.END_OF_ROUND ||
+      previousStage === GameViewStage.WAITING_FOR_NEW_ROUND;
     if (isRoundOver) setActiveTab('scores');
-    else if (actionTab) setActiveTab(actionTab);
-  }, [actionTab, isRoundOver]);
+    else if (wasRoundOver || previousStage === GameViewStage.PICKING_CARDS)
+      setActiveTab('table');
+  }
 
   const cardsWithSelection = useMemo(
     () =>
