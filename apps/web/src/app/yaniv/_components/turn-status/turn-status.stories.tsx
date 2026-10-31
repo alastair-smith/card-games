@@ -58,3 +58,15 @@ export const EveryMessageLongestName: Story = {
   ...EveryMessage,
   args: { players: playersWithTurnFor('WWWWWWWWWWWW' as PlayerName) },
 };
+
+/** Every message for your own turn. */
+export const EveryMessageOnYourTurn: Story = {
+  args: { userId: '2' as UserId },
+  render: (args) => (
+    <div className='flex flex-col gap-4'>
+      {Object.values(GameStep).map((step) => (
+        <TurnStatus key={step} {...args} step={step} />
+      ))}
+    </div>
+  ),
+};
