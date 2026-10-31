@@ -110,7 +110,8 @@ const baseProps = {
   pickupSource: null,
 };
 
-const getPanel = (name: string) => screen.getByRole('tabpanel', { name });
+const getPanel = (name: string | RegExp) =>
+  screen.getByRole('tabpanel', { name });
 const getTab = (name: RegExp) => screen.getByRole('tab', { name });
 
 describe('Game', () => {
@@ -171,9 +172,38 @@ describe('Game', () => {
   });
 
   describe('tabs', () => {
-    test('opens your hand when it is your turn to play', () => {
+    test('opens the table when it is your turn to play, to see what was last played', () => {
       render(<Game {...baseProps} />);
-      expect(getTab(/Your hand/)).toHaveAttribute('aria-selected', 'true');
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('stays on the tab you chose when your turn starts', () => {
+      const { rerender } = render(
+        <Game
+          {...baseProps}
+          players={baseProps.players.map((player) => ({
+            ...player,
+            isPlayersTurn: player.id === '2',
+          }))}
+          stage={GameViewStage.WAITING_FOR_PLAYER}
+        />,
+      );
+      fireEvent.mouseDown(getTab(/Scores/));
+      rerender(<Game {...baseProps} />);
+      expect(getTab(/Scores/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('stays on the tab you chose as another player takes their turn', () => {
+      const props = {
+        ...baseProps,
+        userId: '2' as UserId,
+        stage: GameViewStage.WAITING_FOR_PLAYER,
+      };
+      const { rerender } = render(<Game {...props} />);
+      fireEvent.mouseDown(getTab(/Scores/));
+      rerender(<Game {...props} step={GameStep.PICKUP_CARD} />);
+      rerender(<Game {...props} step={GameStep.PROCEED} />);
+      expect(getTab(/Scores/)).toHaveAttribute('aria-selected', 'true');
     });
 
     test('opens the table on another player’s turn', () => {
@@ -189,11 +219,73 @@ describe('Game', () => {
 
     test('switches to the table when you need to pick up', () => {
       const { rerender } = render(<Game {...baseProps} />);
+      fireEvent.mouseDown(getTab(/Your hand/));
       rerender(
         <Game
           {...baseProps}
           stage={GameViewStage.DRAWING_CARDS}
           step={GameStep.PICKUP_CARD}
+        />,
+      );
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switches to the table when you have played and have nothing to pick up', () => {
+      const { rerender } = render(<Game {...baseProps} />);
+      fireEvent.mouseDown(getTab(/Your hand/));
+      rerender(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('stays on the tab you chose after picking up', () => {
+      const props = {
+        ...baseProps,
+        stage: GameViewStage.DRAWING_CARDS,
+        step: GameStep.PICKUP_CARD,
+      };
+      const { rerender } = render(<Game {...props} />);
+      fireEvent.mouseDown(getTab(/Your hand/));
+      rerender(
+        <Game
+          {...props}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      expect(getTab(/Your hand/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switches the dealer to the table when they deal the next round', () => {
+      const { rerender } = render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.END_OF_ROUND}
+          step={GameStep.REDEAL}
+        />,
+      );
+      rerender(<Game {...baseProps} />);
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('switches everyone else to the table when the next round is dealt', () => {
+      const props = {
+        ...baseProps,
+        userId: '2' as UserId,
+        stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+        step: GameStep.REDEAL,
+      };
+      const { rerender } = render(<Game {...props} />);
+      rerender(
+        <Game
+          {...props}
+          stage={GameViewStage.WAITING_FOR_PLAYER}
+          step={GameStep.PLAY_CARDS}
         />,
       );
       expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
@@ -216,28 +308,28 @@ describe('Game', () => {
       expect(getTab(/Scores/)).toHaveAttribute('aria-selected', 'true');
     });
 
-    test('marks the tab with your next move when you switch away from it', () => {
+    test('marks the tab with your next move when you are on another tab', () => {
       render(<Game {...baseProps} />);
-      fireEvent.mouseDown(getTab(/Table/));
       expect(getTab(/Your hand/)).toHaveTextContent('your move');
     });
 
     test('does not mark the tab you are on', () => {
       render(<Game {...baseProps} />);
+      fireEvent.mouseDown(getTab(/Your hand/));
       expect(getTab(/Your hand/)).not.toHaveTextContent('your move');
     });
 
     test('keeps the panels you are not on out of reach', () => {
       render(<Game {...baseProps} />);
-      expect(getPanel('Table')).toHaveAttribute('inert');
-      expect(getPanel('Your hand')).not.toHaveAttribute('inert');
+      expect(getPanel(/Your hand/)).toHaveAttribute('inert');
+      expect(getPanel('Table')).not.toHaveAttribute('inert');
     });
 
     test('keeps every panel in reach on larger screens, which show them together', () => {
       stubBrowserApis({ matchingQueries: ['(min-width: 1024px)'] });
       render(<Game {...baseProps} />);
       expect(getPanel('Table')).not.toHaveAttribute('inert');
-      expect(getPanel('Your hand')).not.toHaveAttribute('inert');
+      expect(getPanel(/Your hand/)).not.toHaveAttribute('inert');
     });
   });
 
@@ -245,7 +337,7 @@ describe('Game', () => {
     test('puts Play Cards on the hand tab', () => {
       render(<Game {...baseProps} />);
       expect(
-        within(getPanel('Your hand')).getByRole('button', {
+        within(getPanel(/Your hand/)).getByRole('button', {
           name: /Play Cards/,
         }),
       ).toBeInTheDocument();
@@ -320,7 +412,7 @@ describe('Game', () => {
       // the hand
       const largeScreenPlayCards = screen
         .getAllByRole('button', { name: /Play Cards/ })
-        .find((button) => !getPanel('Your hand').contains(button));
+        .find((button) => !getPanel(/Your hand/).contains(button));
       expect(largeScreenPlayCards?.parentElement).toHaveClass('invisible');
     });
 
