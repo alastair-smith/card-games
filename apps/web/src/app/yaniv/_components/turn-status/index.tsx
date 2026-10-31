@@ -1,4 +1,4 @@
-import { BrainIcon, CogIcon, MegaphoneIcon } from 'lucide-react';
+import { BrainIcon, MegaphoneIcon } from 'lucide-react';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameStep } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
@@ -14,8 +14,7 @@ const OTHER_PLAYER_TURN_TEXT = {
   [GameStep.PLAY_CARDS]: (name: PlayerName) =>
     `${name} is choosing what to play`,
   [GameStep.PICKUP_CARD]: (name: PlayerName) => `${name} needs to pick up`,
-  [GameStep.PROCEED]: (name: PlayerName) =>
-    `${name} is deciding whether to call Yaniv`,
+  [GameStep.PROCEED]: (name: PlayerName) => `${name} might call Yaniv`,
   [GameStep.REDEAL]: (name: PlayerName) => `Waiting for ${name} to deal`,
 } as const satisfies Record<GameStep, (name: PlayerName) => string>;
 
@@ -84,11 +83,7 @@ export function TurnStatus({ className, ...props }: TurnStatusProps) {
       <span className='flex flex-wrap items-center justify-center gap-x-2 font-semibold text-balance'>
         {status.turnText}
         {!status.isUserTakingTurn && (
-          <span className='flex'>
-            <CogIcon size={20} className='motion-safe:animate-spin' />
-            <BrainIcon size={20} className='motion-safe:animate-pulse' />
-            <CogIcon size={20} className='motion-safe:animate-spin' />
-          </span>
+          <BrainIcon size={20} className='motion-safe:animate-pulse' />
         )}
       </span>
     </div>
