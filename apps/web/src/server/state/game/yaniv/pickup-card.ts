@@ -8,6 +8,7 @@ import type { GameCode } from '~/types/game';
 import {
   GameStage,
   GameStep,
+  type PickupSource,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import { reshuffleDeck } from './lib/reshuffle-deck';
@@ -31,7 +32,7 @@ const drawFromDiscard = async (code: GameCode): Promise<YanivPlayingCard> => {
 export const pickupCard = async (
   code: GameCode,
   userId: UserId,
-  source: 'deck' | 'discard',
+  source: PickupSource,
 ) =>
   withLock('yaniv', code, async () => {
     const state = await getYanivState({ code });
@@ -69,6 +70,7 @@ export const pickupCard = async (
       players: updatedPlayers,
       gameStep: GameStep.PROCEED,
       deckOnlyPickup: undefined,
+      pickupSource: source,
       ...(source === 'deck' ? { drawnCard } : { drawnCard: undefined }),
     };
 

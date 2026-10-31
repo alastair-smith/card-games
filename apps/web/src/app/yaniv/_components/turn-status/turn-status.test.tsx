@@ -33,6 +33,7 @@ describe('TurnStatus', () => {
           players={buildPlayers({ turnIndex: 0 })}
           userId={USER_ID}
           step={step}
+          pickupSource={null}
         />,
       );
       expect(screen.getByText(text)).toBeInTheDocument();
@@ -41,19 +42,49 @@ describe('TurnStatus', () => {
 
   describe('another player’s turn', () => {
     test.each([
-      [GameStep.PLAY_CARDS, 'Bob is choosing what to play'],
-      [GameStep.PICKUP_CARD, 'Bob needs to pick up'],
-      [GameStep.PROCEED, 'Bob might call Yaniv'],
-      [GameStep.REDEAL, 'Waiting for Bob to deal'],
+      [GameStep.PLAY_CARDS, 'Bob is choosing cards'],
+      [GameStep.PICKUP_CARD, 'Bob is picking up'],
+      [GameStep.REDEAL, 'Bob to deal'],
     ])('says what they are doing when they need to %s', (step, text) => {
       render(
         <TurnStatus
           players={buildPlayers({ turnIndex: 1 })}
           userId={USER_ID}
           step={step}
+          pickupSource={null}
         />,
       );
       expect(screen.getByText(text)).toBeInTheDocument();
+    });
+
+    test.each([
+      ['deck', 'Bob has drawn from the deck'],
+      ['discard', 'Bob has drawn from the discard'],
+    ] as const)(
+      'says where they picked up from the %s',
+      (pickupSource, text) => {
+        render(
+          <TurnStatus
+            players={buildPlayers({ turnIndex: 1 })}
+            userId={USER_ID}
+            step={GameStep.PROCEED}
+            pickupSource={pickupSource}
+          />,
+        );
+        expect(screen.getByText(text)).toBeInTheDocument();
+      },
+    );
+
+    test('says when they matched the discard rather than picking up', () => {
+      render(
+        <TurnStatus
+          players={buildPlayers({ turnIndex: 1 })}
+          userId={USER_ID}
+          step={GameStep.PROCEED}
+          pickupSource={null}
+        />,
+      );
+      expect(screen.getByText('Bob matched the discard')).toBeInTheDocument();
     });
   });
 
@@ -64,6 +95,7 @@ describe('TurnStatus', () => {
           players={buildPlayers({ turnIndex: 0, yanivCallerIndex: 1 })}
           userId={USER_ID}
           step={GameStep.PLAY_CARDS}
+          pickupSource={null}
         />,
       );
       expect(
@@ -77,6 +109,7 @@ describe('TurnStatus', () => {
           players={buildPlayers({ turnIndex: 1, yanivCallerIndex: 0 })}
           userId={USER_ID}
           step={GameStep.PLAY_CARDS}
+          pickupSource={null}
         />,
       );
       expect(
@@ -90,6 +123,7 @@ describe('TurnStatus', () => {
           players={buildPlayers({ turnIndex: 1, yanivCallerIndex: 1 })}
           userId={USER_ID}
           step={GameStep.REDEAL}
+          pickupSource={null}
         />,
       );
       expect(screen.queryByText(/Last turns/)).not.toBeInTheDocument();
@@ -104,11 +138,10 @@ describe('TurnAnnouncement', () => {
         players={buildPlayers({ turnIndex: 1 })}
         userId={USER_ID}
         step={GameStep.PICKUP_CARD}
+        pickupSource={null}
       />,
     );
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Bob needs to pick up',
-    );
+    expect(screen.getByRole('status')).toHaveTextContent('Bob is picking up');
   });
 
   test('announces a Yaniv call along with the turn', () => {
@@ -117,6 +150,7 @@ describe('TurnAnnouncement', () => {
         players={buildPlayers({ turnIndex: 0, yanivCallerIndex: 1 })}
         userId={USER_ID}
         step={GameStep.PLAY_CARDS}
+        pickupSource={null}
       />,
     );
     expect(screen.getByRole('status')).toHaveTextContent(

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameStep } from '~/types/games/yaniv';
+import { GameStep, pickupSourceSchema } from '~/types/games/yaniv';
 import { PlayerStrip } from '.';
 
 const players = [
@@ -45,9 +45,14 @@ const meta = {
     players: withTurn(1),
     userId: '1' as UserId,
     step: GameStep.PICKUP_CARD,
+    pickupSource: null,
   },
   argTypes: {
     step: { control: 'select', options: Object.values(GameStep) },
+    pickupSource: {
+      control: 'select',
+      options: [null, ...pickupSourceSchema.options],
+    },
   },
 } satisfies Meta<typeof PlayerStrip>;
 
@@ -59,10 +64,6 @@ export const OtherPlayersTurn: Story = {};
 
 export const YourTurn: Story = {
   args: { players: withTurn(0), step: GameStep.PLAY_CARDS },
-};
-
-export const MightCallYaniv: Story = {
-  args: { step: GameStep.PROCEED },
 };
 
 export const YanivCalled: Story = {
@@ -86,8 +87,4 @@ export const LongestNames: Story = {
       ] as PlayerName,
     })),
   },
-};
-
-export const LongestNameMightCallYaniv: Story = {
-  args: { ...LongestNames.args, step: GameStep.PROCEED },
 };

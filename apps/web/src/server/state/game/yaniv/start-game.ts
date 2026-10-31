@@ -65,6 +65,7 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       currentPlayerId: firstPlayer.id,
       players,
       playedCards: [],
+      pickupSource: null,
     };
 
     await runTransaction(async (transaction) => {

@@ -107,6 +107,7 @@ const baseProps = {
   discardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
   stage: GameViewStage.PICKING_CARDS,
   step: GameStep.PLAY_CARDS,
+  pickupSource: null,
 };
 
 const getPanel = (name: string) => screen.getByRole('tabpanel', { name });

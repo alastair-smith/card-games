@@ -1,6 +1,6 @@
 import { BrainIcon, MegaphoneIcon } from 'lucide-react';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameStep } from '~/types/games/yaniv';
+import { GameStep, type PickupSource } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
 const USER_TURN_TEXT = {
@@ -11,12 +11,17 @@ const USER_TURN_TEXT = {
 } as const satisfies Record<GameStep, string>;
 
 const OTHER_PLAYER_TURN_TEXT = {
-  [GameStep.PLAY_CARDS]: (name: PlayerName) =>
-    `${name} is choosing what to play`,
-  [GameStep.PICKUP_CARD]: (name: PlayerName) => `${name} needs to pick up`,
-  [GameStep.PROCEED]: (name: PlayerName) => `${name} might call Yaniv`,
-  [GameStep.REDEAL]: (name: PlayerName) => `Waiting for ${name} to deal`,
-} as const satisfies Record<GameStep, (name: PlayerName) => string>;
+  [GameStep.PLAY_CARDS]: (name: PlayerName) => `${name} is choosing cards`,
+  [GameStep.PICKUP_CARD]: (name: PlayerName) => `${name} is picking up`,
+  [GameStep.PROCEED]: (name: PlayerName, pickupSource: PickupSource | null) =>
+    pickupSource
+      ? `${name} has drawn from the ${pickupSource}`
+      : `${name} matched the discard`,
+  [GameStep.REDEAL]: (name: PlayerName) => `${name} to deal`,
+} as const satisfies Record<
+  GameStep,
+  (name: PlayerName, pickupSource: PickupSource | null) => string
+>;
 
 type TurnStatusProps = {
   className?: string;
@@ -28,12 +33,14 @@ type TurnStatusProps = {
   }[];
   userId: UserId;
   step: GameStep;
+  pickupSource: PickupSource | null;
 };
 
 function getTurnStatus({
   players,
   userId,
   step,
+  pickupSource,
 }: Omit<TurnStatusProps, 'className'>) {
   const playerTakingTurn = players.find((player) => player.isPlayersTurn);
   if (!playerTakingTurn) return null;
@@ -52,7 +59,7 @@ function getTurnStatus({
       `${yanivCaller.id === userId ? 'You' : yanivCaller.name} called Yaniv! Last turns`,
     turnText: isUserTakingTurn
       ? USER_TURN_TEXT[step]
-      : OTHER_PLAYER_TURN_TEXT[step](playerTakingTurn.name),
+      : OTHER_PLAYER_TURN_TEXT[step](playerTakingTurn.name, pickupSource),
   };
 }
 
