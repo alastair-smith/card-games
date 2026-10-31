@@ -357,6 +357,19 @@ describe('Game', () => {
       ).toBeInTheDocument();
     });
 
+    test('shows your hand total in the Yaniv button on the table', () => {
+      render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      expect(
+        within(getPanel('Table')).getByRole('button', { name: /Yaniv!/ }),
+      ).toHaveAccessibleName('Yaniv!, hand total 1');
+    });
+
     test('puts Start new round on the scores tab', () => {
       render(
         <Game
@@ -430,6 +443,23 @@ describe('Game', () => {
         screen.queryByTestId(`drawn-card-${drawnCard.suit}-${drawnCard.rank}`),
       ).not.toBeInTheDocument();
       expect(screen.getAllByTestId('card-face-down')).toHaveLength(2);
+    });
+
+    test('hides your hand total in the Yaniv button', () => {
+      render(
+        <Game
+          {...baseProps}
+          cards={cards}
+          stage={GameViewStage.END_TURN}
+          step={GameStep.PROCEED}
+        />,
+      );
+      turnFaceDown();
+      for (const yanivButton of screen.getAllByRole('button', {
+        name: /Yaniv!/,
+      })) {
+        expect(yanivButton).not.toHaveTextContent(/\d/);
+      }
     });
   });
 
