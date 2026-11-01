@@ -1,6 +1,6 @@
 import { DocsContext, Story } from '@storybook/addon-docs/blocks';
 import { type RefObject, useContext, useEffect, useRef, useState } from 'react';
-import type { Channel } from 'storybook/internal/channels';
+import type { Channel, ChannelEvent } from 'storybook/internal/channels';
 import {
   RESET_STORY_ARGS,
   STORY_RENDERED,
@@ -144,7 +144,9 @@ const useContentHeight = (frameDocument: Document | undefined) => {
 // Controls block never reach them. The frame is same-origin, so apply each
 // request to its preview directly, along with any changes made before it
 // rendered. Emitting on the frame's channel instead would echo back to this
-// page and loop
+// page and loop. Changes the story makes itself, such as from its buttons,
+// already apply in the frame and post up to this page, so they're skipped
+// rather than rendered twice
 const useFollowControls = (
   frameDocument: Document | undefined,
   story: PreparedStory,
@@ -158,7 +160,11 @@ const useFollowControls = (
     const frameChannel = frameWindow?.__STORYBOOK_ADDONS_CHANNEL__;
     if (!isFollowingControls || !frameDocument || !framePreview) return;
     let isStoryRendered = false;
+    let frameSender: string | undefined;
 
+    function handleFrameArgsChange(this: ChannelEvent) {
+      frameSender = this.from;
+    }
     const applyCurrentArgs = async () => {
       await framePreview.onResetArgs({ storyId: story.id });
       await framePreview.onUpdateArgs({
@@ -171,25 +177,37 @@ const useFollowControls = (
       isStoryRendered = true;
       void applyCurrentArgs();
     };
-    const handleUpdateArgs = (request: UpdateArgsRequest) => {
-      if (isStoryRendered && request.storyId === story.id)
-        void framePreview.onUpdateArgs(request);
-    };
-    const handleResetArgs = (request: ResetArgsRequest) => {
-      if (isStoryRendered && request.storyId === story.id)
-        void framePreview.onResetArgs(request);
-    };
+    function handleUpdateArgs(this: ChannelEvent, request: UpdateArgsRequest) {
+      if (
+        isStoryRendered &&
+        request.storyId === story.id &&
+        this.from !== frameSender
+      )
+        void framePreview?.onUpdateArgs(request);
+    }
+    function handleResetArgs(this: ChannelEvent, request: ResetArgsRequest) {
+      if (
+        isStoryRendered &&
+        request.storyId === story.id &&
+        this.from !== frameSender
+      )
+        void framePreview?.onResetArgs(request);
+    }
 
     if (frameDocument.querySelector(STORY_CHILDREN_SELECTOR)) {
       handleStoryRendered();
     } else {
       frameChannel?.on(STORY_RENDERED, handleStoryRendered);
     }
+    frameChannel?.on(UPDATE_STORY_ARGS, handleFrameArgsChange);
+    frameChannel?.on(RESET_STORY_ARGS, handleFrameArgsChange);
     channel.on(UPDATE_STORY_ARGS, handleUpdateArgs);
     channel.on(RESET_STORY_ARGS, handleResetArgs);
 
     return () => {
       frameChannel?.off(STORY_RENDERED, handleStoryRendered);
+      frameChannel?.off(UPDATE_STORY_ARGS, handleFrameArgsChange);
+      frameChannel?.off(RESET_STORY_ARGS, handleFrameArgsChange);
       channel.off(UPDATE_STORY_ARGS, handleUpdateArgs);
       channel.off(RESET_STORY_ARGS, handleResetArgs);
     };
