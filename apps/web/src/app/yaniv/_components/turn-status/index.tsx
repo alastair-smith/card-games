@@ -10,12 +10,17 @@ const USER_TURN_TEXT = {
   [GameStep.REDEAL]: 'Deal the next round',
 } as const satisfies Record<GameStep, string>;
 
+const DRAW_SOURCE_TEXT = {
+  deck: 'the deck',
+  discard: 'the discard',
+} as const satisfies Record<DrawSource, string>;
+
 const OTHER_PLAYER_TURN_TEXT = {
   [GameStep.PLAY_CARDS]: (name: PlayerName) => `${name} is choosing cards`,
   [GameStep.PICKUP_CARD]: (name: PlayerName) => `${name} is picking up`,
   [GameStep.PROCEED]: (name: PlayerName, drawnFrom: DrawSource | null) =>
     drawnFrom
-      ? `${name} has drawn from the ${drawnFrom}`
+      ? `${name} has drawn from ${DRAW_SOURCE_TEXT[drawnFrom]}`
       : `${name} matched the discard`,
   [GameStep.REDEAL]: (name: PlayerName) => `${name} to deal`,
 } as const satisfies Record<

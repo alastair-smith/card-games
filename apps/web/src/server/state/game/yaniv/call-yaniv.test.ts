@@ -190,6 +190,7 @@ describe('callYaniv', () => {
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(35);
     expect(savedState.currentPlayerId).toBe(USER_1);
+    expect(savedState.drawnFrom).toBeNull();
   });
 
   test('caller with higher hand value among those who called Yaniv gets +25 penalty', async () => {

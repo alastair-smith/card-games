@@ -104,6 +104,14 @@ describe('scoreYanivRound', () => {
     ]);
   });
 
+  test('forgets where the last player drew from', async () => {
+    await scoreYanivRound(CODE, makeState({ drawnFrom: 'discard' }));
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      drawnFrom: null,
+    });
+  });
+
   test('callers with equal hand values both get zero', async () => {
     const state = makeState({
       players: [
