@@ -5,8 +5,9 @@ import {
   DEFAULT_HAND_SIZE,
   GameStage,
   GameStep,
-  type HandSize,
+  type HandSizeSetting,
   MAX_PLAYERS,
+  WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 
 const TRANSACTION = { kind: 'transaction' };
@@ -54,7 +55,7 @@ const PLAYER_2 = 'user-2' as UserId;
 
 const makeLobby = (
   players = [HOST, PLAYER_2],
-  settings: { handSize: HandSize } = { handSize: DEFAULT_HAND_SIZE },
+  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
 ) => ({
   code: CODE,
   type: GameType.YANIV,
@@ -206,6 +207,54 @@ describe('startGame', () => {
       }),
       TRANSACTION,
     );
+  });
+
+  test('makes the first player the dealer and keeps the settings', async () => {
+    await startGame(CODE, HOST);
+    expect(mockSetYanivState).toHaveBeenCalledWith(
+      { code: CODE },
+      expect.objectContaining({
+        dealerId: HOST,
+        settings: { handSize: DEFAULT_HAND_SIZE },
+      }),
+      TRANSACTION,
+    );
+  });
+
+  describe('when the winner chooses the hand size', () => {
+    beforeEach(() => {
+      mockGetLobby.mockResolvedValue(
+        makeLobby([HOST, PLAYER_2], { handSize: WINNER_CHOOSES_HAND_SIZE }),
+      );
+    });
+
+    test('lets the first player choose the hand size before dealing', async () => {
+      await startGame(CODE, HOST);
+      expect(mockSetYanivState).toHaveBeenCalledWith(
+        { code: CODE },
+        expect.objectContaining({
+          gameStage: GameStage.IN_PROGRESS,
+          gameStep: GameStep.CHOOSE_HAND_SIZE,
+          handSize: null,
+          currentPlayerId: HOST,
+          dealerId: HOST,
+        }),
+        TRANSACTION,
+      );
+    });
+
+    test('deals no cards yet', async () => {
+      await startGame(CODE, HOST);
+      expect(mockCreateDeck).not.toHaveBeenCalled();
+      expect(mockDrawCards).not.toHaveBeenCalled();
+      const state = mockSetYanivState.mock.calls[0]?.[1] as {
+        players: Array<{ hand: unknown[]; cardCount: number }>;
+      };
+      for (const player of state.players) {
+        expect(player.hand).toEqual([]);
+        expect(player.cardCount).toBe(0);
+      }
+    });
   });
 
   test('marks the lobby as started', async () => {

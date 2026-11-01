@@ -10,7 +10,12 @@ import { playerColorSchema } from '~/utils/player-color';
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
-export const HAND_SIZE_OPTIONS = [5, 7] as const;
+export const MIN_HAND_SIZE = 1;
+// 5 players with 10 cards each, plus the first discard, fit the 54-card deck
+export const MAX_HAND_SIZE = 10;
+export const DEFAULT_HAND_SIZE = 5;
+export const FIXED_HAND_SIZES = [5, 7] as const;
+export const WINNER_CHOOSES_HAND_SIZE = 'winner-chooses';
 export const MINIMUM_RUN_SIZE = 3;
 export const YANIV_CALL_THRESHOLD = 7;
 export const YANIV_CALLER_PENALTY = 25;
@@ -23,15 +28,25 @@ export const yanivPlayingCardSchema = z.union([
 
 export type YanivPlayingCard = z.infer<typeof yanivPlayingCardSchema>;
 
-export const handSizeSchema = z.literal(HAND_SIZE_OPTIONS);
+export const handSizeSchema = z.int().min(MIN_HAND_SIZE).max(MAX_HAND_SIZE);
 
 export type HandSize = z.infer<typeof handSizeSchema>;
 
-export const DEFAULT_HAND_SIZE: HandSize = 5;
+export const handSizeSettingSchema = z.union([
+  z.literal(FIXED_HAND_SIZES),
+  z.literal(WINNER_CHOOSES_HAND_SIZE),
+]);
+
+export type HandSizeSetting = z.infer<typeof handSizeSettingSchema>;
+
+export const HAND_SIZE_SETTINGS = [
+  ...FIXED_HAND_SIZES,
+  WINNER_CHOOSES_HAND_SIZE,
+] as const satisfies HandSizeSetting[];
 
 /** Host-chosen settings, picked in the lobby before the game starts. */
 export const settingsSchema = z.object({
-  handSize: handSizeSchema,
+  handSize: handSizeSettingSchema,
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
@@ -86,6 +101,7 @@ export enum GameStep {
   PICKUP_CARD = 'PICKUP_CARD',
   PROCEED = 'PROCEED', // end turn, optionally calling yaniv
   REDEAL = 'REDEAL', // only features after yaniv has been called and round is over
+  CHOOSE_HAND_SIZE = 'CHOOSE_HAND_SIZE', // before a round, when the winner chooses the hand size
 }
 
 export const gameStepSchema = z.enum(GameStep);
@@ -97,6 +113,7 @@ export enum GameViewStage {
   END_TURN = 'end-turn',
   END_OF_ROUND = 'end-of-round',
   WAITING_FOR_NEW_ROUND = 'waiting-for-new-round',
+  CHOOSING_HAND_SIZE = 'choosing-hand-size',
 }
 
 export const drawSourceSchema = z.enum(['deck', 'discard']);
@@ -131,7 +148,10 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
   z.object({
     gameStage: z.literal(GameStage.IN_PROGRESS),
     gameStep: gameStepSchema,
-    handSize: handSizeSchema,
+    settings: settingsSchema,
+    // Not chosen yet before the first round when the winner chooses
+    handSize: handSizeSchema.nullable(),
+    dealerId: userIdSchema,
     players: z.array(playerSchema),
     playedCards: z.array(yanivPlayingCardSchema),
     topDiscardCard: yanivPlayingCardSchema.nullable().optional(),

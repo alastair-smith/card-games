@@ -15,6 +15,7 @@ import {
   type DrawSource,
   type GameStep,
   GameViewStage,
+  type HandSize,
   type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
@@ -47,9 +48,16 @@ const ACTION_TAB_BY_STAGE = {
   [GameViewStage.DRAWING_CARDS]: 'table',
   [GameViewStage.END_TURN]: 'table',
   [GameViewStage.END_OF_ROUND]: 'scores',
+  [GameViewStage.CHOOSING_HAND_SIZE]: 'scores',
   [GameViewStage.WAITING_FOR_NEW_ROUND]: null,
   [GameViewStage.WAITING_FOR_PLAYER]: null,
 } as const satisfies Record<GameViewStage, GameTab | null>;
+
+const BETWEEN_ROUNDS_STAGES: GameViewStage[] = [
+  GameViewStage.END_OF_ROUND,
+  GameViewStage.WAITING_FOR_NEW_ROUND,
+  GameViewStage.CHOOSING_HAND_SIZE,
+];
 
 type GameProps = {
   cards: YanivPlayingCard[];
@@ -61,6 +69,8 @@ type GameProps = {
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
+  onChooseHandSize: (handSize: HandSize) => void;
+  isDealer: boolean;
   isRunSelected?: boolean;
   drawnCard?: YanivPlayingCard | undefined;
   canAutoPlay?: boolean;
@@ -94,6 +104,8 @@ export default function Game({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
+  onChooseHandSize,
+  isDealer,
   isRunSelected,
   onCardToggle,
   onPickupFromDeck,
@@ -126,9 +138,7 @@ export default function Game({
   const isUserTakingTurn =
     !!userPlayer && userPlayer.id === playerTakingTurn?.id;
 
-  const isRoundOver =
-    stage === GameViewStage.END_OF_ROUND ||
-    stage === GameViewStage.WAITING_FOR_NEW_ROUND;
+  const isRoundOver = BETWEEN_ROUNDS_STAGES.includes(stage);
 
   const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
   const [activeTab, setActiveTab] = useState<string>(
@@ -141,9 +151,7 @@ export default function Game({
   const [previousStage, setPreviousStage] = useState(stage);
   if (stage !== previousStage) {
     setPreviousStage(stage);
-    const wasRoundOver =
-      previousStage === GameViewStage.END_OF_ROUND ||
-      previousStage === GameViewStage.WAITING_FOR_NEW_ROUND;
+    const wasRoundOver = BETWEEN_ROUNDS_STAGES.includes(previousStage);
     if (isRoundOver) setActiveTab('scores');
     else if (wasRoundOver || previousStage === GameViewStage.PICKING_CARDS)
       setActiveTab('table');
@@ -200,6 +208,8 @@ export default function Game({
     stage,
     isRunSelected,
     handTotal: isHandHidden ? undefined : handTotal,
+    isDealer,
+    onChooseHandSize,
     onEndTurnClick,
     onYanivClick,
     onPlayCards,

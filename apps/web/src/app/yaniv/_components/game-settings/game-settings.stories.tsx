@@ -3,8 +3,9 @@ import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import {
   DEFAULT_HAND_SIZE,
-  type HandSize,
-  handSizeSchema,
+  HAND_SIZE_SETTINGS,
+  type HandSizeSetting,
+  WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import GameSettings from '.';
 
@@ -18,7 +19,7 @@ const meta = {
     onHandSizeChange: fn(),
   },
   argTypes: {
-    handSize: { control: 'inline-radio', options: [5, 7] },
+    handSize: { control: 'inline-radio', options: HAND_SIZE_SETTINGS },
   },
 } satisfies Meta<typeof GameSettings>;
 
@@ -29,13 +30,13 @@ type Story = StoryObj<typeof meta>;
 // The host picks the settings the game is played with.
 export const Host: Story = {
   render: function Render({ onHandSizeChange, ...args }) {
-    const [, updateArgs] = useArgs<{ handSize: HandSize }>();
+    const [, updateArgs] = useArgs<{ handSize: HandSizeSetting }>();
 
     return (
       <GameSettings
         {...args}
         onHandSizeChange={(value) => {
-          updateArgs({ handSize: handSizeSchema.parse(Number(value)) });
+          updateArgs({ handSize: value });
           onHandSizeChange(value);
         }}
       />
@@ -46,4 +47,9 @@ export const Host: Story = {
 // Everyone else sees the host's choice, but cannot change it.
 export const Player: Story = {
   args: { handSize: 7, isHost: false },
+};
+
+// The winner of each hand picks how many cards the next round deals.
+export const WinnerChooses: Story = {
+  args: { handSize: WINNER_CHOOSES_HAND_SIZE },
 };

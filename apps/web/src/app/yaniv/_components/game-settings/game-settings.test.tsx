@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
+import { WINNER_CHOOSES_HAND_SIZE } from '~/types/games/yaniv';
 import GameSettings from '.';
 
 const noop = vi.fn();
@@ -47,7 +48,33 @@ describe('GameSettings', () => {
       fireEvent.click(screen.getByRole('radio', { name: /7 Cards/ }));
 
       expect(handleHandSizeChange).toHaveBeenCalledOnce();
-      expect(handleHandSizeChange).toHaveBeenCalledWith('7');
+      expect(handleHandSizeChange).toHaveBeenCalledWith(7);
+    });
+
+    test('offers to let the winner of each hand choose', () => {
+      const handleHandSizeChange = vi.fn();
+      render(
+        <GameSettings
+          {...defaultProps}
+          onHandSizeChange={handleHandSizeChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: /Winner Chooses/ }));
+
+      expect(handleHandSizeChange).toHaveBeenCalledOnce();
+      expect(handleHandSizeChange).toHaveBeenCalledWith(
+        WINNER_CHOOSES_HAND_SIZE,
+      );
+    });
+
+    test('shows the winner choosing as selected', () => {
+      render(
+        <GameSettings {...defaultProps} handSize={WINNER_CHOOSES_HAND_SIZE} />,
+      );
+      expect(
+        screen.getByRole('radio', { name: /Winner Chooses/ }),
+      ).toBeChecked();
     });
   });
 

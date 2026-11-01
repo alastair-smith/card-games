@@ -95,6 +95,7 @@ const USER_TURN_TEXT = {
   [GameStep.PICKUP_CARD]: 'Pick up from the deck or discard pile',
   [GameStep.PROCEED]: 'Call Yaniv or end your turn',
   [GameStep.REDEAL]: 'Deal the next round',
+  [GameStep.CHOOSE_HAND_SIZE]: 'Choose the hand size',
 } as const satisfies Record<GameStep, string>;
 
 const OTHER_PLAYER_TURN_TEXT = {
@@ -104,6 +105,8 @@ const OTHER_PLAYER_TURN_TEXT = {
   [GameStep.PROCEED]: (name: PlayerName) =>
     `${name} is deciding whether to call Yaniv`,
   [GameStep.REDEAL]: (name: PlayerName) => `Waiting for ${name} to deal`,
+  [GameStep.CHOOSE_HAND_SIZE]: (name: PlayerName) =>
+    `${name} is choosing the hand size`,
 } as const satisfies Record<GameStep, (name: PlayerName) => string>;
 
 const USER_STEP_BY_STAGE = {
@@ -113,6 +116,7 @@ const USER_STEP_BY_STAGE = {
   [GameViewStage.END_OF_ROUND]: GameStep.REDEAL,
   [GameViewStage.WAITING_FOR_NEW_ROUND]: GameStep.REDEAL,
   [GameViewStage.WAITING_FOR_PLAYER]: GameStep.PLAY_CARDS,
+  [GameViewStage.CHOOSING_HAND_SIZE]: GameStep.CHOOSE_HAND_SIZE,
 } as const satisfies Record<GameViewStage, GameStep>;
 
 function TurnStatus({
@@ -644,6 +648,7 @@ const ACTION_TAB_BY_STAGE = {
   [GameViewStage.DRAWING_CARDS]: 'table',
   [GameViewStage.END_TURN]: 'table',
   [GameViewStage.END_OF_ROUND]: 'scores',
+  [GameViewStage.CHOOSING_HAND_SIZE]: 'scores',
   [GameViewStage.WAITING_FOR_NEW_ROUND]: null,
   [GameViewStage.WAITING_FOR_PLAYER]: null,
 } as const satisfies Record<GameViewStage, GameTab | null>;

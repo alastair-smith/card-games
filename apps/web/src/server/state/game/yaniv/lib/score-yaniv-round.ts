@@ -7,6 +7,7 @@ import {
   GameStage,
   type GameState,
   GameStep,
+  WINNER_CHOOSES_HAND_SIZE,
   YANIV_CALLER_PENALTY,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
@@ -98,6 +99,17 @@ export const scoreYanivRound = async (
       );
       if (!firstDealer) throw new Error('No Yaniv caller found after scoring');
 
+      // The caller with the lowest hand scores 0; on a tie the first of them
+      // in seating order wins
+      const handWinner = playersWithHandValues.find(
+        ({ player, handValue }) =>
+          player.isYanivCalled && handValue === minCallerHandValue,
+      )?.player;
+      if (!handWinner) throw new Error('No hand winner found after scoring');
+
+      const isHandSizeChosenByWinner =
+        state.settings.handSize === WINNER_CHOOSES_HAND_SIZE;
+
       const isGameOver = scoredPlayers.some(
         (player) => player.score > GAME_OVER_SCORE,
       );
@@ -118,8 +130,13 @@ export const scoreYanivRound = async (
         : {
             ...state,
             players: scoredPlayers,
-            gameStep: GameStep.REDEAL,
-            currentPlayerId: firstDealer.id,
+            dealerId: firstDealer.id,
+            ...(isHandSizeChosenByWinner
+              ? {
+                  gameStep: GameStep.CHOOSE_HAND_SIZE,
+                  currentPlayerId: handWinner.id,
+                }
+              : { gameStep: GameStep.REDEAL, currentPlayerId: firstDealer.id }),
             playedCards: [],
             drawnCard: undefined,
             drawnFrom: null,

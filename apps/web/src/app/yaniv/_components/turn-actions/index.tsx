@@ -6,18 +6,21 @@ import {
   MegaphoneIcon,
 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
-import { GameViewStage } from '~/types/games/yaniv';
+import { GameViewStage, type HandSize } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
+import { HandSizeDialog } from '../hand-size-dialog';
 
 type TurnActionsProps = {
   className?: string;
   stage: GameViewStage;
   isRunSelected?: boolean | undefined;
   handTotal?: number | undefined;
+  isDealer: boolean;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
   onStartNewRoundClick: () => void;
+  onChooseHandSize: (handSize: HandSize) => void;
 };
 
 /** The buttons for your next move, if it has any. */
@@ -26,10 +29,12 @@ export function TurnActions({
   stage,
   isRunSelected,
   handTotal,
+  isDealer,
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
   onStartNewRoundClick,
+  onChooseHandSize,
 }: TurnActionsProps) {
   return (
     <div
@@ -83,6 +88,13 @@ export function TurnActions({
           Start new round
           <ArrowRightCircleIcon />
         </Button>
+      )}
+
+      {stage === GameViewStage.CHOOSING_HAND_SIZE && (
+        <HandSizeDialog
+          isDealer={isDealer}
+          onChooseHandSize={onChooseHandSize}
+        />
       )}
     </div>
   );

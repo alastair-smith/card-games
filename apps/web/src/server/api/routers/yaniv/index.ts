@@ -1,5 +1,6 @@
 import { createTRPCRouter } from '~/server/api/trpc';
 import { callYanivMutation } from './call-yaniv';
+import { chooseHandSizeMutation } from './choose-hand-size';
 import { endTurnMutation } from './end-turn';
 import { pickupCardMutation } from './pickup-card';
 import { playCardsMutation } from './play-cards';
@@ -15,6 +16,7 @@ export const yanivRouter = createTRPCRouter({
   playCards: playCardsMutation,
   pickupCard: pickupCardMutation,
   callYaniv: callYanivMutation,
+  chooseHandSize: chooseHandSizeMutation,
   startNewRound: startNewRoundMutation,
   endTurn: endTurnMutation,
   triggerEmoji: triggerEmojiMutation,

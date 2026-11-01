@@ -2,7 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-import type { HandSize } from '~/types/games/yaniv';
+import {
+  type HandSizeSetting,
+  WINNER_CHOOSES_HAND_SIZE,
+} from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 import Lobby from './index';
 
@@ -48,10 +51,10 @@ vi.mock('~/trpc/react', () => ({
 
 vi.mock('./lobby.view', () => ({
   default: (props: {
-    handSize: HandSize;
+    handSize: HandSizeSetting;
     user: { isReady: boolean; name: string };
     handleNameChange: (name: string) => void;
-    handleHandSizeChange: (handSize: string) => void;
+    handleHandSizeChange: (handSize: HandSizeSetting) => void;
     handleReadyChange: (isReady: boolean) => void;
   }) => (
     <div>
@@ -62,11 +65,17 @@ vi.mock('./lobby.view', () => ({
         value={props.user.name}
         onChange={(event) => props.handleNameChange(event.target.value)}
       />
-      <button type='button' onClick={() => props.handleHandSizeChange('5')}>
+      <button type='button' onClick={() => props.handleHandSizeChange(5)}>
         Choose 5
       </button>
-      <button type='button' onClick={() => props.handleHandSizeChange('7')}>
+      <button type='button' onClick={() => props.handleHandSizeChange(7)}>
         Choose 7
+      </button>
+      <button
+        type='button'
+        onClick={() => props.handleHandSizeChange(WINNER_CHOOSES_HAND_SIZE)}
+      >
+        Let the winner choose
       </button>
       <button type='button' onClick={() => props.handleReadyChange(true)}>
         Ready up
@@ -91,10 +100,10 @@ const player = (overrides: Partial<Player> = {}): Player => ({
 });
 
 const renderLobby = ({
-  handSize = 5 as HandSize,
+  handSize = 5,
   isReady = false,
 }: {
-  handSize?: HandSize;
+  handSize?: HandSizeSetting;
   isReady?: boolean;
 } = {}) =>
   render(
@@ -112,13 +121,13 @@ beforeEach(() => {
 describe('Lobby', () => {
   describe('hand size', () => {
     test('shows the hand size the lobby is on', () => {
-      renderLobby({ handSize: 7 as HandSize });
+      renderLobby({ handSize: 7 });
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
     });
 
     test('saves the hand size that was chosen', () => {
-      renderLobby({ handSize: 5 as HandSize });
+      renderLobby({ handSize: 5 });
 
       fireEvent.click(screen.getByRole('button', { name: 'Choose 7' }));
 
@@ -129,11 +138,25 @@ describe('Lobby', () => {
       });
     });
 
+    test('saves that the winner chooses the hand size', () => {
+      renderLobby({ handSize: 5 });
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Let the winner choose' }),
+      );
+
+      expect(settingsMutation.mutate).toHaveBeenCalledOnce();
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
+        code,
+        handSize: WINNER_CHOOSES_HAND_SIZE,
+      });
+    });
+
     test('shows the chosen hand size while it is still being saved', () => {
       settingsMutation.isPending = true;
       settingsMutation.variables = { code, handSize: 7 };
 
-      renderLobby({ handSize: 5 as HandSize });
+      renderLobby({ handSize: 5 });
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
     });
@@ -142,7 +165,7 @@ describe('Lobby', () => {
       settingsMutation.isPending = false;
       settingsMutation.variables = { code, handSize: 7 };
 
-      renderLobby({ handSize: 5 as HandSize });
+      renderLobby({ handSize: 5 });
 
       expect(screen.getByText('Hand size: 5')).toBeInTheDocument();
     });

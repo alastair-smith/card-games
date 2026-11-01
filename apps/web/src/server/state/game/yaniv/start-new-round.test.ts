@@ -140,6 +140,15 @@ describe('startNewRound', () => {
     await expect(startNewRound(CODE, USER_2)).rejects.toThrow('Not your turn');
   });
 
+  test('throws when the hand size has not been chosen', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(makeState({ handSize: null }));
+
+    await expect(startNewRound(CODE, USER_1)).rejects.toThrow(
+      'Hand size not chosen',
+    );
+    expect(vi.mocked(yanivDeck.createDeck)).not.toHaveBeenCalled();
+  });
+
   test('throws when deck runs out seeding discard', async () => {
     vi.mocked(yanivDeck.drawCard).mockResolvedValue(null);
 

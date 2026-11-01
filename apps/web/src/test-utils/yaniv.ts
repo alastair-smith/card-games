@@ -2,6 +2,7 @@ import type { ClientPlayer } from '~/server/state/game/yaniv/lib/to-client-game-
 import type { PlayerName, UserId } from '~/types/entities';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
   GameStage,
   type GameState,
   GameStep,
@@ -54,7 +55,9 @@ export const buildInProgressState = (
 ): InProgressState => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PLAY_CARDS,
+  settings: DEFAULT_SETTINGS,
   handSize: DEFAULT_HAND_SIZE,
+  dealerId: overrides.currentPlayerId,
   playedCards: [],
   drawnFrom: null,
   ...overrides,

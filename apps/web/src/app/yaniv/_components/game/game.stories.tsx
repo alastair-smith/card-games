@@ -117,6 +117,8 @@ const meta = {
     onCardToggle: fn(),
     onPickupFromDeck: fn(),
     onPickupFromDiscard: fn(),
+    onChooseHandSize: fn(),
+    isDealer: true,
     stage: GameViewStage.PICKING_CARDS,
     step: GameStep.PLAY_CARDS,
     drawnFrom: null,
@@ -233,6 +235,44 @@ export const WaitingForNewRound: Story = {
     players: withTurn(2),
     stage: GameViewStage.WAITING_FOR_NEW_ROUND,
     step: GameStep.REDEAL,
+  },
+};
+
+// You won the hand and someone else deals, so you only choose the hand size.
+export const ChoosingHandSize: Story = {
+  args: {
+    isDealer: false,
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+};
+
+export const WaitingForHandSize: Story = {
+  args: {
+    players: withTurn(2),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+};
+
+// The first player chooses the hand size before anything is dealt.
+export const ChoosingFirstHandSize: Story = {
+  args: {
+    players: withTurn(
+      0,
+      players.map((player) => ({
+        ...player,
+        cardCount: 0,
+        score: 0,
+        roundScores: [],
+        isFiftyScoreHalved: false,
+      })),
+    ),
+    cards: [],
+    playedCards: [],
+    discardCard: null,
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
   },
 };
 
@@ -399,6 +439,18 @@ const WALKTHROUGH_STAGES = [
     players: withYanivCalledByKevin(1),
     stage: GameViewStage.WAITING_FOR_NEW_ROUND,
     step: GameStep.REDEAL,
+  },
+  {
+    label: 'Winner chooses: you choose',
+    players: withYanivCalledByKevin(0),
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+  {
+    label: 'Winner chooses: Kevin chooses',
+    players: withYanivCalledByKevin(1),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    step: GameStep.CHOOSE_HAND_SIZE,
   },
 ] as const satisfies (Pick<GameProps, 'players' | 'stage' | 'step'> &
   Partial<Pick<GameProps, 'drawnFrom'>> & {

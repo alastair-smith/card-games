@@ -82,4 +82,18 @@ describe('RoundSummary', () => {
       expect(screen.getByText('No rounds played yet')).toBeInTheDocument();
     });
   });
+
+  describe('before the first round is dealt', () => {
+    test('shows the scores rather than a round result', () => {
+      render(
+        <RoundSummary
+          players={[buildClientPlayer({ id: '1' as UserId })]}
+          userId={'1' as UserId}
+          isRoundOver
+        />,
+      );
+      expect(screen.getByText('No rounds played yet')).toBeInTheDocument();
+      expect(screen.getByText('Scores')).toBeInTheDocument();
+    });
+  });
 });

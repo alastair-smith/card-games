@@ -7,18 +7,32 @@ import {
   ChoiceCardTitle,
   ChoiceGroup,
 } from '~/components/ui/choice-group';
-import { HAND_SIZE_OPTIONS, type HandSize } from '~/types/games/yaniv';
+import {
+  HAND_SIZE_SETTINGS,
+  type HandSizeSetting,
+  MAX_HAND_SIZE,
+  MIN_HAND_SIZE,
+  WINNER_CHOOSES_HAND_SIZE,
+} from '~/types/games/yaniv';
+import { cn } from '~/utils/cn';
 
-const HAND_SIZE_DESCRIPTIONS = {
-  5: 'For a shorter game',
-  7: 'For a longer game',
-} as const satisfies Record<HandSize, string>;
+const HAND_SIZE_CHOICES = {
+  5: { title: '5 Cards', description: 'For a shorter game' },
+  7: { title: '7 Cards', description: 'For a longer game' },
+  [WINNER_CHOOSES_HAND_SIZE]: {
+    title: 'Winner Chooses',
+    description: `The winner of each hand picks ${MIN_HAND_SIZE} to ${MAX_HAND_SIZE} cards for the next`,
+  },
+} as const satisfies Record<
+  HandSizeSetting,
+  { title: string; description: string }
+>;
 
 type GameSettingsProps = {
   className?: string;
-  handSize: HandSize;
+  handSize: HandSizeSetting;
   isHost: boolean;
-  onHandSizeChange: (handSize: string) => void;
+  onHandSizeChange: (handSize: HandSizeSetting) => void;
 };
 
 export default function GameSettings({
@@ -27,6 +41,13 @@ export default function GameSettings({
   isHost,
   onHandSizeChange,
 }: GameSettingsProps) {
+  const handleValueChange = (value: string) => {
+    const option = HAND_SIZE_SETTINGS.find(
+      (setting) => String(setting) === value,
+    );
+    if (option !== undefined) onHandSizeChange(option);
+  };
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -42,13 +63,21 @@ export default function GameSettings({
           label='Hand Size'
           value={String(handSize)}
           isDisabled={!isHost}
-          onValueChange={onHandSizeChange}
+          onValueChange={handleValueChange}
         >
-          {HAND_SIZE_OPTIONS.map((option) => (
-            <ChoiceCard key={option} value={String(option)}>
-              <ChoiceCardTitle>{option} Cards</ChoiceCardTitle>
+          {HAND_SIZE_SETTINGS.map((option) => (
+            <ChoiceCard
+              key={option}
+              value={String(option)}
+              className={cn(
+                option === WINNER_CHOOSES_HAND_SIZE && 'col-span-2',
+              )}
+            >
+              <ChoiceCardTitle>
+                {HAND_SIZE_CHOICES[option].title}
+              </ChoiceCardTitle>
               <ChoiceCardDescription>
-                {HAND_SIZE_DESCRIPTIONS[option]}
+                {HAND_SIZE_CHOICES[option].description}
               </ChoiceCardDescription>
             </ChoiceCard>
           ))}
