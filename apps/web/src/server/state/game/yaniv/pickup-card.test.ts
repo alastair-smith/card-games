@@ -192,7 +192,7 @@ describe('pickupCard', () => {
       await pickupCard(CODE, USER_1, 'deck');
 
       expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        pickupSource: 'deck',
+        drawnFrom: 'deck',
       });
     });
 
@@ -295,7 +295,7 @@ describe('pickupCard', () => {
       await pickupCard(CODE, USER_1, 'discard');
 
       expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        pickupSource: 'discard',
+        drawnFrom: 'discard',
       });
     });
 

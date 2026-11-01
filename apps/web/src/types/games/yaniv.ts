@@ -99,9 +99,9 @@ export enum GameViewStage {
   WAITING_FOR_NEW_ROUND = 'waiting-for-new-round',
 }
 
-export const pickupSourceSchema = z.enum(['deck', 'discard']);
+export const drawSourceSchema = z.enum(['deck', 'discard']);
 
-export type PickupSource = z.infer<typeof pickupSourceSchema>;
+export type DrawSource = z.infer<typeof drawSourceSchema>;
 
 export const roundScoreSchema = z.object({
   original: z.number(),
@@ -138,8 +138,7 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     currentPlayerId: userIdSchema,
     drawnCard: yanivPlayingCardSchema.optional(),
     deckOnlyPickup: z.boolean().optional(),
-    /** Where the current player picked up from this turn, if they have. */
-    pickupSource: pickupSourceSchema.nullable(),
+    drawnFrom: drawSourceSchema.nullable(),
   }),
   z.object({
     gameStage: z.literal(GameStage.FINISHED),

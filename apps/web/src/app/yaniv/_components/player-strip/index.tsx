@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import type { UserId } from '~/types/entities';
-import type { GameStep, PickupSource } from '~/types/games/yaniv';
+import type { DrawSource, GameStep } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 import { PlayerTag } from '../player-tag';
 import { TurnStatus } from '../turn-status';
@@ -16,7 +16,7 @@ type PlayerStripProps = {
   })[];
   userId: UserId;
   step: GameStep;
-  pickupSource: PickupSource | null;
+  drawnFrom: DrawSource | null;
 };
 
 /** Every player's tag, under a line saying what's happening. */
@@ -25,7 +25,7 @@ export function PlayerStrip({
   players,
   userId,
   step,
-  pickupSource,
+  drawnFrom,
 }: PlayerStripProps) {
   return (
     <div className={cn('flex flex-col gap-2', className)}>
@@ -33,7 +33,7 @@ export function PlayerStrip({
         players={players}
         userId={userId}
         step={step}
-        pickupSource={pickupSource}
+        drawnFrom={drawnFrom}
       />
       <ol
         aria-label='Players'

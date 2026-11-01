@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameStep, type PickupSource } from '~/types/games/yaniv';
+import { type DrawSource, GameStep } from '~/types/games/yaniv';
 import { TurnStatus } from '.';
 
 const OTHER_PLAYER_MESSAGES = [
-  { step: GameStep.PLAY_CARDS, pickupSource: null },
-  { step: GameStep.PICKUP_CARD, pickupSource: null },
-  { step: GameStep.PROCEED, pickupSource: 'deck' },
-  { step: GameStep.PROCEED, pickupSource: 'discard' },
-  { step: GameStep.PROCEED, pickupSource: null },
-  { step: GameStep.REDEAL, pickupSource: null },
-] as const satisfies { step: GameStep; pickupSource: PickupSource | null }[];
+  { step: GameStep.PLAY_CARDS, drawnFrom: null },
+  { step: GameStep.PICKUP_CARD, drawnFrom: null },
+  { step: GameStep.PROCEED, drawnFrom: 'deck' },
+  { step: GameStep.PROCEED, drawnFrom: 'discard' },
+  { step: GameStep.PROCEED, drawnFrom: null },
+  { step: GameStep.REDEAL, drawnFrom: null },
+] as const satisfies { step: GameStep; drawnFrom: DrawSource | null }[];
 
 const playersWithTurnFor = (name: PlayerName) => [
   {
@@ -28,7 +28,7 @@ const meta = {
     players: playersWithTurnFor('Kevin' as PlayerName),
     userId: '1' as UserId,
     step: GameStep.PLAY_CARDS,
-    pickupSource: null,
+    drawnFrom: null,
   },
 } satisfies Meta<typeof TurnStatus>;
 
@@ -42,12 +42,12 @@ export const OtherPlayersTurn: Story = {};
 export const EveryMessage: Story = {
   render: (args) => (
     <div className='flex flex-col gap-4'>
-      {OTHER_PLAYER_MESSAGES.map(({ step, pickupSource }) => (
+      {OTHER_PLAYER_MESSAGES.map(({ step, drawnFrom }) => (
         <TurnStatus
-          key={`${step}-${pickupSource}`}
+          key={`${step}-${drawnFrom}`}
           {...args}
           step={step}
-          pickupSource={pickupSource}
+          drawnFrom={drawnFrom}
         />
       ))}
     </div>

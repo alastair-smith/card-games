@@ -83,7 +83,7 @@ export default function YanivGameController({
     currentPlayerId,
     drawnCard,
     deckOnlyPickup,
-    pickupSource,
+    drawnFrom,
   } = gameState as InProgressClientGameState;
 
   const isMyTurn = currentPlayerId === userId;
@@ -208,7 +208,7 @@ export default function YanivGameController({
     <Game
       stage={stage}
       step={gameStep}
-      pickupSource={pickupSource}
+      drawnFrom={drawnFrom}
       cards={hand}
       selectedCards={selectedCards}
       onCardToggle={toggleCard}

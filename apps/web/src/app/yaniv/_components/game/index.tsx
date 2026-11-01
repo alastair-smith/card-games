@@ -12,9 +12,9 @@ import {
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
 import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
 import {
+  type DrawSource,
   type GameStep,
   GameViewStage,
-  type PickupSource,
   type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
@@ -86,7 +86,7 @@ type GameProps = {
   stage: GameViewStage;
   /** What the player taking their turn needs to do next. */
   step: GameStep;
-  pickupSource: PickupSource | null;
+  drawnFrom: DrawSource | null;
 };
 
 export default function Game({
@@ -101,7 +101,7 @@ export default function Game({
   players,
   stage,
   step,
-  pickupSource,
+  drawnFrom,
   cards,
   selectedCards,
   userId,
@@ -233,7 +233,7 @@ export default function Game({
         players={players}
         userId={userId}
         step={step}
-        pickupSource={pickupSource}
+        drawnFrom={drawnFrom}
       />
 
       <PageEmojiRain
@@ -262,7 +262,7 @@ export default function Game({
                   players={players}
                   userId={userId}
                   step={step}
-                  pickupSource={pickupSource}
+                  drawnFrom={drawnFrom}
                 />
                 <div className='grid flex-1 place-items-center'>
                   {isRoundOver ? (

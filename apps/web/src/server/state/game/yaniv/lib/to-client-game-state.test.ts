@@ -117,18 +117,16 @@ describe('toClientGameState', () => {
       expect(result.drawnCard).toBeUndefined();
     });
 
-    test('tells other players where the card came from', () => {
+    test('tells other players which pile the card was drawn from', () => {
       const state = makeInProgressState({
         currentPlayerId: USER_1,
         drawnCard: DRAWN_CARD,
-        pickupSource: 'deck',
+        drawnFrom: 'deck',
       });
 
-      const result = toClientGameState(state, USER_2);
-      if (result.gameStage !== GameStage.IN_PROGRESS)
-        throw new Error('Expected IN_PROGRESS state');
-
-      expect(result.pickupSource).toBe('deck');
+      expect(toClientGameState(state, USER_2)).toMatchObject({
+        drawnFrom: 'deck',
+      });
     });
   });
 

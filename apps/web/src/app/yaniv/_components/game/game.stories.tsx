@@ -12,9 +12,9 @@ import {
   type UserId,
 } from '~/types/entities';
 import {
+  drawSourceSchema,
   GameStep,
   GameViewStage,
-  pickupSourceSchema,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 import Game from '.';
@@ -119,7 +119,7 @@ const meta = {
     onPickupFromDiscard: fn(),
     stage: GameViewStage.PICKING_CARDS,
     step: GameStep.PLAY_CARDS,
-    pickupSource: null,
+    drawnFrom: null,
     players: withTurn(0),
     cards: userCards,
     userId: '1' as UserId,
@@ -133,9 +133,9 @@ const meta = {
   argTypes: {
     stage: { control: 'select', options: Object.values(GameViewStage) },
     step: { control: 'select', options: Object.values(GameStep) },
-    pickupSource: {
+    drawnFrom: {
       control: 'select',
-      options: [null, ...pickupSourceSchema.options],
+      options: [null, ...drawSourceSchema.options],
     },
   },
 } satisfies Meta<typeof Game>;

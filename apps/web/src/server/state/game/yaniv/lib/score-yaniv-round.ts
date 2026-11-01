@@ -122,7 +122,7 @@ export const scoreYanivRound = async (
             currentPlayerId: firstDealer.id,
             playedCards: [],
             drawnCard: undefined,
-            pickupSource: null,
+            drawnFrom: null,
           };
 
       await setYanivState({ code }, newState);

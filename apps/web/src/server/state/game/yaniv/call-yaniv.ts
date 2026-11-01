@@ -58,7 +58,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) =>
         })),
         playedCards: [],
         drawnCard: undefined,
-        pickupSource: null,
+        drawnFrom: null,
         currentPlayerId: nextPlayerId,
         gameStep: GameStep.PLAY_CARDS,
       };

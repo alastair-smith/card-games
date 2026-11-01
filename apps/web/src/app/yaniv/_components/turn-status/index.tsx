@@ -1,6 +1,6 @@
 import { BrainIcon, MegaphoneIcon } from 'lucide-react';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameStep, type PickupSource } from '~/types/games/yaniv';
+import { type DrawSource, GameStep } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
 const USER_TURN_TEXT = {
@@ -13,14 +13,14 @@ const USER_TURN_TEXT = {
 const OTHER_PLAYER_TURN_TEXT = {
   [GameStep.PLAY_CARDS]: (name: PlayerName) => `${name} is choosing cards`,
   [GameStep.PICKUP_CARD]: (name: PlayerName) => `${name} is picking up`,
-  [GameStep.PROCEED]: (name: PlayerName, pickupSource: PickupSource | null) =>
-    pickupSource
-      ? `${name} has drawn from the ${pickupSource}`
+  [GameStep.PROCEED]: (name: PlayerName, drawnFrom: DrawSource | null) =>
+    drawnFrom
+      ? `${name} has drawn from the ${drawnFrom}`
       : `${name} matched the discard`,
   [GameStep.REDEAL]: (name: PlayerName) => `${name} to deal`,
 } as const satisfies Record<
   GameStep,
-  (name: PlayerName, pickupSource: PickupSource | null) => string
+  (name: PlayerName, drawnFrom: DrawSource | null) => string
 >;
 
 type TurnStatusProps = {
@@ -33,14 +33,14 @@ type TurnStatusProps = {
   }[];
   userId: UserId;
   step: GameStep;
-  pickupSource: PickupSource | null;
+  drawnFrom: DrawSource | null;
 };
 
 function getTurnStatus({
   players,
   userId,
   step,
-  pickupSource,
+  drawnFrom,
 }: Omit<TurnStatusProps, 'className'>) {
   const playerTakingTurn = players.find((player) => player.isPlayersTurn);
   if (!playerTakingTurn) return null;
@@ -59,7 +59,7 @@ function getTurnStatus({
       `${yanivCaller.id === userId ? 'You' : yanivCaller.name} called Yaniv! Last turns`,
     turnText: isUserTakingTurn
       ? USER_TURN_TEXT[step]
-      : OTHER_PLAYER_TURN_TEXT[step](playerTakingTurn.name, pickupSource),
+      : OTHER_PLAYER_TURN_TEXT[step](playerTakingTurn.name, drawnFrom),
   };
 }
 
