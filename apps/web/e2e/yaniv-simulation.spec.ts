@@ -9,6 +9,7 @@ import {
 import {
   DEFAULT_HAND_SIZE,
   MIN_HAND_SIZE,
+  WINNER_CHOOSES_HAND_SIZE,
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
   type YanivPlayingCard,
@@ -280,42 +281,40 @@ async function tryTakeTurn(
     return true;
   }
 
-  // REDEAL step for the dealer, or CHOOSE_HAND_SIZE step for the winner of
-  // the last hand, which opens the hand size dialog
-  const startRoundBtn = page.getByRole('button', {
-    name: /^(Start new round|Choose hand size)$/,
+  // CHOOSE_HAND_SIZE step — only the winner of the last hand sees this button,
+  // when the winner chooses the hand size
+  const chooseHandSizeBtn = page.getByRole('button', {
+    name: 'Choose hand size',
   });
-  if (await startRoundBtn.isVisible()) {
-    let isChoosingHandSize: boolean;
+  if (await chooseHandSizeBtn.isVisible()) {
     try {
-      // The winner who also deals sees "Start new round" too, so only the
-      // dialog's trigger says whether a dialog opens
-      isChoosingHandSize =
-        (await startRoundBtn.getAttribute('aria-haspopup', {
-          timeout: 5_000,
-        })) === 'dialog';
+      await chooseHandSizeBtn.click({ timeout: 5_000 });
+    } catch {
+      return false;
+    }
+
+    const handSizeDialog = page.getByRole('dialog', {
+      name: 'Choose the hand size',
+    });
+    await handSizeDialog.waitFor({ state: 'visible' });
+    await chooseRandomHandSize(page);
+    // The dialog stays open until the server moves on, and hides the button
+    // from role queries while it's open, so wait for the dialog first
+    await handSizeDialog.waitFor({ state: 'hidden', timeout: 15_000 });
+    await chooseHandSizeBtn.waitFor({ state: 'hidden', timeout: 15_000 });
+    return true;
+  }
+
+  // REDEAL step — only the dealer sees this button
+  const startRoundBtn = page.getByRole('button', { name: 'Start new round' });
+  if (await startRoundBtn.isVisible()) {
+    try {
       // Use a short timeout so React re-render flickers don't cause an infinite retry
       await startRoundBtn.click({ timeout: 5_000 });
     } catch {
       // Element detached mid-click (polling re-render); will retry next iteration
       return false;
     }
-
-    if (isChoosingHandSize) {
-      const handSizeDialog = page.getByRole('dialog', {
-        name: 'Choose the hand size',
-      });
-      await handSizeDialog.waitFor({ state: 'visible' });
-      await chooseRandomHandSize(page);
-      // The open dialog hides the button from role queries, so wait for it
-      // to close before waiting for the button
-      await handSizeDialog.waitFor({ state: 'hidden', timeout: 15_000 });
-    }
-
-    // Wait for the server to move on, so the next iteration doesn't reopen
-    // the dialog before the round is dealt
-    await startRoundBtn.waitFor({ state: 'hidden', timeout: 15_000 });
-
     return true;
   }
 
@@ -346,9 +345,12 @@ async function chooseRandomHandSize(page: Page): Promise<void> {
 // Test
 // ---------------------------------------------------------------------------
 
-test('simulates a full 3-player game of Yaniv to completion, with the winner choosing each hand size', async ({
+test('simulates a full 3-player game of Yaniv to completion', async ({
   browser,
 }) => {
+  const isWinnerChoosingHandSize =
+    test.info().project.metadata.handSize === WINNER_CHOOSES_HAND_SIZE;
+
   const ctx1 = await browser.newContext();
   const ctx2 = await browser.newContext();
   const ctx3 = await browser.newContext();
@@ -368,10 +370,12 @@ test('simulates a full 3-player game of Yaniv to completion, with the winner cho
 
   // The host lets the winner of each hand choose the next hand size, and the
   // first player chooses the first
-  await p1.getByRole('radio', { name: /Winner Chooses/ }).click();
-  await expect(p2.getByRole('radio', { name: /Winner Chooses/ })).toBeChecked({
-    timeout: 15_000,
-  });
+  if (isWinnerChoosingHandSize) {
+    await p1.getByRole('radio', { name: /Winner Chooses/ }).click();
+    await expect(p2.getByRole('radio', { name: /Winner Chooses/ })).toBeChecked(
+      { timeout: 15_000 },
+    );
+  }
 
   // Player 1 marks ready too (other players' switches are disabled)
   await p1
