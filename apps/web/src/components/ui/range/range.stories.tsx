@@ -7,6 +7,7 @@ const meta = {
   title: 'UI Components / Range',
   component: Range,
   args: {
+    label: 'Choose a range',
     min: 1,
     max: 10,
     range: [1, 5],
