@@ -140,6 +140,7 @@ function inProgressState(
     settings: DEFAULT_SETTINGS,
     handSize: DEFAULT_HAND_SIZE,
     dealerId: USER_ID,
+    yanivCallerIds: [],
     currentPlayerId: USER_ID,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.KING },

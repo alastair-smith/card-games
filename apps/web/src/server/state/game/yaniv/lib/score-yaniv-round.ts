@@ -99,12 +99,17 @@ export const scoreYanivRound = async (
       );
       if (!firstDealer) throw new Error('No Yaniv caller found after scoring');
 
-      // The caller with the lowest hand scores 0; on a tie the first of them
-      // in seating order wins
-      const handWinner = playersWithHandValues.find(
-        ({ player, handValue }) =>
-          player.isYanivCalled && handValue === minCallerHandValue,
-      )?.player;
+      // Every caller with the lowest hand scores 0, but the first of them to
+      // call wins the hand
+      const handWinnerId = state.yanivCallerIds.find((callerId) =>
+        callers.some(
+          ({ player, handValue }) =>
+            player.id === callerId && handValue === minCallerHandValue,
+        ),
+      );
+      const handWinner = scoredPlayers.find(
+        (player) => player.id === handWinnerId,
+      );
       if (!handWinner) throw new Error('No hand winner found after scoring');
 
       const isHandSizeChosenByWinner =

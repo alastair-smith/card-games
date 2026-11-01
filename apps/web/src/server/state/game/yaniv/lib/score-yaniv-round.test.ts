@@ -313,31 +313,34 @@ describe('scoreYanivRound', () => {
       });
     });
 
-    test('lets the first winner in seating order choose when the winners tie', async () => {
+    test('lets whoever called first choose when the lowest hands tie, though both score nothing', async () => {
       await scoreYanivRound(
         CODE,
         makeState({
           settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          yanivCallerIds: [USER_2, USER_1],
           players: [
             buildPlayer({
               id: USER_1,
               hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
-              score: 30,
               isYanivCalled: true,
             }),
             buildPlayer({
               id: USER_2,
               hand: [{ suit: Suit.DIAMONDS, rank: Rank.TWO }],
+              score: 30,
               isYanivCalled: true,
             }),
           ],
         }),
       );
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        currentPlayerId: USER_1,
-        dealerId: USER_2,
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      expect(savedState).toMatchObject({
+        currentPlayerId: USER_2,
+        dealerId: USER_1,
       });
+      expect(savedState.players.map((player) => player.score)).toEqual([0, 30]);
     });
   });
 });

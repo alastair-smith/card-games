@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useState } from 'react';
-import { fn } from 'storybook/test';
+import { fn, userEvent, within } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
@@ -167,6 +167,25 @@ const runSelectedArgs = {
 export const YourTurnToPlay: Story = {};
 
 export const FiveCardHand: Story = { args: { cards: userCards.slice(0, 5) } };
+
+// The largest hand the winner of a hand can choose to deal
+export const TenCardHand: Story = {
+  args: {
+    cards: [
+      ...userCards,
+      { suit: Suit.DIAMONDS, rank: Rank.TWO },
+      { suit: Suit.SPADES, rank: Rank.THREE },
+      { suit: Suit.HEARTS, rank: Rank.FOUR },
+    ],
+  },
+  // Smaller screens show the hand in its own tab; larger screens have no tabs
+  play: async ({ canvasElement }) => {
+    const handTab = within(canvasElement).queryByRole('tab', {
+      name: /Your hand/,
+    });
+    if (handTab) await userEvent.click(handTab);
+  },
+};
 
 export const ThirteenCardHand: Story = {
   args: {

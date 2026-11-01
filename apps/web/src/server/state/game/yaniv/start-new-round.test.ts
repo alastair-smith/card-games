@@ -169,6 +169,14 @@ describe('startNewRound', () => {
     });
   });
 
+  test('forgets who called Yaniv last round', async () => {
+    await startNewRound(CODE, USER_1);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      yanivCallerIds: [],
+    });
+  });
+
   test('keeps the scores from previous rounds', async () => {
     await startNewRound(CODE, USER_1);
 

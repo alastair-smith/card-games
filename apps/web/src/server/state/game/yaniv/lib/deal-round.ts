@@ -50,6 +50,7 @@ export const dealNextRound = async (
   ...state,
   handSize,
   players: await dealRound(code, state.players, handSize),
+  yanivCallerIds: [],
   playedCards: [],
   drawnCard: undefined,
   drawnFrom: null,

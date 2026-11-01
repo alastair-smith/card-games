@@ -49,6 +49,7 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       gameStage: GameStage.IN_PROGRESS as const,
       settings,
       dealerId: firstPlayer.id,
+      yanivCallerIds: [],
       currentPlayerId: firstPlayer.id,
       playedCards: [],
       drawnFrom: null,

@@ -4,25 +4,25 @@ import { HandSizeDialog } from '.';
 
 const noop = vi.fn();
 
-const openDialog = (name: string) =>
-  fireEvent.click(screen.getByRole('button', { name }));
+const openDialog = () =>
+  fireEvent.click(screen.getByRole('button', { name: 'Choose hand size' }));
 
 describe('HandSizeDialog', () => {
-  describe('when you deal the next round', () => {
-    test('starts the new round from the dialog', () => {
-      render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
-      openDialog('Start new round');
-      expect(
-        screen.getByRole('dialog', { name: 'Choose the hand size' }),
-      ).toBeInTheDocument();
-    });
+  test('opens to choose the hand size', () => {
+    render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
+    openDialog();
+    expect(
+      screen.getByRole('dialog', { name: 'Choose the hand size' }),
+    ).toBeInTheDocument();
+  });
 
+  describe('when you deal the next round', () => {
     test('deals the chosen number of cards', () => {
       const handleChooseHandSize = vi.fn();
       render(
         <HandSizeDialog isDealer onChooseHandSize={handleChooseHandSize} />,
       );
-      openDialog('Start new round');
+      openDialog();
 
       fireEvent.keyDown(screen.getByRole('slider', { name: 'Hand size' }), {
         key: 'ArrowRight',
@@ -35,7 +35,7 @@ describe('HandSizeDialog', () => {
 
     test('stays open after choosing, until the round is dealt', () => {
       render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
-      openDialog('Start new round');
+      openDialog();
 
       fireEvent.click(screen.getByRole('button', { name: 'Deal 5 cards' }));
 
@@ -51,7 +51,7 @@ describe('HandSizeDialog', () => {
           onChooseHandSize={handleChooseHandSize}
         />,
       );
-      openDialog('Start new round');
+      openDialog();
 
       const dealButton = screen.getByRole('button', { name: 'Deal 5 cards' });
       fireEvent.click(dealButton);
@@ -70,7 +70,7 @@ describe('HandSizeDialog', () => {
           onChooseHandSize={handleChooseHandSize}
         />,
       );
-      openDialog('Choose hand size');
+      openDialog();
 
       fireEvent.click(screen.getByRole('button', { name: 'Choose 5 cards' }));
 
@@ -81,7 +81,7 @@ describe('HandSizeDialog', () => {
   describe('hand size', () => {
     test('starts at five cards from one to ten', () => {
       render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
-      openDialog('Start new round');
+      openDialog();
 
       const slider = screen.getByRole('slider', { name: 'Hand size' });
       expect(slider).toHaveValue('5');
@@ -91,7 +91,7 @@ describe('HandSizeDialog', () => {
 
     test('says card rather than cards for a single card', () => {
       render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
-      openDialog('Start new round');
+      openDialog();
 
       fireEvent.keyDown(screen.getByRole('slider', { name: 'Hand size' }), {
         key: 'Home',
@@ -104,13 +104,13 @@ describe('HandSizeDialog', () => {
 
     test('starts at five cards again when reopened', () => {
       render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
-      openDialog('Start new round');
+      openDialog();
       fireEvent.keyDown(screen.getByRole('slider', { name: 'Hand size' }), {
         key: 'End',
       });
       fireEvent.click(screen.getByRole('button', { name: 'Close' }));
 
-      openDialog('Start new round');
+      openDialog();
 
       expect(screen.getByRole('slider', { name: 'Hand size' })).toHaveValue(
         '5',

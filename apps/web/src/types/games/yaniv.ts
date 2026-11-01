@@ -152,6 +152,8 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
     // Not chosen yet before the first round when the winner chooses
     handSize: handSizeSchema.nullable(),
     dealerId: userIdSchema,
+    // In the order they called, which breaks a tie for the lowest hand
+    yanivCallerIds: z.array(userIdSchema),
     players: z.array(playerSchema),
     playedCards: z.array(yanivPlayingCardSchema),
     topDiscardCard: yanivPlayingCardSchema.nullable().optional(),

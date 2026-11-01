@@ -58,6 +58,9 @@ export const buildInProgressState = (
   settings: DEFAULT_SETTINGS,
   handSize: DEFAULT_HAND_SIZE,
   dealerId: overrides.currentPlayerId,
+  yanivCallerIds: overrides.players
+    .filter((player) => player.isYanivCalled)
+    .map((player) => player.id),
   playedCards: [],
   drawnFrom: null,
   ...overrides,

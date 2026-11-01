@@ -3,7 +3,6 @@ import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { HandSizeDialog } from '.';
 
 // Each play function leaves the dialog open, to show it
-
 const meta = {
   title: 'Yaniv / Hand Size Dialog',
   component: HandSizeDialog,
@@ -18,12 +17,15 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+const openDialog = (canvasElement: HTMLElement) =>
+  userEvent.click(
+    within(canvasElement).getByRole('button', { name: 'Choose hand size' }),
+  );
+
 // The winner of the last hand is also dealing, so choosing deals the round.
 export const Dealer: Story = {
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Start new round' }),
-    );
+    await openDialog(canvasElement);
     screen.getByRole('slider', { name: 'Hand size' }).focus();
     await userEvent.keyboard('{ArrowRight}{ArrowRight}');
 
@@ -37,9 +39,7 @@ export const Dealer: Story = {
 export const Pending: Story = {
   args: { isPending: true },
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Start new round' }),
-    );
+    await openDialog(canvasElement);
 
     await expect(
       screen.getByRole('button', { name: 'Deal 5 cards' }),
@@ -51,9 +51,7 @@ export const Pending: Story = {
 export const NotDealer: Story = {
   args: { isDealer: false },
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Choose hand size' }),
-    );
+    await openDialog(canvasElement);
 
     await expect(
       screen.getByRole('button', { name: 'Choose 5 cards' }),

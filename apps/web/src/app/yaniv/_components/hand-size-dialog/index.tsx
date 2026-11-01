@@ -57,7 +57,7 @@ export function HandSizeDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className={className}>
-          {isDealer ? 'Start new round' : 'Choose hand size'}
+          Choose hand size
           <ArrowRightCircleIcon />
         </Button>
       </DialogTrigger>
