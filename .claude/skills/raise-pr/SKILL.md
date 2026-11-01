@@ -35,11 +35,12 @@ Fill in `.github/pull_request_template.md`:
 
 - **Summary:** one or two plain-language sentences, or a few bullet points, on
   what the change does and why. No file names, no technical breakdown.
-- **Details:** bullet points on what a reviewer needs to follow the change:
-  the approach and why, anything that relies on undocumented behaviour, and
-  changes to existing behaviour or tests. Leave out small facts the diff
-  already shows, such as sizes, constants or where files live. Omit the
-  section if there's nothing to add.
+- **Details:** bullet points on what a reviewer couldn't work out from the
+  diff: why this approach over another, anything that relies on undocumented
+  behaviour, and changes to existing behaviour. Leave out what the diff
+  already shows, such as a new lookup table, renamed tests or a tweak to an
+  existing test. A small fix usually needs only the Summary and the `Closes`
+  line, so omit the section when there's nothing to add.
 - Don't list manual follow-up steps, such as changing repo settings after
   merge. They aren't part of the PR.
 - End with `Closes #123` for the issue it completes, or `Part of #123` if the
@@ -77,8 +78,16 @@ shown.
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
 
-If the script can't capture the state you need, say what's missing and
-suggest an issue to add it, rather than taking the screenshot another way.
+Screenshot every state the change affects. When no story shows one, such as
+another player's step or a message that only appears mid-turn, add a story
+for it (committed with 🔧) and capture that, rather than leaving the
+screenshot out. When the change affects text that varies, such as a message
+for each step or for each player, show every variant, at the worst case such
+as the longest name. A story that stacks the variants keeps that to one
+screenshot.
+
+If a state still can't be captured, say what's missing and suggest an issue
+to add it, rather than taking the screenshot another way.
 
 Put them in a table under a `### Screenshots` heading at the end of the body,
 above `Closes #123`. Reference each one by the path the script printed, and
@@ -156,3 +165,16 @@ EOF
 
 ./.claude/skills/raise-pr/scripts/update-pr.ts --title '🔧 Add `manage-issue` skill'
 ```
+
+## Addressing review comments
+
+`gh pr view --json reviews,comments` shows each review's summary but not the
+comments left on lines of code. List those, with their file, line and
+replies:
+
+```bash
+./.claude/skills/raise-pr/scripts/list-review-comments.ts 123
+```
+
+A comment on code that has since changed says `outdated` and gives the line
+it was left on.

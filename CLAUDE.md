@@ -19,6 +19,8 @@ Multiplayer card game — server actions transmit state to clients.
   extra shell around them can make them prompt: `cd … &&`, `2>&1`, `$?` and
   other variables, unquoted globs, loops and inline `python3`. For several
   independent commands, make parallel calls instead
+- Before a run of several edits or commands, say in one line what you're
+  about to do, and again when the plan changes
 
 ### Formatting
 
@@ -96,7 +98,12 @@ the same way:
 pnpm --filter @repo/web test:stories --reporter=dot src/path/to/file.stories.tsx
 ```
 
-E2E tests play a full game in Playwright, one browser setup per project.
+E2E tests play a full game in Playwright, one browser setup per project. CI
+runs them on every PR, so once the unit and story tests pass, push and let CI
+run them rather than waiting on them locally. Run them locally first only
+when a change reworks the game flow, where the E2E tests themselves will
+likely need changes.
+
 They reuse the dev server on port 3000, so start it first if it isn't running
 (see the `dev-servers` skill), and they test whichever branch is checked out. Run them in
 the background, as a project takes a few minutes:
@@ -220,8 +227,10 @@ matching the media query again.
 While building a layout change, check every state it affects at smaller and
 larger screen sizes. Look for layout shift between states (measure where key
 elements sit in each), overlap, and content cut off at the worst case: the
-most players, the longest names, and every optional element showing, such as
-a Yaniv sticker on every tag.
+most players, the longest names, every optional element showing, such as
+a Yaniv sticker on every tag, and every message or state the element can show,
+not just one example. Measure sizes in the running page or story rather than
+adding them up from the classes.
 
 ### Naming
 
@@ -231,6 +240,10 @@ including arrow function parameters and loop variables:
 ```ts
 players.map((player) => player.name);
 ```
+
+Name a new field, prop or variable with the terms the code around it already
+uses for the same idea, e.g. `drawnFrom` beside `drawnCard`, not
+`pickupSource`.
 
 ### Comments
 
@@ -242,7 +255,8 @@ Keep comments to a minimum and let names carry the meaning
 - Don't record history — no `// added to fix the issue in i-123`; that belongs
   in the PR description
 - Keep a comment to the reason in a few words. Leave out anything a class
-  name, prop or component name already says
+  name, prop or component name already says, including doc comments on props
+  and schema fields that restate their name
 - Say smaller and larger screens, not phones or desktop: layouts change with
   screen width, not device
 
@@ -315,6 +329,10 @@ New domain types should be paired with a Zod schema in the same file:
 export const fooSchema = z.object({ ... });
 export type Foo = z.infer<typeof fooSchema>;
 ```
+
+When a new schema covers values the code already lists elsewhere, such as an
+API input's `z.enum(['deck', 'discard'])`, switch those copies to the new
+schema in the same change.
 
 ### Stored state
 
