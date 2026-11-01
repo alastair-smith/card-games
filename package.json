@@ -24,10 +24,10 @@
     "@biomejs/biome": "^2.5.15",
     "turbo": "^2.11.9"
   },
-  "packageManager": "pnpm@10.34.7",
+  "packageManager": "pnpm@12.17.0",
   "engines": {
     "npm": "please-use-pnpm",
     "yarn": "please-use-pnpm",
-    "pnpm": "10.34.7"
+    "pnpm": "12.17.0"
   }
 }
