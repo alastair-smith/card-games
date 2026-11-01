@@ -100,15 +100,22 @@ describe('GameSettings', () => {
   });
 
   describe('random hand size range', () => {
-    test('is hidden until a random hand size is chosen', () => {
+    // Includes hidden elements, as a closed panel is hidden from screen readers
+    const getRangePanel = () =>
+      screen
+        .getByRole('group', { name: 'Hand size range', hidden: true })
+        .closest('[data-slot="choice-card-panel"]');
+
+    test('is out of reach until a random hand size is chosen', () => {
       render(<GameSettings {...defaultProps} />);
 
+      expect(getRangePanel()).toHaveAttribute('inert');
       expect(
         screen.queryByRole('group', { name: 'Hand size range' }),
       ).not.toBeInTheDocument();
     });
 
-    test('shows the range when the hand size is random', () => {
+    test('opens the range below the random choice when the hand size is random', () => {
       render(
         <GameSettings
           {...defaultProps}
@@ -117,9 +124,14 @@ describe('GameSettings', () => {
         />,
       );
 
+      expect(getRangePanel()).not.toHaveAttribute('inert');
       expect(
+        screen
+          .getByRole('radio', { name: /Random/ })
+          .closest('[data-slot="choice-card"]'),
+      ).toContainElement(
         screen.getByRole('group', { name: 'Hand size range' }),
-      ).toBeInTheDocument();
+      );
       expect(screen.getByRole('spinbutton', { name: 'Min' })).toHaveAttribute(
         'aria-valuenow',
         '3',

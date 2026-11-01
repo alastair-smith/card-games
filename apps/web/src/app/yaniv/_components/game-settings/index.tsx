@@ -81,6 +81,21 @@ export default function GameSettings({
               key={option}
               value={String(option)}
               className={cn(typeof option === 'string' && 'col-span-2')}
+              panel={
+                option === RANDOM_HAND_SIZE ? (
+                  <Range
+                    className='mx-auto'
+                    label='Hand size range'
+                    min={MIN_HAND_SIZE}
+                    max={MAX_HAND_SIZE}
+                    range={[handSizeRange.min, handSizeRange.max]}
+                    onRangeChange={([min, max]) =>
+                      onHandSizeRangeChange({ min, max })
+                    }
+                    isDisabled={!isHost}
+                  />
+                ) : undefined
+              }
             >
               <ChoiceCardTitle>
                 {HAND_SIZE_CHOICES[option].title}
@@ -91,17 +106,6 @@ export default function GameSettings({
             </ChoiceCard>
           ))}
         </ChoiceGroup>
-        {handSize === RANDOM_HAND_SIZE && (
-          <Range
-            className='mt-2'
-            label='Hand size range'
-            min={MIN_HAND_SIZE}
-            max={MAX_HAND_SIZE}
-            range={[handSizeRange.min, handSizeRange.max]}
-            onRangeChange={([min, max]) => onHandSizeRangeChange({ min, max })}
-            isDisabled={!isHost}
-          />
-        )}
       </CardContent>
     </Card>
   );
