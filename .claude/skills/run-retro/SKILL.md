@@ -41,6 +41,12 @@ count of retros without it.
    leave it prompting if each run deserves a look
 4. **Repeated commands** worth a script
 5. **Process friction:** how the work was done, not the code
+6. **Tool economy:** calls that cost more than they needed to, such as
+   full-page screenshots, measurement loops, or output too long to read
+7. **Information access:** something you needed but couldn't see, such as
+   dev server logs
+8. **Navigation:** time spent finding the right file, which a pointer would
+   have saved
 
 ## 3. Decide what's worth a change
 
@@ -54,8 +60,12 @@ A mistake you caught yourself, or a reviewer's comment fixed in one round,
 doesn't count. Then sort what's left:
 
 - **Existing rule not followed:** if `CLAUDE.md` or a skill already covered
-  it clearly, don't add words. Name the rule in the recap and change nothing.
-  Reword a rule only where it was genuinely unclear.
+  it clearly, don't add words. Name the rule in the recap, put it on the
+  watch list, and change nothing. Reword a rule only where it was genuinely
+  unclear. If the watch list shows the same rule broken before, the rule
+  isn't working: propose replacing it with an automated check, or deleting
+  it. `CLAUDE.md` loads into every conversation, so removing a rule that
+  doesn't change behaviour is progress too.
 - **First sighting:** put it on the watch list rather than writing a rule. A
   correction the user stated outright, such as "push and let CI run them", is
   the exception: it can become a rule straight away.
@@ -81,6 +91,12 @@ Before proposing a fix, search open issues for one that already covers it,
 and before proposing a script for a command, check whether the allowlist
 already allows that command or another that does the same job.
 
+Prefer a check over a rule. If a lint rule, a type, a test or CI could catch
+the mistake, propose that check, extending one the repo already runs where
+possible (see the commands in `CLAUDE.md` and `.github/workflows/ci.yml`), rather than
+writing an instruction. A check stops the mistake recurring without adding
+to what every conversation has to read.
+
 For a manual step that's slow or risky, offer both kinds of fix side by side:
 a script that makes the step safer, and a change of setup that removes the
 step, such as a running copy of `main` to screenshot against instead of
@@ -88,6 +104,7 @@ swapping files.
 
 | Fix | Where |
 |---|---|
+| A mistake a lint rule, type, test or CI check could catch | That check, rather than a written rule |
 | Code, testing or workflow rule for the whole repo | `CLAUDE.md`, kept short: no one-off review notes |
 | How a workflow such as raising a PR runs | That skill's `SKILL.md` |
 | A command that's repeated or needs approval | A skill script, allowlisted unless each run should ask |
