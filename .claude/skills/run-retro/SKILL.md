@@ -50,6 +50,11 @@ Before proposing a fix, search open issues for one that already covers it,
 and before proposing a script for a command, check whether the allowlist
 already allows that command or another that does the same job.
 
+For a manual step that's slow or risky, offer both kinds of fix side by side:
+a script that makes the step safer, and a change of setup that removes the
+step, such as a running copy of `main` to screenshot against instead of
+swapping files.
+
 | Fix | Where |
 |---|---|
 | Code, testing or workflow rule for the whole repo | `CLAUDE.md`, kept short: no one-off review notes |
@@ -80,7 +85,9 @@ items as a checklist, and don't move on until every item has a decision: do
 it, skip it, leave it for later, or watch it. Ask for the decisions with the
 AskUserQuestion tool, offering those as options plus "Explain this point
 further". Its questions show apart from your message, so put the problem and
-the proposed change in plain words in the question itself. When asked to
+the proposed change in plain words in the question itself. Keep each question
+to one problem and its fix, and leave bookkeeping such as watch-list counts
+out of it. When asked to
 explain further, explain again more simply; don't drop a point because it was
 hard to explain. Watch suits a pattern seen once
 that would only be worth a rule if it recurs: it goes on `watch-list.md`
