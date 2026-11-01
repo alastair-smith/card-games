@@ -190,7 +190,6 @@ describe('callYaniv', () => {
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(35);
     expect(savedState.currentPlayerId).toBe(USER_1);
-    expect(savedState.drawnFrom).toBeNull();
   });
 
   test('caller with higher hand value among those who called Yaniv gets +25 penalty', async () => {
@@ -336,7 +335,7 @@ describe('callYaniv', () => {
     );
   });
 
-  test('forgets where the caller picked up from', async () => {
+  test('forgets where the caller drew from', async () => {
     await callYaniv(CODE, USER_1);
 
     expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({

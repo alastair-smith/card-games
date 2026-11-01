@@ -161,7 +161,7 @@ describe('endTurn', () => {
     );
   });
 
-  test('forgets where the player picked up from', async () => {
+  test('forgets where the player drew from', async () => {
     await endTurn(CODE, USER_1);
 
     expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
@@ -395,14 +395,6 @@ describe('endTurn', () => {
           'drawnCard',
           undefined,
         );
-      });
-
-      test('forgets where the last player picked up from', async () => {
-        await endTurn(CODE, USER_2);
-
-        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-          drawnFrom: null,
-        });
       });
     });
 
