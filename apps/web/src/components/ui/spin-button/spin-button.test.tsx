@@ -4,9 +4,11 @@ import { SpinButton } from '.';
 
 const renderSpinButton = ({
   value = 5,
+  isDisabled = false,
   onValueChange = vi.fn(),
 }: {
   value?: number;
+  isDisabled?: boolean;
   onValueChange?: (value: number) => void;
 } = {}) =>
   render(
@@ -15,6 +17,7 @@ const renderSpinButton = ({
       value={value}
       min={1}
       max={10}
+      isDisabled={isDisabled}
       onValueChange={onValueChange}
     />,
   );
@@ -101,6 +104,36 @@ describe('SpinButton', () => {
     it('disables increasing at the maximum', () => {
       renderSpinButton({ value: 10 });
 
+      expect(
+        screen.getByRole('button', { name: 'Increase Min' }),
+      ).toBeDisabled();
+    });
+  });
+
+  describe('when disabled', () => {
+    it('shows the value as disabled and out of the tab order', () => {
+      renderSpinButton({ isDisabled: true });
+
+      const spinButton = screen.getByRole('spinbutton', { name: 'Min' });
+      expect(spinButton).toHaveAttribute('aria-disabled', 'true');
+      expect(spinButton).not.toHaveAttribute('tabindex');
+    });
+
+    it('ignores the arrow keys', () => {
+      const onValueChange = vi.fn();
+      renderSpinButton({ isDisabled: true, onValueChange });
+
+      fireEvent.keyDown(screen.getByRole('spinbutton'), { key: 'ArrowUp' });
+
+      expect(onValueChange).not.toHaveBeenCalled();
+    });
+
+    it('disables both buttons', () => {
+      renderSpinButton({ isDisabled: true });
+
+      expect(
+        screen.getByRole('button', { name: 'Decrease Min' }),
+      ).toBeDisabled();
       expect(
         screen.getByRole('button', { name: 'Increase Min' }),
       ).toBeDisabled();

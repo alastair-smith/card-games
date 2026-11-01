@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
-import { DEFAULT_HAND_SIZE } from '~/types/games/yaniv';
+import {
+  DEFAULT_SETTINGS,
+  RANDOM_HAND_SIZE,
+  type Settings,
+} from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetLobby = vi.fn();
@@ -21,12 +25,13 @@ const { updateSettings } = await import('./update-settings');
 const CODE = 'ABCDEF' as GameCode;
 const HOST_ID = 'host-1' as UserId;
 const USER_ID = 'user-2' as UserId;
+const SEVEN_CARD_SETTINGS: Settings = { ...DEFAULT_SETTINGS, handSize: 7 };
 
 const makeLobby = () => ({
   code: CODE,
   type: GameType.YANIV,
   host: HOST_ID,
-  settings: { handSize: DEFAULT_HAND_SIZE },
+  settings: DEFAULT_SETTINGS,
   players: [HOST_ID, USER_ID].map((id) => ({
     id,
     name: `Player ${id}`,
@@ -52,7 +57,7 @@ describe('updateSettings', () => {
       updateSettings({
         code: CODE,
         userId: HOST_ID,
-        settings: { handSize: 7 },
+        settings: SEVEN_CARD_SETTINGS,
       }),
     ).rejects.toThrow('lobby not found');
   });
@@ -62,7 +67,7 @@ describe('updateSettings', () => {
       updateSettings({
         code: CODE,
         userId: USER_ID,
-        settings: { handSize: 7 },
+        settings: SEVEN_CARD_SETTINGS,
       }),
     ).rejects.toThrow('only the host can change the settings');
 
@@ -76,7 +81,7 @@ describe('updateSettings', () => {
       updateSettings({
         code: CODE,
         userId: HOST_ID,
-        settings: { handSize: 7 },
+        settings: SEVEN_CARD_SETTINGS,
       }),
     ).rejects.toThrow('game has already started');
 
@@ -87,13 +92,31 @@ describe('updateSettings', () => {
     await updateSettings({
       code: CODE,
       userId: HOST_ID,
-      settings: { handSize: 7 },
+      settings: SEVEN_CARD_SETTINGS,
     });
 
     expect(mockSetLobby).toHaveBeenCalledOnce();
     expect(mockSetLobby).toHaveBeenCalledWith(
       { code: CODE },
-      expect.objectContaining({ settings: { handSize: 7 } }),
+      expect.objectContaining({ settings: SEVEN_CARD_SETTINGS }),
+    );
+  });
+
+  test('saves the random hand size range the host chose', async () => {
+    const randomSettings: Settings = {
+      handSize: RANDOM_HAND_SIZE,
+      handSizeRange: { min: 2, max: 9 },
+    };
+
+    await updateSettings({
+      code: CODE,
+      userId: HOST_ID,
+      settings: randomSettings,
+    });
+
+    expect(mockSetLobby).toHaveBeenCalledWith(
+      { code: CODE },
+      expect.objectContaining({ settings: randomSettings }),
     );
   });
 
@@ -101,7 +124,7 @@ describe('updateSettings', () => {
     await updateSettings({
       code: CODE,
       userId: HOST_ID,
-      settings: { handSize: 7 },
+      settings: SEVEN_CARD_SETTINGS,
     });
 
     expect(mockSetLobby).toHaveBeenCalledWith(
@@ -118,13 +141,13 @@ describe('updateSettings', () => {
     await updateSettings({
       code: CODE,
       userId: HOST_ID,
-      settings: { handSize: 7 },
+      settings: SEVEN_CARD_SETTINGS,
     });
 
     expect(mockPublishLobbyState).toHaveBeenCalledOnce();
     expect(mockPublishLobbyState).toHaveBeenCalledWith(
       CODE,
-      expect.objectContaining({ settings: { handSize: 7 } }),
+      expect.objectContaining({ settings: SEVEN_CARD_SETTINGS }),
     );
   });
 });

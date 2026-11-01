@@ -16,6 +16,7 @@ export const MAX_HAND_SIZE = 10;
 export const DEFAULT_HAND_SIZE = 5;
 export const FIXED_HAND_SIZES = [5, 7] as const;
 export const WINNER_CHOOSES_HAND_SIZE = 'winner-chooses';
+export const RANDOM_HAND_SIZE = 'random';
 export const MINIMUM_RUN_SIZE = 3;
 export const YANIV_CALL_THRESHOLD = 7;
 export const YANIV_CALLER_PENALTY = 25;
@@ -35,6 +36,7 @@ export type HandSize = z.infer<typeof handSizeSchema>;
 export const handSizeSettingSchema = z.union([
   z.literal(FIXED_HAND_SIZES),
   z.literal(WINNER_CHOOSES_HAND_SIZE),
+  z.literal(RANDOM_HAND_SIZE),
 ]);
 
 export type HandSizeSetting = z.infer<typeof handSizeSettingSchema>;
@@ -42,17 +44,33 @@ export type HandSizeSetting = z.infer<typeof handSizeSettingSchema>;
 export const HAND_SIZE_SETTINGS = [
   ...FIXED_HAND_SIZES,
   WINNER_CHOOSES_HAND_SIZE,
+  RANDOM_HAND_SIZE,
 ] as const satisfies HandSizeSetting[];
+
+export const handSizeRangeSchema = z
+  .object({ min: handSizeSchema, max: handSizeSchema })
+  .refine((range) => range.min <= range.max, {
+    message: 'The fewest cards cannot be more than the most cards',
+  });
+
+export type HandSizeRange = z.infer<typeof handSizeRangeSchema>;
+
+export const DEFAULT_HAND_SIZE_RANGE: HandSizeRange = { min: 1, max: 7 };
 
 /** Host-chosen settings, picked in the lobby before the game starts. */
 export const settingsSchema = z.object({
   handSize: handSizeSettingSchema,
+  // Kept while another hand size is picked, so it's there to switch back to
+  handSizeRange: handSizeRangeSchema,
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 
 /** What a new Yaniv lobby starts with. */
-export const DEFAULT_SETTINGS: Settings = { handSize: DEFAULT_HAND_SIZE };
+export const DEFAULT_SETTINGS: Settings = {
+  handSize: DEFAULT_HAND_SIZE,
+  handSizeRange: DEFAULT_HAND_SIZE_RANGE,
+};
 
 export const YANIV_RANK_SCORE = {
   [Rank.TWO]: 2,

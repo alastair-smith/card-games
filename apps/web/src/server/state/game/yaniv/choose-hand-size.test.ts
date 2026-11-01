@@ -12,6 +12,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
   GameStage,
   type GameState,
   GameStep,
@@ -61,7 +62,7 @@ const DEALT_CARDS: YanivPlayingCard[] = [
 const makeState = (overrides: Partial<State> = {}): State =>
   buildInProgressState({
     gameStep: GameStep.CHOOSE_HAND_SIZE,
-    settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+    settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
     handSize: null,
     currentPlayerId: WINNER,
     dealerId: WINNER,

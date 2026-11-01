@@ -65,6 +65,19 @@ describe('useWaitForServerValue', () => {
     expect(hasFinished()).toBe(false);
   });
 
+  test('finishes when a copy of the value arrives from the server', async () => {
+    const { result, rerender } = renderHook(
+      ({ serverValue }) => useWaitForServerValue(serverValue),
+      { initialProps: { serverValue: { min: 1, max: 7 } } },
+    );
+
+    const hasFinished = settled(result.current({ min: 2, max: 7 }));
+    rerender({ serverValue: { min: 2, max: 7 } });
+    await act(async () => {});
+
+    expect(hasFinished()).toBe(true);
+  });
+
   test('gives up waiting when the value never arrives', async () => {
     const { result } = renderHook(() => useWaitForServerValue(5));
 

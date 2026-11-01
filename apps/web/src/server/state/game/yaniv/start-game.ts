@@ -10,9 +10,11 @@ import {
   GameStep,
   MAX_PLAYERS,
   MIN_PLAYERS,
+  RANDOM_HAND_SIZE,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import { dealRound } from './lib/deal-round';
+import { pickRandomHandSize } from './lib/pick-random-hand-size';
 
 export const startGame = async (code: GameCode, userId: UserId) =>
   withLock('lobby', code, async () => {
@@ -55,9 +57,14 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       drawnFrom: null,
     };
 
+    const handSize =
+      settings.handSize === RANDOM_HAND_SIZE
+        ? pickRandomHandSize(settings.handSizeRange)
+        : settings.handSize;
+
     // With no last hand to have won, the first player chooses the hand size
     const state =
-      settings.handSize === WINNER_CHOOSES_HAND_SIZE
+      handSize === WINNER_CHOOSES_HAND_SIZE
         ? {
             ...startingState,
             gameStep: GameStep.CHOOSE_HAND_SIZE,
@@ -67,8 +74,8 @@ export const startGame = async (code: GameCode, userId: UserId) =>
         : {
             ...startingState,
             gameStep: GameStep.PLAY_CARDS,
-            handSize: settings.handSize,
-            players: await dealRound(code, players, settings.handSize),
+            handSize,
+            players: await dealRound(code, players, handSize),
           };
 
     await runTransaction(async (transaction) => {

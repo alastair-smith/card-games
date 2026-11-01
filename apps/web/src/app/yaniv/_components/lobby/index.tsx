@@ -7,7 +7,11 @@ import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import { api } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-import type { HandSizeSetting } from '~/types/games/yaniv';
+import type {
+  HandSizeRange,
+  HandSizeSetting,
+  Settings,
+} from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
@@ -17,11 +21,11 @@ const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 export default function Lobby({
   code,
   players,
-  handSize,
+  settings,
 }: {
   code: GameCode;
   players: Player[];
-  handSize: HandSizeSetting;
+  settings: Settings;
 }) {
   const currentPlayer = players.find((player) => player.isUser);
 
@@ -42,7 +46,7 @@ export default function Lobby({
   const confirmedColor = useRef(user.color);
 
   const waitForIsReady = useWaitForServerValue(currentPlayer.isReady);
-  const waitForHandSize = useWaitForServerValue(handSize);
+  const waitForSettings = useWaitForServerValue(settings);
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
 
@@ -67,7 +71,7 @@ export default function Lobby({
   const startGameMutation = api.yaniv.startGame.useMutation();
   const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
     scope: { id: `settings-${code}` },
-    onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+    onSuccess: (_data, variables) => waitForSettings(variables.settings),
     onError: () => {
       toast.error('Error updating settings.');
     },
@@ -80,10 +84,10 @@ export default function Lobby({
       : undefined;
   const isReady = pendingIsReady ?? currentPlayer.isReady;
 
-  const pendingHandSize = updateSettingsMutation.isPending
-    ? updateSettingsMutation.variables?.handSize
+  const pendingSettings = updateSettingsMutation.isPending
+    ? updateSettingsMutation.variables?.settings
     : undefined;
-  const selectedHandSize = pendingHandSize ?? handSize;
+  const selectedSettings = pendingSettings ?? settings;
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
@@ -132,8 +136,20 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
+  // Each change is a single step, and builds on any change still being saved,
+  // as the settings updates run one at a time
   const handleHandSizeChange = (newHandSize: HandSizeSetting) => {
-    updateSettingsMutation.mutate({ code, handSize: newHandSize });
+    updateSettingsMutation.mutate({
+      code,
+      settings: { ...selectedSettings, handSize: newHandSize },
+    });
+  };
+
+  const handleHandSizeRangeChange = (newHandSizeRange: HandSizeRange) => {
+    updateSettingsMutation.mutate({
+      code,
+      settings: { ...selectedSettings, handSizeRange: newHandSizeRange },
+    });
   };
 
   const handleReadyChange = (nextIsReady: boolean) => {
@@ -148,12 +164,14 @@ export default function Lobby({
     <LobbyView
       code={code}
       players={players}
-      handSize={selectedHandSize}
+      handSize={selectedSettings.handSize}
+      handSizeRange={selectedSettings.handSizeRange}
       user={{ ...user, isReady }}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
       handleHandSizeChange={handleHandSizeChange}
+      handleHandSizeRangeChange={handleHandSizeRangeChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

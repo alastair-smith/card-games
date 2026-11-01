@@ -11,6 +11,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
   type GameStage,
   type GameState,
   GameStep,
@@ -319,7 +320,7 @@ describe('scoreYanivRound', () => {
       await scoreYanivRound(
         CODE,
         makeSplitWinnerState({
-          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
         }),
       );
 
@@ -334,7 +335,7 @@ describe('scoreYanivRound', () => {
       await scoreYanivRound(
         CODE,
         makeState({
-          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
           yanivCallerIds: [USER_2, USER_1],
           players: [
             buildPlayer({

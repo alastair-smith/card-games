@@ -3,7 +3,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
+  type HandSizeRange,
   type HandSizeSetting,
+  RANDOM_HAND_SIZE,
+  type Settings,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
@@ -52,13 +56,24 @@ vi.mock('~/trpc/react', () => ({
 vi.mock('./lobby.view', () => ({
   default: (props: {
     handSize: HandSizeSetting;
+    handSizeRange: HandSizeRange;
     user: { isReady: boolean; name: string };
     handleNameChange: (name: string) => void;
     handleHandSizeChange: (handSize: HandSizeSetting) => void;
+    handleHandSizeRangeChange: (handSizeRange: HandSizeRange) => void;
     handleReadyChange: (isReady: boolean) => void;
   }) => (
     <div>
       <p>Hand size: {props.handSize}</p>
+      <p>
+        Range: {props.handSizeRange.min} to {props.handSizeRange.max}
+      </p>
+      <button
+        type='button'
+        onClick={() => props.handleHandSizeRangeChange({ min: 2, max: 7 })}
+      >
+        Raise the fewest cards
+      </button>
       <p>Ready: {String(props.user.isReady)}</p>
       <input
         aria-label='Your name'
@@ -100,14 +115,18 @@ const player = (overrides: Partial<Player> = {}): Player => ({
 });
 
 const renderLobby = ({
-  handSize = 5,
+  settings = {},
   isReady = false,
 }: {
-  handSize?: HandSizeSetting;
+  settings?: Partial<Settings>;
   isReady?: boolean;
 } = {}) =>
   render(
-    <Lobby code={code} players={[player({ isReady })]} handSize={handSize} />,
+    <Lobby
+      code={code}
+      players={[player({ isReady })]}
+      settings={{ ...DEFAULT_SETTINGS, ...settings }}
+    />,
   );
 
 beforeEach(() => {
@@ -121,25 +140,25 @@ beforeEach(() => {
 describe('Lobby', () => {
   describe('hand size', () => {
     test('shows the hand size the lobby is on', () => {
-      renderLobby({ handSize: 7 });
+      renderLobby({ settings: { handSize: 7 } });
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
     });
 
-    test('saves the hand size that was chosen', () => {
-      renderLobby({ handSize: 5 });
+    test('saves the hand size that was chosen, keeping the range', () => {
+      renderLobby({ settings: { handSize: 5 } });
 
       fireEvent.click(screen.getByRole('button', { name: 'Choose 7' }));
 
       expect(settingsMutation.mutate).toHaveBeenCalledOnce();
       expect(settingsMutation.mutate).toHaveBeenCalledWith({
         code,
-        handSize: 7,
+        settings: { ...DEFAULT_SETTINGS, handSize: 7 },
       });
     });
 
     test('saves that the winner chooses the hand size', () => {
-      renderLobby({ handSize: 5 });
+      renderLobby({ settings: { handSize: 5 } });
 
       fireEvent.click(
         screen.getByRole('button', { name: 'Let the winner choose' }),
@@ -148,26 +167,90 @@ describe('Lobby', () => {
       expect(settingsMutation.mutate).toHaveBeenCalledOnce();
       expect(settingsMutation.mutate).toHaveBeenCalledWith({
         code,
-        handSize: WINNER_CHOOSES_HAND_SIZE,
+        settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
       });
     });
 
     test('shows the chosen hand size while it is still being saved', () => {
       settingsMutation.isPending = true;
-      settingsMutation.variables = { code, handSize: 7 };
+      settingsMutation.variables = {
+        code,
+        settings: { ...DEFAULT_SETTINGS, handSize: 7 },
+      };
 
-      renderLobby({ handSize: 5 });
+      renderLobby({ settings: { handSize: 5 } });
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
     });
 
     test('shows the lobby hand size again once the change has been saved', () => {
       settingsMutation.isPending = false;
-      settingsMutation.variables = { code, handSize: 7 };
+      settingsMutation.variables = {
+        code,
+        settings: { ...DEFAULT_SETTINGS, handSize: 7 },
+      };
 
-      renderLobby({ handSize: 5 });
+      renderLobby({ settings: { handSize: 5 } });
 
       expect(screen.getByText('Hand size: 5')).toBeInTheDocument();
+    });
+  });
+
+  describe('random hand size range', () => {
+    test('shows the range the lobby is on', () => {
+      renderLobby({ settings: { handSizeRange: { min: 3, max: 6 } } });
+
+      expect(screen.getByText('Range: 3 to 6')).toBeInTheDocument();
+    });
+
+    test('saves each change to the range straight away, keeping the hand size', () => {
+      renderLobby({ settings: { handSize: RANDOM_HAND_SIZE } });
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Raise the fewest cards' }),
+      );
+
+      expect(settingsMutation.mutate).toHaveBeenCalledOnce();
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
+        code,
+        settings: {
+          handSize: RANDOM_HAND_SIZE,
+          handSizeRange: { min: 2, max: 7 },
+        },
+      });
+    });
+
+    test('builds on a change that is still being saved', () => {
+      settingsMutation.isPending = true;
+      settingsMutation.variables = {
+        code,
+        settings: { ...DEFAULT_SETTINGS, handSize: RANDOM_HAND_SIZE },
+      };
+      renderLobby({ settings: { handSize: 5 } });
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Raise the fewest cards' }),
+      );
+
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
+        code,
+        settings: {
+          handSize: RANDOM_HAND_SIZE,
+          handSizeRange: { min: 2, max: 7 },
+        },
+      });
+    });
+
+    test('shows the chosen range while it is still being saved', () => {
+      settingsMutation.isPending = true;
+      settingsMutation.variables = {
+        code,
+        settings: { ...DEFAULT_SETTINGS, handSizeRange: { min: 4, max: 9 } },
+      };
+
+      renderLobby();
+
+      expect(screen.getByText('Range: 4 to 9')).toBeInTheDocument();
     });
   });
 

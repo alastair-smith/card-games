@@ -1,14 +1,20 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { WINNER_CHOOSES_HAND_SIZE } from '~/types/games/yaniv';
+import {
+  DEFAULT_HAND_SIZE_RANGE,
+  RANDOM_HAND_SIZE,
+  WINNER_CHOOSES_HAND_SIZE,
+} from '~/types/games/yaniv';
 import GameSettings from '.';
 
 const noop = vi.fn();
 
 const defaultProps = {
   handSize: 5 as const,
+  handSizeRange: DEFAULT_HAND_SIZE_RANGE,
   isHost: true,
   onHandSizeChange: noop,
+  onHandSizeRangeChange: noop,
 };
 
 describe('GameSettings', () => {
@@ -76,9 +82,90 @@ describe('GameSettings', () => {
         screen.getByRole('radio', { name: /Winner Chooses/ }),
       ).toBeChecked();
     });
+
+    test('offers a random hand size', () => {
+      const handleHandSizeChange = vi.fn();
+      render(
+        <GameSettings
+          {...defaultProps}
+          onHandSizeChange={handleHandSizeChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: /Random/ }));
+
+      expect(handleHandSizeChange).toHaveBeenCalledOnce();
+      expect(handleHandSizeChange).toHaveBeenCalledWith(RANDOM_HAND_SIZE);
+    });
+  });
+
+  describe('random hand size range', () => {
+    test('is hidden until a random hand size is chosen', () => {
+      render(<GameSettings {...defaultProps} />);
+
+      expect(
+        screen.queryByRole('group', { name: 'Hand size range' }),
+      ).not.toBeInTheDocument();
+    });
+
+    test('shows the range when the hand size is random', () => {
+      render(
+        <GameSettings
+          {...defaultProps}
+          handSize={RANDOM_HAND_SIZE}
+          handSizeRange={{ min: 3, max: 6 }}
+        />,
+      );
+
+      expect(
+        screen.getByRole('group', { name: 'Hand size range' }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole('spinbutton', { name: 'Min' })).toHaveAttribute(
+        'aria-valuenow',
+        '3',
+      );
+      expect(screen.getByRole('spinbutton', { name: 'Max' })).toHaveAttribute(
+        'aria-valuenow',
+        '6',
+      );
+    });
+
+    test('calls the range handler when an end of the range changes', () => {
+      const handleHandSizeRangeChange = vi.fn();
+      render(
+        <GameSettings
+          {...defaultProps}
+          handSize={RANDOM_HAND_SIZE}
+          handSizeRange={{ min: 3, max: 6 }}
+          onHandSizeRangeChange={handleHandSizeRangeChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Increase Max' }));
+
+      expect(handleHandSizeRangeChange).toHaveBeenCalledOnce();
+      expect(handleHandSizeRangeChange).toHaveBeenCalledWith({
+        min: 3,
+        max: 7,
+      });
+    });
   });
 
   describe('players who are not the host', () => {
+    test('cannot change the random hand size range', () => {
+      render(
+        <GameSettings
+          {...defaultProps}
+          handSize={RANDOM_HAND_SIZE}
+          isHost={false}
+        />,
+      );
+
+      expect(
+        screen.getByRole('group', { name: 'Hand size range' }),
+      ).toBeDisabled();
+    });
+
     test('cannot change the hand size', () => {
       const handleHandSizeChange = vi.fn();
       render(

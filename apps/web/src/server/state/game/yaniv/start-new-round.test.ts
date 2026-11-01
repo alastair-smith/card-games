@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
@@ -16,6 +16,7 @@ import {
   GameStage,
   type GameState,
   GameStep,
+  RANDOM_HAND_SIZE,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
 
@@ -231,6 +232,41 @@ describe('startNewRound', () => {
     await startNewRound(CODE, USER_1);
 
     expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenCalledWith(CODE, 7);
+  });
+
+  describe('when the hand size is random', () => {
+    const randomSettings = {
+      handSize: RANDOM_HAND_SIZE,
+      handSizeRange: { min: 2, max: 4 },
+    } as const;
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test('deals every player a new size of hand from within the range', async () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.999_999);
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({ settings: randomSettings, handSize: 2 }),
+      );
+
+      await startNewRound(CODE, USER_1);
+
+      expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenCalledTimes(2);
+      expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenNthCalledWith(
+        1,
+        CODE,
+        4,
+      );
+      expect(vi.mocked(yanivDeck.drawCards)).toHaveBeenNthCalledWith(
+        2,
+        CODE,
+        4,
+      );
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        handSize: 4,
+      });
+    });
   });
 
   test('deals hands to all players', async () => {

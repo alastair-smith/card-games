@@ -1,13 +1,15 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { expectInProgressState } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
   GameStage,
   GameStep,
-  type HandSizeSetting,
   MAX_PLAYERS,
+  RANDOM_HAND_SIZE,
+  type Settings,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 
@@ -56,12 +58,12 @@ const PLAYER_2 = 'user-2' as UserId;
 
 const makeLobby = (
   players = [HOST, PLAYER_2],
-  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
+  settings: Partial<Settings> = {},
 ) => ({
   code: CODE,
   type: GameType.YANIV,
   host: HOST,
-  settings,
+  settings: { ...DEFAULT_SETTINGS, ...settings },
   players: players.map((id) => ({ id, name: `Player ${id}`, isReady: true })),
   isGameStarted: false,
 });
@@ -210,10 +212,43 @@ describe('startGame', () => {
       { code: CODE },
       expect.objectContaining({
         dealerId: HOST,
-        settings: { handSize: DEFAULT_HAND_SIZE },
+        settings: DEFAULT_SETTINGS,
       }),
       TRANSACTION,
     );
+  });
+
+  describe('when the hand size is random', () => {
+    beforeEach(() => {
+      mockGetLobby.mockResolvedValue(
+        makeLobby([HOST, PLAYER_2], {
+          handSize: RANDOM_HAND_SIZE,
+          handSizeRange: { min: 2, max: 4 },
+        }),
+      );
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test('deals every player the same size of hand from within the range', async () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.5);
+
+      await startGame(CODE, HOST);
+
+      expect(mockDrawCards).toHaveBeenCalledTimes(2);
+      expect(mockDrawCards).toHaveBeenNthCalledWith(1, CODE, 3);
+      expect(mockDrawCards).toHaveBeenNthCalledWith(2, CODE, 3);
+      expect(mockSetYanivState).toHaveBeenCalledWith(
+        { code: CODE },
+        expect.objectContaining({
+          gameStep: GameStep.PLAY_CARDS,
+          handSize: 3,
+        }),
+        TRANSACTION,
+      );
+    });
   });
 
   describe('when the winner chooses the hand size', () => {

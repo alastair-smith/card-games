@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import { useEffect, useRef } from 'react';
 
 const SERVER_VALUE_TIMEOUT_MS = 5000;
@@ -8,10 +9,10 @@ const SERVER_VALUE_TIMEOUT_MS = 5000;
  * mutation callback to hold the mutation pending until the change lands.
  *
  * @example
- * const waitForHandSize = useWaitForServerValue(handSize);
+ * const waitForSettings = useWaitForServerValue(settings);
  *
  * api.yaniv.updateSettings.useMutation({
- *   onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+ *   onSuccess: (_data, variables) => waitForSettings(variables.settings),
  * });
  */
 export function useWaitForServerValue<Value>(serverValue: Value) {
@@ -22,7 +23,7 @@ export function useWaitForServerValue<Value>(serverValue: Value) {
     latestServerValue.current = serverValue;
 
     waiting.current = waiting.current.filter((waiter) => {
-      if (waiter.value !== serverValue) {
+      if (!isEqual(waiter.value, serverValue)) {
         return true;
       }
 
@@ -33,7 +34,7 @@ export function useWaitForServerValue<Value>(serverValue: Value) {
 
   return (value: Value) =>
     new Promise<void>((resolve) => {
-      if (latestServerValue.current === value) {
+      if (isEqual(latestServerValue.current, value)) {
         resolve();
         return;
       }

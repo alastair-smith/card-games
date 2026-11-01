@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, GameUpdate } from '~/types/game';
 import {
-  DEFAULT_HAND_SIZE,
-  type HandSizeSetting,
+  DEFAULT_SETTINGS,
   MAX_PLAYERS,
+  type Settings,
 } from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
@@ -32,14 +32,11 @@ const HOST_ID = 'host-1' as UserId;
 const USER_ID = 'user-2' as UserId;
 const NEW_PLAYER_NAME = 'Brave Otter';
 
-const makeLobby = (
-  playerIds: UserId[],
-  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
-) => ({
+const makeLobby = (playerIds: UserId[], settings: Partial<Settings> = {}) => ({
   code: CODE,
   type: GameType.YANIV,
   host: HOST_ID,
-  settings,
+  settings: { ...DEFAULT_SETTINGS, ...settings },
   players: playerIds.map((id) => ({
     id,
     name: `Player ${id}`,
@@ -70,7 +67,7 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
     expect(mockSetLobby).not.toHaveBeenCalled();
   });
@@ -84,7 +81,7 @@ describe('joinGame', () => {
         expect.objectContaining({ id: HOST_ID, isHost: true }),
         expect.objectContaining({ id: USER_ID, isHost: false }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
   });
 
@@ -147,7 +144,7 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
   });
 
