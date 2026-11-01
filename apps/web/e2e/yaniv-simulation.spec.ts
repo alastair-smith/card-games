@@ -8,7 +8,9 @@ import {
 } from '../src/types/cards';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_HAND_SIZE_RANGE,
   MIN_HAND_SIZE,
+  RANDOM_HAND_SIZE,
   WINNER_CHOOSES_HAND_SIZE,
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
@@ -346,6 +348,27 @@ async function chooseRandomHandSize(page: Page): Promise<void> {
     .click({ timeout: 5_000 });
 }
 
+const E2E_HAND_SIZE_RANGE = { min: MIN_HAND_SIZE, max: 3 };
+
+/** Picks a random hand size and narrows its range with the Max steppers. */
+async function chooseRandomHandSizeRange(page: Page): Promise<void> {
+  await page.getByRole('radio', { name: /Random/ }).click();
+  const range = page.getByRole('group', { name: 'Hand size range' });
+  const max = range.getByRole('spinbutton', { name: 'Max' });
+  await expect(range.getByRole('spinbutton', { name: 'Min' })).toHaveAttribute(
+    'aria-valuenow',
+    String(E2E_HAND_SIZE_RANGE.min),
+  );
+  for (
+    let value = DEFAULT_HAND_SIZE_RANGE.max;
+    value > E2E_HAND_SIZE_RANGE.max;
+    value--
+  ) {
+    await range.getByRole('button', { name: 'Decrease Max' }).click();
+    await expect(max).toHaveAttribute('aria-valuenow', String(value - 1));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Test
 // ---------------------------------------------------------------------------
@@ -355,6 +378,8 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
 }) => {
   const isWinnerChoosingHandSize =
     test.info().project.metadata.handSize === WINNER_CHOOSES_HAND_SIZE;
+  const isHandSizeRandom =
+    test.info().project.metadata.handSize === RANDOM_HAND_SIZE;
 
   const ctx1 = await browser.newContext();
   const ctx2 = await browser.newContext();
@@ -378,6 +403,17 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
   if (isWinnerChoosingHandSize) {
     await p1.getByRole('radio', { name: /Winner Chooses/ }).click();
     await expect(p2.getByRole('radio', { name: /Winner Chooses/ })).toBeChecked(
+      { timeout: 15_000 },
+    );
+  }
+
+  // The host deals a random hand size each hand, from a narrow range of small
+  // hands so the game finishes in time
+  if (isHandSizeRandom) {
+    await chooseRandomHandSizeRange(p1);
+    await expect(p2.getByRole('spinbutton', { name: 'Max' })).toHaveAttribute(
+      'aria-valuenow',
+      String(E2E_HAND_SIZE_RANGE.max),
       { timeout: 15_000 },
     );
   }

@@ -125,6 +125,16 @@ and CI skip it:
 pnpm --filter @repo/web test:e2e --project=chromium-desktop-winner-chooses
 ```
 
+To play one where each hand deals a random size from a 1–3 card range, run
+the other opt-in project after changing that flow:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop-random
+```
+
+These projects share the dev server and the results folder, so run them one
+at a time.
+
 ### Dev servers
 
 Use the `dev-servers` skill to start, wait for and stop the app (port 3000),
