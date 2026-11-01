@@ -329,13 +329,18 @@ async function chooseRandomHandSize(page: Page): Promise<void> {
   const handSize =
     MIN_HAND_SIZE +
     Math.floor(Math.random() * (DEFAULT_HAND_SIZE - MIN_HAND_SIZE + 1));
-  const slider = page.getByRole('slider', { name: 'Hand size' });
-  await expect(slider).toHaveValue(String(DEFAULT_HAND_SIZE));
-  await slider.focus();
+  const handSizes = page.getByRole('radiogroup', { name: 'Hand size' });
+  const defaultHandSize = handSizes.getByRole('radio', {
+    name: String(DEFAULT_HAND_SIZE),
+  });
+  await expect(defaultHandSize).toBeChecked();
+  await defaultHandSize.focus();
   for (let step = handSize; step < DEFAULT_HAND_SIZE; step++) {
-    await slider.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
   }
-  await expect(slider).toHaveValue(String(handSize));
+  await expect(
+    handSizes.getByRole('radio', { name: String(handSize) }),
+  ).toBeChecked();
   await page
     .getByRole('button', { name: /^(Deal|Choose) \d+ cards?$/ })
     .click({ timeout: 5_000 });

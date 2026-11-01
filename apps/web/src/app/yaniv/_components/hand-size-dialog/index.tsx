@@ -4,6 +4,10 @@ import { ArrowRightCircleIcon } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Button } from '~/components/ui/button';
 import {
+  ButtonGroupChoice,
+  ButtonGroupChoiceItem,
+} from '~/components/ui/button-group';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -12,13 +16,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-import { Slider } from '~/components/ui/slider';
 import {
   DEFAULT_HAND_SIZE,
   type HandSize,
   MAX_HAND_SIZE,
   MIN_HAND_SIZE,
 } from '~/types/games/yaniv';
+
+const HAND_SIZES: HandSize[] = Array.from(
+  { length: MAX_HAND_SIZE - MIN_HAND_SIZE + 1 },
+  (_, index) => MIN_HAND_SIZE + index,
+);
 
 type HandSizeDialogProps = {
   className?: string;
@@ -45,6 +53,11 @@ export function HandSizeDialog({
     setIsOpen(nextIsOpen);
   };
 
+  const handleHandSizeChange = (value: string) => {
+    const size = HAND_SIZES.find((option) => String(option) === value);
+    if (size !== undefined) setHandSize(size);
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isPending) return;
@@ -61,7 +74,9 @@ export function HandSizeDialog({
           <ArrowRightCircleIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      {/* Less padding on smaller screens leaves the 10 buttons room to reach
+          the minimum target size */}
+      <DialogContent className='p-4 sm:p-6'>
         <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
           <DialogHeader>
             <DialogTitle>Choose the hand size</DialogTitle>
@@ -69,14 +84,24 @@ export function HandSizeDialog({
               How many cards each player is dealt next round.
             </DialogDescription>
           </DialogHeader>
-          <Slider
+          <ButtonGroupChoice
+            className='w-full'
             label='Hand size'
-            min={MIN_HAND_SIZE}
-            max={MAX_HAND_SIZE}
-            value={handSize}
-            onValueChange={setHandSize}
+            value={String(handSize)}
+            onValueChange={handleHandSizeChange}
             isDisabled={isPending}
-          />
+          >
+            {HAND_SIZES.map((size) => (
+              <ButtonGroupChoiceItem
+                key={size}
+                value={String(size)}
+                // Shares the width evenly, so all 10 fit on smaller screens
+                className='min-w-0 flex-1 px-0'
+              >
+                {size}
+              </ButtonGroupChoiceItem>
+            ))}
+          </ButtonGroupChoice>
           <DialogFooter>
             <Button type='submit' disabled={isPending}>
               {isDealer ? `Deal ${cardsText}` : `Choose ${cardsText}`}

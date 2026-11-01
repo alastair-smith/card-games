@@ -26,8 +26,7 @@ const openDialog = (canvasElement: HTMLElement) =>
 export const Dealer: Story = {
   play: async ({ canvasElement }) => {
     await openDialog(canvasElement);
-    screen.getByRole('slider', { name: 'Hand size' }).focus();
-    await userEvent.keyboard('{ArrowRight}{ArrowRight}');
+    await userEvent.click(screen.getByRole('radio', { name: '7' }));
 
     await expect(
       screen.getByRole('button', { name: 'Deal 7 cards' }),
