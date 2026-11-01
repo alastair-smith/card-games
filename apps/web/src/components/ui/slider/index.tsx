@@ -36,6 +36,7 @@ export function Slider({
       max={max}
       step={step}
       disabled={isDisabled}
+      // Leaves out base-ui's event details, so callers get just the value
       onValueChange={(newValue) => onValueChange?.(newValue)}
       className={cn(
         'flex w-full flex-col gap-2 data-disabled:opacity-50',

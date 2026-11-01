@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
-// Each play function leaves the dialog open, to show it
 import { HandSizeDialog } from '.';
+
+// Each play function leaves the dialog open, to show it
 
 const meta = {
   title: 'Yaniv / Hand Size Dialog',
@@ -29,6 +30,20 @@ export const Dealer: Story = {
     await expect(
       screen.getByRole('button', { name: 'Deal 7 cards' }),
     ).toBeInTheDocument();
+  },
+};
+
+// The choice is on its way to the server, so it can't be sent twice.
+export const Pending: Story = {
+  args: { isPending: true },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Start new round' }),
+    );
+
+    await expect(
+      screen.getByRole('button', { name: 'Deal 5 cards' }),
+    ).toBeDisabled();
   },
 };
 

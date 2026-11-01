@@ -58,7 +58,9 @@ export default function YanivGameController({
   const pickupCardMutation = api.yaniv.pickupCard.useMutation();
   const callYanivMutation = api.yaniv.callYaniv.useMutation();
   const startNewRoundMutation = api.yaniv.startNewRound.useMutation();
-  const chooseHandSizeMutation = api.yaniv.chooseHandSize.useMutation();
+  const chooseHandSizeMutation = api.yaniv.chooseHandSize.useMutation({
+    onError: (error) => toast.error(error.message),
+  });
   const endTurnMutation = api.yaniv.endTurn.useMutation({
     onError: (error) => toast.error(error.message),
   });
@@ -231,6 +233,7 @@ export default function YanivGameController({
       onYanivClick={handleCallYaniv}
       onPlayCards={handlePlayCards}
       onChooseHandSize={handleChooseHandSize}
+      isHandSizeChoicePending={chooseHandSizeMutation.isPending}
       isDealer={isDealer}
       isRunSelected={isSelectedCardsRun}
       players={players}

@@ -286,7 +286,14 @@ async function tryTakeTurn(
     name: /^(Start new round|Choose hand size)$/,
   });
   if (await startRoundBtn.isVisible()) {
+    let isChoosingHandSize: boolean;
     try {
+      // The winner who also deals sees "Start new round" too, so only the
+      // dialog's trigger says whether a dialog opens
+      isChoosingHandSize =
+        (await startRoundBtn.getAttribute('aria-haspopup', {
+          timeout: 5_000,
+        })) === 'dialog';
       // Use a short timeout so React re-render flickers don't cause an infinite retry
       await startRoundBtn.click({ timeout: 5_000 });
     } catch {
@@ -294,14 +301,11 @@ async function tryTakeTurn(
       return false;
     }
 
-    const handSizeDialog = page.getByRole('dialog', {
-      name: 'Choose the hand size',
-    });
-    const isChoosingHandSize = await handSizeDialog
-      .waitFor({ state: 'visible', timeout: 2_000 })
-      .then(() => true)
-      .catch(() => false);
     if (isChoosingHandSize) {
+      const handSizeDialog = page.getByRole('dialog', {
+        name: 'Choose the hand size',
+      });
+      await handSizeDialog.waitFor({ state: 'visible' });
       await chooseRandomHandSize(page);
       // The open dialog hides the button from role queries, so wait for it
       // to close before waiting for the button

@@ -4,7 +4,7 @@ import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep } from '~/types/games/yaniv';
-import { dealRound } from './lib/deal-round';
+import { dealNextRound } from './lib/deal-round';
 
 export const startNewRound = async (code: GameCode, userId: UserId) =>
   withLock('yaniv', code, async () => {
@@ -18,16 +18,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) =>
     if (state.currentPlayerId !== userId) throw new Error('Not your turn');
     if (state.handSize === null) throw new Error('Hand size not chosen');
 
-    const players = await dealRound(code, state.players, state.handSize);
-
-    const newState = {
-      ...state,
-      players,
-      playedCards: [],
-      drawnCard: undefined,
-      drawnFrom: null,
-      gameStep: GameStep.PLAY_CARDS,
-    };
+    const newState = await dealNextRound(code, state, state.handSize);
 
     await setYanivState({ code }, newState);
     await publishYanivState(code, newState);

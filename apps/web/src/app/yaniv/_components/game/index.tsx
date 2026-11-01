@@ -70,6 +70,7 @@ type GameProps = {
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
   onChooseHandSize: (handSize: HandSize) => void;
+  isHandSizeChoicePending?: boolean;
   isDealer: boolean;
   isRunSelected?: boolean;
   drawnCard?: YanivPlayingCard | undefined;
@@ -105,6 +106,7 @@ export default function Game({
   onYanivClick,
   onPlayCards,
   onChooseHandSize,
+  isHandSizeChoicePending = false,
   isDealer,
   isRunSelected,
   onCardToggle,
@@ -209,6 +211,7 @@ export default function Game({
     isRunSelected,
     handTotal: isHandHidden ? undefined : handTotal,
     isDealer,
+    isHandSizeChoicePending,
     onChooseHandSize,
     onEndTurnClick,
     onYanivClick,

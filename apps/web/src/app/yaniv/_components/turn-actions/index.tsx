@@ -16,6 +16,7 @@ type TurnActionsProps = {
   isRunSelected?: boolean | undefined;
   handTotal?: number | undefined;
   isDealer: boolean;
+  isHandSizeChoicePending?: boolean;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
@@ -30,6 +31,7 @@ export function TurnActions({
   isRunSelected,
   handTotal,
   isDealer,
+  isHandSizeChoicePending = false,
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
@@ -93,6 +95,7 @@ export function TurnActions({
       {stage === GameViewStage.CHOOSING_HAND_SIZE && (
         <HandSizeDialog
           isDealer={isDealer}
+          isPending={isHandSizeChoicePending}
           onChooseHandSize={onChooseHandSize}
         />
       )}

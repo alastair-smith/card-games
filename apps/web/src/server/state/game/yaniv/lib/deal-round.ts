@@ -2,7 +2,12 @@ import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { deckWithJokers } from '~/types/cards';
 import type { GameCode } from '~/types/game';
-import type { GameStage, GameState, HandSize } from '~/types/games/yaniv';
+import {
+  type GameStage,
+  type GameState,
+  GameStep,
+  type HandSize,
+} from '~/types/games/yaniv';
 import { shuffle } from '~/utils/cards/index';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
@@ -35,3 +40,18 @@ export const dealRound = async (
 
   return dealtPlayers;
 };
+
+/** Deals the next round, starting with the player whose turn it already is. */
+export const dealNextRound = async (
+  code: GameCode,
+  state: InProgressState,
+  handSize: HandSize,
+): Promise<InProgressState> => ({
+  ...state,
+  handSize,
+  players: await dealRound(code, state.players, handSize),
+  playedCards: [],
+  drawnCard: undefined,
+  drawnFrom: null,
+  gameStep: GameStep.PLAY_CARDS,
+});

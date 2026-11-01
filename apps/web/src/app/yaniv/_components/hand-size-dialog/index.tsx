@@ -23,13 +23,18 @@ import {
 type HandSizeDialogProps = {
   className?: string;
   isDealer: boolean;
+  isPending?: boolean;
   onChooseHandSize: (handSize: HandSize) => void;
 };
 
-/** Lets the winner of the last hand pick how many cards are dealt next. */
+/**
+ * Lets the winner of the last hand pick how many cards are dealt next. It
+ * stays open until the round moves on, so a failed choice can be retried.
+ */
 export function HandSizeDialog({
   className,
   isDealer,
+  isPending = false,
   onChooseHandSize,
 }: HandSizeDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +47,7 @@ export function HandSizeDialog({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsOpen(false);
+    if (isPending) return;
     onChooseHandSize(handSize);
   };
 
@@ -70,9 +75,10 @@ export function HandSizeDialog({
             max={MAX_HAND_SIZE}
             value={handSize}
             onValueChange={setHandSize}
+            isDisabled={isPending}
           />
           <DialogFooter>
-            <Button type='submit'>
+            <Button type='submit' disabled={isPending}>
               {isDealer ? `Deal ${cardsText}` : `Choose ${cardsText}`}
             </Button>
           </DialogFooter>

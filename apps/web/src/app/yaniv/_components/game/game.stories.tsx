@@ -266,6 +266,7 @@ export const ChoosingFirstHandSize: Story = {
         score: 0,
         roundScores: [],
         isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
       })),
     ),
     cards: [],

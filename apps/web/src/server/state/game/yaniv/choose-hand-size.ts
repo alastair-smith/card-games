@@ -4,7 +4,7 @@ import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep, type HandSize } from '~/types/games/yaniv';
-import { dealRound } from './lib/deal-round';
+import { dealNextRound } from './lib/deal-round';
 
 export const chooseHandSize = async (
   code: GameCode,
@@ -24,15 +24,7 @@ export const chooseHandSize = async (
     // A dealer choosing deals straight away; otherwise the dealer deals next
     const newState =
       state.dealerId === userId
-        ? {
-            ...state,
-            handSize,
-            players: await dealRound(code, state.players, handSize),
-            playedCards: [],
-            drawnCard: undefined,
-            drawnFrom: null,
-            gameStep: GameStep.PLAY_CARDS,
-          }
+        ? await dealNextRound(code, state, handSize)
         : {
             ...state,
             handSize,

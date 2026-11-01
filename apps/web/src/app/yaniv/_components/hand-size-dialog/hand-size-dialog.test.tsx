@@ -32,6 +32,33 @@ describe('HandSizeDialog', () => {
       expect(handleChooseHandSize).toHaveBeenCalledOnce();
       expect(handleChooseHandSize).toHaveBeenCalledWith(6);
     });
+
+    test('stays open after choosing, until the round is dealt', () => {
+      render(<HandSizeDialog isDealer onChooseHandSize={noop} />);
+      openDialog('Start new round');
+
+      fireEvent.click(screen.getByRole('button', { name: 'Deal 5 cards' }));
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    test('cannot choose again while the choice is being sent', () => {
+      const handleChooseHandSize = vi.fn();
+      render(
+        <HandSizeDialog
+          isDealer
+          isPending
+          onChooseHandSize={handleChooseHandSize}
+        />,
+      );
+      openDialog('Start new round');
+
+      const dealButton = screen.getByRole('button', { name: 'Deal 5 cards' });
+      fireEvent.click(dealButton);
+
+      expect(dealButton).toBeDisabled();
+      expect(handleChooseHandSize).not.toHaveBeenCalled();
+    });
   });
 
   describe('when someone else deals the next round', () => {

@@ -20,6 +20,7 @@ vi.mock('~/components/ui/toast', () => ({
 }));
 
 const mutate = vi.fn();
+let chooseHandSizeOptions: { onError?: (error: Error) => void } = {};
 vi.mock('~/trpc/react', () => ({
   api: {
     yaniv: {
@@ -27,7 +28,12 @@ vi.mock('~/trpc/react', () => ({
       pickupCard: { useMutation: () => ({ mutate }) },
       callYaniv: { useMutation: () => ({ mutate }) },
       startNewRound: { useMutation: () => ({ mutate }) },
-      chooseHandSize: { useMutation: () => ({ mutate }) },
+      chooseHandSize: {
+        useMutation: (options: typeof chooseHandSizeOptions) => {
+          chooseHandSizeOptions = options;
+          return { mutate, isPending: false };
+        },
+      },
       endTurn: { useMutation: () => ({ mutate }) },
       triggerEmoji: { useMutation: () => ({ mutate }) },
     },
@@ -293,6 +299,17 @@ describe('YanivGameController', () => {
       fireEvent.click(screen.getByTestId('choose-hand-size'));
       expect(mutate).toHaveBeenCalledOnce();
       expect(mutate).toHaveBeenCalledWith({ code: CODE, handSize: 3 });
+    });
+
+    test('shows the error when the hand size could not be chosen', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      act(() => chooseHandSizeOptions.onError?.(new Error('Not your turn')));
+      expect(toast.error).toHaveBeenCalledWith('Not your turn');
     });
   });
 
