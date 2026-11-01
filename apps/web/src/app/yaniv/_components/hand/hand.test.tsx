@@ -45,7 +45,7 @@ const defaultProps = {
   isFiftyScoreHalved: false,
   totalScore: 0,
   isActive: false,
-  isFaceDown: false,
+  isHandHidden: false,
   onVisibilityToggle: noop,
 };
 
@@ -140,19 +140,19 @@ describe('Hand', () => {
 
   describe('face down', () => {
     test('turns every card face down', () => {
-      render(<Hand {...defaultProps} isFaceDown />);
+      render(<Hand {...defaultProps} isHandHidden />);
       expect(within(getHand()).queryAllByRole('button')).toHaveLength(0);
       expect(within(getHand()).getAllByRole('img')).toHaveLength(3);
     });
 
     test('hides the hand total', () => {
-      render(<Hand {...defaultProps} isFaceDown />);
+      render(<Hand {...defaultProps} isHandHidden />);
       expect(screen.getByText(', hidden')).toBeInTheDocument();
       expect(screen.getByLabelText('Hand total')).toHaveClass('invisible');
     });
 
     test('still shows the total score', () => {
-      render(<Hand {...defaultProps} totalScore={23} isFaceDown />);
+      render(<Hand {...defaultProps} totalScore={23} isHandHidden />);
       expect(screen.getByText('23')).toBeInTheDocument();
     });
 

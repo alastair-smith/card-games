@@ -13,7 +13,6 @@ type TurnActionsProps = {
   className?: string;
   stage: GameViewStage;
   isRunSelected?: boolean | undefined;
-  /** Shown in the Yaniv button, when given. */
   handTotal?: number | undefined;
   onEndTurnClick: () => void;
   onYanivClick: () => void;

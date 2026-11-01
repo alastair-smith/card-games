@@ -17,7 +17,7 @@ type HandProps = {
   isFiftyScoreHalved: boolean;
   totalScore: number;
   isActive: boolean;
-  isFaceDown: boolean;
+  isHandHidden: boolean;
   onCardClick?: ((card: HandCard) => void) | undefined;
   onVisibilityToggle: () => void;
 };
@@ -35,7 +35,7 @@ export function Hand({
   isFiftyScoreHalved,
   totalScore,
   isActive,
-  isFaceDown,
+  isHandHidden,
   onCardClick,
   onVisibilityToggle,
 }: HandProps) {
@@ -56,13 +56,13 @@ export function Hand({
         <HandSummary
           className='flex-1'
           handTotal={handTotal}
-          isHandTotalHidden={isFaceDown}
+          isHandTotalHidden={isHandHidden}
           totalScore={totalScore}
           isFiftyScoreHalved={isFiftyScoreHalved}
         />
         <ToggleVisibilityButton
           className='hidden lg:flex'
-          isFaceDown={isFaceDown}
+          isHandHidden={isHandHidden}
           onClick={onVisibilityToggle}
         />
       </div>
@@ -75,10 +75,12 @@ export function Hand({
         {sortedCards.map((card) => (
           <li key={`${card.suit}-${card.rank}`} className='flex'>
             <PlayingCard
-              card={isFaceDown ? null : card}
-              highlighted={card.selected && !isFaceDown}
+              card={isHandHidden ? null : card}
+              highlighted={card.selected && !isHandHidden}
               onClick={
-                onCardClick && !isFaceDown ? () => onCardClick(card) : undefined
+                onCardClick && !isHandHidden
+                  ? () => onCardClick(card)
+                  : undefined
               }
             />
           </li>

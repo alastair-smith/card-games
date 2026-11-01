@@ -4,14 +4,14 @@ import { cn } from '~/utils/cn';
 
 type ToggleVisibilityButtonProps = {
   className?: string;
-  isFaceDown: boolean;
+  isHandHidden: boolean;
   onClick: () => void;
 };
 
 /** Turns your cards face down, for when someone could see your screen. */
 export function ToggleVisibilityButton({
   className,
-  isFaceDown,
+  isHandHidden,
   onClick,
 }: ToggleVisibilityButtonProps) {
   return (
@@ -21,10 +21,10 @@ export function ToggleVisibilityButton({
       onClick={onClick}
       className={cn('shrink-0', className)}
     >
-      {isFaceDown ? <EyeIcon /> : <EyeOffIcon />}
+      {isHandHidden ? <EyeIcon /> : <EyeOffIcon />}
       Toggle visibility
       <span className='sr-only'>
-        , your cards are {isFaceDown ? 'face down' : 'face up'}
+        , your cards are {isHandHidden ? 'face down' : 'face up'}
       </span>
     </Button>
   );
