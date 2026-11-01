@@ -1,4 +1,5 @@
 import { UserRoundIcon } from 'lucide-react';
+import { MiniCard } from '~/components/ui/mini-card';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import { cn } from '~/utils/cn';
 import { type PlayerColor, playerColorValue } from '~/utils/player-color';
@@ -45,12 +46,7 @@ export function PlayerTag({
         <span className='whitespace-nowrap font-extrabold text-white text-outline-black'>
           {name}
         </span>
-        <span
-          aria-hidden='true'
-          className='grid h-[1.9em] w-[1.4em] place-items-center rounded-[3px] border border-black/40 bg-true-white font-bold text-slate'
-        >
-          {cardCount}
-        </span>
+        <MiniCard aria-hidden='true'>{cardCount}</MiniCard>
         <span className='sr-only'>, {cardCount} cards</span>
 
         {isYanivCalled && (
