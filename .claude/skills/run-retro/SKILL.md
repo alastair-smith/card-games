@@ -82,10 +82,10 @@ back in a later retro.
 
 ## 4. Decide where each fix belongs
 
-Check what reads a file, and when, before proposing it. For example,
-`REVIEW.md` is read only by the Code Review service, not by `/code-review`,
-and a skill is read only when its workflow starts, so a rule about how to
-build something belongs in `CLAUDE.md`, not in `raise-pr`.
+Check what reads a file, and when, before proposing it. For example, a skill
+is read only when its workflow starts, so a rule about how to build something
+belongs in `CLAUDE.md`, which every conversation reads, not in `raise-pr`,
+which is read only once the work is done.
 
 Before proposing a fix, search open issues for one that already covers it,
 and before proposing a script for a command, check whether the allowlist
