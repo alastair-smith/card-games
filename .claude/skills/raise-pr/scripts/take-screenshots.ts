@@ -10,7 +10,7 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog]) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
@@ -31,6 +31,7 @@ const {
   'full-page': isFullPage = false,
   'scroll-to-bottom': isScrollingToBottom = false,
   theme = 'light',
+  dialog: isDialog = false,
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
@@ -40,6 +41,7 @@ const {
     'full-page': { type: 'boolean' },
     'scroll-to-bottom': { type: 'boolean' },
     theme: { type: 'string' },
+    dialog: { type: 'boolean' },
   },
 }).values;
 
@@ -70,6 +72,12 @@ if (isFullPage && isScrollingToBottom) {
 if (story && (isFullPage || isScrollingToBottom)) {
   exitWithError(
     '--full-page and --scroll-to-bottom only apply to --path and --docs, since --story captures just the component.',
+  );
+}
+
+if (isDialog && !story) {
+  exitWithError(
+    '--dialog only applies to --story, whose play function opens the dialog.',
   );
 }
 
@@ -240,6 +248,57 @@ async function captureStory(page: Page, file: string) {
   });
 }
 
+const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
+
+// Dialogs zoom in as they open. Looping animations, such as a pulse, never
+// finish, so only wait for the rest
+const OPENING_ANIMATIONS_SCRIPT = `Promise.all(
+  document
+    .getAnimations()
+    .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+    .map((animation) => animation.finished),
+)`;
+
+// A dialog renders in a portal outside the story's root, so crop to the
+// dialog itself, framed by the overlay behind it
+async function captureDialog(page: Page, file: string) {
+  const dialog = page.locator(DIALOG_SELECTOR).first();
+  try {
+    await dialog.waitFor({ state: 'visible', timeout: 10_000 });
+  } catch {
+    exitWithError(
+      `The story '${story}' didn't open a dialog. Its play function needs to open one.`,
+    );
+  }
+  await page.evaluate(OPENING_ANIMATIONS_SCRIPT);
+
+  const bounds = boundsSchema.safeParse(await dialog.boundingBox());
+  if (!bounds.success) {
+    exitWithError(`The dialog in '${story}' has no visible size.`);
+  }
+
+  const viewport = page.viewportSize();
+  const x = Math.max(bounds.data.x - STORY_PADDING, 0);
+  const y = Math.max(bounds.data.y - STORY_PADDING, 0);
+  const right = bounds.data.x + bounds.data.width + STORY_PADDING;
+  const bottom = bounds.data.y + bounds.data.height + STORY_PADDING;
+  await page.screenshot({
+    path: file,
+    clip: {
+      x,
+      y,
+      width: Math.min(right, viewport?.width ?? right) - x,
+      height: Math.min(bottom, viewport?.height ?? bottom) - y,
+    },
+  });
+}
+
+function capture(page: Page, file: string) {
+  if (isDialog) return captureDialog(page, file);
+  if (story) return captureStory(page, file);
+  return capturePage(page, file);
+}
+
 const url = getUrl();
 const branch = await getIssueBranch();
 const directory = `.pr-screenshots/${branch}`;
@@ -267,7 +326,7 @@ try {
     }
 
     const file = `${directory}/${name}-${size.label}.png`;
-    await (story ? captureStory(page, file) : capturePage(page, file));
+    await capture(page, file);
     console.log(file);
 
     await context.close();

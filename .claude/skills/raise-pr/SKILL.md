@@ -62,6 +62,7 @@ Start the one you need if it isn't running, with the `dev-servers` skill:
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-hand-size-dialog--dealer --dialog --name hand-size-dialog
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --theme dark
 ```
 
@@ -77,6 +78,9 @@ shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+- **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
+  renders outside the story's own area. The story's `play` function must
+  open it and leave it open
 - **Docs:** `--docs` takes a path on the docs site and works like `--path`.
   Screenshots are light by default; pass `--theme dark` for dark mode. Only
   the docs site has a dark theme so far, so the script rejects it elsewhere
@@ -107,14 +111,15 @@ columns, and write the alt text in the reference:
 | Full lobby  | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) | ![Full lobby, mobile](.pr-screenshots/i-123/lobby/lobby-mobile.png) |
 ```
 
-When something changed, show it before and after. Take the previous
-screenshots on the issue branch before changing anything, since the script
-doesn't run on `main`, named `<name>-previous`:
+When something changed, show it before and after, as a row each. Take the
+previous screenshots on the issue branch before changing anything, since the
+script doesn't run on `main`, named `<name>-previous`:
 
 ```md
-| Description         | Previous                           | Updated                   |
-| :------------------ | ---------------------------------- | ------------------------- |
-| Full lobby, desktop | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-desktop.png) |
+| Description          | Desktop                            | Mobile                            |
+| :------------------- | ---------------------------------- | --------------------------------- |
+| Full lobby, previous | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-previous-mobile.png) |
+| Full lobby, updated  | ![…](…/lobby-desktop.png)          | ![…](…/lobby-mobile.png)          |
 ```
 ## Create
 
