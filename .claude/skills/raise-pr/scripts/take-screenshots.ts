@@ -213,19 +213,51 @@ const STORY_BOUNDS_SCRIPT = `(() => {
 // Matches the decorator's p-4, so the felt background frames the component
 const STORY_PADDING = 16;
 
-async function captureStory(page: Page, file: string) {
+// Storybook finishes a story once its play function has run and its CSS
+// animations have ended
+const STORY_FINISHED_SCRIPT = `window.__STORYBOOK_PREVIEW__?.currentRender?.phase === 'finished'`;
+
+// Movement driven from JavaScript, such as a carousel sliding to the tab a
+// play function picked, isn't something Storybook waits for, so wait until
+// nothing moves between two frames
+const LAYOUT_SETTLED_SCRIPT = `new Promise((resolve) => {
+  const getPositions = () =>
+    [...document.querySelectorAll('#storybook-root *, [role="dialog"] *')]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left + ',' + rect.top;
+      })
+      .join('|');
+  let previous = getPositions();
+  const check = () =>
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const current = getPositions();
+        if (current === previous) resolve(true);
+        else {
+          previous = current;
+          check();
+        }
+      }),
+    );
+  check();
+})`;
+
+async function waitForStoryToSettle(page: Page) {
   try {
-    await page
-      .locator(
-        '#storybook-root > div > :not(section[aria-label^="Notifications"])',
-      )
-      .first()
-      .waitFor({ timeout: 10_000 });
+    await page.waitForFunction(STORY_FINISHED_SCRIPT, undefined, {
+      timeout: 15_000,
+    });
   } catch {
     exitWithError(
-      `The story '${story}' didn't render. Check its ID, which follows ?path=/story/ in Storybook's URL.`,
+      `The story '${story}' didn't finish. Check its ID, which follows ?path=/story/ in Storybook's URL, and that its play function passes.`,
     );
   }
+  await page.evaluate(LAYOUT_SETTLED_SCRIPT);
+}
+
+async function captureStory(page: Page, file: string) {
+  await waitForStoryToSettle(page);
 
   const bounds = boundsSchema.safeParse(
     await page.evaluate(STORY_BOUNDS_SCRIPT),
@@ -250,27 +282,16 @@ async function captureStory(page: Page, file: string) {
 
 const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
 
-// Dialogs zoom in as they open. Looping animations, such as a pulse, never
-// finish, so only wait for the rest
-const OPENING_ANIMATIONS_SCRIPT = `Promise.all(
-  document
-    .getAnimations()
-    .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
-    .map((animation) => animation.finished),
-)`;
-
 // A dialog renders in a portal outside the story's root, so crop to the
 // dialog itself, framed by the overlay behind it
 async function captureDialog(page: Page, file: string) {
+  await waitForStoryToSettle(page);
   const dialog = page.locator(DIALOG_SELECTOR).first();
-  try {
-    await dialog.waitFor({ state: 'visible', timeout: 10_000 });
-  } catch {
+  if (!(await dialog.isVisible())) {
     exitWithError(
-      `The story '${story}' didn't open a dialog. Its play function needs to open one.`,
+      `The story '${story}' didn't open a dialog. Its play function needs to open one and leave it open.`,
     );
   }
-  await page.evaluate(OPENING_ANIMATIONS_SCRIPT);
 
   const bounds = boundsSchema.safeParse(await dialog.boundingBox());
   if (!bounds.success) {
