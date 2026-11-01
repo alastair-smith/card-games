@@ -9,3 +9,12 @@ Each retro checks for them; see step 1 of `SKILL.md`.
 | Building a fix around an assumed cause or limitation (why something is slow, what an API can't do) without first testing it with a small experiment under the same conditions, e.g. a frame load queue for slowness that was really Vite's dev server | 2026-10-25 (`fa43661c-b9c7-42ea-b39f-bdad52e9aa35`), 2026-10-31 (`27975623-bfa0-4649-bdb7-f8f38c162130`, a width worked out from classes; its layout form is now a `CLAUDE.md` rule) | 0 |
 | Adding a story for an edge case another story already covers, e.g. a game story for stickers on every tag when the player strip's story already shows it | 2026-10-30 (`4d3d8f54-0392-416a-9118-7e8c83d1dfde`) | 1 |
 | Committing without checking that staging worked, so a commit goes out half done, e.g. `git add` failing on a path already removed with `git rm` while the commit went ahead | 2026-10-30 (`4d3d8f54-0392-416a-9118-7e8c83d1dfde`) | 1 |
+
+## Retro log
+
+One row per retro, to see whether the changes each retro makes are trending
+towards zero. Issues filed for ideas count as changes.
+
+| Date | Session | Points raised | Changes made |
+|:-|-|-|-|
+| 2026-11-01 | `27975623-bfa0-4649-bdb7-f8f38c162130` | 9, plus 2 in the retro of the retro | 11 rule or script changes and 3 issues, before the stricter bar in step 3 |

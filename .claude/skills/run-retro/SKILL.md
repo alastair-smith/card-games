@@ -1,9 +1,13 @@
 ---
 name: run-retro
-description: Run a retrospective on the current session, or a past one. Find corrections worth writing down, approval prompts to remove, commands worth scripting and process friction, agree each fix with the user, then run one retro of the retro. Use when the user asks for a retro or to review how a session went.
+description: Run a retrospective on the current session, or a past one. Find corrections worth writing down, approval prompts to remove, commands worth scripting and process friction, keep only the few that clear a strict bar, agree each fix with the user, then run a retro of the retro if the retro itself was corrected. Use when the user asks for a retro or to review how a session went.
 ---
 
 # Run a retro
+
+The aim is a workflow where most retros find nothing to change. Every point
+raised costs the user a decision and usually an issue or PR, so raise only
+what clears the bar in step 3, and say plainly when nothing does.
 
 ## 1. Gather evidence
 
@@ -24,8 +28,9 @@ allowlist. This lists every tool call the user approved or rejected by hand
 ```
 
 Then read `watch-list.md` next to this file. For each pattern on it, check
-whether it happened again this session. If it did, make it a point and
-propose a fix. If it didn't, add one to its count of retros without it.
+whether it happened again this session. If it did, it's now on its second
+sighting and a candidate for a change in step 3. If it didn't, add one to its
+count of retros without it.
 
 ## 2. Sort into categories
 
@@ -37,9 +42,35 @@ propose a fix. If it didn't, add one to its count of retros without it.
 4. **Repeated commands** worth a script
 5. **Process friction:** how the work was done, not the code
 
-Skip one-offs that won't recur.
+## 3. Decide what's worth a change
 
-## 3. Decide where each fix belongs
+Keep a point only if it cost something this session:
+
+- The user corrected you, or asked for something you'd left out
+- Work had to be redone
+- The same approval prompt came up repeatedly
+
+A mistake you caught yourself, or a reviewer's comment fixed in one round,
+doesn't count. Then sort what's left:
+
+- **Existing rule not followed:** if `CLAUDE.md` or a skill already covered
+  it clearly, don't add words. Name the rule in the recap and change nothing.
+  Reword a rule only where it was genuinely unclear.
+- **First sighting:** put it on the watch list rather than writing a rule. A
+  correction the user stated outright, such as "push and let CI run them", is
+  the exception: it can become a rule straight away.
+- **Second sighting**, from the watch list: a candidate for a change.
+
+Rank the candidates by what they cost: user corrections first, then redone
+work, then approval prompts. Propose at most 3 changes; the rest go on the
+watch list or are dropped, and the recap says which. Zero is a fine result:
+say "nothing worth changing" rather than looking for something to raise.
+
+Don't file issues for ideas a retro turns up, such as new tooling. Note them
+in the recap, and file one only if the user asks or the same friction comes
+back in a later retro.
+
+## 4. Decide where each fix belongs
 
 Check what reads a file, and when, before proposing it. For example,
 `REVIEW.md` is read only by the Code Review service, not by `/code-review`,
@@ -78,34 +109,36 @@ For example, if work was left out and the user then asked for it, check
 whether it was left out without being looked at, rather than drafting
 "ask first".
 
-## 4. Go through it with the user
+## 5. Go through it with the user
 
-List the points, one line each, then detail one at a time. Give each point's
-items as a checklist, and don't move on until every item has a decision: do
-it, skip it, leave it for later, or watch it. Ask for the decisions with the
+List the proposed changes, one line each, along with what you set aside in
+step 3 and why (existing rule, first sighting, over the cap), so the user can
+pull one back. Then detail one change at a time and don't move on until it
+has a decision: do it, skip it, or watch it. Ask for the decisions with the
 AskUserQuestion tool, offering those as options plus "Explain this point
 further". Its questions show apart from your message, so put the problem and
 the proposed change in plain words in the question itself. Keep each question
 to one problem and its fix, and leave bookkeeping such as watch-list counts
-out of it. When asked to
-explain further, explain again more simply; don't drop a point because it was
-hard to explain. Watch suits a pattern seen once
-that would only be worth a rule if it recurs: it goes on `watch-list.md`
-rather than into a rule. Changes follow the usual issue and branch
-rules; group small doc changes into one PR. Before filing the issue for them,
-show its title, labels and milestone, as the `manage-issue` skill asks.
+out of it. When asked to explain further, explain again more simply; don't
+drop a point because it was hard to explain.
 
-## 5. Recap
+Changes follow the usual issue and branch rules; put all of a retro's
+changes in one PR. Before filing the issue for them, show its title, labels
+and milestone, as the `manage-issue` skill asks.
 
-End with a table of every item, its decision, and where it landed: a PR or
-issue number, memory, the watch list, or dropped.
+## 6. Recap
+
+End with a table of every item, its decision, and where it landed: the PR,
+memory, the watch list, an existing rule, or dropped.
 
 Update `watch-list.md` in the retro's PR: add the patterns being watched,
-remove any that got a fix, and propose dropping any that have gone 5 retros
-without recurring.
+remove any that got a fix, propose dropping any that have gone 5 retros
+without recurring, and add a row to its retro log with the points raised and
+the changes made. If the changes aren't trending towards zero, say so.
 
-## 6. Retro of the retro
+## 7. Retro of the retro
 
-Once the recap is agreed, run steps 1 to 5 once more on the retro
-conversation itself, putting its fixes into this skill. Then stop: don't
+Only if the user corrected how the retro ran, run steps 1 to 6 once more on
+the retro conversation itself, putting its fixes into this skill. If the
+retro ran without corrections, skip this step. Either way, stop there: don't
 offer a retro of that one.
