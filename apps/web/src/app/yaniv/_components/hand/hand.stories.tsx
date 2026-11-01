@@ -24,7 +24,7 @@ const meta = {
     totalScore: 23,
     handTotal: 59,
     isActive: false,
-    isFaceDown: false,
+    isHandHidden: false,
     onCardClick: fn(),
     onVisibilityToggle: fn(),
   },
@@ -65,4 +65,4 @@ export const FullHand: Story = {
 export const YourTurn: Story = { args: { isActive: true } };
 
 /** Larger screens only: the toggle shows from 1024px wide. */
-export const FaceDown: Story = { args: { isFaceDown: true } };
+export const FaceDown: Story = { args: { isHandHidden: true } };

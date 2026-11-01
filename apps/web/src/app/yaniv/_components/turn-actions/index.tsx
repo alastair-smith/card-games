@@ -13,6 +13,7 @@ type TurnActionsProps = {
   className?: string;
   stage: GameViewStage;
   isRunSelected?: boolean | undefined;
+  handTotal?: number | undefined;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
@@ -24,6 +25,7 @@ export function TurnActions({
   className,
   stage,
   isRunSelected,
+  handTotal,
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
@@ -58,7 +60,16 @@ export function TurnActions({
       {stage === GameViewStage.END_TURN && (
         <>
           <Button onClick={onYanivClick}>
-            <MegaphoneIcon /> Yaniv!
+            <MegaphoneIcon />
+            <span>
+              Yaniv!
+              {handTotal !== undefined && (
+                <>
+                  <span aria-hidden='true'> ({handTotal})</span>
+                  <span className='sr-only'>, hand total {handTotal}</span>
+                </>
+              )}
+            </span>
           </Button>
           <Button onClick={onEndTurnClick}>
             End Turn

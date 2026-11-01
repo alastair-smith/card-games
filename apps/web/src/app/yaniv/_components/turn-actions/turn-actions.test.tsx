@@ -118,6 +118,26 @@ describe('TurnActions', () => {
       fireEvent.click(screen.getByRole('button', { name: /end turn/i }));
       expect(handleEndTurnClick).toHaveBeenCalledOnce();
     });
+
+    test('shows your hand total in the Yaniv button', () => {
+      render(
+        <TurnActions
+          {...baseProps}
+          stage={GameViewStage.END_TURN}
+          handTotal={12}
+        />,
+      );
+      const yanivButton = screen.getByRole('button', { name: /yaniv/i });
+      expect(yanivButton).toHaveTextContent('(12)');
+      expect(yanivButton).toHaveAccessibleName('Yaniv!, hand total 12');
+    });
+
+    test('leaves the hand total out of the Yaniv button when it is hidden', () => {
+      render(<TurnActions {...baseProps} stage={GameViewStage.END_TURN} />);
+      expect(
+        screen.getByRole('button', { name: /yaniv/i }),
+      ).not.toHaveTextContent(/\d/);
+    });
   });
 
   describe('waiting for new round', () => {

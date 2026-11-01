@@ -116,7 +116,7 @@ export default function Game({
 
   // Only larger screens show the button; smaller screens keep the hand private
   // in its own tab
-  const [isFaceDown, setIsFaceDown] = useState(false);
+  const [isHandHidden, setIsHandHidden] = useState(false);
 
   const userPlayer = players.find((player) => player.id === userId);
   const playerTakingTurn = players.find((player) => player.isPlayersTurn);
@@ -157,12 +157,12 @@ export default function Game({
         // Face down, the picked-up card stays in the hand rather than showing
         // over the deck
         hidden:
-          !isFaceDown &&
+          !isHandHidden &&
           isShownInOverlay &&
           drawnCard?.rank === card.rank &&
           drawnCard?.suit === card.suit,
       })),
-    [cards, selectedCards, drawnCard, isShownInOverlay, isFaceDown],
+    [cards, selectedCards, drawnCard, isShownInOverlay, isHandHidden],
   );
 
   if (!userPlayer) {
@@ -186,7 +186,7 @@ export default function Game({
       onDeckClick={onPickupFromDeck}
       onDiscardClick={onPickupFromDiscard}
       className='sm:text-lg md:text-2xl'
-      drawnCard={!isFaceDown && isShownInOverlay ? drawnCard : undefined}
+      drawnCard={!isHandHidden && isShownInOverlay ? drawnCard : undefined}
       canAutoPlay={canAutoPlay}
       onAutoPlayDrawnCard={onAutoPlayDrawnCard}
       onDrawnCardDismissed={onOverlayDismissed}
@@ -196,6 +196,7 @@ export default function Game({
   const turnActionsProps = {
     stage,
     isRunSelected,
+    handTotal: isHandHidden ? undefined : handTotal,
     onEndTurnClick,
     onYanivClick,
     onPlayCards,
@@ -298,9 +299,9 @@ export default function Game({
                   isActive={
                     stage === GameViewStage.PICKING_CARDS && isUserTakingTurn
                   }
-                  isFaceDown={isFaceDown}
+                  isHandHidden={isHandHidden}
                   onVisibilityToggle={() =>
-                    setIsFaceDown((previous) => !previous)
+                    setIsHandHidden((previous) => !previous)
                   }
                 />
               </div>
@@ -333,7 +334,7 @@ export default function Game({
                 // Face-down cards can't be played, so Play Cards hides with them
                 className={cn(
                   'justify-end',
-                  isFaceDown &&
+                  isHandHidden &&
                     stage === GameViewStage.PICKING_CARDS &&
                     'invisible',
                 )}
