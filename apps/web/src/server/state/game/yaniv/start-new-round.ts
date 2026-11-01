@@ -43,6 +43,7 @@ export const startNewRound = async (code: GameCode, userId: UserId) =>
       players,
       playedCards: [],
       drawnCard: undefined,
+      drawnFrom: null,
       currentPlayerId: state.currentPlayerId,
       gameStep: GameStep.PLAY_CARDS,
     };

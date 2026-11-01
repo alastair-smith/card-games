@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
-import { GameStep } from '~/types/games/yaniv';
+import { drawSourceSchema, GameStep } from '~/types/games/yaniv';
 import { PlayerStrip } from '.';
 
 const players = [
@@ -45,9 +45,14 @@ const meta = {
     players: withTurn(1),
     userId: '1' as UserId,
     step: GameStep.PICKUP_CARD,
+    drawnFrom: null,
   },
   argTypes: {
     step: { control: 'select', options: Object.values(GameStep) },
+    drawnFrom: {
+      control: 'select',
+      options: [null, ...drawSourceSchema.options],
+    },
   },
 } satisfies Meta<typeof PlayerStrip>;
 

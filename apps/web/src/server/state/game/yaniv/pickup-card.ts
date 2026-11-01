@@ -6,6 +6,7 @@ import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  type DrawSource,
   GameStage,
   GameStep,
   type YanivPlayingCard,
@@ -31,7 +32,7 @@ const drawFromDiscard = async (code: GameCode): Promise<YanivPlayingCard> => {
 export const pickupCard = async (
   code: GameCode,
   userId: UserId,
-  source: 'deck' | 'discard',
+  source: DrawSource,
 ) =>
   withLock('yaniv', code, async () => {
     const state = await getYanivState({ code });
@@ -69,6 +70,7 @@ export const pickupCard = async (
       players: updatedPlayers,
       gameStep: GameStep.PROCEED,
       deckOnlyPickup: undefined,
+      drawnFrom: source,
       ...(source === 'deck' ? { drawnCard } : { drawnCard: undefined }),
     };
 

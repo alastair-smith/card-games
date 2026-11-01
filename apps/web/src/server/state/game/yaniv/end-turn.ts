@@ -39,6 +39,7 @@ export const endTurn = async (code: GameCode, userId: UserId) =>
         ...state,
         playedCards: [],
         drawnCard: undefined,
+        drawnFrom: null,
         currentPlayerId: nextPlayerId,
         gameStep: GameStep.PLAY_CARDS,
       };

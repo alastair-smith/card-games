@@ -12,6 +12,7 @@ import {
   type UserId,
 } from '~/types/entities';
 import {
+  drawSourceSchema,
   GameStep,
   GameViewStage,
   type YanivPlayingCard,
@@ -118,6 +119,7 @@ const meta = {
     onPickupFromDiscard: fn(),
     stage: GameViewStage.PICKING_CARDS,
     step: GameStep.PLAY_CARDS,
+    drawnFrom: null,
     players: withTurn(0),
     cards: userCards,
     userId: '1' as UserId,
@@ -131,6 +133,10 @@ const meta = {
   argTypes: {
     stage: { control: 'select', options: Object.values(GameViewStage) },
     step: { control: 'select', options: Object.values(GameStep) },
+    drawnFrom: {
+      control: 'select',
+      options: [null, ...drawSourceSchema.options],
+    },
   },
 } satisfies Meta<typeof Game>;
 
@@ -357,6 +363,20 @@ const WALKTHROUGH_STAGES = [
     step: GameStep.PICKUP_CARD,
   },
   {
+    label: 'Kevin drew from the discard',
+    players: withTurn(1),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    step: GameStep.PROCEED,
+    drawnFrom: 'discard',
+  },
+  {
+    label: 'Kevin matched the discard',
+    players: withTurn(1),
+    stage: GameViewStage.WAITING_FOR_PLAYER,
+    step: GameStep.PROCEED,
+    drawnFrom: null,
+  },
+  {
     label: 'Kevin called Yaniv, Paul plays',
     players: withYanivCalledByKevin(2),
     stage: GameViewStage.WAITING_FOR_PLAYER,
@@ -375,14 +395,15 @@ const WALKTHROUGH_STAGES = [
     step: GameStep.REDEAL,
   },
   {
-    label: 'Waiting for Kevin to deal',
+    label: 'Kevin to deal',
     players: withYanivCalledByKevin(1),
     stage: GameViewStage.WAITING_FOR_NEW_ROUND,
     step: GameStep.REDEAL,
   },
-] as const satisfies (Pick<GameProps, 'players' | 'stage' | 'step'> & {
-  label: string;
-})[];
+] as const satisfies (Pick<GameProps, 'players' | 'stage' | 'step'> &
+  Partial<Pick<GameProps, 'drawnFrom'>> & {
+    label: string;
+  })[];
 
 /**
  * Steps through a round with the buttons over the header, keeping the game

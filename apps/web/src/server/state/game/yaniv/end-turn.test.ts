@@ -63,6 +63,7 @@ const makeState = (overrides: Partial<State> = {}): State =>
     ],
     playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
     drawnCard: DRAWN_CARD,
+    drawnFrom: 'deck',
     ...overrides,
   });
 
@@ -78,6 +79,7 @@ const makeYanivCalledState = (overrides: Partial<State> = {}): State =>
     ],
     playedCards: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
     drawnCard: undefined,
+    drawnFrom: 'discard',
     ...overrides,
   });
 
@@ -157,6 +159,14 @@ describe('endTurn', () => {
       'drawnCard',
       undefined,
     );
+  });
+
+  test('forgets where the player drew from', async () => {
+    await endTurn(CODE, USER_1);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      drawnFrom: null,
+    });
   });
 
   test('advances to the next player', async () => {

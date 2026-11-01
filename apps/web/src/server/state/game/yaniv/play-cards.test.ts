@@ -207,6 +207,19 @@ describe('playCards', () => {
     });
   });
 
+  test('records that nothing was drawn when the play matches the discard', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({ drawnFrom: 'deck' }),
+    );
+    vi.mocked(isValidYanivPlay).mockReturnValue(makeValidPlay([CARD_1], false));
+
+    await playCards(CODE, USER_1, [CARD_1]);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      drawnFrom: null,
+    });
+  });
+
   test('sets deck-only pickup restriction when validation signals it', async () => {
     vi.mocked(isValidYanivPlay).mockReturnValue(
       makeValidPlay([CARD_1], true, true),

@@ -116,6 +116,18 @@ describe('toClientGameState', () => {
 
       expect(result.drawnCard).toBeUndefined();
     });
+
+    test('tells other players which pile the card was drawn from', () => {
+      const state = makeInProgressState({
+        currentPlayerId: USER_1,
+        drawnCard: DRAWN_CARD,
+        drawnFrom: 'deck',
+      });
+
+      expect(toClientGameState(state, USER_2)).toMatchObject({
+        drawnFrom: 'deck',
+      });
+    });
   });
 
   describe('finished game', () => {

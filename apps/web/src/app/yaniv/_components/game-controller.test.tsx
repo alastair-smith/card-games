@@ -129,6 +129,7 @@ function inProgressState(
     ],
     playedCards: [],
     topDiscardCard: { suit: Suit.CLUBS, rank: Rank.FOUR },
+    drawnFrom: null,
     players,
     ...overrides,
   };
