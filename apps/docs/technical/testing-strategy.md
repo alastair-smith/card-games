@@ -4,13 +4,13 @@ This document describes the five-tier testing strategy for the card games platfo
 
 ## Overview
 
-| Tier | Name | Tooling | What it tests | When it runs |
-|------|------|---------|---------------|--------------|
-| 1 | Unit tests | Vitest + jsdom | Individual functions and components in isolation | PR CI |
-| 2 | UI flow tests | Playwright + MSW | Client-side game flows with a mocked backend | PR CI |
-| 3 | Backend integration tests | Vitest + Redis | Server-side game logic against a real Redis instance | PR CI |
-| 4 | Smoke tests | Playwright | Core happy path against the deployed environment | Post-deployment |
-| 5 | Full game simulation | Playwright | Complete Yaniv game played to completion | Daily cron |
+| Tier | Name                      | Tooling          | What it tests                                        | When it runs    |
+| ---- | ------------------------- | ---------------- | ---------------------------------------------------- | --------------- |
+| 1    | Unit tests                | Vitest + jsdom   | Individual functions and components in isolation     | PR CI           |
+| 2    | UI flow tests             | Playwright + MSW | Client-side game flows with a mocked backend         | PR CI           |
+| 3    | Backend integration tests | Vitest + Redis   | Server-side game logic against a real Redis instance | PR CI           |
+| 4    | Smoke tests               | Playwright       | Core happy path against the deployed environment     | Post-deployment |
+| 5    | Full game simulation      | Playwright       | Complete Yaniv game played to completion             | Daily cron      |
 
 ---
 

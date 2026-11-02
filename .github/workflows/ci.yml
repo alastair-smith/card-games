@@ -145,7 +145,7 @@ jobs:
       - name: Run build
         run: pnpm build
         env:
-          SKIP_ENV_VALIDATION: "true"
+          SKIP_ENV_VALIDATION: 'true'
       - name: Cache build output
         uses: actions/cache/save@v6
         with:
@@ -166,7 +166,7 @@ jobs:
           - 6379:6379
     env: &e2e-env
       REDIS_CONNECTION_STRING: redis://localhost:6379
-      AUTH_SECRET: "test-secret-at-least-32-characters-long!!"
+      AUTH_SECRET: 'test-secret-at-least-32-characters-long!!'
       NODE_ENV: test
     steps:
       - name: Checkout

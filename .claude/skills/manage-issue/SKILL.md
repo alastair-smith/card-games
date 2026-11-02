@@ -1,4 +1,5 @@
 ---
+
 name: manage-issue
 description: Find, create, update or close GitHub issues for this repo, including labels, milestones and project board status. Use whenever filing an issue (even a quick follow-up in the middle of other work), looking up existing issues, closing one that was done without a linked PR, or checking what's on the board.
 ---
@@ -12,20 +13,20 @@ Issues live in `alastair-smith/card-games` and are tracked on project 3
 
 Every issue has exactly one type label and one area label.
 
-| Type | For |
-|---|---|
-| `bug` | Something isn't working |
-| `feature` | Something new, or an improvement to something that exists |
-| `chore` | Maintenance, tooling, infrastructure, refactoring |
-| `documentation` | Docs only |
-| `question` | Asking for help |
+| Type            | For                                                       |
+| --------------- | --------------------------------------------------------- |
+| `bug`           | Something isn't working                                   |
+| `feature`       | Something new, or an improvement to something that exists |
+| `chore`         | Maintenance, tooling, infrastructure, refactoring         |
+| `documentation` | Docs only                                                 |
+| `question`      | Asking for help                                           |
 
-| Area | For |
-|---|---|
-| `yaniv` | The Yaniv game |
-| `lobby` | The game lobby |
-| `home page` | The home page |
-| `other` | Anything else, including dev tooling and infrastructure |
+| Area        | For                                                     |
+| ----------- | ------------------------------------------------------- |
+| `yaniv`     | The Yaniv game                                          |
+| `lobby`     | The game lobby                                          |
+| `home page` | The home page                                           |
+| `other`     | Anything else, including dev tooling and infrastructure |
 
 Issues opened through the templates are labelled automatically.
 `create-issue.ts` skips the templates, so always pass both labels

@@ -8,7 +8,7 @@ inputs:
     description: 'Browser the project needs installed, e.g. chromium'
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - uses: ./.github/actions/setup
     - name: Restore build output
