@@ -1,11 +1,14 @@
+import { context, propagation, trace } from '@opentelemetry/api';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
+import {
+  CompositePropagator,
+  W3CBaggagePropagator,
+  W3CTraceContextPropagator,
+} from '@opentelemetry/core';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch';
 import { resourceFromAttributes } from '@opentelemetry/resources';
-import {
-  BatchSpanProcessor,
-  WebTracerProvider,
-} from '@opentelemetry/sdk-trace-web';
+import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
@@ -64,7 +67,7 @@ export function initClientTelemetry() {
     url: '/api/telemetry',
   });
 
-  const provider = new WebTracerProvider({
+  const provider = new TracerProvider({
     resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: 'card-games-web',
       [ATTR_SERVICE_VERSION]: env.NEXT_PUBLIC_GIT_COMMIT_HASH,
@@ -75,12 +78,19 @@ export function initClientTelemetry() {
       'browser.viewport.width': window.innerWidth,
       'browser.viewport.height': window.innerHeight,
     }),
-    spanProcessors: [new BatchSpanProcessor(exporter)],
+    spanProcessors: [new BatchSpanProcessor({ exporter })],
   });
 
-  provider.register({
-    contextManager: new ZoneContextManager(),
-  });
+  trace.setGlobalTracerProvider(provider);
+  context.setGlobalContextManager(new ZoneContextManager().enable());
+  propagation.setGlobalPropagator(
+    new CompositePropagator({
+      propagators: [
+        new W3CTraceContextPropagator(),
+        new W3CBaggagePropagator(),
+      ],
+    }),
+  );
 
   new FetchInstrumentation({
     propagateTraceHeaderCorsUrls: [window.location.origin],

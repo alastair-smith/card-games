@@ -24,7 +24,12 @@ updates:
     # A dependency joins the first group it matches, so minor and patch
     # updates all land in one PR and the groups below only see majors. Those
     # group packages that release in lockstep and must move together.
+    # OpenTelemetry comes first because its experimental 0.x packages take
+    # breaking changes as minor bumps, alongside majors of its stable ones.
     groups:
+      opentelemetry:
+        patterns:
+          - '@opentelemetry/*'
       minor-and-patch:
         update-types:
           - minor
@@ -46,9 +51,6 @@ updates:
       trpc:
         patterns:
           - '@trpc/*'
-      opentelemetry:
-        patterns:
-          - '@opentelemetry/*'
       playwright:
         patterns:
           - playwright
