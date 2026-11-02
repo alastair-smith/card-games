@@ -44,7 +44,9 @@ export function startTelemetry() {
       [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: env.NODE_ENV,
     }),
     traceExporter: exporter,
-    logRecordProcessor: new BatchLogRecordProcessor({ exporter: logExporter }),
+    logRecordProcessors: [
+      new BatchLogRecordProcessor({ exporter: logExporter }),
+    ],
     instrumentations: [
       new HttpInstrumentation({
         ignoreOutgoingRequestHook: (req) =>
