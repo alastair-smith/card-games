@@ -18,7 +18,6 @@
 
 <p align="center">
   <a href="#about">About</a>
-  | <a href="#getting-started">Getting Started</a>
   | <a href="#contributing">Contributing</a>
   | <a href="#licence">Licence</a>
 </p>
@@ -51,10 +50,6 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 | Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E)    |
 | Linting    | [Biome](https://biomejs.dev/)                                                         |
 
-
-## Getting Started
-
-See [Getting Started](./apps/docs/technical/getting-started.md) for prerequisites, running the app locally and other scripts.
 
 ## Contributing
 
