@@ -34,11 +34,6 @@
       "quoteStyle": "single"
     }
   },
-  "markdown": {
-    "formatter": {
-      "formatEmbeds": false
-    }
-  },
   "yaml": {
     "formatter": {
       "quoteStyle": "single"

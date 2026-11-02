@@ -96,8 +96,8 @@ pass that same path to `--attach` (below), which uploads it and points the
 reference at the upload. Write the alt text in the reference:
 
 ```md
-| Description | Image |
-|:-|-|
+| Description         | Image                                                                 |
+| :------------------ | --------------------------------------------------------------------- |
 | Full lobby, desktop | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) |
 ```
 
@@ -106,8 +106,8 @@ screenshots on the issue branch before changing anything, since the script
 doesn't run on `main`, named `<name>-previous`:
 
 ```md
-| Description | Previous | Updated |
-|:-|-|-|
+| Description         | Previous                           | Updated                   |
+| :------------------ | ---------------------------------- | ------------------------- |
 | Full lobby, desktop | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-desktop.png) |
 ```
 ## Create

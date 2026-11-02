@@ -313,9 +313,9 @@ Primitive IDs and constrained strings use branded types — avoid using plain `s
 
 ```ts
 // types defined in ~/types/entities.ts
-userId: UserId
-name: PlayerName
-code: GameCode
+userId: UserId;
+name: PlayerName;
+code: GameCode;
 ```
 
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
@@ -385,9 +385,9 @@ onCardClick: (card: Card) => void
 Boolean props: `is<Noun><State>`:
 
 ```ts
-isYanivCalled: boolean
-isHighlighted: boolean
-isFiftyScoreHalved: boolean
+isYanivCalled: boolean;
+isHighlighted: boolean;
+isFiftyScoreHalved: boolean;
 ```
 
 ### Component files
