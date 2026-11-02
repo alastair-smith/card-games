@@ -2,7 +2,7 @@
 
 ## High level
 
-![High-level architecture: browser, tRPC routers, state, data, server events and Redis](../diagrams/architecture/high-level.svg)
+![High-level architecture: browser, the Next.js server on Render, Redis and New Relic](../diagrams/architecture/high-level.svg)
 
 ## Auth
 
