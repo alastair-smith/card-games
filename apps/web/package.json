@@ -39,7 +39,7 @@
     "@opentelemetry/instrumentation-ioredis": "^0.71.0",
     "@opentelemetry/instrumentation-pino": "^0.69.0",
     "@opentelemetry/resources": "^2.12.0",
-    "@opentelemetry/sdk-logs": "^0.223.0",
+    "@opentelemetry/sdk-logs": "^3.0.0",
     "@opentelemetry/sdk-node": "^0.223.0",
     "@opentelemetry/sdk-trace-web": "^2.12.0",
     "@opentelemetry/semantic-conventions": "^1.43.0",
