@@ -39,6 +39,24 @@ importers:
         specifier: ^8.8.5
         version: 8.8.5
 
+  apps/docs:
+    devDependencies:
+      '@d2lang/d2':
+        specifier: ^0.1.34
+        version: 0.1.34
+      '@types/node':
+        specifier: ^24.19.2
+        version: 24.19.2
+      playwright:
+        specifier: ^1.64.1
+        version: 1.64.1
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      zx:
+        specifier: ^8.8.5
+        version: 8.8.5
+
   apps/web:
     dependencies:
       '@base-ui/react':
@@ -494,6 +512,9 @@ packages:
   '@csstools/css-tokenizer@4.0.2':
     resolution: {integrity: sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw==}
     engines: {node: '>=20.19.0'}
+
+  '@d2lang/d2@0.1.34':
+    resolution: {integrity: sha512-35m2DaRUgeBy1cFbF9XEGIuaN/pMWrqkJtGj/tsq7OrU4N8degbY80Js7Mw7UeuE+fwGpxdZaGckEUVOPAj7CA==}
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -4784,6 +4805,8 @@ snapshots:
       css-tree: 3.2.1
 
   '@csstools/css-tokenizer@4.0.2': {}
+
+  '@d2lang/d2@0.1.34': {}
 
   '@dnd-kit/accessibility@3.1.1(react@19.3.1)':
     dependencies:

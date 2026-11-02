@@ -1,0 +1,32 @@
+direction: right
+
+browser: Browser
+
+render: Render {
+  server: Next.js server {
+    api: "tRPC routers\nsrc/server/api"
+    state: "State\nsrc/server/state"
+    data: "Data\nsrc/server/data"
+    events: "Server events\nsrc/server/events"
+    telemetry: "/api/telemetry"
+
+    api -> state: mutations
+    api -> data: queries
+    state -> data: read and write
+    state -> events: publish
+    events -> api: subscriptions listen
+  }
+}
+
+redis: Redis {
+  shape: cylinder
+}
+
+new-relic: New Relic
+
+browser -> render.server.api: queries and mutations
+render.server.api -> browser: subscription updates over SSE
+browser -> render.server.telemetry: "browser traces,\nif the player opts in"
+render.server.data -> redis
+render.server -> new-relic: "server traces and logs\nover OTLP"
+render.server.telemetry -> new-relic: forward browser traces

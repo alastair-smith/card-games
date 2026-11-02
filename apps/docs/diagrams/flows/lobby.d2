@@ -1,0 +1,39 @@
+direction: down
+
+create: "lobby.create\nstores the lobby with the creator as host\nand the first player"
+
+lobby: "Lobby\nevery change is stored in Redis and sent\nto each player as LOBBY_UPDATE" {
+  shape: page
+}
+
+join: "A player joins\nopening the game's subscription adds them,\nup to 5 players"
+update-player: "A player changes their name,\ncolour or ready status\n(colour must not be taken)"
+settings: "The host changes the hand size"
+make-host: "The host makes another player host"
+kick: "The host removes a player"
+leave: "A player leaves\n(host doesn't pass to anyone)"
+removed: "The removed player's subscription\nsends them back to /"
+
+start: "The host starts the game\nwith 2 to 5 players"
+in-progress: "Game in progress\nthe lobby no longer accepts changes\nor new players"
+
+create -> lobby
+
+lobby -> join
+lobby -> update-player
+lobby -> settings
+lobby -> make-host
+lobby -> kick
+lobby -> leave
+
+join -> lobby
+update-player -> lobby
+settings -> lobby
+make-host -> lobby
+kick -> lobby
+leave -> lobby
+kick -> removed
+leave -> removed
+
+lobby -> start
+start -> in-progress
