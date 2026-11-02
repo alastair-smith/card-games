@@ -33,6 +33,25 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
+/**
+ * Some things inside a slide answer to the same gestures the carousel does:
+ * arrow keys move a caret through a field or carry a row up a reorderable list,
+ * and a press and drag selects text or picks a row up. Those gestures belong to
+ * whatever the player is working with, not to turning the page.
+ */
+const KEEPS_ITS_OWN_GESTURES = [
+  'input',
+  'textarea',
+  'select',
+  '[contenteditable="true"]',
+  '[data-slot="reorder-handle"]',
+].join(', ');
+
+// Element rather than HTMLElement: a press lands on the icon inside the drag
+// handle, and an SVG icon is not an HTML element.
+const keepsItsOwnGestures = (target: EventTarget | null): boolean =>
+  target instanceof Element && target.closest(KEEPS_ITS_OWN_GESTURES) !== null;
+
 function useCarousel() {
   const context = React.useContext(CarouselContext);
 
@@ -63,6 +82,9 @@ const Carousel = React.forwardRef<
       {
         ...opts,
         axis: orientation === 'horizontal' ? 'x' : 'y',
+        watchDrag:
+          opts?.watchDrag ??
+          ((_emblaApi, event) => !keepsItsOwnGestures(event.target)),
       },
       plugins,
     );
@@ -92,6 +114,10 @@ const Carousel = React.forwardRef<
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLElement>) => {
+        if (keepsItsOwnGestures(event.target)) {
+          return;
+        }
+
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
           scrollPrev();

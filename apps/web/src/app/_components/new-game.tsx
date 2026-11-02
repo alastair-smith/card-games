@@ -27,6 +27,8 @@ type GameProps = {
   length: GameLength;
   summary: string;
   disabled?: boolean;
+  /** Where to keep score for a game played in person, where there is one. */
+  scoreboardURL?: string;
 };
 
 // TODO update min + max players
@@ -51,6 +53,7 @@ const games: GameProps[] = [
     },
     length: GameLength.medium,
     summary: 'Win hands of 7 points or under and call Yaniv!',
+    scoreboardURL: `${gameURL[GameType.YANIV]}/scoreboard`,
   },
   // {
   //   gameType: GameType.BLOB,
@@ -96,6 +99,7 @@ function Game({
   length,
   summary,
   disabled = false,
+  scoreboardURL,
 }: GameProps & { className?: string }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -141,6 +145,12 @@ function Game({
           >
             {disabled ? 'Coming Soon!' : 'Create Game'}
           </Button>
+
+          {scoreboardURL && (
+            <Button variant='secondary' asChild>
+              <a href={scoreboardURL}>Score Sheet</a>
+            </Button>
+          )}
         </div>
 
         <div className='hidden sm:flex items-center justify-center rounded-lg bg-main-background h-[250px] w-[250px] shrink-0'>
