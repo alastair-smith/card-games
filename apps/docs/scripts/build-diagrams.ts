@@ -1,11 +1,11 @@
 #!/usr/bin/env node
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { D2 } from '@d2lang/d2';
-import fs from 'fs/promises';
 
-const LIGHT_THEME = 102
-const DARK_THEME = 200
+const LIGHT_THEME = 102;
+const DARK_THEME = 200;
 
 /** Recursively find all .d2 files in the repository */
 async function getD2Files(dir: string) {
@@ -46,7 +46,11 @@ async function main() {
 
       const content = await fs.readFile(file, 'utf8');
 
-      const compiled = await d2.compile(content, {sketch: true, themeID: LIGHT_THEME, darkThemeID: DARK_THEME});
+      const compiled = await d2.compile(content, {
+        sketch: true,
+        themeID: LIGHT_THEME,
+        darkThemeID: DARK_THEME,
+      });
       const svg = await d2.render(compiled.diagram, compiled.renderOptions);
 
       await fs.writeFile(outFile, svg, 'utf8');
