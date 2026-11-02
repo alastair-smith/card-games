@@ -1,4 +1,3 @@
-import { GeistSans } from 'geist/font/sans';
 import type { Metadata, Viewport } from 'next';
 import '~/styles/globals.css';
 import 'sonner/dist/styles.css'; // required as lib-injected styles are blocked by CSP
@@ -49,7 +48,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang='en' className={`${GeistSans.variable}`}>
+    <html lang='en'>
       <body className='bg-dark-green background-noise text-dark-text'>
         <TelemetryProvider />
         <TRPCReactProvider>{children}</TRPCReactProvider>
