@@ -266,8 +266,8 @@ uses for the same idea, e.g. `drawnFrom` beside `drawnCard`, not
 Keep comments to a minimum and let names carry the meaning
 (`useWaitForServerValue`, `DEFAULT_HAND_SIZE`).
 
-- Do comment *why* when a decision isn't obvious from the code
-- Explain *how* only in code that is rarely touched but important, such as auth
+- Do comment _why_ when a decision isn't obvious from the code
+- Explain _how_ only in code that is rarely touched but important, such as auth
 - Don't record history — no `// added to fix the issue in i-123`; that belongs
   in the PR description
 - Keep a comment to the reason in a few words. Leave out anything a class
@@ -313,9 +313,9 @@ Primitive IDs and constrained strings use branded types — avoid using plain `s
 
 ```ts
 // types defined in ~/types/entities.ts
-userId: UserId
-name: PlayerName
-code: GameCode
+userId: UserId;
+name: PlayerName;
+code: GameCode;
 ```
 
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
@@ -385,9 +385,9 @@ onCardClick: (card: Card) => void
 Boolean props: `is<Noun><State>`:
 
 ```ts
-isYanivCalled: boolean
-isHighlighted: boolean
-isFiftyScoreHalved: boolean
+isYanivCalled: boolean;
+isHighlighted: boolean;
+isFiftyScoreHalved: boolean;
 ```
 
 ### Component files
@@ -410,6 +410,7 @@ wrapping it in a game-specific component or adding a second version beside it.
 ## Testing
 
 ### Test naming
+
 - Describe behavior in plain language — never reference prop or parameter names in test titles
 - ✓ "shows Yaniv called marquee when Yaniv has been called"
 - ✗ "shows marquee when isYanivCalled is true"
@@ -419,12 +420,14 @@ wrapping it in a game-specific component or adding a second version beside it.
 - ✗ "calls the Yaniv handler when Yaniv! is clicked"
 
 ### Assertions
+
 - Use `@testing-library/jest-dom` for DOM assertions — it's the RTL-recommended companion library
 - `toBeInTheDocument()` for presence, `not.toBeInTheDocument()` for absence
 - `toHaveBeenCalledOnce()` for callback assertions (Vitest spy matcher)
 - Prefer accessible queries (`getByRole`, `getByText`, `getByLabelText`) over `getByTestId` — test IDs are a last resort for when no semantic query applies
 
 ### Structure
+
 - Group related tests in nested `describe` blocks by feature/stage, not by prop
 - Fresh `vi.fn()` instances per test when asserting a handler was called
 - Shared `vi.fn()` (e.g. `noop`) is fine for handlers that are not under test
@@ -435,16 +438,19 @@ wrapping it in a game-specific component or adding a second version beside it.
 - Share test helpers from `~/test-utils/` rather than copying them between files
 
 ### Test data
+
 - Reuse the test data builders in `~/test-utils/` (e.g. `buildPlayer`, `buildInProgressState`) instead of writing full object literals, passing only the fields the test cares about
 - If a test needs a shape no builder covers, add or extend a builder there
 - When a new field is added, give the builder a default value for it rather than updating every test
 - Keep test data within the game's limits, such as `MAX_PLAYERS`, so tests and stories only show states a real game can reach
 
 ### Stories
+
 - Stories don't set a viewport or come in per-size copies; the viewport toolbar picks the size
 - A `play` function can't rely on an element that only exists at one size, as story tests render at one size
 
 ### Mocking
+
 - Mock complex sub-components to test parent logic in isolation
 - Use `data-testid="card-{suit}-{rank}"` on mocked card components for reliable selection
 - Mock layout wrappers (e.g. `GameLayout`) with a simple children passthrough

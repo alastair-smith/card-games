@@ -12,22 +12,22 @@ Exact versions are specified in the [node-version](../../../.node-version) and [
 
 1. Install dependencies:
 
-    ```bash
-    pnpm install
-    ```
+   ```bash
+   pnpm install
+   ```
 
 2. Start the development server (Next.js + Redis in Docker):
 
-    ```bash
-    pnpm dev
-    ```
+   ```bash
+   pnpm dev
+   ```
 
-    Open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Other Scripts
 
 | Command                               | Description                                          |
-|:--------------------------------------|:-----------------------------------------------------|
+| :------------------------------------ | :--------------------------------------------------- |
 | `pnpm build`                          | Make a production build                              |
 | `pnpm start`                          | Start the production server (requires a `.env` file) |
 | `pnpm test`                           | Run unit tests                                       |

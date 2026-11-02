@@ -31,7 +31,7 @@ Hosted at **[https://playcards.games](https://playcards.games)**.
 ### Games
 
 | Game          | Description                                                                                    |
-|:--------------|:-----------------------------------------------------------------------------------------------|
+| :------------ | :--------------------------------------------------------------------------------------------- |
 | **High Card** | (Test game) High Card is a simple luck-based game where the player with the highest card wins. |
 | **Yaniv**     | Win hands of 7 points or under and call Yaniv!                                                 |
 
@@ -39,16 +39,16 @@ Hosted at **[https://playcards.games](https://playcards.games)**.
 
 Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multiplayer:
 
-| Layer      | Technology                                                                            |
-|------------|---------------------------------------------------------------------------------------|
-| Language   | [TypeScript](https://www.typescriptlang.org/)                                         |
-| Framework  | [Next.js](https://nextjs.org) (App Router)                                            |
-| API        | [tRPC](https://trpc.io) with server-sent events for game state updates                |
-| Styling    | [Tailwind CSS](https://tailwindcss.com)                                               |
-| Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)            |
-| Hosting    | [Render](https://render.com/)                                                         |
-| Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E)    |
-| Linting    | [Biome](https://biomejs.dev/)                                                         |
+| Layer      | Technology                                                                         |
+| ---------- | ---------------------------------------------------------------------------------- |
+| Language   | [TypeScript](https://www.typescriptlang.org/)                                      |
+| Framework  | [Next.js](https://nextjs.org) (App Router)                                         |
+| API        | [tRPC](https://trpc.io) with server-sent events for game state updates             |
+| Styling    | [Tailwind CSS](https://tailwindcss.com)                                            |
+| Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)         |
+| Hosting    | [Render](https://render.com/)                                                      |
+| Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E) |
+| Linting    | [Biome](https://biomejs.dev/)                                                      |
 
 
 ## Contributing

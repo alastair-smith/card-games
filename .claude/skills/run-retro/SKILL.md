@@ -1,4 +1,5 @@
 ---
+
 name: run-retro
 description: Run a retrospective on the current session, or a past one. Find corrections worth writing down, approval prompts to remove, commands worth scripting and process friction, keep only the few that clear a strict bar, agree each fix with the user, then run a retro of the retro if the retro itself was corrected. Use when the user asks for a retro or to review how a session went.
 ---
@@ -102,15 +103,15 @@ a script that makes the step safer, and a change of setup that removes the
 step, such as a running copy of `main` to screenshot against instead of
 swapping files.
 
-| Fix | Where |
-|---|---|
-| A mistake a lint rule, type, test or CI check could catch | That check, rather than a written rule |
-| Code, testing or workflow rule for the whole repo | `CLAUDE.md`, kept short: no one-off review notes |
-| How a workflow such as raising a PR runs | That skill's `SKILL.md` |
-| A command that's repeated or needs approval | A skill script, allowlisted unless each run should ask |
-| A read-only command that's always safe, or a docs site whose content only its maintainers publish (not GitHub, npm or other hosts of anyone's content) | The allowlist in `.claude/settings.json` |
-| Context about one piece of code | A comment there |
-| A short-term learning, or a personal preference that isn't about how this repo works | Memory, as a last resort: prefer `CLAUDE.md` or a skill wherever the fix fits there |
+| Fix                                                                                                                                                    | Where                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| A mistake a lint rule, type, test or CI check could catch                                                                                              | That check, rather than a written rule                                              |
+| Code, testing or workflow rule for the whole repo                                                                                                      | `CLAUDE.md`, kept short: no one-off review notes                                    |
+| How a workflow such as raising a PR runs                                                                                                               | That skill's `SKILL.md`                                                             |
+| A command that's repeated or needs approval                                                                                                            | A skill script, allowlisted unless each run should ask                              |
+| A read-only command that's always safe, or a docs site whose content only its maintainers publish (not GitHub, npm or other hosts of anyone's content) | The allowlist in `.claude/settings.json`                                            |
+| Context about one piece of code                                                                                                                        | A comment there                                                                     |
+| A short-term learning, or a personal preference that isn't about how this repo works                                                                   | Memory, as a last resort: prefer `CLAUDE.md` or a skill wherever the fix fits there |
 
 Draft rules as the general principle, not as a description of the incident
 that prompted them. Add a concrete example only where the rule would
