@@ -1,0 +1,72 @@
+direction: down
+
+create: Create a game {
+  click: "Click 'Create Game' on /"
+  mutation: "lobby.create\ncreates the lobby and game state,\nwith the host as the first player"
+  click -> mutation
+}
+
+code: Join with a code {
+  enter: "Enter the code and click 'Join' on /"
+  lobby: "/lobby/<code>\nlobby.getSummary"
+  not-found: Not Found page
+  enter -> lobby
+  lobby -> not-found: no lobby
+}
+
+shared-link: Join from a link {
+  open: "Open /yaniv/<code>\nfrom the lobby's link or QR code"
+}
+
+page: "/yaniv/<code>\nvalidates the code, renders the client"
+
+create.mutation -> page: navigate
+code.lobby -> page: redirect to the game's URL
+shared-link.open -> page
+
+subscription: Subscription {
+  start: "yaniv.state subscription\nlistens for lobby, game and emoji events"
+  exists: Does the game exist? {shape: diamond}
+  stage: Game stage? {shape: diamond}
+  finished-player: Is the user a player? {shape: diamond}
+  in-lobby: Is the user in the lobby? {shape: diamond}
+  started: Has the game started? {shape: diamond}
+  full: Is the lobby full? {shape: diamond}
+  add: "Add the user to the lobby\nand publish the lobby"
+
+  not-found: yield GAME_NOT_FOUND
+  finished: yield FINISHED
+  lobby-full: yield LOBBY_FULL
+  lobby-update: yield LOBBY_UPDATE
+  game-update: yield GAME_STATE_UPDATE
+  stream: "Yield each event as it arrives,\nuntil the game finishes or the client disconnects"
+  end: End subscription
+
+  start -> exists
+  exists -> not-found: no
+  exists -> stage: yes
+
+  stage -> finished-player: finished
+  finished-player -> finished: yes
+  finished-player -> not-found: no
+
+  stage -> in-lobby: lobby
+  in-lobby -> lobby-update: yes
+  in-lobby -> started: no
+  started -> not-found: yes
+  started -> full: no
+  full -> lobby-full: yes
+  full -> add: no
+  add -> lobby-update
+
+  stage -> game-update: in progress
+
+  lobby-update -> stream
+  game-update -> stream
+  not-found -> end
+  finished -> end
+  lobby-full -> end
+  stream -> end
+}
+
+page -> subscription.start

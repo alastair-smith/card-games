@@ -1,0 +1,24 @@
+direction: right
+
+browser: Browser
+
+server: Next.js server {
+  api: "tRPC routers\nsrc/server/api"
+  state: "State\nsrc/server/state"
+  data: "Data\nsrc/server/data"
+  events: "Server events\nsrc/server/events"
+
+  api -> state: mutations
+  api -> data: queries
+  state -> data: read and write
+  state -> events: publish
+  events -> api: subscriptions listen
+}
+
+redis: Redis {
+  shape: cylinder
+}
+
+browser -> server.api: queries and mutations
+server.api -> browser: subscription updates over SSE
+server.data -> redis
