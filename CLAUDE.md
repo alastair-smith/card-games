@@ -161,8 +161,8 @@ own PR", look into it first: try it to see how big the change is and how well
 it fits. Then recommend including or splitting it, with the reason, before
 raising the PR. Don't leave it out without looking.
 
-Only state how the game or app behaves, in issues, commits, PRs or replies,
-once you've checked it in the code or the running app. Give a change's reason
+Only state how the game or app behaves, in issues, commits, PRs, docs,
+diagrams or replies, once you've checked it in the code or the running app. Give a change's reason
 as what the user asked for or what was measured, not a reason you've inferred.
 
 ## Skill scripts
@@ -203,6 +203,22 @@ Don't add `Claude-Session:` trailers or any other Claude attribution lines.
 ## Pull requests
 
 Use the `raise-pr` skill when opening a PR or updating its title or description.
+
+## Docs
+
+Docs live in `apps/docs`: how the app is built under `technical/`, how each
+game works under `games/`. Link each new doc from `index.md`.
+
+Diagrams are D2 files in `apps/docs/diagrams/`, shown in the docs as the SVGs
+built from them. Rebuild the SVGs after changing a diagram, and commit both;
+CI fails if they differ:
+
+```bash
+pnpm --filter @repo/docs build:diagrams
+```
+
+When a change alters a flow or structure a diagram shows, update the diagram
+in the same PR.
 
 ## Code conventions
 
