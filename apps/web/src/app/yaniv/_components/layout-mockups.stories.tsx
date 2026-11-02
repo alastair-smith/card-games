@@ -817,7 +817,8 @@ function MockGame({
 
   useEffect(() => {
     if (!carouselApi) return;
-    const tabIndex = TAB_ORDER.findIndex((tab) => tab === activeTab);
+    const tabOrder: readonly string[] = TAB_ORDER;
+    const tabIndex = tabOrder.indexOf(activeTab);
     if (tabIndex === carouselApi.selectedScrollSnap()) return;
     const isMotionAllowed = matchMedia(
       '(prefers-reduced-motion: no-preference)',

@@ -37,7 +37,46 @@
     },
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "complexity": {
+        "noExtraBooleanCast": "error",
+        "noFlatMapIdentity": "error",
+        "noUselessCatch": "error",
+        "noUselessConstructor": "error",
+        "noUselessContinue": "error",
+        "noUselessEmptyExport": "error",
+        "noUselessEscapeInRegex": "error",
+        "noUselessFragments": "error",
+        "noUselessLabel": "error",
+        "noUselessLoneBlockStatements": "error",
+        "noUselessRename": "error",
+        "noUselessStringRaw": "error",
+        "noUselessSwitchCase": "error",
+        "noUselessTernary": "error",
+        "noUselessThisAlias": "error",
+        "noUselessTypeConstraint": "error",
+        "noUselessUndefinedInitialization": "error",
+        "useFlatMap": "error",
+        "useIndexOf": "error",
+        "useLiteralKeys": "error"
+      },
+      "correctness": {
+        "useParseIntRadix": "error"
+      },
+      "performance": {
+        "useGoogleFontPreconnect": "error"
+      },
+      "style": {
+        "useArrayLiterals": "error",
+        "useExponentiationOperator": "error",
+        "useNodejsImportProtocol": "error",
+        "useShorthandFunctionType": "error",
+        "useTemplate": "error",
+        "useVueMultiWordComponentNames": "error"
+      },
+      "suspicious": {
+        "noQuickfixBiome": "error"
+      }
     }
   },
   "vcs": {
