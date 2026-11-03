@@ -46,6 +46,7 @@ export default defineConfig({
           { text: 'Getting started', link: '/technical/getting-started' },
           { text: 'Architecture', link: '/technical/architecture' },
           { text: 'Testing strategy', link: '/technical/testing-strategy' },
+          { text: 'Maintaining the docs', link: '/technical/maintaining-docs' },
         ],
       },
       {
