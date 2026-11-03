@@ -1,4 +1,4 @@
-# Maintaining the docs
+# Documentation
 
 The docs are Markdown files in `apps/docs`, built into a site with [VitePress](https://vitepress.dev): how the app is built under `technical/`, how each game works under `games/`.
 

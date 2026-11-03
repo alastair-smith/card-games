@@ -7,7 +7,7 @@ Docs for [Play Cards](https://playcards.games), a platform for playing card game
 - [Getting started](./technical/getting-started.md) — prerequisites, running the app locally and other scripts
 - [Architecture](./technical/architecture.md) — how the browser, server and Redis fit together, auth and events
 - [Testing strategy](./technical/testing-strategy.md) — the testing tiers, what each covers and when it runs
-- [Maintaining the docs](./technical/maintaining-docs.md) — adding a doc, running the docs site and rebuilding diagrams
+- [Documentation](./technical/documentation.md) — adding a doc, running the docs site and rebuilding diagrams
 
 ## Games
 
