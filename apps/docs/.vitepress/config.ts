@@ -38,7 +38,7 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: '/favicon.svg',
-    siteTitle: 'Play Cards',
+    siteTitle: 'PlayCards Docs',
     sidebar: [
       {
         text: 'Technical',
@@ -59,7 +59,7 @@ export default defineConfig({
     ],
     nav: [
       {
-        text: '<img class="app-link-icon" src="/app-icon.svg" alt="">playcards.games',
+        text: '<img class="app-link-icon" src="/app-icon.svg" alt="">PlayCards.Games',
         link: 'https://playcards.games',
       },
     ],
