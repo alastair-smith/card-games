@@ -49,6 +49,14 @@
   }
 }
 
+.app-link-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: -5px;
+}
+
 /* Like the web app's panel card */
 .diagram-light,
 .diagram-dark {

@@ -57,7 +57,12 @@ export default defineConfig({
         ],
       },
     ],
-    nav: [{ text: 'Play a game', link: 'https://playcards.games' }],
+    nav: [
+      {
+        text: '<img class="app-link-icon" src="/app-icon.svg" alt="">playcards.games',
+        link: 'https://playcards.games',
+      },
+    ],
     socialLinks: [{ icon: 'github', link: REPO_URL }],
     search: { provider: 'local' },
   },
