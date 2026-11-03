@@ -16,22 +16,31 @@ export default defineConfig({
         return;
       }
 
-      // Swap each diagram for the light and dark copies build:diagrams makes,
-      // so it follows the theme toggle rather than the system colour scheme
+      // Render each diagram's light and dark copy, so it follows the theme
+      // toggle. Lazy loading leaves the hidden copy unfetched
       markdown.renderer.rules.image = (tokens, index, options, env, self) => {
         const token = tokens[index];
         const source = token?.attrGet('src');
-        if (!token || !source?.includes('/diagrams/')) {
+        if (!token || !source?.endsWith('.light.svg')) {
           return renderImage(tokens, index, options, env, self);
         }
 
-        return (['light', 'dark'] as const)
+        const originalAttributes = token.attrs;
+        const html = (['light', 'dark'] as const)
           .map((theme) => {
-            token.attrSet('src', source.replace(/\.svg$/, `.${theme}.svg`));
-            token.attrSet('class', `diagram-${theme}`);
+            token.attrs =
+              originalAttributes?.map(([name, value]) => [name, value]) ?? [];
+            token.attrSet(
+              'src',
+              source.replace(/\.light\.svg$/, `.${theme}.svg`),
+            );
+            token.attrJoin('class', `diagram-${theme}`);
+            token.attrSet('loading', 'lazy');
             return renderImage(tokens, index, options, env, self);
           })
           .join('');
+        token.attrs = originalAttributes;
+        return html;
       };
     },
   },

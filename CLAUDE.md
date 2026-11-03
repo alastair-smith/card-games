@@ -209,11 +209,13 @@ Use the `raise-pr` skill when opening a PR or updating its title or description.
 ## Docs
 
 Docs live in `apps/docs`: how the app is built under `technical/`, how each
-game works under `games/`. Link each new doc from `index.md`.
+game works under `games/`. Link each new doc from `index.md`, and add it to
+the sidebar in `apps/docs/.vitepress/config.ts`.
 
-Diagrams are D2 files in `apps/docs/diagrams/`, shown in the docs as the SVGs
-built from them. Rebuild the SVGs after changing a diagram, and commit both;
-CI fails if they differ:
+Diagrams are D2 files in `apps/docs/diagrams/`, each built to a `.light.svg`
+and a `.dark.svg`. Link to the light one from a doc; the site swaps in the
+dark one. Rebuild the SVGs after changing a diagram, and commit them with it;
+CI fails if they're missing or differ:
 
 ```bash
 pnpm --filter @repo/docs build:diagrams

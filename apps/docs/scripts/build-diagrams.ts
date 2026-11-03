@@ -30,47 +30,30 @@ const DARK_THEME_COLORS = {
   AB5: '#12392b',
 } as const;
 
-// The committed SVG switches on the system colour scheme, for GitHub. The
-// docs site shows the light or dark copy per its light/dark toggle, which an
-// SVG's own prefers-color-scheme query can't follow
-const RENDERS = [
-  {
-    suffix: '',
-    themeID: LIGHT_THEME,
-    darkThemeID: DARK_THEME,
-    overridesKey: 'dark-theme-overrides',
-  },
-  {
-    suffix: '.light',
-    themeID: LIGHT_THEME,
-    darkThemeID: undefined,
-    overridesKey: undefined,
-  },
-  {
-    suffix: '.dark',
-    themeID: DARK_THEME,
-    darkThemeID: undefined,
-    overridesKey: 'theme-overrides',
-  },
+// One SVG per theme, as the docs site's light/dark toggle can't reach an
+// SVG's own prefers-color-scheme query
+const THEMES = [
+  { name: 'light', themeID: LIGHT_THEME, colors: undefined },
+  { name: 'dark', themeID: DARK_THEME, colors: DARK_THEME_COLORS },
 ] as const;
 
-function withDarkThemeColors(
+function withThemeColors(
   content: string,
-  overridesKey: (typeof RENDERS)[number]['overridesKey'],
+  colors: (typeof THEMES)[number]['colors'],
 ) {
-  if (!overridesKey) {
+  if (!colors) {
     return content;
   }
 
-  const colors = Object.entries(DARK_THEME_COLORS)
+  const overrides = Object.entries(colors)
     .map(([code, color]) => `      ${code}: "${color}"`)
     .join('\n');
 
   return `${content}
 vars: {
   d2-config: {
-    ${overridesKey}: {
-${colors}
+    theme-overrides: {
+${overrides}
     }
   }
 }
@@ -108,28 +91,19 @@ async function main() {
 
   try {
     for (const file of d2Files) {
-      const outFile = file.replace(/\.d2$/, '.svg');
       const relInput = path.relative(process.cwd(), file);
-      const relOutput = path.relative(process.cwd(), outFile);
-
-      console.log(`⚡ Compiling: ${relInput} -> ${relOutput}`);
+      console.log(`⚡ Compiling: ${relInput}`);
 
       const content = await fs.readFile(file, 'utf8');
 
-      for (const render of RENDERS) {
+      for (const theme of THEMES) {
         const compiled = await d2.compile(
-          withDarkThemeColors(content, render.overridesKey),
-          {
-            sketch: true,
-            layout: 'elk',
-            pad: 20,
-            themeID: render.themeID,
-            darkThemeID: render.darkThemeID,
-          },
+          withThemeColors(content, theme.colors),
+          { sketch: true, layout: 'elk', pad: 20, themeID: theme.themeID },
         );
         const svg = await d2.render(compiled.diagram, compiled.renderOptions);
         await fs.writeFile(
-          outFile.replace(/\.svg$/, `${render.suffix}.svg`),
+          file.replace(/\.d2$/, `.${theme.name}.svg`),
           svg,
           'utf8',
         );

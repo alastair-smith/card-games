@@ -32,23 +32,26 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
-  diagrams:
-    name: Check Diagrams
+  docs:
+    name: Docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
       - uses: ./.github/actions/setup
+      - name: Build docs
+        run: pnpm --filter @repo/docs build
+      # The build rebuilds the diagrams first. Untracked files count too, so a
+      # diagram whose SVGs were never committed fails
       - name: Check diagrams
         run: |
-          pnpm run --dir ./apps/docs build:diagrams
-          CHANGES=$(git diff --name-only)
+          CHANGES=$(git status --porcelain)
           if [ -n "$CHANGES" ]; then
             echo "Missing built diagrams:"
             echo
             echo "$CHANGES"
             echo
-            echo "Rebuild diagrams with pnpm run --dir ./apps/docs build:diagrams and commit to the branch."
+            echo "Rebuild diagrams with pnpm --filter @repo/docs build:diagrams and commit to the branch."
             exit 1
           else
             echo "diagrams all up to date."
@@ -142,8 +145,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
       - uses: ./.github/actions/setup
+      # The Docs job builds the docs site
       - name: Run build
-        run: pnpm build
+        run: pnpm turbo run build --filter=@repo/web
         env:
           SKIP_ENV_VALIDATION: 'true'
       - name: Cache build output

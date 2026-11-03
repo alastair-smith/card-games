@@ -24,4 +24,4 @@ Diagrams are written in [D2](https://d2lang.com) under [`diagrams/`](https://git
 pnpm --filter @repo/docs build:diagrams
 ```
 
-Each diagram has three SVGs. The plain one follows the system colour scheme, for viewing on GitHub. The `.light.svg` and `.dark.svg` copies are for the site, which shows whichever matches its light/dark toggle. CI fails if any of them differ from the `.d2` file.
+Each diagram builds to a `.light.svg` and a `.dark.svg`. Link to the light one from a doc; the site swaps in the dark one when its light/dark toggle is set to dark. CI fails if either is missing or differs from the `.d2` file.

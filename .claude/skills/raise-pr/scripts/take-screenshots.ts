@@ -10,7 +10,7 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom] [--dark]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
@@ -30,7 +30,7 @@ const {
   name,
   'full-page': isFullPage = false,
   'scroll-to-bottom': isScrollingToBottom = false,
-  dark: isDark = false,
+  theme = 'light',
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
@@ -39,9 +39,21 @@ const {
     name: { type: 'string' },
     'full-page': { type: 'boolean' },
     'scroll-to-bottom': { type: 'boolean' },
-    dark: { type: 'boolean' },
+    theme: { type: 'string' },
   },
 }).values;
+
+const isTheme = (value: string): value is 'light' | 'dark' =>
+  value === 'light' || value === 'dark';
+
+if (!isTheme(theme)) {
+  exitWithError(`--theme must be light or dark, not '${theme}'.`);
+}
+
+// Only the docs site has a dark theme so far
+if (theme === 'dark' && !docs) {
+  exitWithError('--theme dark only applies to --docs.');
+}
 
 if (!name || [path, docs, story].filter(Boolean).length !== 1) {
   exitWithUsage(usage);
@@ -221,7 +233,7 @@ try {
       viewport: { width: size.width, height: size.height },
       isMobile: size.isMobile,
       hasTouch: size.isMobile,
-      colorScheme: isDark ? 'dark' : 'light',
+      colorScheme: theme,
     });
     const page = await context.newPage();
 
