@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 const REPO_URL = 'https://github.com/alastair-smith/card-games';
 
 export default defineConfig({
-  title: 'Play Cards docs',
+  title: 'Play Cards Docs',
   description: 'How Play Cards is built and how each game works',
   cleanUrls: true,
   ignoreDeadLinks: 'localhostLinks',
@@ -38,7 +38,7 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: '/favicon.svg',
-    siteTitle: 'PlayCards Docs',
+    siteTitle: 'Docs.PlayCards',
     sidebar: [
       {
         text: 'Technical',
