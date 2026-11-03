@@ -8,6 +8,9 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "passThroughEnv": ["SKIP_ENV_VALIDATION"]
     },
+    "@repo/docs#build": {
+      "outputs": [".vitepress/dist/**", "diagrams/**/*.svg"]
+    },
     "typecheck": {
       "dependsOn": ["^typecheck"],
       "outputs": []

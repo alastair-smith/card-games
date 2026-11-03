@@ -55,3 +55,8 @@ dist
 
 *storybook.log
 storybook-static
+
+apps/docs/.vitepress/cache
+apps/docs/.vitepress/dist
+apps/docs/diagrams/**/*.light.svg
+apps/docs/diagrams/**/*.dark.svg
