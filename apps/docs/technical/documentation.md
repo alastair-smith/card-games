@@ -18,10 +18,10 @@ pnpm --filter @repo/docs dev
 
 ## Diagrams
 
-Diagrams are written in [D2](https://d2lang.com) under [`diagrams/`](https://github.com/alastair-smith/card-games/tree/main/apps/docs/diagrams). After changing a `.d2` file, rebuild the SVGs from the repo root:
+Diagrams are written in [D2](https://d2lang.com) under [`diagrams/`](https://github.com/alastair-smith/card-games/tree/main/apps/docs/diagrams). After changing a `.d2` file, rebuild the SVGs from the repo root and commit them:
 
 ```bash
 pnpm --filter @repo/docs build:diagrams
 ```
 
-This also writes a light and a dark copy of each diagram, which aren't committed. The site shows whichever matches its light/dark toggle, as the committed SVGs follow the system colour scheme instead.
+Each diagram has three SVGs. The plain one follows the system colour scheme, for viewing on GitHub. The `.light.svg` and `.dark.svg` copies are for the site, which shows whichever matches its light/dark toggle. CI fails if any of them differ from the `.d2` file.
