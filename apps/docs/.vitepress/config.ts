@@ -57,6 +57,7 @@ export default defineConfig({
         ],
       },
     ],
+    nav: [{ text: 'Play a game', link: 'https://playcards.games' }],
     socialLinks: [{ icon: 'github', link: REPO_URL }],
     search: { provider: 'local' },
   },
