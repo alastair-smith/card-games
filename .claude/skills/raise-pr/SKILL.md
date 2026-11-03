@@ -98,12 +98,13 @@ to add it, rather than taking the screenshot another way.
 Put them in a table under a `### Screenshots` heading at the end of the body,
 above `Closes #123`. Reference each one by the path the script printed, and
 pass that same path to `--attach` (below), which uploads it and points the
-reference at the upload. Write the alt text in the reference:
+reference at the upload. Give each state a row, with desktop and mobile as
+columns, and write the alt text in the reference:
 
 ```md
-| Description         | Image                                                                 |
-| :------------------ | --------------------------------------------------------------------- |
-| Full lobby, desktop | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) |
+| Description | Desktop                                                               | Mobile                                                              |
+| :---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Full lobby  | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) | ![Full lobby, mobile](.pr-screenshots/i-123/lobby/lobby-mobile.png) |
 ```
 
 When something changed, show it before and after. Take the previous
