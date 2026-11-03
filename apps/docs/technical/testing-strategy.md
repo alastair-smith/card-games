@@ -1,141 +1,110 @@
 # Testing Strategy
 
-This document describes the five-tier testing strategy for the card games platform. Each tier has a distinct scope, tooling, and trigger — together they give fast feedback on PRs without sacrificing confidence in the deployed system.
+Every pull request runs static checks and four kinds of test, from fastest to slowest. Each catches a different kind of mistake, so a change is checked from its types up to a full game in a real browser.
 
 ## Overview
 
-| Tier | Name                      | Tooling          | What it tests                                        | When it runs    |
-| ---- | ------------------------- | ---------------- | ---------------------------------------------------- | --------------- |
-| 1    | Unit tests                | Vitest + jsdom   | Individual functions and components in isolation     | PR CI           |
-| 2    | UI flow tests             | Playwright + MSW | Client-side game flows with a mocked backend         | PR CI           |
-| 3    | Backend integration tests | Vitest + Redis   | Server-side game logic against a real Redis instance | PR CI           |
-| 4    | Smoke tests               | Playwright       | Core happy path against the deployed environment     | Post-deployment |
-| 5    | Full game simulation      | Playwright       | Complete Yaniv game played to completion             | Daily cron      |
+| Check             | Tooling                                                                                                                      | What it checks                                         | CI job               |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | -------------------- |
+| Static checks     | [Biome](https://biomejs.dev), [TypeScript](https://www.npmjs.com/package/typescript)                                         | Lint, formatting and types across the repo             | Lint                 |
+| Unit tests        | [Vitest](https://www.npmjs.com/package/vitest), [jsdom](https://www.npmjs.com/package/jsdom)                                 | Functions and components on their own                  | Test                 |
+| Story tests       | [Storybook](https://www.npmjs.com/package/@storybook/addon-vitest), [Vitest browser mode](https://vitest.dev/guide/browser/) | Each story renders and its `play` function passes      | Story Tests          |
+| Integration tests | [Vitest](https://www.npmjs.com/package/vitest), [Redis](https://redis.io)                                                    | The data layer against a real Redis                    | Integration Tests    |
+| E2E tests         | [Playwright](https://www.npmjs.com/package/@playwright/test)                                                                 | A full game of Yaniv in real browsers, against a build | E2E Tests (4 setups) |
 
----
+The four test jobs only run when a pull request changes the app: `apps/web/`, `packages/`, the root package and workspace files, or the CI workflows. The lint job always runs.
 
-## Tier 1 — Unit Tests
+## Static checks
 
-**Purpose:** Verify individual units of logic and UI in complete isolation. These are the fastest tests and run on every PR.
+**Tooling:** [Biome](https://biomejs.dev) for linting and formatting, including the Markdown and YAML files, and [TypeScript](https://www.npmjs.com/package/typescript) for type checking each package.
 
-**Tooling:** Vitest, jsdom, @testing-library/react, @testing-library/jest-dom
+**Run locally** from the repo root:
 
-**Scope:**
-- Game state functions (`play-cards`, `pickup-card`, `call-yaniv`, etc.)
-- UI components (hand, controls, scorecard, round summary, etc.)
-- Utility functions (card validation, scoring, sorting)
-
-**What they don't cover:** Interactions between components, real Redis state, network calls, or multi-step flows.
-
-**Run locally:**
 ```bash
-pnpm --filter @repo/web test -- run src/path/to/file.test.tsx
-pnpm test  # full suite
+pnpm format:fix   # fix lint and formatting
+pnpm typecheck    # check types in every package
+pnpm lint         # both checks, without fixing, as CI runs them
 ```
 
-**CI job:** `test` — runs on every PR.
+**CI job:** Lint, which runs `pnpm lint`.
 
----
+Two more checks run on every pull request:
 
-## Tier 2 — UI Flow Tests
+- **Check Diagrams** rebuilds the D2 diagrams and fails if the committed SVGs differ. See [Documentation](./documentation.md)
+- **PR Title** checks the title starts with one of the emoji in CLAUDE.md's commit conventions
 
-**Purpose:** Verify client-side game flows end to end from the user's perspective, without needing a real backend or Redis. These tests assert that the right UI states appear in response to realistic game scenarios.
+## Unit tests
 
-**Tooling:** Playwright, MSW (v2)
+**Purpose:** check individual functions and components on their own. These are the fastest tests.
 
-**How it works:** MSW runs as a service worker in the browser and intercepts all tRPC HTTP requests (mutations and SSE subscriptions). Each test sets up a specific scenario — e.g. "it's your turn and you have a valid set in hand" — and asserts the UI responds correctly.
+**Tooling:** [Vitest](https://www.npmjs.com/package/vitest) in [jsdom](https://www.npmjs.com/package/jsdom), with [Testing Library](https://www.npmjs.com/package/@testing-library/react) and [jest-dom](https://www.npmjs.com/package/@testing-library/jest-dom) for components.
 
-**Example scenarios:**
-- Joining a lobby: entering a name and game code → seeing the lobby waiting screen
-- Launching a game: host starts the game → game board appears with dealt cards
-- Playing a card: selecting a card and confirming → discard pile updates, turn passes
-- Picking up from discard: selecting a card from the discard pile → it appears in hand
-- Calling Yaniv: clicking the Yaniv button → round summary screen appears
-- Viewing round summary: scores displayed correctly before next round begins
-- Game over: final scores shown after a player is eliminated
+**Scope:** any `*.test.ts` or `*.test.tsx` file in `apps/web`, apart from the integration tests, such as:
 
-**What they don't cover:** Real backend correctness, Redis state, or actual card shuffling/distribution.
+- Game state functions, such as playing cards, picking up and calling Yaniv
+- Components, such as the hand, turn actions and round summary
+- Utilities, such as scoring and sorting cards
+
+**What they don't cover:** layout and styles, which jsdom doesn't render, Redis, or a game across several requests.
 
 **Run locally:**
+
 ```bash
-# Next.js dev server must be running with MSW enabled
-pnpm dev
-pnpm --filter @repo/web playwright test
+pnpm --filter @repo/web test src/path/to/file.test.tsx   # one file
+pnpm test                                                # every unit test
 ```
 
-**CI job:** `ui-flow-tests` — runs on every PR.
+**CI job:** Test.
 
----
+## Story tests
 
-## Tier 3 — Backend Integration Tests
+**Purpose:** check each component renders in a real browser, in every state its stories show. A story with a `play` function also clicks or types through it and checks the result.
 
-**Purpose:** Verify server-side game logic against a real Redis instance. These tests rig up specific state in Redis and assert that the state functions produce the correct output and side effects.
+**Tooling:** [Storybook's Vitest addon](https://www.npmjs.com/package/@storybook/addon-vitest) turns each story into a test, run in Chromium through [Vitest browser mode](https://www.npmjs.com/package/@vitest/browser-playwright). The [accessibility addon](https://www.npmjs.com/package/@storybook/addon-a11y) checks each story too, but reports problems as warnings rather than failing the test.
 
-**Tooling:** Vitest, ioredis, real Redis
-
-**How it works:** Each test uses a unique game code to isolate state, calls the data layer functions directly against a real Redis instance, and asserts the resulting Redis state and return value.
-
-**Example scenarios:**
-- `createDiscard` clears any pre-existing pile for the game code
-- `pushDiscard` / `popDiscard` maintains LIFO ordering
-- `drainDiscard` returns all cards top-first and clears the key
-- `createDeck` / `drawCard` maintains FIFO ordering
-- `deckExists` / `discardExists` reflect accurate presence after mutations
-
-**What they don't cover:** UI, network layer, tRPC procedure logic, or higher-level game state functions.
+**What they don't cover:** the server, or components wired together beyond what a story renders.
 
 **Run locally:**
+
 ```bash
-# Requires Redis running (same as dev)
-pnpm --filter @repo/web test:integration
+pnpm --filter @repo/web test:stories src/path/to/file.stories.tsx   # one story file
+pnpm --filter @repo/web test:stories                                # every story
 ```
 
-**CI job:** `test-integration` — runs on every PR with a Redis instance provided by the CI environment.
+**CI job:** Story Tests.
 
----
+## Integration tests
 
-## Tier 4 — Smoke Tests
+**Purpose:** check the data layer against a real Redis, where a mock would hide how Redis orders and stores values.
 
-**Purpose:** Confirm the deployed application is functional after a release. These are intentionally minimal — just enough to catch a broken deployment.
+**Tooling:** [Vitest](https://www.npmjs.com/package/vitest) with [ioredis](https://www.npmjs.com/package/ioredis), against [Redis](https://redis.io).
 
-**Tooling:** Playwright
+**Scope:** `*.integration.test.ts` files, which cover the deck and discard pile, such as the deck drawing cards in the order it was created. Each test generates its own game code, so tests don't share state.
 
-**Scope:** Single happy-path walkthrough:
-1. Navigate to home page
-2. Create a new game
-3. Join as a second player (second browser context)
-4. Start the game
-5. Play one card
-6. Assert the discard pile updates
+**What they don't cover:** the tRPC procedures, the game state functions built on the data layer, or the UI.
 
-The test exits immediately after confirming the card play succeeded. No further game logic is exercised.
+**Run locally** from the repo root, which starts Redis in Docker first:
 
-**Run locally:**
 ```bash
-TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:smoke
+pnpm test:integration
 ```
 
-**Trigger:** Post-deployment workflow — not PR CI. Runs against the staging URL after a successful deploy.
+**CI job:** Integration Tests, with Redis as a service container.
 
----
+## E2E tests
 
-## Tier 5 — Full Game Simulation
+**Purpose:** check a complete game works in real browsers, against a production build with Redis.
 
-**Purpose:** Validate the complete Yaniv game flow from start to finish, including multi-round scoring, edge cases (assaf, 50-point halving), and the game-over screen. This tier catches regressions that shorter tests miss.
+**Tooling:** [Playwright](https://www.npmjs.com/package/@playwright/test).
 
-**Tooling:** Playwright (multiple browser contexts to simulate multiple players)
+**Scope:** one test plays a full 3-player game of Yaniv, from creating the lobby to the game-over screen. Each player has their own browser context. Player 1 picks the best move each turn and the others the worst, so the game reaches an end.
 
-**Scope:**
-- Two or more browser contexts join the same game
-- Each context takes turns playing cards, picking up, or calling Yaniv
-- The simulation continues until one player accumulates enough points to be eliminated
-- Assertions cover: round summaries between rounds, score accumulation, game-over screen with final standings
+The test runs in four browser setups: `chromium-desktop`, `chromium-mobile`, `firefox-desktop` and `firefox-mobile`.
 
-**Why not in PR CI:** Game length is non-deterministic and multi-player orchestration adds meaningful overhead. Running daily on a schedule is more appropriate — it provides a daily regression signal without slowing down PR feedback.
+**Run locally** in the background, as a run takes a few minutes. Playwright reuses the dev server on port 3000 if it's running:
 
-**Run locally:**
 ```bash
-TARGET_URL=https://staging.example.com pnpm --filter @repo/web playwright test:e2e
+pnpm --filter @repo/web test:e2e --project=chromium-desktop
 ```
 
-**Trigger:** GitHub Actions scheduled workflow — runs daily against the staging environment, not triggered by PRs.
+**CI job:** E2E Tests, one job per browser setup, each against the build from the Build job. A failing run uploads its Playwright trace.
