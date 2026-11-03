@@ -12,7 +12,7 @@ background, and stop it when you're done:
 ```bash
 pnpm dev
 pnpm --filter @repo/web dev:stories
-pnpm --filter @repo/docs dev
+pnpm --filter @repo/docs dev:docs
 ```
 
 The app runs on port 3000, Storybook on 6006 and the docs site on 5173. If a

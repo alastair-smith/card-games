@@ -11,7 +11,7 @@ Link each new doc from [`index.md`](../index.md), and add it to the sidebar in [
 To run the site locally from the repo root:
 
 ```bash
-pnpm --filter @repo/docs dev
+pnpm --filter @repo/docs dev:docs
 ```
 
 `pnpm --filter @repo/docs build` rebuilds the diagrams, then builds the site into `.vitepress/dist`.
