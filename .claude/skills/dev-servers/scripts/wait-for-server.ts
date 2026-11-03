@@ -6,11 +6,12 @@ import {
   parseArguments,
 } from '../../lib/script-helpers.ts';
 
-const usage = 'Usage: wait-for-server.ts --port <3000|6006>';
+const usage = 'Usage: wait-for-server.ts --port <3000|6006|5173>';
 
 const SERVER_NAMES = {
   '3000': 'The app',
   '6006': 'Storybook',
+  '5173': 'The docs site',
 } as const satisfies Record<string, string>;
 
 const TIMEOUT_SECONDS = 120;
@@ -31,7 +32,7 @@ if (!port) {
 
 if (!isServerPort(port)) {
   exitWithError(
-    `--port must be 3000 (the app) or 6006 (Storybook), not '${port}'.`,
+    `--port must be 3000 (the app), 6006 (Storybook) or 5173 (the docs site), not '${port}'.`,
   );
 }
 

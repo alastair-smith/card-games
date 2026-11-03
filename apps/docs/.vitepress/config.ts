@@ -6,6 +6,8 @@ export default defineConfig({
   title: 'Play Cards Docs',
   description: 'How Play Cards is built and how each game works',
   cleanUrls: true,
+  // A fixed port, so tools such as the screenshot script can find the site
+  vite: { server: { port: 5173, strictPort: true } },
   ignoreDeadLinks: 'localhostLinks',
   markdown: {
     config(markdown) {

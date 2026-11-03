@@ -118,8 +118,8 @@ Chromium ones unless asked; CI runs all four.
 
 ### Dev servers
 
-Use the `dev-servers` skill to start, wait for and stop the app (port 3000) or
-Storybook (port 6006).
+Use the `dev-servers` skill to start, wait for and stop the app (port 3000),
+Storybook (port 6006) or the docs site (port 5173).
 
 When linking the user to a story, use the `link-stories` skill.
 

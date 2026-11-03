@@ -53,7 +53,8 @@ Fill in `.github/pull_request_template.md`:
 ## Screenshots
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
-on the dev server (port 3000) or of a single story in Storybook (port 6006).
+on the dev server (port 3000), of a single story in Storybook (port 6006) or
+of a page on the docs site (port 5173).
 Start the one you need if it isn't running, with the `dev-servers` skill:
 
 ```bash
@@ -61,6 +62,7 @@ Start the one you need if it isn't running, with the `dev-servers` skill:
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --dark
 ```
 
 It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
@@ -75,6 +77,9 @@ shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+- **Docs:** `--docs` takes a path on the docs site and works like `--path`.
+  Screenshots are light by default; pass `--dark` for dark mode, as the docs
+  follow the system colour scheme
 
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
