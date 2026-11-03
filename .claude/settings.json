@@ -43,6 +43,8 @@
       "Bash(git pull *)",
       "Bash(git switch *)",
       "Bash(pnpm --filter @repo/docs build:diagrams)",
+      "Bash(pnpm --filter @repo/docs build:docs)",
+      "Bash(pnpm --filter @repo/docs dev:docs)",
       "Bash(pnpm --filter @repo/web dev:stories)",
       "Bash(pnpm --filter @repo/web test *)",
       "Bash(pnpm --filter @repo/web test:e2e *)",

@@ -14,7 +14,7 @@ To run the site locally from the repo root:
 pnpm --filter @repo/docs dev:docs
 ```
 
-`pnpm --filter @repo/docs build` rebuilds the diagrams, then builds the site into `.vitepress/dist`.
+`pnpm --filter @repo/docs build:docs` rebuilds the diagrams, then builds the site into `.vitepress/dist`.
 
 ## Diagrams
 

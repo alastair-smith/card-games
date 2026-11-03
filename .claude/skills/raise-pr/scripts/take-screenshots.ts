@@ -127,6 +127,25 @@ const SCROLL_TO_BOTTOM_SCRIPT = `(() => {
 
 const mainOverflowSchema = z.number().nonnegative();
 
+// A full-page capture doesn't scroll, so lazy images below the first screen
+// would never load. Scroll through a screen at a time, then wait for them
+const LOAD_LAZY_IMAGES_SCRIPT = `(async () => {
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  for (let top = 0; top < document.documentElement.scrollHeight; top += window.innerHeight) {
+    window.scrollTo(0, top);
+    await frame();
+  }
+  await Promise.all(
+    [...document.images]
+      .filter((image) => !image.complete && getComputedStyle(image).display !== 'none')
+      .map((image) => new Promise((resolve) => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', resolve, { once: true });
+      })),
+  );
+  window.scrollTo(0, 0);
+})()`;
+
 async function capturePage(page: Page, file: string) {
   // Lets client components finish hydrating. Game pages keep a
   // subscription open and never go idle, so the timeout isn't an error
@@ -140,6 +159,8 @@ async function capturePage(page: Page, file: string) {
   }
 
   if (isFullPage) {
+    await page.evaluate(LOAD_LAZY_IMAGES_SCRIPT);
+
     const mainOverflow = mainOverflowSchema.parse(
       await page.evaluate(MAIN_OVERFLOW_SCRIPT),
     );

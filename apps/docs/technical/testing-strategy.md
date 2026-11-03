@@ -12,7 +12,7 @@ Every pull request runs static checks and four kinds of test, from fastest to sl
 | Integration tests | [Vitest](https://www.npmjs.com/package/vitest), [Redis](https://redis.io)                                                    | The data layer against a real Redis                    | Integration Tests    |
 | E2E tests         | [Playwright](https://www.npmjs.com/package/@playwright/test)                                                                 | A full game of Yaniv in real browsers, against a build | E2E Tests (4 setups) |
 
-The four test jobs only run when a pull request changes the app: `apps/web/`, `packages/`, the root package and workspace files, or the CI workflows. The lint job always runs.
+The test, build and E2E jobs only run when a pull request changes the app: `apps/web/`, `packages/`, the root package, workspace and `turbo.json` files, or the CI workflows and actions. The Lint, Docs and PR Title jobs always run.
 
 ## Static checks
 
@@ -30,7 +30,7 @@ pnpm lint         # both checks, without fixing, as CI runs them
 
 Two more checks run on every pull request:
 
-- **Check Diagrams** rebuilds the D2 diagrams and fails if the committed SVGs differ. See [Documentation](./documentation.md)
+- **Docs** builds the docs site, which fails on a broken link, then fails if the rebuilt diagram SVGs differ from the committed ones or weren't committed. See [Documentation](./documentation.md)
 - **PR Title** checks the title starts with one of the emoji in CLAUDE.md's commit conventions
 
 ## Unit tests
