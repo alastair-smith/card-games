@@ -1,6 +1,6 @@
 # Testing Strategy
 
-Every pull request runs static checks and four kinds of test, from fastest to slowest. Each catches a different kind of mistake, so a change is checked from its types up to a full game in a real browser.
+Every pull request runs static checks, and one that changes the app also runs four kinds of test, from fastest to slowest. Each catches a different kind of mistake, so a change is checked from its types up to a full game in a real browser.
 
 ## Overview
 

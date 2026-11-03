@@ -127,23 +127,23 @@ const SCROLL_TO_BOTTOM_SCRIPT = `(() => {
 
 const mainOverflowSchema = z.number().nonnegative();
 
-// A full-page capture doesn't scroll, so lazy images below the first screen
-// would never load. Scroll through a screen at a time, then wait for them
-const LOAD_LAZY_IMAGES_SCRIPT = `(async () => {
-  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
-  for (let top = 0; top < document.documentElement.scrollHeight; top += window.innerHeight) {
-    window.scrollTo(0, top);
-    await frame();
+// Lazy images off screen wouldn't load before the capture, so load them all
+// now. The deadline keeps a slow or broken image from stalling the capture
+const IMAGE_LOAD_TIMEOUT_MILLISECONDS = 10_000;
+const LOAD_IMAGES_SCRIPT = `(async () => {
+  for (const image of document.querySelectorAll('img[loading="lazy"]')) {
+    image.loading = 'eager';
   }
-  await Promise.all(
-    [...document.images]
-      .filter((image) => !image.complete && getComputedStyle(image).display !== 'none')
-      .map((image) => new Promise((resolve) => {
-        image.addEventListener('load', resolve, { once: true });
-        image.addEventListener('error', resolve, { once: true });
-      })),
-  );
-  window.scrollTo(0, 0);
+  const loads = [...document.images]
+    .filter((image) => !image.complete)
+    .map((image) => new Promise((resolve) => {
+      image.addEventListener('load', resolve, { once: true });
+      image.addEventListener('error', resolve, { once: true });
+    }));
+  await Promise.race([
+    Promise.all(loads),
+    new Promise((resolve) => setTimeout(resolve, ${IMAGE_LOAD_TIMEOUT_MILLISECONDS})),
+  ]);
 })()`;
 
 async function capturePage(page: Page, file: string) {
@@ -154,13 +154,13 @@ async function capturePage(page: Page, file: string) {
   // The dev-only Next.js indicator would otherwise sit over the page
   await page.evaluate(`document.querySelector('nextjs-portal')?.remove()`);
 
+  await page.evaluate(LOAD_IMAGES_SCRIPT);
+
   if (isScrollingToBottom) {
     await page.evaluate(SCROLL_TO_BOTTOM_SCRIPT);
   }
 
   if (isFullPage) {
-    await page.evaluate(LOAD_LAZY_IMAGES_SCRIPT);
-
     const mainOverflow = mainOverflowSchema.parse(
       await page.evaluate(MAIN_OVERFLOW_SCRIPT),
     );

@@ -9,7 +9,7 @@ in-progress: "Game in progress\nthe lobby no longer accepts changes\nor new play
 
 create -> waiting-for-players
 waiting-for-players -> waiting-for-ready: "a player joins"
-waiting-for-ready -> ready: "everyone is ready"
+waiting-for-ready -> ready: "everyone is ready, or a player\nwho isn't leaves or is removed"
 ready -> in-progress: "the host starts the game"
 
 # Steps back are written from the earlier stage, so the layout keeps the
