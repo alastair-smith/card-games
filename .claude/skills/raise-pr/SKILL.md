@@ -53,7 +53,8 @@ Fill in `.github/pull_request_template.md`:
 ## Screenshots
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
-on the dev server (port 3000) or of a single story in Storybook (port 6006).
+on the dev server (port 3000), of a single story in Storybook (port 6006) or
+of a page on the docs site (port 5173).
 Start the one you need if it isn't running, with the `dev-servers` skill:
 
 ```bash
@@ -61,6 +62,7 @@ Start the one you need if it isn't running, with the `dev-servers` skill:
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --theme dark
 ```
 
 It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
@@ -75,6 +77,9 @@ shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+- **Docs:** `--docs` takes a path on the docs site and works like `--path`.
+  Screenshots are light by default; pass `--theme dark` for dark mode. Only
+  the docs site has a dark theme so far, so the script rejects it elsewhere
 
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
@@ -93,12 +98,13 @@ to add it, rather than taking the screenshot another way.
 Put them in a table under a `### Screenshots` heading at the end of the body,
 above `Closes #123`. Reference each one by the path the script printed, and
 pass that same path to `--attach` (below), which uploads it and points the
-reference at the upload. Write the alt text in the reference:
+reference at the upload. Give each state a row, with desktop and mobile as
+columns, and write the alt text in the reference:
 
 ```md
-| Description         | Image                                                                 |
-| :------------------ | --------------------------------------------------------------------- |
-| Full lobby, desktop | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) |
+| Description | Desktop                                                               | Mobile                                                              |
+| :---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Full lobby  | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) | ![Full lobby, mobile](.pr-screenshots/i-123/lobby/lobby-mobile.png) |
 ```
 
 When something changed, show it before and after. Take the previous

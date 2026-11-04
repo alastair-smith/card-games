@@ -2,14 +2,14 @@
 
 ## High level
 
-![High-level architecture: browser, the Next.js server on Render, Redis and New Relic](../diagrams/architecture/high-level.svg)
+![High-level architecture: browser, the Next.js server on Render, Redis and New Relic](../diagrams/architecture/high-level.light.svg)
 
 ## Auth
 
-![Auth flow: the proxy issues or renews a JWT cookie on each request](../diagrams/flows/auth.svg)
+![Auth flow: the proxy issues or renews a JWT cookie on each request](../diagrams/flows/auth.light.svg)
 
 ## Data
 
 ## Events
 
-![Event flow: a mutation stores state in Redis, emits an event and each subscription sends the update over SSE](../diagrams/architecture/events.svg)
+![Event flow: a mutation stores state in Redis, emits an event and each subscription sends the update over SSE](../diagrams/architecture/events.light.svg)

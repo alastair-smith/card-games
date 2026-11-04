@@ -32,27 +32,15 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
-  diagrams:
-    name: Check Diagrams
+  docs:
+    name: Docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
       - uses: ./.github/actions/setup
-      - name: Check diagrams
-        run: |
-          pnpm run --dir ./apps/docs build:diagrams
-          CHANGES=$(git diff --name-only)
-          if [ -n "$CHANGES" ]; then
-            echo "Missing built diagrams:"
-            echo
-            echo "$CHANGES"
-            echo
-            echo "Rebuild diagrams with pnpm run --dir ./apps/docs build:diagrams and commit to the branch."
-            exit 1
-          else
-            echo "diagrams all up to date."
-          fi
+      - name: Build docs
+        run: pnpm --filter @repo/docs build:docs
 
   changes:
     name: Detect App Changes

@@ -118,8 +118,8 @@ Chromium ones unless asked; CI runs all four.
 
 ### Dev servers
 
-Use the `dev-servers` skill to start, wait for and stop the app (port 3000) or
-Storybook (port 6006).
+Use the `dev-servers` skill to start, wait for and stop the app (port 3000),
+Storybook (port 6006) or the docs site (port 5173).
 
 When linking the user to a story, use the `link-stories` skill.
 
@@ -209,11 +209,13 @@ Use the `raise-pr` skill when opening a PR or updating its title or description.
 ## Docs
 
 Docs live in `apps/docs`: how the app is built under `technical/`, how each
-game works under `games/`. Link each new doc from `index.md`.
+game works under `games/`. Link each new doc from `index.md`, and add it to
+the sidebar in `apps/docs/.vitepress/config.ts`.
 
-Diagrams are D2 files in `apps/docs/diagrams/`, shown in the docs as the SVGs
-built from them. Rebuild the SVGs after changing a diagram, and commit both;
-CI fails if they differ:
+Diagrams are D2 files in `apps/docs/diagrams/`, each built to a `.light.svg`
+and a `.dark.svg` when the docs site builds or starts. The SVGs aren't
+committed. Link to the light one from a doc; the site swaps in the dark one.
+To check a diagram compiles without starting the site:
 
 ```bash
 pnpm --filter @repo/docs build:diagrams

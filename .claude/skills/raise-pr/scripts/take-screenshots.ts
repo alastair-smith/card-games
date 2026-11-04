@@ -10,10 +10,11 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
+const DOCS_ORIGIN = 'http://localhost:5173';
 const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const STORY_ID = /^[a-z0-9-]+--[a-z0-9-]+$/;
 
@@ -24,21 +25,37 @@ const SIZES = [
 
 const {
   path,
+  docs,
   story,
   name,
   'full-page': isFullPage = false,
   'scroll-to-bottom': isScrollingToBottom = false,
+  theme = 'light',
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
+    docs: { type: 'string' },
     story: { type: 'string' },
     name: { type: 'string' },
     'full-page': { type: 'boolean' },
     'scroll-to-bottom': { type: 'boolean' },
+    theme: { type: 'string' },
   },
 }).values;
 
-if (!name || Boolean(path) === Boolean(story)) {
+const isTheme = (value: string): value is 'light' | 'dark' =>
+  value === 'light' || value === 'dark';
+
+if (!isTheme(theme)) {
+  exitWithError(`--theme must be light or dark, not '${theme}'.`);
+}
+
+// Only the docs site has a dark theme so far
+if (theme === 'dark' && !docs) {
+  exitWithError('--theme dark only applies to --docs.');
+}
+
+if (!name || [path, docs, story].filter(Boolean).length !== 1) {
   exitWithUsage(usage);
 }
 
@@ -52,7 +69,7 @@ if (isFullPage && isScrollingToBottom) {
 
 if (story && (isFullPage || isScrollingToBottom)) {
   exitWithError(
-    '--full-page and --scroll-to-bottom only apply to --path, since --story captures just the component.',
+    '--full-page and --scroll-to-bottom only apply to --path and --docs, since --story captures just the component.',
   );
 }
 
@@ -69,15 +86,16 @@ function getUrl(): URL {
     return url;
   }
 
-  if (!path?.startsWith('/')) {
+  const [option, pagePath, origin] = docs
+    ? ['--docs', docs, DOCS_ORIGIN]
+    : ['--path', path, DEV_SERVER_ORIGIN];
+  if (!pagePath?.startsWith('/')) {
     exitWithUsage(usage);
   }
-  const url = new URL(path, DEV_SERVER_ORIGIN);
+  const url = new URL(pagePath, origin);
   // A path such as //example.com would otherwise point the browser elsewhere
-  if (url.origin !== DEV_SERVER_ORIGIN) {
-    exitWithError(
-      `--path must be a path on ${DEV_SERVER_ORIGIN}, not '${path}'.`,
-    );
+  if (url.origin !== origin) {
+    exitWithError(`${option} must be a path on ${origin}, not '${pagePath}'.`);
   }
   return url;
 }
@@ -109,6 +127,25 @@ const SCROLL_TO_BOTTOM_SCRIPT = `(() => {
 
 const mainOverflowSchema = z.number().nonnegative();
 
+// Lazy images off screen wouldn't load before the capture, so load them all
+// now. The deadline keeps a slow or broken image from stalling the capture
+const IMAGE_LOAD_TIMEOUT_MILLISECONDS = 10_000;
+const LOAD_IMAGES_SCRIPT = `(async () => {
+  for (const image of document.querySelectorAll('img[loading="lazy"]')) {
+    image.loading = 'eager';
+  }
+  const loads = [...document.images]
+    .filter((image) => !image.complete)
+    .map((image) => new Promise((resolve) => {
+      image.addEventListener('load', resolve, { once: true });
+      image.addEventListener('error', resolve, { once: true });
+    }));
+  await Promise.race([
+    Promise.all(loads),
+    new Promise((resolve) => setTimeout(resolve, ${IMAGE_LOAD_TIMEOUT_MILLISECONDS})),
+  ]);
+})()`;
+
 async function capturePage(page: Page, file: string) {
   // Lets client components finish hydrating. Game pages keep a
   // subscription open and never go idle, so the timeout isn't an error
@@ -116,6 +153,8 @@ async function capturePage(page: Page, file: string) {
 
   // The dev-only Next.js indicator would otherwise sit over the page
   await page.evaluate(`document.querySelector('nextjs-portal')?.remove()`);
+
+  await page.evaluate(LOAD_IMAGES_SCRIPT);
 
   if (isScrollingToBottom) {
     await page.evaluate(SCROLL_TO_BOTTOM_SCRIPT);
@@ -215,6 +254,7 @@ try {
       viewport: { width: size.width, height: size.height },
       isMobile: size.isMobile,
       hasTouch: size.isMobile,
+      colorScheme: theme,
     });
     const page = await context.newPage();
 
@@ -222,7 +262,7 @@ try {
       await page.goto(url.href, { waitUntil: 'load' });
     } catch {
       exitWithError(
-        `Couldn't load ${url.href}. Is ${story ? 'Storybook' : 'the dev server'} running on ${url.origin}?`,
+        `Couldn't load ${url.href}. Is ${story ? 'Storybook' : docs ? 'the docs site' : 'the dev server'} running on ${url.origin}?`,
       );
     }
 

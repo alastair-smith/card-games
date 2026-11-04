@@ -10,12 +10,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!apps/docs/diagrams/**/*.svg",
-      "!pnpm-lock.yaml",
-      "!LICENSE.md"
-    ]
+    "includes": ["**", "!pnpm-lock.yaml", "!LICENSE.md"]
   },
   "formatter": {
     "enabled": true,

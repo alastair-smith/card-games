@@ -1,39 +1,19 @@
 direction: down
 
-create: "lobby.create\nstores the lobby with the creator as host\nand the first player"
+create: "lobby.create\nthe creator is host and the first player"
 
-lobby: "Lobby\nevery change is stored in Redis and sent\nto each player as LOBBY_UPDATE" {
-  shape: page
-}
-
-join: "A player joins\nopening the game's subscription adds them,\nup to 5 players"
-update-player: "A player changes their name,\ncolour or ready status\n(colour must not be taken)"
-settings: "The host changes the hand size"
-make-host: "The host makes another player host"
-kick: "The host removes a player"
-leave: "A player leaves\n(host doesn't pass to anyone)"
-removed: "The removed player's subscription\nsends them back to /"
-
-start: "The host starts the game\nwith 2 to 5 players"
+waiting-for-players: "Waiting for players\nfewer than 2 players"
+waiting-for-ready: "Waiting for everyone to be ready\n2 to 5 players"
+ready: "Ready to start\nthe host can start the game"
 in-progress: "Game in progress\nthe lobby no longer accepts changes\nor new players"
 
-create -> lobby
+create -> waiting-for-players
+waiting-for-players -> waiting-for-ready: "a player joins"
+waiting-for-ready -> ready: "everyone is ready, or a player\nwho isn't leaves or is removed"
+ready -> in-progress: "the host starts the game"
 
-lobby -> join
-lobby -> update-player
-lobby -> settings
-lobby -> make-host
-lobby -> kick
-lobby -> leave
-
-join -> lobby
-update-player -> lobby
-settings -> lobby
-make-host -> lobby
-kick -> lobby
-leave -> lobby
-kick -> removed
-leave -> removed
-
-lobby -> start
-start -> in-progress
+# Steps back are written from the earlier stage, so the layout keeps the
+# stages in order from top to bottom
+waiting-for-ready <- ready: "a player joins (up to 5)\nor marks themselves not ready"
+waiting-for-players <- waiting-for-ready: "a player leaves or is removed,\nleaving fewer than 2"
+waiting-for-players <- ready: "a player leaves or is removed,\nleaving fewer than 2"

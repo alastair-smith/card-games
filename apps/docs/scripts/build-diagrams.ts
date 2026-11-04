@@ -7,6 +7,59 @@ import { D2 } from '@d2lang/d2';
 const LIGHT_THEME = 102;
 const DARK_THEME = 200;
 
+// Dark Mauve recoloured with Storybook's dark theme in
+// apps/web/.storybook/theme.ts, on the web app's panel card background
+const DARK_THEME_COLORS = {
+  N1: '#f4eff5',
+  N2: '#b8bfc2',
+  N3: '#8fa69b',
+  N4: '#5c7d6f',
+  N5: '#183f31',
+  N6: '#143829',
+  N7: '#204c3b',
+  B1: '#c5d2cc',
+  B2: '#8fa69b',
+  B3: '#5c7d6f',
+  B4: '#2b5d4a',
+  B5: '#275645',
+  B6: '#12392b',
+  AA2: '#5299e0',
+  AA4: '#275645',
+  AA5: '#12392b',
+  AB4: '#275645',
+  AB5: '#12392b',
+} as const;
+
+// One SVG per theme, as the docs site's light/dark toggle can't reach an
+// SVG's own prefers-color-scheme query
+const THEMES = [
+  { name: 'light', themeID: LIGHT_THEME, colors: undefined },
+  { name: 'dark', themeID: DARK_THEME, colors: DARK_THEME_COLORS },
+] as const;
+
+function withThemeColors(
+  content: string,
+  colors: (typeof THEMES)[number]['colors'],
+) {
+  if (!colors) {
+    return content;
+  }
+
+  const overrides = Object.entries(colors)
+    .map(([code, color]) => `      ${code}: "${color}"`)
+    .join('\n');
+
+  return `${content}
+vars: {
+  d2-config: {
+    theme-overrides: {
+${overrides}
+    }
+  }
+}
+`;
+}
+
 /** Recursively find all .d2 files in the repository */
 async function getD2Files(dir: string) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -38,22 +91,23 @@ async function main() {
 
   try {
     for (const file of d2Files) {
-      const outFile = file.replace(/\.d2$/, '.svg');
       const relInput = path.relative(process.cwd(), file);
-      const relOutput = path.relative(process.cwd(), outFile);
-
-      console.log(`⚡ Compiling: ${relInput} -> ${relOutput}`);
+      console.log(`⚡ Compiling: ${relInput}`);
 
       const content = await fs.readFile(file, 'utf8');
 
-      const compiled = await d2.compile(content, {
-        sketch: true,
-        themeID: LIGHT_THEME,
-        darkThemeID: DARK_THEME,
-      });
-      const svg = await d2.render(compiled.diagram, compiled.renderOptions);
-
-      await fs.writeFile(outFile, svg, 'utf8');
+      for (const theme of THEMES) {
+        const compiled = await d2.compile(
+          withThemeColors(content, theme.colors),
+          { sketch: true, layout: 'elk', pad: 20, themeID: theme.themeID },
+        );
+        const svg = await d2.render(compiled.diagram, compiled.renderOptions);
+        await fs.writeFile(
+          file.replace(/\.d2$/, `.${theme.name}.svg`),
+          svg,
+          'utf8',
+        );
+      }
     }
 
     console.log('✨ All diagrams compiled successfully!');

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Exact versions are specified in the [node-version](../../../.node-version) and [tool-versions](../../../.tool-versions) files. Tools like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com/guide/getting-started.html) can help with managing the versions.
+Exact versions are specified in the [node-version](https://github.com/alastair-smith/card-games/blob/main/.node-version) and [tool-versions](https://github.com/alastair-smith/card-games/blob/main/.tool-versions) files. Tools like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com/guide/getting-started.html) can help with managing the versions.
 
 - [Node.js](https://nodejs.org/) v24
 - [pnpm](https://pnpm.io/) v10
