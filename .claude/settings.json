@@ -80,6 +80,7 @@
       "mcp__storybook__get-storybook-story-instructions",
       "mcp__storybook__stories-preview",
       "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:developers.cloudflare.com)",
       "WebFetch(domain:docs.github.com)",
       "WebFetch(domain:storybook.js.org)",
       "WebFetch(domain:tailwindcss.com)",
