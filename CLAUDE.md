@@ -213,9 +213,9 @@ game works under `games/`. Link each new doc from `index.md`, and add it to
 the sidebar in `apps/docs/.vitepress/config.ts`.
 
 Diagrams are D2 files in `apps/docs/diagrams/`, each built to a `.light.svg`
-and a `.dark.svg`. Link to the light one from a doc; the site swaps in the
-dark one. Rebuild the SVGs after changing a diagram, and commit them with it;
-CI fails if they're missing or differ:
+and a `.dark.svg` when the docs site builds or starts. The SVGs aren't
+committed. Link to the light one from a doc; the site swaps in the dark one.
+To check a diagram compiles without starting the site:
 
 ```bash
 pnpm --filter @repo/docs build:diagrams

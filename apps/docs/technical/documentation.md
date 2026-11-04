@@ -14,14 +14,14 @@ To run the site locally from the repo root:
 pnpm --filter @repo/docs dev:docs
 ```
 
-`pnpm --filter @repo/docs build:docs` rebuilds the diagrams, then builds the site into `.vitepress/dist`.
+Both build the diagrams first. `pnpm --filter @repo/docs build:docs` builds the site into `.vitepress/dist`.
 
 ## Diagrams
 
-Diagrams are written in [D2](https://d2lang.com) under [`diagrams/`](https://github.com/alastair-smith/card-games/tree/main/apps/docs/diagrams). After changing a `.d2` file, rebuild the SVGs from the repo root and commit them:
+Diagrams are written in [D2](https://d2lang.com) under [`diagrams/`](https://github.com/alastair-smith/card-games/tree/main/apps/docs/diagrams). Each builds to a `.light.svg` and a `.dark.svg`, which aren't committed. Link to the light one from a doc; the site swaps in the dark one when its light/dark toggle is set to dark.
+
+To check a diagram compiles without starting the site, from the repo root:
 
 ```bash
 pnpm --filter @repo/docs build:diagrams
 ```
-
-Each diagram builds to a `.light.svg` and a `.dark.svg`. Link to the light one from a doc; the site swaps in the dark one when its light/dark toggle is set to dark. CI fails if either is missing or differs from the `.d2` file.

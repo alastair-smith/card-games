@@ -41,21 +41,6 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Build docs
         run: pnpm --filter @repo/docs build:docs
-      # The build rebuilds the diagrams first. Untracked files count too, so a
-      # diagram whose SVGs were never committed fails
-      - name: Check diagrams
-        run: |
-          CHANGES=$(git status --porcelain)
-          if [ -n "$CHANGES" ]; then
-            echo "Missing built diagrams:"
-            echo
-            echo "$CHANGES"
-            echo
-            echo "Rebuild diagrams with pnpm --filter @repo/docs build:diagrams and commit to the branch."
-            exit 1
-          else
-            echo "diagrams all up to date."
-          fi
 
   changes:
     name: Detect App Changes

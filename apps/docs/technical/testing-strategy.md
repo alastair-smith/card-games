@@ -30,7 +30,7 @@ pnpm lint         # both checks, without fixing, as CI runs them
 
 Two more checks run on every pull request:
 
-- **Docs** builds the docs site, which fails on a broken link, then fails if the rebuilt diagram SVGs differ from the committed ones or weren't committed. See [Documentation](./documentation.md)
+- **Docs** builds the diagrams and the docs site, which fails on a diagram that doesn't compile or a broken link. See [Documentation](./documentation.md)
 - **PR Title** checks the title starts with one of the emoji in CLAUDE.md's commit conventions
 
 ## Unit tests
