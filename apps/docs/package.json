@@ -6,6 +6,7 @@
   "scripts": {
     "build:docs": "pnpm build:diagrams && vitepress build",
     "build:diagrams": "./scripts/build-diagrams.ts",
+    "deploy:docs": "wrangler deploy",
     "dev:docs": "pnpm build:diagrams && vitepress dev",
     "preview": "vitepress preview",
     "typecheck": "tsc --noEmit -p .vitepress && tsc --noEmit",
@@ -17,6 +18,7 @@
     "medium-zoom": "^1.1.2",
     "typescript": "^7.0.2",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.44"
+    "vue": "^3.5.44",
+    "wrangler": "^4.155.0"
   }
 }
