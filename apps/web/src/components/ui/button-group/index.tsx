@@ -94,7 +94,9 @@ function ButtonGroupChoice({
           data-orientation='horizontal'
           className={cn(
             buttonGroupVariants({ orientation: 'horizontal' }),
-            'w-full',
+            // Each choice keeps its own borders, overlapping its neighbour's,
+            // so the chosen one's edges match on both sides
+            'w-full [&>*:not(:first-child)]:-ml-0.5 [&>*:not(:first-child)]:border-l-2',
           )}
         >
           {children}
@@ -126,12 +128,11 @@ function ButtonGroupChoiceItem({
       className={cn(
         buttonVariants({ variant: 'secondary', size: 'sm' }),
         'relative',
-        'has-checked:bg-primary has-checked:font-extrabold',
-        // Thickens the chosen button's edge, so it doesn't rely on colour.
-        // An outline still shows in forced colours, where a ring wouldn't
-        'has-checked:outline-2 has-checked:-outline-offset-4 has-checked:outline-light-text',
-        'has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
-        'has-disabled:pointer-events-none has-disabled:border-light-text-disabled has-disabled:bg-secondary-disabled has-disabled:text-light-text-disabled has-disabled:outline-light-text-disabled has-checked:has-disabled:bg-primary-disabled',
+        'has-checked:z-10 has-checked:bg-primary',
+        // Forced colours replace backgrounds, so use the system's highlight
+        'forced-colors:has-checked:bg-[Highlight] forced-colors:has-checked:text-[HighlightText] forced-colors:has-checked:forced-color-adjust-none',
+        'has-focus-visible:z-10 has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
+        'has-disabled:pointer-events-none has-disabled:border-light-text-disabled has-disabled:bg-secondary-disabled has-disabled:text-light-text-disabled has-checked:has-disabled:bg-primary-disabled',
         className,
       )}
     >
