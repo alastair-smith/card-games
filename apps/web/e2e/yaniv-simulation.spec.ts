@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { pickRandomHandSize } from '../src/server/state/game/yaniv/lib/pick-random-hand-size';
 import {
   JOKER_RANK,
   RANK_DISPLAY,
@@ -328,9 +329,10 @@ async function tryTakeTurn(
  * the default, as larger hands make the game too long to finish in time.
  */
 async function chooseRandomHandSize(page: Page): Promise<void> {
-  const handSize =
-    MIN_HAND_SIZE +
-    Math.floor(Math.random() * (DEFAULT_HAND_SIZE - MIN_HAND_SIZE + 1));
+  const handSize = pickRandomHandSize({
+    min: MIN_HAND_SIZE,
+    max: DEFAULT_HAND_SIZE,
+  });
   const handSizes = page.getByRole('group', { name: 'Hand size' });
   const defaultHandSize = handSizes.getByRole('radio', {
     name: String(DEFAULT_HAND_SIZE),

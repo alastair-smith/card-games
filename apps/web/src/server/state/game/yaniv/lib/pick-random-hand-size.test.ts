@@ -18,7 +18,7 @@ describe('pickRandomHandSize', () => {
     expect(pickRandomHandSize({ min: 1, max: 7 })).toBe(7);
   });
 
-  test('picks evenly across the range', () => {
+  test('picks from the middle of the range for a random number halfway up', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.5);
 
     expect(pickRandomHandSize({ min: 3, max: 6 })).toBe(5);
