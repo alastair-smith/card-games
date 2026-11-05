@@ -5,6 +5,7 @@ import { cn } from '~/utils/cn';
 
 type SpinButtonProps = {
   className?: string;
+  isDisabled?: boolean;
   label: string;
   max: number;
   min: number;
@@ -14,6 +15,7 @@ type SpinButtonProps = {
 
 export function SpinButton({
   className,
+  isDisabled = false,
   label,
   max,
   min,
@@ -35,7 +37,7 @@ export function SpinButton({
       End: max,
     };
     const newValue = keyValues[event.key];
-    if (newValue === undefined) return;
+    if (isDisabled || newValue === undefined) return;
     event.preventDefault();
     changeValue(newValue);
   };
@@ -52,7 +54,8 @@ export function SpinButton({
       <span
         ref={spinButtonRef}
         role='spinbutton'
-        tabIndex={0}
+        tabIndex={isDisabled ? undefined : 0}
+        aria-disabled={isDisabled || undefined}
         aria-label={label}
         aria-valuenow={value}
         aria-valuemin={min}
@@ -69,7 +72,7 @@ export function SpinButton({
           variant='secondary'
           tabIndex={-1}
           aria-label={`Decrease ${label}`}
-          disabled={value <= min}
+          disabled={isDisabled || value <= min}
           onClick={() => handleButtonClick(value - 1)}
         >
           -
@@ -79,7 +82,7 @@ export function SpinButton({
           variant='secondary'
           tabIndex={-1}
           aria-label={`Increase ${label}`}
-          disabled={value >= max}
+          disabled={isDisabled || value >= max}
           onClick={() => handleButtonClick(value + 1)}
         >
           +

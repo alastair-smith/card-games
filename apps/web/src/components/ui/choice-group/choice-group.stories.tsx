@@ -3,6 +3,8 @@ import type { ComponentProps, ReactNode } from 'react';
 import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -131,6 +133,35 @@ export const WithCustomContent: Story = {
             </span>
           </ChoiceCard>
         ))}
+      </ChoiceGroup>
+    </SettingsCard>
+  ),
+};
+
+// A choice with more settings opens them in a panel below it while it's
+// selected.
+export const WithPanel: Story = {
+  args: { heading: 'Who deals first', label: 'Who deals first' },
+  render: ({ heading, ...args }) => (
+    <SettingsCard heading={heading}>
+      <ChoiceGroup {...args} defaultValue='youngest'>
+        <ChoiceCard value='youngest'>
+          <ChoiceCardTitle>Youngest player</ChoiceCardTitle>
+        </ChoiceCard>
+        <ChoiceCard
+          value='random'
+          panel={
+            <Label className='flex items-center justify-center gap-2'>
+              <Switch defaultChecked />
+              Skip whoever dealt last
+            </Label>
+          }
+        >
+          <ChoiceCardTitle>Random player</ChoiceCardTitle>
+          <ChoiceCardDescription>
+            Select to see its settings.
+          </ChoiceCardDescription>
+        </ChoiceCard>
       </ChoiceGroup>
     </SettingsCard>
   ),

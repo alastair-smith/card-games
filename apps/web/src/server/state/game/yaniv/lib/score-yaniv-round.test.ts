@@ -5,14 +5,17 @@ import {
   buildInProgressState,
   buildPlayer,
   buildRoundScore,
+  expectInProgressState,
 } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
   type GameStage,
   type GameState,
   GameStep,
+  WINNER_CHOOSES_HAND_SIZE,
   YANIV_CALLER_PENALTY,
 } from '~/types/games/yaniv';
 
@@ -91,7 +94,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player1 = savedState.players.find((p) => p.id === USER_1);
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player1?.score).toBe(0);
@@ -136,7 +141,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(0);
   });
@@ -146,7 +153,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player2?.score).toBe(10);
     expect(player2?.roundScores).toEqual([buildRoundScore({ original: 10 })]);
@@ -157,7 +166,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player1 = savedState.players.find((p) => p.id === USER_1);
     expect(player1?.score).toBe(0);
     expect(player1?.roundScores).toEqual([
@@ -187,7 +198,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       expect(
         savedState.players.find((p) => p.id === USER_2)?.roundScores,
       ).toEqual([previousRound, buildRoundScore({ original: 10 })]);
@@ -203,7 +216,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(25);
       expect(player2?.roundScores).toEqual([
@@ -226,7 +241,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(50);
       expect(player2?.roundScores).toEqual([
@@ -261,9 +278,89 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(10);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(20);
     expect(savedState.players.find((p) => p.id === USER_3)?.score).toBe(55);
+  });
+
+  describe('next round', () => {
+    // USER_2 wins the hand, but USER_1 has the lowest total of the callers
+    const makeSplitWinnerState = (overrides: Partial<State> = {}) =>
+      makeState({
+        players: [
+          buildPlayer({
+            id: USER_1,
+            hand: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
+            isYanivCalled: true,
+          }),
+          buildPlayer({
+            id: USER_2,
+            hand: [{ suit: Suit.DIAMONDS, rank: Rank.THREE }],
+            score: 40,
+            isYanivCalled: true,
+          }),
+        ],
+        ...overrides,
+      });
+
+    test('lets the dealer deal when the hand size is fixed', async () => {
+      await scoreYanivRound(CODE, makeSplitWinnerState());
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        gameStep: GameStep.REDEAL,
+        currentPlayerId: USER_1,
+        dealerId: USER_1,
+      });
+    });
+
+    test('lets the winner of the hand choose the hand size when the winner chooses', async () => {
+      await scoreYanivRound(
+        CODE,
+        makeSplitWinnerState({
+          settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
+        }),
+      );
+
+      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+        gameStep: GameStep.CHOOSE_HAND_SIZE,
+        currentPlayerId: USER_2,
+        dealerId: USER_1,
+      });
+    });
+
+    test('lets whoever called first choose when the lowest hands tie, though both score nothing', async () => {
+      await scoreYanivRound(
+        CODE,
+        makeState({
+          settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
+          yanivCallerIds: [USER_2, USER_1],
+          players: [
+            buildPlayer({
+              id: USER_1,
+              hand: [{ suit: Suit.HEARTS, rank: Rank.TWO }],
+              isYanivCalled: true,
+            }),
+            buildPlayer({
+              id: USER_2,
+              hand: [{ suit: Suit.DIAMONDS, rank: Rank.TWO }],
+              score: 30,
+              isYanivCalled: true,
+            }),
+          ],
+        }),
+      );
+
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
+      expect(savedState).toMatchObject({
+        currentPlayerId: USER_2,
+        dealerId: USER_1,
+      });
+      expect(savedState.players.map((player) => player.score)).toEqual([0, 30]);
+    });
   });
 });

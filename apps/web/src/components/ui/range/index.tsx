@@ -4,6 +4,7 @@ import { SpinButton } from '~/components/ui/spin-button';
 import { cn } from '~/utils/cn';
 
 type RangeProps = ComponentProps<'fieldset'> & {
+  isDisabled?: boolean;
   label: string;
   max: number;
   min: number;
@@ -13,6 +14,7 @@ type RangeProps = ComponentProps<'fieldset'> & {
 
 export const Range = ({
   className,
+  isDisabled = false,
   label,
   max,
   min,
@@ -22,7 +24,11 @@ export const Range = ({
 }: RangeProps) => {
   return (
     <fieldset
-      className={cn('flex w-fit flex-col items-center gap-2', className)}
+      disabled={isDisabled}
+      className={cn(
+        'flex w-fit flex-col items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50',
+        className,
+      )}
       {...props}
     >
       <legend className='sr-only'>{label}</legend>
@@ -46,6 +52,7 @@ export const Range = ({
           value={lowerValue}
           min={min}
           max={upperValue}
+          isDisabled={isDisabled}
           onValueChange={(value) => onRangeChange([value, upperValue])}
         />
         <SpinButton
@@ -53,6 +60,7 @@ export const Range = ({
           value={upperValue}
           min={lowerValue}
           max={max}
+          isDisabled={isDisabled}
           onValueChange={(value) => onRangeChange([lowerValue, value])}
         />
       </div>

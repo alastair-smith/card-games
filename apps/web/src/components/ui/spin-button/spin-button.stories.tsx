@@ -37,3 +37,5 @@ export const Standard: Story = {};
 export const AtMinimum: Story = { args: { value: 1 } };
 
 export const AtMaximum: Story = { args: { value: 10 } };
+
+export const Disabled: Story = { args: { isDisabled: true } };

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useState } from 'react';
-import { fn } from 'storybook/test';
+import { fn, userEvent, within } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
@@ -117,6 +117,8 @@ const meta = {
     onCardToggle: fn(),
     onPickupFromDeck: fn(),
     onPickupFromDiscard: fn(),
+    onChooseHandSize: fn(),
+    isDealer: true,
     stage: GameViewStage.PICKING_CARDS,
     step: GameStep.PLAY_CARDS,
     drawnFrom: null,
@@ -165,6 +167,25 @@ const runSelectedArgs = {
 export const YourTurnToPlay: Story = {};
 
 export const FiveCardHand: Story = { args: { cards: userCards.slice(0, 5) } };
+
+// The largest hand the winner of a hand can choose to deal
+export const TenCardHand: Story = {
+  args: {
+    cards: [
+      ...userCards,
+      { suit: Suit.DIAMONDS, rank: Rank.TWO },
+      { suit: Suit.SPADES, rank: Rank.THREE },
+      { suit: Suit.HEARTS, rank: Rank.FOUR },
+    ],
+  },
+  // Smaller screens show the hand in its own tab; larger screens have no tabs
+  play: async ({ canvasElement }) => {
+    const handTab = within(canvasElement).queryByRole('tab', {
+      name: /Your hand/,
+    });
+    if (handTab) await userEvent.click(handTab);
+  },
+};
 
 export const ThirteenCardHand: Story = {
   args: {
@@ -233,6 +254,45 @@ export const WaitingForNewRound: Story = {
     players: withTurn(2),
     stage: GameViewStage.WAITING_FOR_NEW_ROUND,
     step: GameStep.REDEAL,
+  },
+};
+
+// You won the hand and someone else deals, so you only choose the hand size.
+export const ChoosingHandSize: Story = {
+  args: {
+    isDealer: false,
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+};
+
+export const WaitingForHandSize: Story = {
+  args: {
+    players: withTurn(2),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+};
+
+// The first player chooses the hand size before anything is dealt.
+export const ChoosingFirstHandSize: Story = {
+  args: {
+    players: withTurn(
+      0,
+      players.map((player) => ({
+        ...player,
+        cardCount: 0,
+        score: 0,
+        roundScores: [],
+        isFiftyScoreHalved: false,
+        isHundredScoreHalved: false,
+      })),
+    ),
+    cards: [],
+    playedCards: [],
+    discardCard: null,
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
   },
 };
 
@@ -399,6 +459,18 @@ const WALKTHROUGH_STAGES = [
     players: withYanivCalledByKevin(1),
     stage: GameViewStage.WAITING_FOR_NEW_ROUND,
     step: GameStep.REDEAL,
+  },
+  {
+    label: 'Winner chooses: you choose',
+    players: withYanivCalledByKevin(0),
+    stage: GameViewStage.CHOOSING_HAND_SIZE,
+    step: GameStep.CHOOSE_HAND_SIZE,
+  },
+  {
+    label: 'Winner chooses: Kevin chooses',
+    players: withYanivCalledByKevin(1),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
+    step: GameStep.CHOOSE_HAND_SIZE,
   },
 ] as const satisfies (Pick<GameProps, 'players' | 'stage' | 'step'> &
   Partial<Pick<GameProps, 'drawnFrom'>> & {

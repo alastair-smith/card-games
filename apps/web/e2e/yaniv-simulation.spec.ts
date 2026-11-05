@@ -1,4 +1,5 @@
 import { expect, type Page, test } from '@playwright/test';
+import { pickRandomHandSize } from '../src/server/state/game/yaniv/lib/pick-random-hand-size';
 import {
   JOKER_RANK,
   RANK_DISPLAY,
@@ -7,6 +8,11 @@ import {
   Suit,
 } from '../src/types/cards';
 import {
+  DEFAULT_HAND_SIZE,
+  DEFAULT_HAND_SIZE_RANGE,
+  MIN_HAND_SIZE,
+  RANDOM_HAND_SIZE,
+  WINNER_CHOOSES_HAND_SIZE,
   YANIV_CALL_THRESHOLD,
   YANIV_RANK_SCORE,
   type YanivPlayingCard,
@@ -125,6 +131,7 @@ async function getPlayerSnapshot(page: Page, label: string): Promise<string> {
     'Yaniv!',
     'Draw from deck',
     'Start new round',
+    'Choose hand size',
     'Pick Another Game',
   ];
   const visibleButtons: string[] = [];
@@ -277,7 +284,31 @@ async function tryTakeTurn(
     return true;
   }
 
-  // REDEAL step — only the round-caller sees this button
+  // CHOOSE_HAND_SIZE step — only the winner of the last hand sees this button,
+  // when the winner chooses the hand size
+  const chooseHandSizeBtn = page.getByRole('button', {
+    name: 'Choose hand size',
+  });
+  if (await chooseHandSizeBtn.isVisible()) {
+    try {
+      await chooseHandSizeBtn.click({ timeout: 5_000 });
+    } catch {
+      return false;
+    }
+
+    const handSizeDialog = page.getByRole('dialog', {
+      name: 'Choose the hand size',
+    });
+    await handSizeDialog.waitFor({ state: 'visible' });
+    await chooseRandomHandSize(page);
+    // The dialog stays open until the server moves on, and hides the button
+    // from role queries while it's open, so wait for the dialog first
+    await handSizeDialog.waitFor({ state: 'hidden', timeout: 15_000 });
+    await chooseHandSizeBtn.waitFor({ state: 'hidden', timeout: 15_000 });
+    return true;
+  }
+
+  // REDEAL step — only the dealer sees this button
   const startRoundBtn = page.getByRole('button', { name: 'Start new round' });
   if (await startRoundBtn.isVisible()) {
     try {
@@ -293,6 +324,53 @@ async function tryTakeTurn(
   return false;
 }
 
+/**
+ * Picks a hand size with the keyboard and submits it. It stays at or below
+ * the default, as larger hands make the game too long to finish in time.
+ */
+async function chooseRandomHandSize(page: Page): Promise<void> {
+  const handSize = pickRandomHandSize({
+    min: MIN_HAND_SIZE,
+    max: DEFAULT_HAND_SIZE,
+  });
+  const handSizes = page.getByRole('group', { name: 'Hand size' });
+  const defaultHandSize = handSizes.getByRole('radio', {
+    name: String(DEFAULT_HAND_SIZE),
+  });
+  await expect(defaultHandSize).toBeChecked();
+  await defaultHandSize.focus();
+  for (let step = handSize; step < DEFAULT_HAND_SIZE; step++) {
+    await page.keyboard.press('ArrowLeft');
+  }
+  await expect(
+    handSizes.getByRole('radio', { name: String(handSize) }),
+  ).toBeChecked();
+  await page
+    .getByRole('button', { name: /^(Deal|Choose) \d+ cards?$/ })
+    .click({ timeout: 5_000 });
+}
+
+const E2E_HAND_SIZE_RANGE = { min: MIN_HAND_SIZE, max: 3 };
+
+/** Picks a random hand size and narrows its range with the Max steppers. */
+async function chooseRandomHandSizeRange(page: Page): Promise<void> {
+  await page.getByRole('radio', { name: /Random/ }).click();
+  const range = page.getByRole('group', { name: 'Hand size range' });
+  const max = range.getByRole('spinbutton', { name: 'Max' });
+  await expect(range.getByRole('spinbutton', { name: 'Min' })).toHaveAttribute(
+    'aria-valuenow',
+    String(E2E_HAND_SIZE_RANGE.min),
+  );
+  for (
+    let value = DEFAULT_HAND_SIZE_RANGE.max;
+    value > E2E_HAND_SIZE_RANGE.max;
+    value--
+  ) {
+    await range.getByRole('button', { name: 'Decrease Max' }).click();
+    await expect(max).toHaveAttribute('aria-valuenow', String(value - 1));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Test
 // ---------------------------------------------------------------------------
@@ -300,6 +378,11 @@ async function tryTakeTurn(
 test('simulates a full 3-player game of Yaniv to completion', async ({
   browser,
 }) => {
+  const isWinnerChoosingHandSize =
+    test.info().project.metadata.handSize === WINNER_CHOOSES_HAND_SIZE;
+  const isHandSizeRandom =
+    test.info().project.metadata.handSize === RANDOM_HAND_SIZE;
+
   const ctx1 = await browser.newContext();
   const ctx2 = await browser.newContext();
   const ctx3 = await browser.newContext();
@@ -316,6 +399,26 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
 
   // Players 2 and 3 join
   await Promise.all([joinLobby(p2, gameUrl), joinLobby(p3, gameUrl)]);
+
+  // The host lets the winner of each hand choose the next hand size, and the
+  // first player chooses the first
+  if (isWinnerChoosingHandSize) {
+    await p1.getByRole('radio', { name: /Winner Chooses/ }).click();
+    await expect(p2.getByRole('radio', { name: /Winner Chooses/ })).toBeChecked(
+      { timeout: 15_000 },
+    );
+  }
+
+  // The host deals a random hand size each hand, from a narrow range of small
+  // hands so the game finishes in time
+  if (isHandSizeRandom) {
+    await chooseRandomHandSizeRange(p1);
+    await expect(p2.getByRole('spinbutton', { name: 'Max' })).toHaveAttribute(
+      'aria-valuenow',
+      String(E2E_HAND_SIZE_RANGE.max),
+      { timeout: 15_000 },
+    );
+  }
 
   // Player 1 marks ready too (other players' switches are disabled)
   await p1

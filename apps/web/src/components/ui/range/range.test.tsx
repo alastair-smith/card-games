@@ -2,13 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Range } from '.';
 
-const renderRange = (onRangeChange = vi.fn()) =>
+const renderRange = (onRangeChange = vi.fn(), isDisabled = false) =>
   render(
     <Range
       label='Hand size'
       min={1}
       max={10}
       range={[3, 6]}
+      isDisabled={isDisabled}
       onRangeChange={onRangeChange}
     />,
   );
@@ -63,6 +64,31 @@ describe('Range', () => {
         'aria-valuemin',
         '3',
       );
+    });
+  });
+
+  describe('when disabled', () => {
+    it('disables the group and both ends', () => {
+      renderRange(vi.fn(), true);
+
+      expect(screen.getByRole('group', { name: 'Hand size' })).toBeDisabled();
+      for (const name of ['Min', 'Max']) {
+        expect(screen.getByRole('spinbutton', { name })).toHaveAttribute(
+          'aria-disabled',
+          'true',
+        );
+      }
+    });
+
+    it('does not change the range', () => {
+      const onRangeChange = vi.fn();
+      renderRange(onRangeChange, true);
+
+      fireEvent.keyDown(screen.getByRole('spinbutton', { name: 'Max' }), {
+        key: 'ArrowUp',
+      });
+
+      expect(onRangeChange).not.toHaveBeenCalled();
     });
   });
 });

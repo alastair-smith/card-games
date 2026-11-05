@@ -33,3 +33,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Standard: Story = {};
+
+export const Disabled: Story = { args: { isDisabled: true } };

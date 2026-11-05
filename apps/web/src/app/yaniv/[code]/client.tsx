@@ -147,7 +147,7 @@ export default function YanivClient({
     if (players === null || settings === null) {
       return <Loading />;
     }
-    return <Lobby code={code} players={players} handSize={settings.handSize} />;
+    return <Lobby code={code} players={players} settings={settings} />;
   }
 
   if (gameState === null) {

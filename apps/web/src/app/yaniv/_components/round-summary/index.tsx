@@ -33,15 +33,17 @@ export function RoundSummary({
   const roundNumber = getRoundCount(players);
   const scoresDescription =
     roundNumber === 0 ? 'No rounds played yet' : `After round ${roundNumber}`;
+  // Before the first deal there's no round result to show yet
+  const isShowingRoundResult = isRoundOver && roundNumber > 0;
 
   return (
     <Card variant='panel' className={cn('w-full max-w-xl', className)}>
       <CardHeader className='items-center space-y-1 pb-2 text-center'>
         <CardDescription>
-          {isRoundOver ? `Round ${roundNumber}` : scoresDescription}
+          {isShowingRoundResult ? `Round ${roundNumber}` : scoresDescription}
         </CardDescription>
         <CardTitle className='text-xl'>
-          {isRoundOver ? getRoundMessage(players, userId) : 'Scores'}
+          {isShowingRoundResult ? getRoundMessage(players, userId) : 'Scores'}
         </CardTitle>
       </CardHeader>
       {/* Narrower sides than the header, so a max-length name fits beside

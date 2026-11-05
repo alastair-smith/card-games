@@ -13,6 +13,8 @@ const meta = {
     onYanivClick: fn(),
     onPlayCards: fn(),
     onStartNewRoundClick: fn(),
+    onChooseHandSize: fn(),
+    isDealer: true,
   },
   argTypes: {
     stage: { control: 'select', options: Object.values(GameViewStage) },
@@ -37,4 +39,14 @@ export const EndTurnHandTotalHidden: Story = {
 
 export const EndOfRound: Story = {
   args: { stage: GameViewStage.END_OF_ROUND },
+};
+
+// The winner of the last hand is also dealing, so choosing deals the round.
+export const ChoosingHandSize: Story = {
+  args: { stage: GameViewStage.CHOOSING_HAND_SIZE },
+};
+
+// The winner of the last hand chooses, then someone else deals.
+export const ChoosingHandSizeForDealer: Story = {
+  args: { stage: GameViewStage.CHOOSING_HAND_SIZE, isDealer: false },
 };

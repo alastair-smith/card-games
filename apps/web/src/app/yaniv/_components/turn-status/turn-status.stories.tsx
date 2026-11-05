@@ -10,6 +10,7 @@ const OTHER_PLAYER_MESSAGES = [
   { step: GameStep.PROCEED, drawnFrom: 'discard' },
   { step: GameStep.PROCEED, drawnFrom: null },
   { step: GameStep.REDEAL, drawnFrom: null },
+  { step: GameStep.CHOOSE_HAND_SIZE, drawnFrom: null },
 ] as const satisfies { step: GameStep; drawnFrom: DrawSource | null }[];
 
 const playersWithTurnFor = (name: PlayerName) => [

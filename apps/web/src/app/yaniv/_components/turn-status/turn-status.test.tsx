@@ -27,6 +27,7 @@ describe('TurnStatus', () => {
       [GameStep.PICKUP_CARD, 'Pick up from the deck or discard pile'],
       [GameStep.PROCEED, 'Call Yaniv or end your turn'],
       [GameStep.REDEAL, 'Deal the next round'],
+      [GameStep.CHOOSE_HAND_SIZE, 'Choose the hand size'],
     ])('says what to do when you need to %s', (step, text) => {
       render(
         <TurnStatus
@@ -45,6 +46,7 @@ describe('TurnStatus', () => {
       [GameStep.PLAY_CARDS, 'Bob is choosing cards'],
       [GameStep.PICKUP_CARD, 'Bob is picking up'],
       [GameStep.REDEAL, 'Bob to deal'],
+      [GameStep.CHOOSE_HAND_SIZE, 'Bob is choosing the hand size'],
     ])('says what they are doing when they need to %s', (step, text) => {
       render(
         <TurnStatus
@@ -114,17 +116,20 @@ describe('TurnStatus', () => {
       ).toBeInTheDocument();
     });
 
-    test('stops mentioning the last turns once the round is over', () => {
-      render(
-        <TurnStatus
-          players={buildPlayers({ turnIndex: 1, yanivCallerIndex: 1 })}
-          userId={USER_ID}
-          step={GameStep.REDEAL}
-          drawnFrom={null}
-        />,
-      );
-      expect(screen.queryByText(/Last turns/)).not.toBeInTheDocument();
-    });
+    test.each([GameStep.REDEAL, GameStep.CHOOSE_HAND_SIZE])(
+      'stops mentioning the last turns once the round is over, when the next step is %s',
+      (step) => {
+        render(
+          <TurnStatus
+            players={buildPlayers({ turnIndex: 1, yanivCallerIndex: 1 })}
+            userId={USER_ID}
+            step={step}
+            drawnFrom={null}
+          />,
+        );
+        expect(screen.queryByText(/Last turns/)).not.toBeInTheDocument();
+      },
+    );
   });
 });
 

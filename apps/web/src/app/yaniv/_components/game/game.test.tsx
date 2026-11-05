@@ -83,6 +83,8 @@ const baseProps = {
   onEndTurnClick: vi.fn(),
   onYanivClick: vi.fn(),
   onPlayCards: vi.fn(),
+  onChooseHandSize: vi.fn(),
+  isDealer: true,
   players: [
     {
       ...buildClientPlayer({
@@ -157,6 +159,19 @@ describe('Game', () => {
     test('shows the round summary when waiting for the new round', () => {
       render(
         <Game {...baseProps} stage={GameViewStage.WAITING_FOR_NEW_ROUND} />,
+      );
+      expect(
+        within(getPanel('Scores')).getByTestId('round-summary'),
+      ).toBeInTheDocument();
+    });
+
+    test('shows the round summary while the hand size is chosen', () => {
+      render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.CHOOSING_HAND_SIZE}
+          step={GameStep.CHOOSE_HAND_SIZE}
+        />,
       );
       expect(
         within(getPanel('Scores')).getByTestId('round-summary'),
@@ -291,6 +306,18 @@ describe('Game', () => {
       expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
     });
 
+    test('switches everyone to the table when the chosen hand size is dealt', () => {
+      const { rerender } = render(
+        <Game
+          {...baseProps}
+          stage={GameViewStage.CHOOSING_HAND_SIZE}
+          step={GameStep.CHOOSE_HAND_SIZE}
+        />,
+      );
+      rerender(<Game {...baseProps} />);
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
     test('switches everyone to the scores when the round ends', () => {
       const props = {
         ...baseProps,
@@ -382,6 +409,22 @@ describe('Game', () => {
       expect(
         within(getPanel('Scores')).getByRole('button', {
           name: /Start new round/,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    test('puts choosing the hand size on the scores tab', () => {
+      render(
+        <Game
+          {...baseProps}
+          isDealer={false}
+          stage={GameViewStage.CHOOSING_HAND_SIZE}
+          step={GameStep.CHOOSE_HAND_SIZE}
+        />,
+      );
+      expect(
+        within(getPanel('Scores')).getByRole('button', {
+          name: 'Choose hand size',
         }),
       ).toBeInTheDocument();
     });

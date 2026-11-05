@@ -116,6 +116,25 @@ The projects are `chromium-desktop`, `chromium-mobile`, `firefox-desktop`
 and `firefox-mobile`. Firefox may not be installed locally, so use the
 Chromium ones unless asked; CI runs all four.
 
+They play with the default 5-card hand. To play a Yaniv game where the
+winner of each hand chooses the next hand size, run the opt-in project after
+changing that flow. It only runs when named with `--project`, so a plain run
+and CI skip it:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop-winner-chooses
+```
+
+To play one where each hand deals a random size from a 1–3 card range, run
+the other opt-in project after changing that flow:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop-random
+```
+
+These projects share the dev server and the results folder, so run them one
+at a time.
+
 ### Dev servers
 
 Use the `dev-servers` skill to start, wait for and stop the app (port 3000),

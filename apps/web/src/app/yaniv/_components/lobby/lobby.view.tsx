@@ -8,13 +8,19 @@ import Players from '~/components/lobby/players.view';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
-import { type HandSize, MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
+import {
+  type HandSizeRange,
+  type HandSizeSetting,
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+} from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 
 export type LobbyProps = {
   code: GameCode;
   players: Player[];
-  handSize: HandSize;
+  handSize: HandSizeSetting;
+  handSizeRange: HandSizeRange;
   user: {
     isReady: boolean;
     name: string;
@@ -24,7 +30,8 @@ export type LobbyProps = {
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange: (color: string) => void;
-  handleHandSizeChange: (handSize: string) => void;
+  handleHandSizeChange: (handSize: HandSizeSetting) => void;
+  handleHandSizeRangeChange: (handSizeRange: HandSizeRange) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -34,7 +41,9 @@ export type LobbyProps = {
 export default function LobbyView({
   code,
   handSize,
+  handSizeRange,
   handleHandSizeChange,
+  handleHandSizeRangeChange,
   ...playerProps
 }: LobbyProps) {
   const isHost = playerProps.players.some(
@@ -58,8 +67,10 @@ export default function LobbyView({
           <GameSettings
             className='w-full'
             handSize={handSize}
+            handSizeRange={handSizeRange}
             isHost={isHost}
             onHandSizeChange={handleHandSizeChange}
+            onHandSizeRangeChange={handleHandSizeRangeChange}
           />
           <Card className='flex-1'>
             <CardHeader>

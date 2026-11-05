@@ -8,6 +8,7 @@ const USER_TURN_TEXT = {
   [GameStep.PICKUP_CARD]: 'Pick up from the deck or discard pile',
   [GameStep.PROCEED]: 'Call Yaniv or end your turn',
   [GameStep.REDEAL]: 'Deal the next round',
+  [GameStep.CHOOSE_HAND_SIZE]: 'Choose the hand size',
 } as const satisfies Record<GameStep, string>;
 
 const DRAW_SOURCE_TEXT = {
@@ -23,6 +24,8 @@ const OTHER_PLAYER_TURN_TEXT = {
       ? `${name} has drawn from ${DRAW_SOURCE_TEXT[drawnFrom]}`
       : `${name} matched the discard`,
   [GameStep.REDEAL]: (name: PlayerName) => `${name} to deal`,
+  [GameStep.CHOOSE_HAND_SIZE]: (name: PlayerName) =>
+    `${name} is choosing the hand size`,
 } as const satisfies Record<
   GameStep,
   (name: PlayerName, drawnFrom: DrawSource | null) => string
@@ -52,7 +55,7 @@ function getTurnStatus({
 
   // Everyone else gets a last turn after a Yaniv call, until the round ends
   const yanivCaller =
-    step === GameStep.REDEAL
+    step === GameStep.REDEAL || step === GameStep.CHOOSE_HAND_SIZE
       ? undefined
       : players.find((player) => player.isYanivCalled);
   const isUserTakingTurn = playerTakingTurn.id === userId;
