@@ -3,7 +3,11 @@ import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { getYanivState, setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
-import { buildInProgressState, buildPlayer } from '~/test-utils/yaniv';
+import {
+  buildInProgressState,
+  buildPlayer,
+  expectInProgressState,
+} from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -69,7 +73,7 @@ const makeState = (overrides: Partial<State> = {}): State =>
   });
 
 const getSavedState = () =>
-  vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+  expectInProgressState(vi.mocked(setYanivState).mock.calls[0]?.[1]);
 
 describe('chooseHandSize', () => {
   beforeEach(() => {

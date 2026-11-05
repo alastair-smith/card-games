@@ -5,6 +5,7 @@ import {
   buildInProgressState,
   buildPlayer,
   buildRoundScore,
+  expectInProgressState,
 } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
@@ -92,7 +93,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player1 = savedState.players.find((p) => p.id === USER_1);
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player1?.score).toBe(0);
@@ -137,7 +140,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(0);
   });
@@ -147,7 +152,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player2 = savedState.players.find((p) => p.id === USER_2);
     expect(player2?.score).toBe(10);
     expect(player2?.roundScores).toEqual([buildRoundScore({ original: 10 })]);
@@ -158,7 +165,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     const player1 = savedState.players.find((p) => p.id === USER_1);
     expect(player1?.score).toBe(0);
     expect(player1?.roundScores).toEqual([
@@ -188,7 +197,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       expect(
         savedState.players.find((p) => p.id === USER_2)?.roundScores,
       ).toEqual([previousRound, buildRoundScore({ original: 10 })]);
@@ -204,7 +215,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(25);
       expect(player2?.roundScores).toEqual([
@@ -227,7 +240,9 @@ describe('scoreYanivRound', () => {
 
       await scoreYanivRound(CODE, state);
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       const player2 = savedState.players.find((p) => p.id === USER_2);
       expect(player2?.score).toBe(50);
       expect(player2?.roundScores).toEqual([
@@ -262,7 +277,9 @@ describe('scoreYanivRound', () => {
 
     await scoreYanivRound(CODE, state);
 
-    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+    const savedState = expectInProgressState(
+      vi.mocked(setYanivState).mock.calls[0]?.[1],
+    );
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(10);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(20);
     expect(savedState.players.find((p) => p.id === USER_3)?.score).toBe(55);
@@ -335,7 +352,9 @@ describe('scoreYanivRound', () => {
         }),
       );
 
-      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
+      const savedState = expectInProgressState(
+        vi.mocked(setYanivState).mock.calls[0]?.[1],
+      );
       expect(savedState).toMatchObject({
         currentPlayerId: USER_2,
         dealerId: USER_1,

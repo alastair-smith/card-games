@@ -49,6 +49,16 @@ export const buildClientPlayer = (
   return { ...player, isUser: false, ...overrides };
 };
 
+/** Narrows a state a test saved, failing the test if it isn't in progress. */
+export const expectInProgressState = (
+  state: GameState | undefined,
+): InProgressState => {
+  if (state?.gameStage !== GameStage.IN_PROGRESS) {
+    throw new Error('Expected an in-progress Yaniv state');
+  }
+  return state;
+};
+
 export const buildInProgressState = (
   overrides: Partial<InProgressState> &
     Pick<InProgressState, 'players' | 'currentPlayerId'>,

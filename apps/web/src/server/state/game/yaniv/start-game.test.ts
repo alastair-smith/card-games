@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { expectInProgressState } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import {
@@ -148,9 +149,7 @@ describe('startGame', () => {
   test('deals a full hand to each player', async () => {
     await startGame(CODE, HOST);
     expect(mockSetYanivState).toHaveBeenCalledOnce();
-    const state = mockSetYanivState.mock.calls[0]?.[1] as {
-      players: Array<{ id: string; hand: unknown[] }>;
-    };
+    const state = expectInProgressState(mockSetYanivState.mock.calls[0]?.[1]);
     for (const player of state.players) {
       expect(player.hand).toHaveLength(DEFAULT_HAND_SIZE);
     }
@@ -158,9 +157,7 @@ describe('startGame', () => {
 
   test('sets card count to the hand size for each player', async () => {
     await startGame(CODE, HOST);
-    const state = mockSetYanivState.mock.calls[0]?.[1] as {
-      players: Array<{ cardCount: number }>;
-    };
+    const state = expectInProgressState(mockSetYanivState.mock.calls[0]?.[1]);
     for (const player of state.players) {
       expect(player.cardCount).toBe(DEFAULT_HAND_SIZE);
     }
@@ -174,9 +171,7 @@ describe('startGame', () => {
     await startGame(CODE, HOST);
 
     expect(mockDrawCards).toHaveBeenCalledWith(CODE, 7);
-    const state = mockSetYanivState.mock.calls[0]?.[1] as {
-      handSize: number;
-    };
+    const state = expectInProgressState(mockSetYanivState.mock.calls[0]?.[1]);
     expect(state.handSize).toBe(7);
   });
 
@@ -247,9 +242,7 @@ describe('startGame', () => {
       await startGame(CODE, HOST);
       expect(mockCreateDeck).not.toHaveBeenCalled();
       expect(mockDrawCards).not.toHaveBeenCalled();
-      const state = mockSetYanivState.mock.calls[0]?.[1] as {
-        players: Array<{ hand: unknown[]; cardCount: number }>;
-      };
+      const state = expectInProgressState(mockSetYanivState.mock.calls[0]?.[1]);
       for (const player of state.players) {
         expect(player.hand).toEqual([]);
         expect(player.cardCount).toBe(0);

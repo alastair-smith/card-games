@@ -5,10 +5,10 @@ import {
   CircleCheckIcon,
   MegaphoneIcon,
 } from 'lucide-react';
+import { HandSizeDialog } from '~/app/yaniv/_components/hand-size-dialog';
 import { Button } from '~/components/ui/button';
 import { GameViewStage, type HandSize } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
-import { HandSizeDialog } from '../hand-size-dialog';
 
 type TurnActionsProps = {
   className?: string;
