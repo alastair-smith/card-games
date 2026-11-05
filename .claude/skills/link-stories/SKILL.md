@@ -48,8 +48,10 @@ such as JSX, give the user written steps instead.
 ## Hosted stories
 
 `main`'s stories are at `https://stories.playcards.games`, and each PR that
-changes the app gets a preview, whose URL the Deploy Stories workflow comments
-on the PR as the link on its `Storybook preview` badge:
+changes the app gets a preview. The Deploy Stories workflow keeps a comment on
+the PR showing the preview's status. Its first line is a hidden
+`<!-- storybook-preview url=… sha=… -->` marker with the URL and commit of the
+last build that deployed:
 
 ```bash
 gh pr view --json comments

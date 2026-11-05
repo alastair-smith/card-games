@@ -158,8 +158,8 @@ EOF
 Read the description back with `gh pr view --json body` and check every
 reference now points at a `github.com/user-attachments` URL.
 
-When the PR changes the app, the Deploy Stories workflow comments a Storybook
-preview URL on it once the build finishes. To point a reviewer at a changed
+When the PR changes the app, the Deploy Stories workflow comments the Storybook
+preview's status on it, with a link once the build deploys. To point a reviewer at a changed
 story there, use the `link-stories` skill's "Hosted stories" section rather
 than linking `localhost`.
 
