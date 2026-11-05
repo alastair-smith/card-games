@@ -219,8 +219,11 @@ const STORY_FINISHED_SCRIPT = `window.__STORYBOOK_PREVIEW__?.currentRender?.phas
 
 // Movement driven from JavaScript, such as a carousel sliding to the tab a
 // play function picked, isn't something Storybook waits for, so wait until
-// nothing moves between two frames
+// nothing moves between two frames. Looping movement, such as a spinner,
+// never settles, so the deadline stops the wait
+const LAYOUT_SETTLE_TIMEOUT_MILLISECONDS = 2_000;
 const LAYOUT_SETTLED_SCRIPT = `new Promise((resolve) => {
+  setTimeout(() => resolve(false), ${LAYOUT_SETTLE_TIMEOUT_MILLISECONDS});
   const getPositions = () =>
     [...document.querySelectorAll('#storybook-root *, [role="dialog"] *')]
       .map((element) => {
