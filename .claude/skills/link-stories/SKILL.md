@@ -49,7 +49,7 @@ such as JSX, give the user written steps instead.
 
 `main`'s stories are at `https://stories.playcards.games`, and each PR that
 changes the app gets a preview, whose URL the Deploy Stories workflow comments
-on the PR. Read it from the comment starting `Storybook preview:`:
+on the PR as the link on its `Storybook preview` badge:
 
 ```bash
 gh pr view --json comments

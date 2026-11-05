@@ -86,7 +86,7 @@ jobs:
         # Edits this workflow's comment on later pushes rather than adding one
         # per push
         run: |
-          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "Storybook preview: $PREVIEW_URL
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "[![Storybook preview](https://img.shields.io/badge/Storybook-preview-FF4785?logo=storybook&logoColor=white)]($PREVIEW_URL)
 
           Built from $HEAD_SHA."
         env:
