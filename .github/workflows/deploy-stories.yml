@@ -1,0 +1,113 @@
+name: Deploy Stories
+
+on:
+  push:
+    branches:
+      - main
+    paths: &app-paths
+      - apps/web/**
+      - packages/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/actions/**
+      - .github/workflows/deploy-stories.yml
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths: *app-paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-stories-${{ github.event.pull_request.number || 'main' }}
+  # A newer push or closing the PR supersedes a preview mid-deploy, but a
+  # production deploy always finishes
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  deploy:
+    name: Deploy
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # The environment only allows main, so its Cloudflare secrets can't be
+    # read from a workflow run on any other branch
+    environment:
+      name: stories
+      url: https://stories.playcards.games
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Build Storybook
+        run: pnpm --filter @repo/web build:stories
+      - name: Deploy to Cloudflare
+        run: pnpm --filter @repo/web deploy:stories
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # Fork and Dependabot runs don't get these secrets, so they get no preview
+  preview:
+    name: Preview
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: stories-preview
+      url: ${{ steps.preview.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Build Storybook
+        run: pnpm --filter @repo/web build:stories
+      - name: Deploy preview to Cloudflare
+        id: preview
+        run: |
+          output=$(pnpm --filter @repo/web exec wrangler preview --name "pr-$PR_NUMBER" --json)
+          url=$(jq -er '.preview.urls[0]' <<< "$output")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Comment preview URL
+        # Edits this workflow's comment on later pushes rather than adding one
+        # per push
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body "Storybook preview: $PREVIEW_URL
+
+          Built from $HEAD_SHA."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+  delete-preview:
+    name: Delete Preview
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    environment: stories-preview
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Delete preview from Cloudflare
+        run: pnpm --filter @repo/web exec wrangler preview delete --name "pr-$PR_NUMBER" --skip-confirmation
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

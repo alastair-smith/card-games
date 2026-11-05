@@ -158,6 +158,11 @@ EOF
 Read the description back with `gh pr view --json body` and check every
 reference now points at a `github.com/user-attachments` URL.
 
+When the PR changes the app, the Deploy Stories workflow comments a Storybook
+preview URL on it once the build finishes. To point a reviewer at a changed
+story there, use the `link-stories` skill's "Hosted stories" section rather
+than linking `localhost`.
+
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new
 title, `--body` with a new body on stdin, or both, plus `--attach` for any

@@ -44,3 +44,18 @@ EOF
 Storybook only reads arg values made of letters, numbers, spaces, underscores
 and dashes from a link, and drops anything else. For other values, or args
 such as JSX, give the user written steps instead.
+
+## Hosted stories
+
+`main`'s stories are at `https://stories.playcards.games`, and each PR that
+changes the app gets a preview, whose URL the Deploy Stories workflow comments
+on the PR. Read it from the comment starting `Storybook preview:`:
+
+```bash
+gh pr view --json comments
+```
+
+When the branch has a PR, also give the story's link on its preview: the same
+link with `http://localhost:6006` replaced by the preview URL. The preview
+shows the last push, so push first. PRs from forks or Dependabot have no
+preview.
