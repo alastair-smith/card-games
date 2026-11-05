@@ -68,9 +68,14 @@ export default function Lobby({
     },
   });
   const makeHostMutation = api.lobby.makeHost.useMutation();
-  const startGameMutation = api.yaniv.startGame.useMutation();
+  // Mutations in one scope run in order, so the game starts only once every
+  // settings change before it has been saved
+  const settingsScope = { id: `settings-${code}` };
+  const startGameMutation = api.yaniv.startGame.useMutation({
+    scope: settingsScope,
+  });
   const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
-    scope: { id: `settings-${code}` },
+    scope: settingsScope,
     onSuccess: (_data, variables) => waitForSettings(variables.settings),
     onError: () => {
       toast.error('Error updating settings.');

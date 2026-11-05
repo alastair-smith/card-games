@@ -35,6 +35,10 @@ const readyMutation = createMutationStub();
 const settingsMutation = createMutationStub();
 const otherMutation = createMutationStub();
 
+type MutationOptions = { scope?: { id: string } } | undefined;
+let settingsMutationOptions: MutationOptions;
+let startGameMutationOptions: MutationOptions;
+
 vi.mock('~/trpc/react', () => ({
   api: {
     lobby: {
@@ -47,8 +51,18 @@ vi.mock('~/trpc/react', () => ({
       makeHost: { useMutation: () => otherMutation },
     },
     yaniv: {
-      startGame: { useMutation: () => otherMutation },
-      updateSettings: { useMutation: () => settingsMutation },
+      startGame: {
+        useMutation: (options: MutationOptions) => {
+          startGameMutationOptions = options;
+          return otherMutation;
+        },
+      },
+      updateSettings: {
+        useMutation: (options: MutationOptions) => {
+          settingsMutationOptions = options;
+          return settingsMutation;
+        },
+      },
     },
   },
 }));
@@ -251,6 +265,17 @@ describe('Lobby', () => {
       renderLobby();
 
       expect(screen.getByText('Range: 4 to 9')).toBeInTheDocument();
+    });
+  });
+
+  describe('starting the game', () => {
+    test('waits for any settings still being saved', () => {
+      renderLobby();
+
+      expect(startGameMutationOptions?.scope).toBeDefined();
+      expect(startGameMutationOptions?.scope).toEqual(
+        settingsMutationOptions?.scope,
+      );
     });
   });
 
