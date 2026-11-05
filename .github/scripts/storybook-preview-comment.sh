@@ -65,8 +65,10 @@ case $status in
     ;;
 esac
 
+# The commit in the query gives each update a new image URL, so GitHub's image
+# proxy can't keep showing an image it cached for an earlier one
 body="$marker url=$last_url sha=$last_sha -->
-[![$alt]($badges_url/storybook-$badge.svg)]($link)
+[![$alt]($badges_url/storybook-$badge.svg?sha=$sha)]($link)
 
 $text"
 
