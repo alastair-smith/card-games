@@ -1,5 +1,20 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type Project } from '@playwright/test';
 import { WINNER_CHOOSES_HAND_SIZE } from './src/types/games/yaniv';
+
+// Longer games for other settings. They only run when named with --project,
+// so a plain run and CI, which names its own, skip them
+const OPT_IN_PROJECTS: Project[] = [
+  {
+    name: 'chromium-desktop-winner-chooses',
+    use: { ...devices['Desktop Chrome'] },
+    metadata: { handSize: WINNER_CHOOSES_HAND_SIZE },
+  },
+];
+
+const isNamedOnCommandLine = (project: Project) =>
+  process.argv.some(
+    (argument) => project.name !== undefined && argument.includes(project.name),
+  );
 
 export default defineConfig({
   testDir: './e2e',
@@ -32,12 +47,6 @@ export default defineConfig({
       name: 'firefox-mobile',
       use: { browserName: 'firefox', viewport: { width: 393, height: 727 } },
     },
-    // Opt-in, as CI only runs the projects above: the winner of each hand
-    // chooses the next hand size
-    {
-      name: 'chromium-desktop-winner-chooses',
-      use: { ...devices['Desktop Chrome'] },
-      metadata: { handSize: WINNER_CHOOSES_HAND_SIZE },
-    },
+    ...OPT_IN_PROJECTS.filter(isNamedOnCommandLine),
   ],
 });
