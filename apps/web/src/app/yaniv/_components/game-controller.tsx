@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from '~/components/ui/toast';
+import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { api } from '~/trpc/react';
 import { JOKER_RANK } from '~/types/cards';
@@ -58,7 +59,13 @@ export default function YanivGameController({
   const pickupCardMutation = api.yaniv.pickupCard.useMutation();
   const callYanivMutation = api.yaniv.callYaniv.useMutation();
   const startNewRoundMutation = api.yaniv.startNewRound.useMutation();
+  const waitForIsChoosingHandSize = useWaitForServerValue(
+    'gameStep' in gameState && gameState.gameStep === GameStep.CHOOSE_HAND_SIZE,
+  );
   const chooseHandSizeMutation = api.yaniv.chooseHandSize.useMutation({
+    // Stays pending until the next step arrives and closes the dialog, so it
+    // can't be sent twice in between
+    onSuccess: () => waitForIsChoosingHandSize(false),
     onError: (error) => toast.error(error.message),
   });
   const endTurnMutation = api.yaniv.endTurn.useMutation({

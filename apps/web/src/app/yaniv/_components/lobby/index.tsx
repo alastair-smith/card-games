@@ -3,13 +3,13 @@
 import debounce from 'lodash/debounce';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
+import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import { api } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import type { HandSizeSetting } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
-import { useWaitForServerValue } from './use-wait-for-server-value';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;

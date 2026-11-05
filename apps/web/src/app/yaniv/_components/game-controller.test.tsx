@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
@@ -13,6 +14,7 @@ import {
   GameStep,
   GameViewStage,
 } from '~/types/games/yaniv';
+import type Game from './game';
 import YanivGameController from './game-controller';
 
 vi.mock('~/components/ui/toast', () => ({
@@ -20,7 +22,10 @@ vi.mock('~/components/ui/toast', () => ({
 }));
 
 const mutate = vi.fn();
-let chooseHandSizeOptions: { onError?: (error: Error) => void } = {};
+let chooseHandSizeOptions: {
+  onSuccess?: () => Promise<void>;
+  onError?: (error: Error) => void;
+} = {};
 vi.mock('~/trpc/react', () => ({
   api: {
     yaniv: {
@@ -42,58 +47,44 @@ vi.mock('~/trpc/react', () => ({
 
 let capturedGameProps: Record<string, unknown> = {};
 vi.mock('./game', () => ({
-  default: (props: Record<string, unknown>) => {
+  default: (props: ComponentProps<typeof Game>) => {
     capturedGameProps = props;
     return (
       <div data-testid='game'>
         <button
           type='button'
           data-testid='play-cards'
-          onClick={() => (props.onPlayCards as () => void)()}
+          onClick={() => props.onPlayCards()}
         />
         <button
           type='button'
           data-testid='yaniv'
-          onClick={props.onYanivClick as () => void}
+          onClick={props.onYanivClick}
         />
         <button
           type='button'
           data-testid='end-turn'
-          onClick={props.onEndTurnClick as () => void}
+          onClick={props.onEndTurnClick}
         />
         <button
           type='button'
           data-testid='pickup-from-discard'
-          onClick={props.onPickupFromDiscard as () => void}
+          onClick={props.onPickupFromDiscard}
         />
         <button
           type='button'
           data-testid='play-ascending'
-          onClick={() =>
-            (
-              props.onPlayCards as (
-                direction: 'ascending' | 'descending',
-              ) => void
-            )('ascending')
-          }
+          onClick={() => props.onPlayCards('ascending')}
         />
         <button
           type='button'
           data-testid='play-descending'
-          onClick={() =>
-            (
-              props.onPlayCards as (
-                direction: 'ascending' | 'descending',
-              ) => void
-            )('descending')
-          }
+          onClick={() => props.onPlayCards('descending')}
         />
         <button
           type='button'
           data-testid='choose-hand-size'
-          onClick={() =>
-            (props.onChooseHandSize as (handSize: number) => void)(3)
-          }
+          onClick={() => props.onChooseHandSize(3)}
         />
       </div>
     );
@@ -311,6 +302,31 @@ describe('YanivGameController', () => {
       );
       act(() => chooseHandSizeOptions.onError?.(new Error('Not your turn')));
       expect(toast.error).toHaveBeenCalledWith('Not your turn');
+    });
+
+    test('stays pending after the server answers, until the next step arrives', async () => {
+      const { rerender } = render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      let isSettled = false;
+      void chooseHandSizeOptions.onSuccess?.().then(() => {
+        isSettled = true;
+      });
+
+      await act(async () => {});
+      expect(isSettled).toBe(false);
+
+      rerender(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.PLAY_CARDS })}
+        />,
+      );
+      await act(async () => {});
+      expect(isSettled).toBe(true);
     });
   });
 
