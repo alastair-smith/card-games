@@ -8,10 +8,9 @@ const openDialog = () =>
   fireEvent.click(screen.getByRole('button', { name: 'Choose hand size' }));
 
 const getHandSize = (name: string) =>
-  within(screen.getByRole('radiogroup', { name: 'Hand size' })).getByRole(
-    'radio',
-    { name },
-  );
+  within(screen.getByRole('group', { name: 'Hand size' })).getByRole('radio', {
+    name,
+  });
 
 describe('HandSizeDialog', () => {
   test('opens to choose the hand size', () => {
@@ -88,20 +87,11 @@ describe('HandSizeDialog', () => {
       openDialog();
 
       const handSizes = within(
-        screen.getByRole('radiogroup', { name: 'Hand size' }),
+        screen.getByRole('group', { name: 'Hand size' }),
       ).getAllByRole('radio');
-      expect(handSizes.map((handSize) => handSize.textContent)).toEqual([
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
-        '7',
-        '8',
-        '9',
-        '10',
-      ]);
+      expect(
+        handSizes.map((handSize) => handSize.getAttribute('value')),
+      ).toEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
       expect(getHandSize('5')).toBeChecked();
     });
 

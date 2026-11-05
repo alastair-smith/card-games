@@ -329,7 +329,7 @@ async function chooseRandomHandSize(page: Page): Promise<void> {
   const handSize =
     MIN_HAND_SIZE +
     Math.floor(Math.random() * (DEFAULT_HAND_SIZE - MIN_HAND_SIZE + 1));
-  const handSizes = page.getByRole('radiogroup', { name: 'Hand size' });
+  const handSizes = page.getByRole('group', { name: 'Hand size' });
   const defaultHandSize = handSizes.getByRole('radio', {
     name: String(DEFAULT_HAND_SIZE),
   });

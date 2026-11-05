@@ -29,9 +29,7 @@ const renderChoice = ({
 describe('ButtonGroupChoice', () => {
   test('is a group of radio buttons named by its label', () => {
     renderChoice();
-    expect(
-      screen.getByRole('radiogroup', { name: 'Size' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Size' })).toBeInTheDocument();
     expect(screen.getAllByRole('radio')).toHaveLength(3);
   });
 
@@ -51,24 +49,10 @@ describe('ButtonGroupChoice', () => {
     expect(handleValueChange).toHaveBeenCalledWith('small');
   });
 
-  test('keeps only the chosen button in the tab order', () => {
-    renderChoice();
-    expect(screen.getByRole('radio', { name: 'Medium' })).toHaveAttribute(
-      'tabindex',
-      '0',
-    );
-    expect(screen.getByRole('radio', { name: 'Small' })).toHaveAttribute(
-      'tabindex',
-      '-1',
-    );
-  });
-
   test('cannot be changed when turned off', () => {
-    const handleValueChange = vi.fn();
-    renderChoice({ onValueChange: handleValueChange, isDisabled: true });
-
-    fireEvent.click(screen.getByRole('radio', { name: 'Small' }));
-
-    expect(handleValueChange).not.toHaveBeenCalled();
+    renderChoice({ isDisabled: true });
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeDisabled();
+    }
   });
 });

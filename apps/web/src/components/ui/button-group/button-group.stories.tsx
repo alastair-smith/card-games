@@ -1,8 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { Button } from '../button';
-import { Card, CardContent, CardHeader } from '../card';
+import { Button } from '~/components/ui/button';
+import {
+  ButtonGroup,
+  ButtonGroupChoice,
+  ButtonGroupChoiceItem,
+} from '~/components/ui/button-group';
+import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
   TableBody,
@@ -11,8 +16,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../table';
-import { ButtonGroup, ButtonGroupChoice, ButtonGroupChoiceItem } from '.';
+} from '~/components/ui/table';
 
 const sizes = ['S', 'M', 'L', 'XL'];
 
@@ -57,7 +61,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-// One choice from the buttons: the arrow keys move it, like radio buttons.
+// One choice from the buttons, which are radio inputs, so the arrow keys move it.
 export const Choice: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
@@ -79,8 +83,8 @@ export const Overview: Story = {
       <CardHeader className='text-2xl font-medium'>Button Group</CardHeader>
       <CardContent>
         <p>
-          Buttons joined into one control. As a choice, one of them is picked at
-          a time, like a set of radio buttons.
+          Buttons joined into one control. As a choice, they're radio buttons
+          styled to match, with one picked at a time.
         </p>
         <Table>
           <TableCaption>Variations of the Button Group component</TableCaption>

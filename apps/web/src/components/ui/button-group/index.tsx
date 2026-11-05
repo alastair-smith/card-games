@@ -1,10 +1,8 @@
 'use client';
 
-import { Radio as RadioPrimitive } from '@base-ui/react/radio';
-import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { ReactNode } from 'react';
-import { Button } from '~/components/ui/button';
+import { createContext, type ReactNode, useContext, useId } from 'react';
+import { buttonVariants } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { cn } from '~/utils/cn';
 
@@ -58,9 +56,17 @@ function ButtonGroupSeparator({
   );
 }
 
+type ButtonGroupChoiceContextValue = {
+  name: string;
+  value: string;
+  onValueChange: (value: string) => void;
+};
+
+const ButtonGroupChoiceContext =
+  createContext<ButtonGroupChoiceContextValue | null>(null);
+
 type ButtonGroupChoiceProps = {
   className?: string;
-  /** Accessible name for the group, e.g. "Hand size". */
   label: string;
   value: string;
   onValueChange: (value: string) => void;
@@ -68,10 +74,7 @@ type ButtonGroupChoiceProps = {
   children: ReactNode;
 };
 
-/**
- * One choice from the group's buttons, as a radio group: a single tab stop,
- * with the arrow keys moving the choice.
- */
+/** One choice from the group's buttons, which are native radio inputs. */
 function ButtonGroupChoice({
   className,
   label,
@@ -80,24 +83,24 @@ function ButtonGroupChoice({
   isDisabled = false,
   children,
 }: ButtonGroupChoiceProps) {
+  const name = useId();
+
   return (
-    <RadioGroupPrimitive
-      data-slot='button-group'
-      data-orientation='horizontal'
-      aria-label={label}
-      value={value}
-      disabled={isDisabled}
-      onValueChange={(newValue: string) => onValueChange(newValue)}
-      className={cn(
-        buttonGroupVariants({ orientation: 'horizontal' }),
-        // Each radio is followed by a hidden input, so the last button isn't
-        // the last child
-        '[&>button:last-of-type]:rounded-r-md',
-        className,
-      )}
-    >
-      {children}
-    </RadioGroupPrimitive>
+    <ButtonGroupChoiceContext value={{ name, value, onValueChange }}>
+      <fieldset disabled={isDisabled} className={cn('min-w-0', className)}>
+        <legend className='sr-only'>{label}</legend>
+        <div
+          data-slot='button-group'
+          data-orientation='horizontal'
+          className={cn(
+            buttonGroupVariants({ orientation: 'horizontal' }),
+            'w-full',
+          )}
+        >
+          {children}
+        </div>
+      </fieldset>
+    </ButtonGroupChoiceContext>
   );
 }
 
@@ -107,27 +110,41 @@ type ButtonGroupChoiceItemProps = {
   children: ReactNode;
 };
 
-/** A button in a {@link ButtonGroupChoice}, standing out when it's chosen. */
+/** A radio in a {@link ButtonGroupChoice}, styled as one of its buttons. */
 function ButtonGroupChoiceItem({
   className,
   value,
   children,
 }: ButtonGroupChoiceItemProps) {
+  const choice = useContext(ButtonGroupChoiceContext);
+  if (!choice) {
+    throw new Error('ButtonGroupChoiceItem must be inside a ButtonGroupChoice');
+  }
+
   return (
-    <RadioPrimitive.Root
-      value={value}
-      nativeButton
-      render={(props, state) => (
-        <Button
-          {...props}
-          size='sm'
-          variant={state.checked ? 'default' : 'secondary'}
-          className={cn(props.className, className)}
-        />
+    <label
+      className={cn(
+        buttonVariants({ variant: 'secondary', size: 'sm' }),
+        'relative',
+        'has-checked:bg-primary has-checked:font-extrabold',
+        // Thickens the chosen button's edge, so it doesn't rely on colour.
+        // An outline still shows in forced colours, where a ring wouldn't
+        'has-checked:outline-2 has-checked:-outline-offset-4 has-checked:outline-light-text',
+        'has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2',
+        'has-disabled:pointer-events-none has-disabled:border-light-text-disabled has-disabled:bg-secondary-disabled has-disabled:text-light-text-disabled has-disabled:outline-light-text-disabled has-checked:has-disabled:bg-primary-disabled',
+        className,
       )}
     >
+      <input
+        type='radio'
+        className='sr-only'
+        name={choice.name}
+        value={value}
+        checked={choice.value === value}
+        onChange={() => choice.onValueChange(value)}
+      />
       {children}
-    </RadioPrimitive.Root>
+    </label>
   );
 }
 
