@@ -18,9 +18,10 @@
 
 <p align="center">
   <a href="#about">About</a>
-  | <a href="#getting-started">Getting Started</a>
   | <a href="#contributing">Contributing</a>
   | <a href="#licence">Licence</a>
+  | <a href="https://docs.playcards.games">Documentation</a>
+  | <a href="https://stories.playcards.games">Storybook</a>
 </p>
 
 ## About
@@ -32,7 +33,7 @@ Hosted at **[https://playcards.games](https://playcards.games)**.
 ### Games
 
 | Game          | Description                                                                                    |
-|:--------------|:-----------------------------------------------------------------------------------------------|
+| :------------ | :--------------------------------------------------------------------------------------------- |
 | **High Card** | (Test game) High Card is a simple luck-based game where the player with the highest card wins. |
 | **Yaniv**     | Win hands of 7 points or under and call Yaniv!                                                 |
 
@@ -40,57 +41,17 @@ Hosted at **[https://playcards.games](https://playcards.games)**.
 
 Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multiplayer:
 
-| Layer      | Technology                                                                            |
-|------------|---------------------------------------------------------------------------------------|
-| Language   | [TypeScript](https://www.typescriptlang.org/)                                         |
-| Framework  | [Next.js](https://nextjs.org) (App Router)                                            |
-| API        | [tRPC](https://trpc.io) with server-sent events for game state updates                |
-| Styling    | [Tailwind CSS](https://tailwindcss.com)                                               |
-| Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)            |
-| Hosting    | [Render](https://render.com/)                                                         |
-| Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E)    |
-| Linting    | [Biome](https://biomejs.dev/)                                                         |
+| Layer      | Technology                                                                         |
+| ---------- | ---------------------------------------------------------------------------------- |
+| Language   | [TypeScript](https://www.typescriptlang.org/)                                      |
+| Framework  | [Next.js](https://nextjs.org) (App Router)                                         |
+| API        | [tRPC](https://trpc.io) with server-sent events for game state updates             |
+| Styling    | [Tailwind CSS](https://tailwindcss.com)                                            |
+| Game state | [Redis](https://redis.io/) via [ioredis](https://github.com/redis/ioredis)         |
+| Hosting    | [Render](https://render.com/)                                                      |
+| Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E) |
+| Linting    | [Biome](https://biomejs.dev/)                                                      |
 
-
-## Getting Started
-
-### Prerequisites
-
-Exact versions are specified in the [node-version](./.node-version) and [tool-versions](./.tool-versions) files. Tools like [mise](https://mise.jdx.dev/) or [asdf](https://asdf-vm.com/guide/getting-started.html) can help with managing the versions.
-
-- [Node.js](https://nodejs.org/) v24
-- [pnpm](https://pnpm.io/) v10
-- [Docker](https://www.docker.com/)
-
-### Running Locally
-
-1. Install dependencies:
-
-    ```bash
-    pnpm install
-    ```
-
-2. Start the development server (Next.js + Redis in Docker):
-
-    ```bash
-    pnpm dev
-    ```
-
-    Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Other Scripts
-
-| Command                               | Description                                          |
-|:--------------------------------------|:-----------------------------------------------------|
-| `pnpm build`                          | Make a production build                              |
-| `pnpm start`                          | Start the production server (requires a `.env` file) |
-| `pnpm test`                           | Run unit tests                                       |
-| `pnpm test:integration`               | Run integration tests                                |
-| `pnpm --filter @repo/web test:e2e`    | Run E2E tests (headless)                             |
-| `pnpm --filter @repo/web test:e2e:ui` | Run E2E tests (With UI)                              |
-| `pnpm typecheck`                      | Verify types                                         |
-| `pnpm format:check`                   | Verify formatting                                    |
-| `pnpm format:fix`                     | Fix formatting issues                                |
 
 ## Contributing
 

@@ -1,7 +1,7 @@
 name: 'Setup Environment'
 description: 'Checkout, setup node and pnpm, and install dependencies'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Read versions
       id: versions

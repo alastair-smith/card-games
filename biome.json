@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -9,7 +9,8 @@
     "enabled": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": ["**", "!pnpm-lock.yaml", "!LICENSE.md"]
   },
   "formatter": {
     "enabled": true,
@@ -28,6 +29,11 @@
       "quoteStyle": "single"
     }
   },
+  "yaml": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
   "linter": {
     "domains": {
       "next": "recommended",
@@ -37,7 +43,46 @@
     },
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "complexity": {
+        "noExtraBooleanCast": "error",
+        "noFlatMapIdentity": "error",
+        "noUselessCatch": "error",
+        "noUselessConstructor": "error",
+        "noUselessContinue": "error",
+        "noUselessEmptyExport": "error",
+        "noUselessEscapeInRegex": "error",
+        "noUselessFragments": "error",
+        "noUselessLabel": "error",
+        "noUselessLoneBlockStatements": "error",
+        "noUselessRename": "error",
+        "noUselessStringRaw": "error",
+        "noUselessSwitchCase": "error",
+        "noUselessTernary": "error",
+        "noUselessThisAlias": "error",
+        "noUselessTypeConstraint": "error",
+        "noUselessUndefinedInitialization": "error",
+        "useFlatMap": "error",
+        "useIndexOf": "error",
+        "useLiteralKeys": "error"
+      },
+      "correctness": {
+        "useParseIntRadix": "error"
+      },
+      "performance": {
+        "useGoogleFontPreconnect": "error"
+      },
+      "style": {
+        "useArrayLiterals": "error",
+        "useExponentiationOperator": "error",
+        "useNodejsImportProtocol": "error",
+        "useShorthandFunctionType": "error",
+        "useTemplate": "error",
+        "useVueMultiWordComponentNames": "error"
+      },
+      "suspicious": {
+        "noQuickfixBiome": "error"
+      }
     }
   },
   "vcs": {

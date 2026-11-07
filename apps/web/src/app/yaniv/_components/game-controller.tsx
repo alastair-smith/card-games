@@ -1,6 +1,7 @@
 'use client';
 
 import { toast } from '~/components/ui/toast';
+import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { api } from '~/trpc/react';
 import { JOKER_RANK } from '~/types/cards';
@@ -11,6 +12,7 @@ import {
   type GameState,
   GameStep,
   GameViewStage,
+  type HandSize,
   YANIV_CALL_THRESHOLD,
 } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
@@ -57,6 +59,15 @@ export default function YanivGameController({
   const pickupCardMutation = api.yaniv.pickupCard.useMutation();
   const callYanivMutation = api.yaniv.callYaniv.useMutation();
   const startNewRoundMutation = api.yaniv.startNewRound.useMutation();
+  const waitForIsChoosingHandSize = useWaitForServerValue(
+    'gameStep' in gameState && gameState.gameStep === GameStep.CHOOSE_HAND_SIZE,
+  );
+  const chooseHandSizeMutation = api.yaniv.chooseHandSize.useMutation({
+    // Stays pending until the next step arrives and closes the dialog, so it
+    // can't be sent twice in between
+    onSuccess: () => waitForIsChoosingHandSize(false),
+    onError: (error) => toast.error(error.message),
+  });
   const endTurnMutation = api.yaniv.endTurn.useMutation({
     onError: (error) => toast.error(error.message),
   });
@@ -84,9 +95,11 @@ export default function YanivGameController({
     drawnCard,
     deckOnlyPickup,
     drawnFrom,
+    dealerId,
   } = gameState as InProgressClientGameState;
 
   const isMyTurn = currentPlayerId === userId;
+  const isDealer = dealerId === userId;
 
   const canCallYaniv = sumYanivHand(hand) <= YANIV_CALL_THRESHOLD;
 
@@ -104,6 +117,10 @@ export default function YanivGameController({
   };
 
   const deriveStage = (): GameViewStage => {
+    if (gameStep === GameStep.CHOOSE_HAND_SIZE)
+      return isMyTurn
+        ? GameViewStage.CHOOSING_HAND_SIZE
+        : GameViewStage.WAITING_FOR_NEW_ROUND;
     if (gameStep === GameStep.REDEAL)
       return isMyTurn
         ? GameViewStage.END_OF_ROUND
@@ -192,6 +209,10 @@ export default function YanivGameController({
     pickupCardMutation.mutate({ code, source: 'discard' });
   };
 
+  const handleChooseHandSize = (handSize: HandSize) => {
+    chooseHandSizeMutation.mutate({ code, handSize });
+  };
+
   const handleTriggerEmoji = (emoji: ReactionEmoji) => {
     triggerEmojiMutation.mutate({ code, emoji });
   };
@@ -218,6 +239,9 @@ export default function YanivGameController({
       onEndTurnClick={handleEndTurn}
       onYanivClick={handleCallYaniv}
       onPlayCards={handlePlayCards}
+      onChooseHandSize={handleChooseHandSize}
+      isHandSizeChoicePending={chooseHandSizeMutation.isPending}
+      isDealer={isDealer}
       isRunSelected={isSelectedCardsRun}
       players={players}
       userId={userId}

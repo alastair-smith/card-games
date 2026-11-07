@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
@@ -8,10 +9,12 @@ import type { PlayerName, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
   GameStage,
   GameStep,
   GameViewStage,
 } from '~/types/games/yaniv';
+import type Game from './game';
 import YanivGameController from './game-controller';
 
 vi.mock('~/components/ui/toast', () => ({
@@ -19,6 +22,10 @@ vi.mock('~/components/ui/toast', () => ({
 }));
 
 const mutate = vi.fn();
+let chooseHandSizeOptions: {
+  onSuccess?: () => Promise<void>;
+  onError?: (error: Error) => void;
+} = {};
 vi.mock('~/trpc/react', () => ({
   api: {
     yaniv: {
@@ -26,6 +33,12 @@ vi.mock('~/trpc/react', () => ({
       pickupCard: { useMutation: () => ({ mutate }) },
       callYaniv: { useMutation: () => ({ mutate }) },
       startNewRound: { useMutation: () => ({ mutate }) },
+      chooseHandSize: {
+        useMutation: (options: typeof chooseHandSizeOptions) => {
+          chooseHandSizeOptions = options;
+          return { mutate, isPending: false };
+        },
+      },
       endTurn: { useMutation: () => ({ mutate }) },
       triggerEmoji: { useMutation: () => ({ mutate }) },
     },
@@ -34,51 +47,44 @@ vi.mock('~/trpc/react', () => ({
 
 let capturedGameProps: Record<string, unknown> = {};
 vi.mock('./game', () => ({
-  default: (props: Record<string, unknown>) => {
+  default: (props: ComponentProps<typeof Game>) => {
     capturedGameProps = props;
     return (
       <div data-testid='game'>
         <button
           type='button'
           data-testid='play-cards'
-          onClick={() => (props.onPlayCards as () => void)()}
+          onClick={() => props.onPlayCards()}
         />
         <button
           type='button'
           data-testid='yaniv'
-          onClick={props.onYanivClick as () => void}
+          onClick={props.onYanivClick}
         />
         <button
           type='button'
           data-testid='end-turn'
-          onClick={props.onEndTurnClick as () => void}
+          onClick={props.onEndTurnClick}
         />
         <button
           type='button'
           data-testid='pickup-from-discard'
-          onClick={props.onPickupFromDiscard as () => void}
+          onClick={props.onPickupFromDiscard}
         />
         <button
           type='button'
           data-testid='play-ascending'
-          onClick={() =>
-            (
-              props.onPlayCards as (
-                direction: 'ascending' | 'descending',
-              ) => void
-            )('ascending')
-          }
+          onClick={() => props.onPlayCards('ascending')}
         />
         <button
           type='button'
           data-testid='play-descending'
-          onClick={() =>
-            (
-              props.onPlayCards as (
-                direction: 'ascending' | 'descending',
-              ) => void
-            )('descending')
-          }
+          onClick={() => props.onPlayCards('descending')}
+        />
+        <button
+          type='button'
+          data-testid='choose-hand-size'
+          onClick={() => props.onChooseHandSize(3)}
         />
       </div>
     );
@@ -111,6 +117,7 @@ function inProgressState(
   overrides: Partial<{
     gameStep: GameStep;
     currentPlayerId: UserId;
+    dealerId: UserId;
     hand: { suit: Suit; rank: Rank }[];
     playedCards: { suit: Suit; rank: Rank }[];
     topDiscardCard: { suit: Suit; rank: Rank } | null;
@@ -121,7 +128,10 @@ function inProgressState(
   return {
     gameStage: GameStage.IN_PROGRESS,
     gameStep: GameStep.PLAY_CARDS,
+    settings: DEFAULT_SETTINGS,
     handSize: DEFAULT_HAND_SIZE,
+    dealerId: USER_ID,
+    yanivCallerIds: [],
     currentPlayerId: USER_ID,
     hand: [
       { suit: Suit.HEARTS, rank: Rank.KING },
@@ -221,6 +231,102 @@ describe('YanivGameController', () => {
         />,
       );
       expect(capturedGameProps.stage).toBe(GameViewStage.WAITING_FOR_NEW_ROUND);
+    });
+
+    test('derives choosing hand size stage when it is your turn to choose', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      expect(capturedGameProps.stage).toBe(GameViewStage.CHOOSING_HAND_SIZE);
+    });
+
+    test('derives waiting for new round stage while another player chooses the hand size', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            gameStep: GameStep.CHOOSE_HAND_SIZE,
+            currentPlayerId: OPPONENT_ID,
+          })}
+        />,
+      );
+      expect(capturedGameProps.stage).toBe(GameViewStage.WAITING_FOR_NEW_ROUND);
+    });
+  });
+
+  describe('choosing the hand size', () => {
+    test('says you are dealing when you deal the next round', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      expect(capturedGameProps.isDealer).toBe(true);
+    });
+
+    test('says you are not dealing when someone else deals the next round', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({
+            gameStep: GameStep.CHOOSE_HAND_SIZE,
+            dealerId: OPPONENT_ID,
+          })}
+        />,
+      );
+      expect(capturedGameProps.isDealer).toBe(false);
+    });
+
+    test('sends the chosen hand size', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      fireEvent.click(screen.getByTestId('choose-hand-size'));
+      expect(mutate).toHaveBeenCalledOnce();
+      expect(mutate).toHaveBeenCalledWith({ code: CODE, handSize: 3 });
+    });
+
+    test('shows the error when the hand size could not be chosen', () => {
+      render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      act(() => chooseHandSizeOptions.onError?.(new Error('Not your turn')));
+      expect(toast.error).toHaveBeenCalledWith('Not your turn');
+    });
+
+    test('stays pending after the server answers, until the next step arrives', async () => {
+      const { rerender } = render(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.CHOOSE_HAND_SIZE })}
+        />,
+      );
+      let isSettled = false;
+      void chooseHandSizeOptions.onSuccess?.().then(() => {
+        isSettled = true;
+      });
+
+      await act(async () => {});
+      expect(isSettled).toBe(false);
+
+      rerender(
+        <YanivGameController
+          {...baseProps}
+          gameState={inProgressState({ gameStep: GameStep.PLAY_CARDS })}
+        />,
+      );
+      await act(async () => {});
+      expect(isSettled).toBe(true);
     });
   });
 

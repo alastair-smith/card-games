@@ -1,0 +1,18 @@
+shape: sequence_diagram
+
+player: Player
+client: Browser (tRPC client)
+procedure: tRPC mutation
+state: State function
+redis: Redis
+emitter: EventEmitter (in-process)
+subscription: "Each player's yaniv.state subscription"
+
+player -> client: plays cards
+client -> procedure: yaniv.playCards
+procedure -> state: playCards, under the game's lock
+state -> redis: store the updated game state
+state -> emitter: "emit yaniv:<code>"
+emitter -> subscription: queue the update
+subscription -> client: GAME_STATE_UPDATE over SSE
+client -> player: shows the updated game

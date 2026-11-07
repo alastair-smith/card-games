@@ -1,0 +1,21 @@
+shape: sequence_diagram
+
+browser: Browser
+proxy: "proxy.ts"
+handler: Page or tRPC procedure
+
+browser -> proxy: any request, with the __host-auth cookie if it has one
+proxy -> proxy: verify the JWT
+
+"No valid session, or under 6 days left": {
+  proxy -> proxy: sign a new 7-day JWT, keeping the user ID if there is one
+  proxy -> proxy: set the cookie on the request
+}
+
+proxy -> handler: request
+handler -> handler: read the user ID from the cookie\n(protected procedures reject a request without one)
+handler -> proxy: response
+
+"New JWT signed": {
+  proxy -> browser: response with Set-Cookie (httpOnly, secure, SameSite=Lax)
+}

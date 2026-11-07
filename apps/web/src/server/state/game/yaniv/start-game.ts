@@ -1,11 +1,8 @@
-import { yanivDeck } from '~/server/data/deck';
-import { yanivDiscard } from '~/server/data/discard';
 import { getLobby, setLobby } from '~/server/data/lobby';
 import { runTransaction } from '~/server/data/redis';
 import { setYanivState } from '~/server/data/yaniv';
 import { publishYanivState } from '~/server/events/yaniv';
 import { withLock } from '~/server/state/lib/locks';
-import { deckWithJokers } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import {
@@ -13,8 +10,9 @@ import {
   GameStep,
   MAX_PLAYERS,
   MIN_PLAYERS,
+  WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
-import { shuffle } from '~/utils/cards/index';
+import { dealRound } from './lib/deal-round';
 
 export const startGame = async (code: GameCode, userId: UserId) =>
   withLock('lobby', code, async () => {
@@ -28,45 +26,52 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       throw new Error('Not enough players to start the game');
     if (lobby.players.length > MAX_PLAYERS)
       throw new Error('Too many players to start the game');
+    if (!lobby.players.every((player) => player.isReady))
+      throw new Error('Not every player is ready');
 
-    const { handSize } = lobby.settings;
-
-    await yanivDeck.createDeck(code, shuffle(deckWithJokers));
-
-    const players = [];
-    for (const lobbyPlayer of lobby.players) {
-      const cards = await yanivDeck.drawCards(code, handSize);
-      players.push({
-        id: lobbyPlayer.id,
-        name: lobbyPlayer.name,
-        color: lobbyPlayer.color,
-        cardCount: cards.length,
-        hand: cards,
-        score: 0,
-        roundScores: [],
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-        isYanivCalled: false,
-      });
-    }
-
-    await yanivDiscard.createDiscard(code);
-    const firstDiscard = await yanivDeck.drawCard(code);
-    if (!firstDiscard) throw new Error('Deck ran out of cards seeding discard');
-    await yanivDiscard.pushDiscard(code, firstDiscard);
+    const { settings } = lobby;
 
     const firstPlayer = lobby.players[0];
     if (!firstPlayer) throw new Error('No players in lobby');
 
-    const state = {
+    const players = lobby.players.map((lobbyPlayer) => ({
+      id: lobbyPlayer.id,
+      name: lobbyPlayer.name,
+      color: lobbyPlayer.color,
+      cardCount: 0,
+      hand: [],
+      score: 0,
+      roundScores: [],
+      isFiftyScoreHalved: false,
+      isHundredScoreHalved: false,
+      isYanivCalled: false,
+    }));
+
+    const startingState = {
       gameStage: GameStage.IN_PROGRESS as const,
-      gameStep: GameStep.PLAY_CARDS,
-      handSize,
+      settings,
+      dealerId: firstPlayer.id,
+      yanivCallerIds: [],
       currentPlayerId: firstPlayer.id,
-      players,
       playedCards: [],
       drawnFrom: null,
     };
+
+    // With no last hand to have won, the first player chooses the hand size
+    const state =
+      settings.handSize === WINNER_CHOOSES_HAND_SIZE
+        ? {
+            ...startingState,
+            gameStep: GameStep.CHOOSE_HAND_SIZE,
+            handSize: null,
+            players,
+          }
+        : {
+            ...startingState,
+            gameStep: GameStep.PLAY_CARDS,
+            handSize: settings.handSize,
+            players: await dealRound(code, players, settings.handSize),
+          };
 
     await runTransaction(async (transaction) => {
       await setLobby({ code }, { ...lobby, isGameStarted: true }, transaction);

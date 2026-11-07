@@ -15,6 +15,7 @@ import {
   type DrawSource,
   type GameStep,
   GameViewStage,
+  type HandSize,
   type RoundScore,
   type YanivPlayingCard,
 } from '~/types/games/yaniv';
@@ -26,6 +27,7 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { PlayerStrip } from '../player-strip';
 import { RoundSummary } from '../round-summary';
+import { getRoundCount } from '../scoreboard';
 import { ScoresDialog } from '../scores-dialog';
 import { TurnActions } from '../turn-actions';
 import { TurnAnnouncement } from '../turn-status';
@@ -47,9 +49,16 @@ const ACTION_TAB_BY_STAGE = {
   [GameViewStage.DRAWING_CARDS]: 'table',
   [GameViewStage.END_TURN]: 'table',
   [GameViewStage.END_OF_ROUND]: 'scores',
+  [GameViewStage.CHOOSING_HAND_SIZE]: 'scores',
   [GameViewStage.WAITING_FOR_NEW_ROUND]: null,
   [GameViewStage.WAITING_FOR_PLAYER]: null,
 } as const satisfies Record<GameViewStage, GameTab | null>;
+
+const BETWEEN_ROUNDS_STAGES: GameViewStage[] = [
+  GameViewStage.END_OF_ROUND,
+  GameViewStage.WAITING_FOR_NEW_ROUND,
+  GameViewStage.CHOOSING_HAND_SIZE,
+];
 
 type GameProps = {
   cards: YanivPlayingCard[];
@@ -61,6 +70,9 @@ type GameProps = {
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
+  onChooseHandSize: (handSize: HandSize) => void;
+  isHandSizeChoicePending?: boolean;
+  isDealer: boolean;
   isRunSelected?: boolean;
   drawnCard?: YanivPlayingCard | undefined;
   canAutoPlay?: boolean;
@@ -94,6 +106,9 @@ export default function Game({
   onEndTurnClick,
   onYanivClick,
   onPlayCards,
+  onChooseHandSize,
+  isHandSizeChoicePending = false,
+  isDealer,
   isRunSelected,
   onCardToggle,
   onPickupFromDeck,
@@ -126,13 +141,19 @@ export default function Game({
   const isUserTakingTurn =
     !!userPlayer && userPlayer.id === playerTakingTurn?.id;
 
-  const isRoundOver =
-    stage === GameViewStage.END_OF_ROUND ||
-    stage === GameViewStage.WAITING_FOR_NEW_ROUND;
+  const isRoundOver = BETWEEN_ROUNDS_STAGES.includes(stage);
+  // Before the first deal there are no scores to show, so everyone stays at
+  // the table
+  const isBeforeFirstDeal = isRoundOver && getRoundCount(players) === 0;
+  const isShowingScores = isRoundOver && !isBeforeFirstDeal;
 
-  const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
+  const actionTab = isUserTakingTurn
+    ? isBeforeFirstDeal
+      ? 'table'
+      : ACTION_TAB_BY_STAGE[stage]
+    : null;
   const [activeTab, setActiveTab] = useState<string>(
-    isRoundOver ? 'scores' : 'table',
+    isShowingScores ? 'scores' : 'table',
   );
 
   // Players pick their own tab, except that playing cards moves you to the
@@ -141,10 +162,8 @@ export default function Game({
   const [previousStage, setPreviousStage] = useState(stage);
   if (stage !== previousStage) {
     setPreviousStage(stage);
-    const wasRoundOver =
-      previousStage === GameViewStage.END_OF_ROUND ||
-      previousStage === GameViewStage.WAITING_FOR_NEW_ROUND;
-    if (isRoundOver) setActiveTab('scores');
+    const wasRoundOver = BETWEEN_ROUNDS_STAGES.includes(previousStage);
+    if (isShowingScores) setActiveTab('scores');
     else if (wasRoundOver || previousStage === GameViewStage.PICKING_CARDS)
       setActiveTab('table');
   }
@@ -200,6 +219,9 @@ export default function Game({
     stage,
     isRunSelected,
     handTotal: isHandHidden ? undefined : handTotal,
+    isDealer,
+    isHandSizeChoicePending,
+    onChooseHandSize,
     onEndTurnClick,
     onYanivClick,
     onPlayCards,
@@ -265,7 +287,7 @@ export default function Game({
                   drawnFrom={drawnFrom}
                 />
                 <div className='grid flex-1 place-items-center'>
-                  {isRoundOver ? (
+                  {isShowingScores ? (
                     <>
                       {/* Smaller screens show the round summary in the
                           Scores tab */}

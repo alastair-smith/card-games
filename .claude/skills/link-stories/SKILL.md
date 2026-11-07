@@ -1,4 +1,5 @@
 ---
+
 name: link-stories
 description: Give the user links to Storybook stories, optionally with args set, e.g. a long player name, and find which stories render a component. Use whenever linking the user to a story to check a change.
 ---
@@ -43,3 +44,20 @@ EOF
 Storybook only reads arg values made of letters, numbers, spaces, underscores
 and dashes from a link, and drops anything else. For other values, or args
 such as JSX, give the user written steps instead.
+
+## Hosted stories
+
+`main`'s stories are at `https://stories.playcards.games`, and each PR that
+changes the app gets a preview. The Deploy Stories workflow keeps a comment on
+the PR showing the preview's status. Its first line is a hidden
+`<!-- storybook-preview url=… sha=… -->` marker with the URL and commit of the
+last build that deployed:
+
+```bash
+gh pr view --json comments
+```
+
+When the branch has a PR, also give the story's link on its preview: the same
+link with `http://localhost:6006` replaced by the preview URL. The preview
+shows the last push, so push first. PRs from forks or Dependabot have no
+preview.

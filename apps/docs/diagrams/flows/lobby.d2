@@ -1,0 +1,21 @@
+direction: down
+
+create: "lobby.create\nthe creator is host and the first player"
+
+waiting-for-players: "Waiting for players\nfewer than 2 players"
+waiting-for-ready: "Waiting for everyone to be ready\n2 to 5 players"
+ready: "Ready to start\nthe host can start the game"
+in-progress: "Game in progress\nthe lobby no longer accepts changes\nor new players"
+deleted: "Lobby deleted\nits link shows the game isn't available"
+
+create -> waiting-for-players
+waiting-for-players -> waiting-for-ready: "a player joins"
+waiting-for-ready -> ready: "everyone is ready, or a player\nwho isn't leaves or is removed"
+ready -> in-progress: "the host starts the game"
+waiting-for-players -> deleted: "the last player leaves"
+
+# Steps back are written from the earlier stage, so the layout keeps the
+# stages in order from top to bottom
+waiting-for-ready <- ready: "a player joins (up to 5)\nor marks themselves not ready"
+waiting-for-players <- waiting-for-ready: "a player leaves or is removed,\nleaving fewer than 2"
+waiting-for-players <- ready: "a player leaves or is removed,\nleaving fewer than 2"

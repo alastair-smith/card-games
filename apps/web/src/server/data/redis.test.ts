@@ -2,13 +2,20 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { z } from 'zod';
 
 const mockRedisSet = vi.fn();
+const mockRedisDel = vi.fn();
 const mockTransactionSet = vi.fn();
+const mockTransactionDel = vi.fn();
 const mockExec = vi.fn();
-const mockTransaction = { set: mockTransactionSet, exec: mockExec };
+const mockTransaction = {
+  set: mockTransactionSet,
+  del: mockTransactionDel,
+  exec: mockExec,
+};
 
 vi.mock('ioredis', () => ({
   default: class {
     set = mockRedisSet;
+    del = mockRedisDel;
     multi = () => mockTransaction;
   },
 }));
@@ -17,7 +24,7 @@ const { dataLayer, REDIS_EXPIRE_TIME_SECONDS, runTransaction } = await import(
   './redis'
 );
 
-const { set } = dataLayer(
+const { set, delete: deleteThing } = dataLayer(
   ({ id }: { id: string }) => `thing:${id}`,
   z.object({ name: z.string().min(1) }),
 );
@@ -39,6 +46,30 @@ describe('set', () => {
       REDIS_EXPIRE_TIME_SECONDS,
     );
     expect(mockTransactionSet).not.toHaveBeenCalled();
+  });
+});
+
+describe('delete', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  test('deletes straight from redis outside a transaction', async () => {
+    await deleteThing({ id: 'one' });
+
+    expect(mockRedisDel).toHaveBeenCalledWith('thing:one');
+    expect(mockTransactionDel).not.toHaveBeenCalled();
+  });
+
+  test('queues the delete onto a transaction', async () => {
+    mockExec.mockResolvedValue([[null, 1]]);
+
+    await runTransaction(async (transaction) => {
+      await deleteThing({ id: 'one' }, transaction);
+    });
+
+    expect(mockTransactionDel).toHaveBeenCalledWith('thing:one');
+    expect(mockRedisDel).not.toHaveBeenCalled();
   });
 });
 

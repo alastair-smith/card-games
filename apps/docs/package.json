@@ -1,0 +1,24 @@
+{
+  "name": "@repo/docs",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "build:docs": "pnpm build:diagrams && vitepress build",
+    "build:diagrams": "./scripts/build-diagrams.ts",
+    "deploy:docs": "wrangler deploy",
+    "dev:docs": "pnpm build:diagrams && vitepress dev",
+    "preview": "vitepress preview",
+    "typecheck": "tsc --noEmit -p .vitepress && tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@d2lang/d2": "^0.1.34",
+    "@types/node": "^26.6.6",
+    "medium-zoom": "^1.1.2",
+    "typescript": "^7.0.2",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.44",
+    "wrangler": "^4.155.0"
+  }
+}

@@ -1,4 +1,5 @@
 ---
+
 name: raise-pr
 description: Raise a pull request for this repo — title emoji, PR body from the template, screenshots and the create-pr script. Use whenever opening a PR or updating a PR's title or description.
 ---
@@ -52,7 +53,8 @@ Fill in `.github/pull_request_template.md`:
 ## Screenshots
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
-on the dev server (port 3000) or of a single story in Storybook (port 6006).
+on the dev server (port 3000), of a single story or a docs page in Storybook
+(port 6006) or of a page on the docs site (port 5173).
 Start the one you need if it isn't running, with the `dev-servers` skill:
 
 ```bash
@@ -60,6 +62,9 @@ Start the one you need if it isn't running, with the `dev-servers` skill:
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-hand-size-dialog--dealer --dialog --name hand-size-dialog
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --storybook-docs yaniv-hand--docs --name hand-docs
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --theme dark
 ```
 
 It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
@@ -74,6 +79,16 @@ shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+- **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
+  renders outside the story's own area. The story's `play` function must
+  open it and leave it open
+- **Storybook docs:** `--storybook-docs` takes the ID that follows
+  `?path=/docs/` in Storybook's URL, such as a component's docs or an MDX
+  page, and works like `--path`
+- **Docs:** `--docs` takes a path on the docs site and works like `--path`
+- **Dark mode:** screenshots are light by default; pass `--theme dark` for
+  dark mode. Only the docs site and Storybook's docs pages have a dark theme
+  so far, so the script rejects it elsewhere
 
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.
@@ -92,22 +107,24 @@ to add it, rather than taking the screenshot another way.
 Put them in a table under a `### Screenshots` heading at the end of the body,
 above `Closes #123`. Reference each one by the path the script printed, and
 pass that same path to `--attach` (below), which uploads it and points the
-reference at the upload. Write the alt text in the reference:
+reference at the upload. Give each state a row, with desktop and mobile as
+columns, and write the alt text in the reference:
 
 ```md
-| Description | Image |
-|:-|-|
-| Full lobby, desktop | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) |
+| Description | Desktop                                                               | Mobile                                                              |
+| :---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Full lobby  | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) | ![Full lobby, mobile](.pr-screenshots/i-123/lobby/lobby-mobile.png) |
 ```
 
-When something changed, show it before and after. Take the previous
-screenshots on the issue branch before changing anything, since the script
-doesn't run on `main`, named `<name>-previous`:
+When something changed, show it before and after, as a row each. Take the
+previous screenshots on the issue branch before changing anything, since the
+script doesn't run on `main`, named `<name>-previous`:
 
 ```md
-| Description | Previous | Updated |
-|:-|-|-|
-| Full lobby, desktop | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-desktop.png) |
+| Description          | Desktop                            | Mobile                            |
+| :------------------- | ---------------------------------- | --------------------------------- |
+| Full lobby, previous | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-previous-mobile.png) |
+| Full lobby, updated  | ![…](…/lobby-desktop.png)          | ![…](…/lobby-mobile.png)          |
 ```
 ## Create
 
@@ -150,6 +167,11 @@ EOF
 
 Read the description back with `gh pr view --json body` and check every
 reference now points at a `github.com/user-attachments` URL.
+
+When the PR changes the app, the Deploy Stories workflow comments the Storybook
+preview's status on it, with a link once the build deploys. To point a reviewer at a changed
+story there, use the `link-stories` skill's "Hosted stories" section rather
+than linking `localhost`.
 
 When later commits change what the PR does, push them with
 `push-branch.ts` and update the current branch's PR. Pass a new

@@ -1,0 +1,23 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Play Cards Storybook
+
+The components of Play Cards, the app for playing multiplayer card games online with friends, each shown on its own in the states it can be in, from a button to a full game of Yaniv.
+
+## What it's for
+
+- **Building and reviewing UI:** each story renders a component with fixed props, so a state that's hard to reach in a real game, such as a Yaniv call or the end of a game, is one click away
+- **Checking both screen sizes:** each component's Docs page shows every story at a smaller and a larger screen size side by side, and the viewport toolbar sets the size of a single story
+- **Testing:** in CI, each story runs as a test in a real browser. A story's `play` function clicks or types through it and checks the result, and the accessibility addon warns about problems it finds
+- **Previewing pull requests:** each pull request that changes the app gets its own copy of this Storybook
+
+## Writing stories
+
+Stories live beside their component, in `apps/web/src/**/*.stories.tsx`. Run Storybook with `pnpm --filter @repo/web dev:stories` and the story tests with `pnpm --filter @repo/web test:stories`.
+
+- <a href="https://storybook.js.org/docs/writing-stories" target="_top">Writing stories</a>: Storybook's guide to story files, args and decorators
+- <a href="https://storybook.js.org/docs/writing-stories/play-function" target="_top">Play functions</a>: interacting with a story and checking the result
+- <a href="https://storybook.js.org/docs/writing-docs/mdx" target="_top">MDX</a>: writing pages like this one
+- <a href="https://docs.playcards.games/technical/testing-strategy#story-tests" target="_top">Story tests</a>: how stories are tested here, and where they fit beside the other tests

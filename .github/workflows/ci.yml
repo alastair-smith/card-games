@@ -32,11 +32,22 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Build docs
+        run: pnpm --filter @repo/docs build:docs
+
   changes:
     name: Detect App Changes
     runs-on: ubuntu-latest
     outputs:
       app: ${{ steps.filter.outputs.app }}
+      built_app: ${{ steps.filter.outputs.built_app }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -46,25 +57,49 @@ jobs:
         id: filter
         # Pull request runs check out the merge commit, so its first parent is the base branch
         run: |
-          app_paths=(
-            apps/web/
-            packages/
-            package.json
-            pnpm-lock.yaml
-            pnpm-workspace.yaml
-            turbo.json
-            .github/workflows/
-            .github/actions/
+          # Changes to these run the test jobs. Those marked ! aren't part of
+          # the built app, so the build and E2E jobs skip them
+          paths=(
+            'apps/web/**'
+            '!apps/web/.storybook/**'
+            '!apps/web/src/**/*.stories.*'
+            'packages/**'
+            'package.json'
+            'pnpm-lock.yaml'
+            'pnpm-workspace.yaml'
+            'turbo.json'
+            '.github/workflows/**'
+            '.github/actions/**'
           )
-          changed_files=$(git diff --name-only HEAD^1 HEAD -- "${app_paths[@]}")
-          if [[ -n "$changed_files" ]]; then
-            echo "App changes:"
-            echo "$changed_files"
-            echo "app=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No app changes"
-            echo "app=false" >> "$GITHUB_OUTPUT"
-          fi
+
+          app_paths=()
+          built_app_paths=()
+          for path in "${paths[@]}"; do
+            if [[ "$path" == '!'* ]]; then
+              built_app_paths+=(":(glob,exclude)${path#!}")
+            else
+              app_paths+=(":(glob)$path")
+              built_app_paths+=(":(glob)$path")
+            fi
+          done
+
+          check_changes() {
+            local output=$1
+            shift
+            local changed_files
+            changed_files=$(git diff --name-only HEAD^1 HEAD -- "$@")
+            if [[ -n "$changed_files" ]]; then
+              echo "Changes for $output:"
+              echo "$changed_files"
+              echo "$output=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "No changes for $output"
+              echo "$output=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+
+          check_changes app "${app_paths[@]}"
+          check_changes built_app "${built_app_paths[@]}"
 
   test:
     name: Test
@@ -114,7 +149,7 @@ jobs:
   build:
     name: Build
     needs: changes
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -123,7 +158,7 @@ jobs:
       - name: Run build
         run: pnpm build
         env:
-          SKIP_ENV_VALIDATION: "true"
+          SKIP_ENV_VALIDATION: 'true'
       - name: Cache build output
         uses: actions/cache/save@v6
         with:
@@ -135,7 +170,7 @@ jobs:
   test-e2e-chromium-desktop:
     name: E2E Tests (chromium-desktop)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: &e2e-services
       redis:
@@ -144,7 +179,7 @@ jobs:
           - 6379:6379
     env: &e2e-env
       REDIS_CONNECTION_STRING: redis://localhost:6379
-      AUTH_SECRET: "test-secret-at-least-32-characters-long!!"
+      AUTH_SECRET: 'test-secret-at-least-32-characters-long!!'
       NODE_ENV: test
     steps:
       - name: Checkout
@@ -157,7 +192,7 @@ jobs:
   test-e2e-chromium-mobile:
     name: E2E Tests (chromium-mobile)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env
@@ -172,7 +207,7 @@ jobs:
   test-e2e-firefox-desktop:
     name: E2E Tests (firefox-desktop)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env
@@ -187,7 +222,7 @@ jobs:
   test-e2e-firefox-mobile:
     name: E2E Tests (firefox-mobile)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env

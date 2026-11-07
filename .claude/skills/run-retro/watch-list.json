@@ -1,0 +1,242 @@
+{
+  "patterns": [
+    {
+      "id": 3,
+      "pattern": "Pushing without running `pnpm format:fix` across the change, so CI's Lint job finds the errors first, e.g. generated SVGs Biome couldn't parse; or running the undocumented `pnpm lint` instead of the format script",
+      "sightings": [
+        {
+          "date": "2026-11-02",
+          "session": "78153c9b-91d4-4efd-88e4-65a59adc3dd6",
+          "pr": 373
+        }
+      ],
+      "retrosWithout": 4
+    },
+    {
+      "id": 4,
+      "pattern": "Giving a new control its own focus, hover, selected or border styles instead of an existing component's variants, e.g. `ButtonGroupChoice` before it took `Button`'s secondary and primary variants and focus ring",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 5,
+      "pattern": "Existing `CLAUDE.md` rule not followed: a diagram not updated in the PR that changed the flow it shows",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 6,
+      "pattern": "Existing `CLAUDE.md` rule not followed: comments longer than their reason, or restating what the classes say, e.g. exact widths in the hand's comment",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 7,
+      "pattern": "Existing `CLAUDE.md` rule not followed: a state left unchecked in a layout change, e.g. the empty hand collapsing before the first deal",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 8,
+      "pattern": "Existing `CLAUDE.md` rule not followed: a control built from buttons with a role instead of the native input, e.g. radio buttons as `<button role=\"radio\">`",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 9,
+      "pattern": "Existing `raise-pr` rule not followed: a PR description's Details longer than a reviewer needs",
+      "sightings": [
+        {
+          "date": "2026-11-01",
+          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+          "pr": 362
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 10,
+      "pattern": "Existing `run-retro` step 4 not followed: a drafted rule that names the incident's details rather than the principle, e.g. calling out `playwright test --list`",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "88a05b01-be7c-4a65-ac1b-d9248524d962",
+          "pr": 399
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 11,
+      "pattern": "Existing `run-retro` step 4 not followed: a drafted rule that doesn't say what it leaves out, so it could be read too widely, e.g. \"do a real run\" read as \"run the E2E games more\"",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "88a05b01-be7c-4a65-ac1b-d9248524d962",
+          "pr": 399
+        }
+      ],
+      "retrosWithout": 3
+    },
+    {
+      "id": 12,
+      "pattern": "A new page built to the letter of the issue but thinner than the sites around it, e.g. a Storybook Introduction of three bare links, before it took nav-styled links, its purpose and guides to writing stories",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
+          "pr": 400
+        }
+      ],
+      "retrosWithout": 2
+    },
+    {
+      "id": 13,
+      "pattern": "A PR that changes a tool with visible output, such as the screenshot script, without an example of that output in its description",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
+          "pr": 402
+        }
+      ],
+      "retrosWithout": 2
+    },
+    {
+      "id": 14,
+      "pattern": "Existing `raise-pr` rule not followed: a screenshot left out of a PR as impossible to take, without suggesting an issue to make it possible",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
+          "pr": 400
+        }
+      ],
+      "retrosWithout": 2
+    },
+    {
+      "id": 15,
+      "pattern": "Existing `run-retro` step 4 not followed: proposing a new check rather than extending the one the repo already runs, e.g. a new CI path filter beside the `changes` job",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
+          "pr": 405
+        }
+      ],
+      "retrosWithout": 2
+    },
+    {
+      "id": 16,
+      "pattern": "Existing `run-retro` step 4 not followed: proposing a script for something an allowed tool already does, e.g. curl-free URL checks for docs sites web fetch is already allowed to read",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
+          "pr": 405
+        }
+      ],
+      "retrosWithout": 2
+    }
+  ],
+  "retros": [
+    {
+      "date": "2026-11-01",
+      "sessions": ["27975623-bfa0-4649-bdb7-f8f38c162130"],
+      "prs": [],
+      "result": {
+        "pointsRaised": 9,
+        "retroOfRetroPoints": 2,
+        "changesMade": "11 rule or script changes and 3 issues, before the stricter bar in step 3",
+        "fixPr": 359
+      }
+    },
+    {
+      "date": "2026-11-02",
+      "sessions": ["78153c9b-91d4-4efd-88e4-65a59adc3dd6"],
+      "prs": [373],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule change in `CLAUDE.md`",
+        "fixPr": 387
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": [
+        "62ab084d-4021-43cb-9b4e-f29cf898ce55",
+        "88a05b01-be7c-4a65-ac1b-d9248524d962"
+      ],
+      "prs": [362],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 2,
+        "changesMade": "1 rule change in `CLAUDE.md`; none from the retro of the retro",
+        "fixPr": 399
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["ccb4c7f3-a1e1-4575-b60f-6422de8669fe"],
+      "prs": [400, 402],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 3,
+        "changesMade": "1 CI check, 1 script and skill, 1 rule in `run-retro`; 1 issue (#403) filed on request; watch-list scripts and JSON from the retro of the retro",
+        "fixPr": 405
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["60a7d890-2983-4d7a-ac8c-5e8fc8d89b83"],
+      "prs": [406],
+      "result": {
+        "pointsRaised": 1,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `CLAUDE.md`",
+        "fixPr": 408
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["8f2a0551-a7a6-43c4-b11b-de3d0e70d388"],
+      "prs": [409],
+      "result": {
+        "pointsRaised": 0,
+        "retroOfRetroPoints": 0,
+        "changesMade": "No changes"
+      }
+    }
+  ]
+}

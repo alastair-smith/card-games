@@ -1,4 +1,5 @@
 ---
+
 name: check-css
 description: Show the CSS Tailwind compiles for given classes, with any @media or @layer around each rule and its position in the stylesheet. Use to check a class compiles at all, how a variant such as motion-safe: or data-[state=open]: is wrapped, or which of two conflicting rules wins on order.
 ---

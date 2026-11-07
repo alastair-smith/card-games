@@ -1,4 +1,5 @@
 ---
+
 name: query-local-telemetry
 description: Query traces from the local Jaeger while debugging the app in development. Use to answer questions like "did this request hit Redis?", "which tRPC call failed?", "how long did this take?" or "is this span still being emitted?". Local development only, not production telemetry.
 ---
@@ -52,16 +53,16 @@ searching `card-games-web`.
 
 ## Queries
 
-| Question | Tool |
-|---|---|
-| Recent traces | `search_traces` with `service_name`; `start_time_min` defaults to `-1h` |
-| Traces for one operation, e.g. `trpc.lobby.create` or `GET /yaniv` | `search_traces` with `span_name` |
-| Traces that failed | `search_traces` with `with_errors: true` |
-| Which operations exist | `get_span_names` with `service_name` |
-| A trace's spans with durations and status | `get_trace_topology` with `trace_id` |
-| Why a trace failed | `get_trace_errors` with `trace_id` |
-| A span's attributes and events, e.g. the Redis command | `get_span_details` with `trace_id` and `span_ids` |
-| What made a trace slow | `get_critical_path` with `trace_id` |
+| Question                                                           | Tool                                                                    |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| Recent traces                                                      | `search_traces` with `service_name`; `start_time_min` defaults to `-1h` |
+| Traces for one operation, e.g. `trpc.lobby.create` or `GET /yaniv` | `search_traces` with `span_name`                                        |
+| Traces that failed                                                 | `search_traces` with `with_errors: true`                                |
+| Which operations exist                                             | `get_span_names` with `service_name`                                    |
+| A trace's spans with durations and status                          | `get_trace_topology` with `trace_id`                                    |
+| Why a trace failed                                                 | `get_trace_errors` with `trace_id`                                      |
+| A span's attributes and events, e.g. the Redis command             | `get_span_details` with `trace_id` and `span_ids`                       |
+| What made a trace slow                                             | `get_critical_path` with `trace_id`                                     |
 
 Start with `search_traces` or `get_span_names`, then use a trace ID to look at
 one trace. `get_trace_topology` leaves out attributes, so only fetch

@@ -1,25 +1,19 @@
 #!/usr/bin/env node
 import { setTimeout as wait } from 'node:timers/promises';
 import {
+  DEV_SERVERS,
   exitWithError,
   exitWithUsage,
+  isDevServerPort,
   parseArguments,
 } from '../../lib/script-helpers.ts';
 
-const usage = 'Usage: wait-for-server.ts --port <3000|6006>';
-
-const SERVER_NAMES = {
-  '3000': 'The app',
-  '6006': 'Storybook',
-} as const satisfies Record<string, string>;
+const usage = 'Usage: wait-for-server.ts --port <3000|6006|5173>';
 
 const TIMEOUT_SECONDS = 120;
 const POLL_INTERVAL_MILLISECONDS = 1000;
 // The app compiles a page on its first request, which can take a while
 const REQUEST_TIMEOUT_MILLISECONDS = 30_000;
-
-const isServerPort = (value: string): value is keyof typeof SERVER_NAMES =>
-  Object.hasOwn(SERVER_NAMES, value);
 
 const { port } = parseArguments(usage, {
   options: { port: { type: 'string' } },
@@ -29,13 +23,13 @@ if (!port) {
   exitWithUsage(usage);
 }
 
-if (!isServerPort(port)) {
+if (!isDevServerPort(port)) {
   exitWithError(
-    `--port must be 3000 (the app) or 6006 (Storybook), not '${port}'.`,
+    `--port must be 3000 (the app), 6006 (Storybook) or 5173 (the docs site), not '${port}'.`,
   );
 }
 
-const serverName = SERVER_NAMES[port];
+const serverName = DEV_SERVERS[port];
 const deadline = Date.now() + TIMEOUT_SECONDS * 1000;
 
 while (Date.now() < deadline) {

@@ -119,5 +119,13 @@ export const dataLayer = <
 
       return validated;
     },
+
+    /** Remove from redis, or queue the removal onto a transaction from `runTransaction` */
+    delete: async (
+      keyArgs: P,
+      transaction?: ChainableCommander,
+    ): Promise<void> => {
+      await (transaction ?? redis).del(getKey(keyArgs));
+    },
   };
 };

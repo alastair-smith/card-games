@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "card-games-stories",
+  "compatibility_date": "2026-11-05",
+  "assets": {
+    "directory": "./storybook-static"
+  },
+  "routes": [{ "pattern": "stories.playcards.games", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": true,
+  "previews": {}
+}

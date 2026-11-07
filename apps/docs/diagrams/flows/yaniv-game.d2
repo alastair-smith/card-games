@@ -1,0 +1,47 @@
+direction: down
+
+lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses (see below)"
+deal: "Deal\nshuffle the deck with jokers, deal each hand,\nturn over the first discard"
+
+turn: "Turn" {
+  play: "PLAY_CARDS\nplay one card, a set or a run"
+  matches: "Does the first card match\nthe top discard's rank?" {shape: diamond}
+  pickup: "PICKUP_CARD\ndraw from the deck or the discard\n(deck only after extending a run)"
+  proceed: "PROCEED"
+  play-back: "Play the drawn card back\n(drawn from the deck and fits\nonto the cards just played)"
+
+  play -> matches
+  matches -> pickup: no
+  matches -> proceed: yes
+  pickup -> proceed
+  proceed -> play-back: optional
+  play-back -> proceed
+}
+
+end-turn: "End turn\n(not allowed with an empty hand)"
+call-yaniv: "Call Yaniv\n(hand worth 7 or less)"
+next-called: "Has the next player\ncalled Yaniv?" {shape: diamond}
+next-player: Next player's turn
+
+score: "Score the round\nlowest caller scores 0, other callers 25,\neveryone else their hand's value.\nLanding on exactly 50 or 100 halves it, once each" {
+  shape: page
+}
+over: "Is anyone over 100?" {shape: diamond}
+redeal: "REDEAL\nthe lowest-scoring caller\nstarts a new round"
+finished: "FINISHED\nlowest score wins"
+
+lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals and goes first"
+deal -> turn.play
+
+turn.proceed -> end-turn
+turn.proceed -> call-yaniv
+end-turn -> next-called
+call-yaniv -> next-called
+next-called -> next-player: no
+next-player -> turn.play
+next-called -> score: "yes, everyone else\nhas had one more turn"
+
+score -> over
+over -> finished: yes
+over -> redeal: no
+redeal -> deal: start a new round

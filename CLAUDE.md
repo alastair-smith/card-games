@@ -116,10 +116,23 @@ The projects are `chromium-desktop`, `chromium-mobile`, `firefox-desktop`
 and `firefox-mobile`. Firefox may not be installed locally, so use the
 Chromium ones unless asked; CI runs all four.
 
+They play with the default 5-card hand. To play a Yaniv game where the
+winner of each hand chooses the next hand size, run the opt-in project after
+changing that flow. It only runs when named with `--project`, so a plain run
+and CI skip it:
+
+```bash
+pnpm --filter @repo/web test:e2e --project=chromium-desktop-winner-chooses
+```
+
+To check a change to how tests or tools run, such as Playwright's config,
+use a real run that reaches the part you changed, and keep it short: stop
+once it gets there rather than playing a whole E2E game.
+
 ### Dev servers
 
-Use the `dev-servers` skill to start, wait for and stop the app (port 3000) or
-Storybook (port 6006).
+Use the `dev-servers` skill to start, wait for and stop the app (port 3000),
+Storybook (port 6006) or the docs site (port 5173).
 
 When linking the user to a story, use the `link-stories` skill.
 
@@ -145,7 +158,9 @@ All work that changes files happens on a branch for an issue. Before starting:
 
 1. If the prompt doesn't reference an issue, search for an existing issue
    that covers the work, and file one with the `manage-issue` skill if there
-   isn't one
+   isn't one. This applies on another issue's branch too: work outside that
+   issue gets its own issue and branch, unless the current PR needs it to
+   pass CI
 2. Create a branch for it with the `manage-branch` skill — unless the issue
    already has an open PR, in which case work on that PR's branch
 3. Before changing anything, refine the issue, unless it was filed in this
@@ -161,8 +176,8 @@ own PR", look into it first: try it to see how big the change is and how well
 it fits. Then recommend including or splitting it, with the reason, before
 raising the PR. Don't leave it out without looking.
 
-Only state how the game or app behaves, in issues, commits, PRs or replies,
-once you've checked it in the code or the running app. Give a change's reason
+Only state how the game or app behaves, in issues, commits, PRs, docs,
+diagrams or replies, once you've checked it in the code or the running app. Give a change's reason
 as what the user asked for or what was measured, not a reason you've inferred.
 
 ## Skill scripts
@@ -203,6 +218,28 @@ Don't add `Claude-Session:` trailers or any other Claude attribution lines.
 ## Pull requests
 
 Use the `raise-pr` skill when opening a PR or updating its title or description.
+
+Once the work for an issue is done and the tests, type check and formatting
+pass, commit it and raise the PR without asking first. Ask first only when
+part of the scope is still undecided.
+
+## Docs
+
+Docs live in `apps/docs`: how the app is built under `technical/`, how each
+game works under `games/`. Link each new doc from `index.md`, and add it to
+the sidebar in `apps/docs/.vitepress/config.ts`.
+
+Diagrams are D2 files in `apps/docs/diagrams/`, each built to a `.light.svg`
+and a `.dark.svg` when the docs site builds or starts. The SVGs aren't
+committed. Link to the light one from a doc; the site swaps in the dark one.
+To check a diagram compiles without starting the site:
+
+```bash
+pnpm --filter @repo/docs build:diagrams
+```
+
+When a change alters a flow or structure a diagram shows, update the diagram
+in the same PR.
 
 ## Code conventions
 
@@ -250,8 +287,8 @@ uses for the same idea, e.g. `drawnFrom` beside `drawnCard`, not
 Keep comments to a minimum and let names carry the meaning
 (`useWaitForServerValue`, `DEFAULT_HAND_SIZE`).
 
-- Do comment *why* when a decision isn't obvious from the code
-- Explain *how* only in code that is rarely touched but important, such as auth
+- Do comment _why_ when a decision isn't obvious from the code
+- Explain _how_ only in code that is rarely touched but important, such as auth
 - Don't record history — no `// added to fix the issue in i-123`; that belongs
   in the PR description
 - Keep a comment to the reason in a few words. Leave out anything a class
@@ -297,9 +334,9 @@ Primitive IDs and constrained strings use branded types — avoid using plain `s
 
 ```ts
 // types defined in ~/types/entities.ts
-userId: UserId
-name: PlayerName
-code: GameCode
+userId: UserId;
+name: PlayerName;
+code: GameCode;
 ```
 
 Cast raw strings when constructing test data or initial values: `'abc' as UserId`.
@@ -369,9 +406,9 @@ onCardClick: (card: Card) => void
 Boolean props: `is<Noun><State>`:
 
 ```ts
-isYanivCalled: boolean
-isHighlighted: boolean
-isFiftyScoreHalved: boolean
+isYanivCalled: boolean;
+isHighlighted: boolean;
+isFiftyScoreHalved: boolean;
 ```
 
 ### Component files
@@ -394,6 +431,7 @@ wrapping it in a game-specific component or adding a second version beside it.
 ## Testing
 
 ### Test naming
+
 - Describe behavior in plain language — never reference prop or parameter names in test titles
 - ✓ "shows Yaniv called marquee when Yaniv has been called"
 - ✗ "shows marquee when isYanivCalled is true"
@@ -403,12 +441,14 @@ wrapping it in a game-specific component or adding a second version beside it.
 - ✗ "calls the Yaniv handler when Yaniv! is clicked"
 
 ### Assertions
+
 - Use `@testing-library/jest-dom` for DOM assertions — it's the RTL-recommended companion library
 - `toBeInTheDocument()` for presence, `not.toBeInTheDocument()` for absence
 - `toHaveBeenCalledOnce()` for callback assertions (Vitest spy matcher)
 - Prefer accessible queries (`getByRole`, `getByText`, `getByLabelText`) over `getByTestId` — test IDs are a last resort for when no semantic query applies
 
 ### Structure
+
 - Group related tests in nested `describe` blocks by feature/stage, not by prop
 - Fresh `vi.fn()` instances per test when asserting a handler was called
 - Shared `vi.fn()` (e.g. `noop`) is fine for handlers that are not under test
@@ -419,16 +459,19 @@ wrapping it in a game-specific component or adding a second version beside it.
 - Share test helpers from `~/test-utils/` rather than copying them between files
 
 ### Test data
+
 - Reuse the test data builders in `~/test-utils/` (e.g. `buildPlayer`, `buildInProgressState`) instead of writing full object literals, passing only the fields the test cares about
 - If a test needs a shape no builder covers, add or extend a builder there
 - When a new field is added, give the builder a default value for it rather than updating every test
 - Keep test data within the game's limits, such as `MAX_PLAYERS`, so tests and stories only show states a real game can reach
 
 ### Stories
+
 - Stories don't set a viewport or come in per-size copies; the viewport toolbar picks the size
 - A `play` function can't rely on an element that only exists at one size, as story tests render at one size
 
 ### Mocking
+
 - Mock complex sub-components to test parent logic in isolation
 - Use `data-testid="card-{suit}-{rank}"` on mocked card components for reliable selection
 - Mock layout wrappers (e.g. `GameLayout`) with a simple children passthrough

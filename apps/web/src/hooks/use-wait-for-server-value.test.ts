@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { useWaitForServerValue } from './use-wait-for-server-value';
+import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 
 const TIMEOUT_MS = 5000;
 

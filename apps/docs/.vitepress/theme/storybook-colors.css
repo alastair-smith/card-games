@@ -1,0 +1,103 @@
+/* Colours and fonts from Storybook's theme in apps/web/.storybook/theme.ts */
+
+:root {
+  --vp-sidebar-width: 224px;
+  /* Keeps the sidebar against the left edge on the widest screens */
+  --vp-layout-max-width: 100vw;
+
+  --vp-font-family-base:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  --vp-font-family-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #e5f8fa;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #e5f8fa;
+
+  --vp-c-text-1: #1f2e3d;
+  --vp-c-text-2: rgba(31, 46, 61, 0.78);
+  --vp-c-text-3: rgba(31, 46, 61, 0.56);
+
+  --vp-c-border: rgba(31, 46, 61, 0.25);
+  --vp-c-divider: rgba(31, 46, 61, 0.15);
+  --vp-c-gutter: rgba(31, 46, 61, 0.15);
+
+  /* Darker than Storybook's #178259 so links pass contrast on the sidebar */
+  --vp-c-brand-1: #13704c;
+  --vp-c-brand-2: #178259;
+  --vp-c-brand-3: #01321f;
+  --vp-c-brand-soft: rgba(23, 130, 89, 0.14);
+
+  --vp-button-brand-bg: #f5d547;
+  --vp-button-brand-border: #f5d547;
+  --vp-button-brand-text: #1f2e3d;
+  --vp-button-brand-hover-bg: #f8e070;
+  --vp-button-brand-hover-border: #f8e070;
+  --vp-button-brand-hover-text: #1f2e3d;
+  --vp-button-brand-active-bg: #e8c52e;
+  --vp-button-brand-active-border: #e8c52e;
+  --vp-button-brand-active-text: #1f2e3d;
+}
+
+/* More room for the diagrams beside the outline */
+@media (min-width: 1440px) {
+  .VPContent .VPDoc.has-aside .content .content-container {
+    max-width: 880px;
+  }
+}
+
+.app-link-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: -5px;
+}
+
+/* Like the web app's panel card */
+.diagram-light,
+.diagram-dark {
+  border: 2px solid var(--vp-c-border);
+  border-radius: 8px;
+}
+
+.diagram-dark {
+  border-color: rgba(244, 239, 245, 0.3);
+}
+
+/* Above the nav bar and sidebar */
+.medium-zoom-overlay {
+  z-index: 100;
+}
+
+.medium-zoom-image--opened {
+  z-index: 101;
+}
+
+:root:not(.dark) .diagram-dark,
+.dark .diagram-light {
+  display: none;
+}
+
+.dark {
+  --vp-c-bg: #0e3929;
+  --vp-c-bg-alt: #012819;
+  --vp-c-bg-elv: #0a291d;
+  --vp-c-bg-soft: #01321f;
+
+  --vp-c-text-1: #f4eff5;
+  --vp-c-text-2: #b8bfc2;
+  --vp-c-text-3: rgba(184, 191, 194, 0.7);
+
+  --vp-c-border: rgba(244, 239, 245, 0.25);
+  --vp-c-divider: rgba(244, 239, 245, 0.15);
+  --vp-c-gutter: #012819;
+
+  --vp-c-brand-1: #f5d547;
+  --vp-c-brand-2: #f8e070;
+  --vp-c-brand-3: #e8c52e;
+  --vp-c-brand-soft: rgba(245, 213, 71, 0.16);
+}
