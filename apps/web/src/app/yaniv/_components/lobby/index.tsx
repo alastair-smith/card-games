@@ -7,11 +7,7 @@ import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import { api } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-import type {
-  DealerSetting,
-  HandSizeSetting,
-  Settings,
-} from '~/types/games/yaniv';
+import type { Settings, SettingUpdate } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
@@ -157,15 +153,10 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
-  const handleHandSizeChange = (newHandSize: HandSizeSetting) => {
-    updateHandSizeMutation.mutate({
-      code,
-      settings: { handSize: newHandSize },
-    });
-  };
-
-  const handleDealerChange = (newDealer: DealerSetting) => {
-    updateDealerMutation.mutate({ code, settings: { dealer: newDealer } });
+  const handleSettingChange = (update: SettingUpdate) => {
+    const mutation =
+      'handSize' in update ? updateHandSizeMutation : updateDealerMutation;
+    mutation.mutate({ code, settings: update });
   };
 
   const handleReadyChange = (nextIsReady: boolean) => {
@@ -180,14 +171,12 @@ export default function Lobby({
     <LobbyView
       code={code}
       players={players}
-      handSize={selectedHandSize}
-      dealer={selectedDealer}
+      settings={{ handSize: selectedHandSize, dealer: selectedDealer }}
       user={{ ...user, isReady }}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
-      handleHandSizeChange={handleHandSizeChange}
-      handleDealerChange={handleDealerChange}
+      handleSettingChange={handleSettingChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

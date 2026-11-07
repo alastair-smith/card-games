@@ -8,69 +8,76 @@ import {
   ChoiceGroup,
 } from '~/components/ui/choice-group';
 import {
-  DEALER_SETTINGS,
-  type DealerSetting,
-  HAND_SIZE_SETTINGS,
-  type HandSizeSetting,
+  type Settings,
+  type SettingUpdate,
+  settingUpdateSchema,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
-const HAND_SIZE_CHOICES = {
-  5: { title: '5 Cards', description: 'For a shorter game' },
-  7: { title: '7 Cards', description: 'For a longer game' },
-  [WINNER_CHOOSES_HAND_SIZE]: {
-    title: 'Winner Chooses',
-    description: `Each round's winner chooses how many cards are dealt in the next round.`,
-  },
-} as const satisfies Record<
-  HandSizeSetting,
-  { title: string; description: string }
->;
+type SettingConfig<Key extends keyof Settings> = {
+  key: Key;
+  title: string;
+  description: string;
+  options: readonly {
+    value: Settings[Key];
+    title: string;
+    description: string;
+    isWide?: boolean;
+  }[];
+};
 
-const DEALER_CHOICES = {
-  rotates: {
-    title: 'Rotates',
-    description: 'Take turns to deal. The player after the dealer goes first.',
+export const GAME_SETTINGS = [
+  {
+    key: 'handSize',
+    title: 'Hand Size',
+    description: 'How many cards each player is dealt at the start of a round.',
+    options: [
+      { value: 5, title: '5 Cards', description: 'For a shorter game' },
+      { value: 7, title: '7 Cards', description: 'For a longer game' },
+      {
+        value: WINNER_CHOOSES_HAND_SIZE,
+        title: 'Winner Chooses',
+        description: `Each round's winner chooses how many cards are dealt in the next round.`,
+        isWide: true,
+      },
+    ],
   },
-  'hand-winner': {
-    title: 'Hand Winner',
-    description: `The last hand's winner deals and goes first.`,
+  {
+    key: 'dealer',
+    title: 'Dealer',
+    description: 'Who deals each new round after the first.',
+    options: [
+      {
+        value: 'rotates',
+        title: 'Rotates',
+        description:
+          'Take turns to deal. The player after the dealer goes first.',
+      },
+      {
+        value: 'hand-winner',
+        title: 'Hand Winner',
+        description: `The last hand's winner deals and goes first.`,
+      },
+    ],
   },
-} as const satisfies Record<
-  DealerSetting,
-  { title: string; description: string }
->;
+] as const satisfies readonly {
+  [Key in keyof Settings]: SettingConfig<Key>;
+}[keyof Settings][];
 
 type GameSettingsProps = {
   className?: string;
-  handSize: HandSizeSetting;
-  dealer: DealerSetting;
+  settings: Settings;
   isHost: boolean;
-  onHandSizeChange: (handSize: HandSizeSetting) => void;
-  onDealerChange: (dealer: DealerSetting) => void;
+  onSettingChange: (update: SettingUpdate) => void;
 };
 
 export default function GameSettings({
   className,
-  handSize,
-  dealer,
+  settings,
   isHost,
-  onHandSizeChange,
-  onDealerChange,
+  onSettingChange,
 }: GameSettingsProps) {
-  const handleHandSizeValueChange = (value: string) => {
-    const option = HAND_SIZE_SETTINGS.find(
-      (setting) => String(setting) === value,
-    );
-    if (option !== undefined) onHandSizeChange(option);
-  };
-
-  const handleDealerValueChange = (value: string) => {
-    const option = DEALER_SETTINGS.find((setting) => setting === value);
-    if (option !== undefined) onDealerChange(option);
-  };
-
   return (
     <Card className={className}>
       <CardHeader>
@@ -78,51 +85,48 @@ export default function GameSettings({
           {isHost ? 'Settings' : 'Settings (Configured by Host)'}
         </h2>
       </CardHeader>
-      <CardContent className='flex flex-col gap-2'>
-        <h3 className='font-semibold'>Hand Size</h3>
-        <p>How many cards each player is dealt at the start of a round.</p>
-        <ChoiceGroup
-          className='grid-cols-2'
-          label='Hand Size'
-          value={String(handSize)}
-          isDisabled={!isHost}
-          onValueChange={handleHandSizeValueChange}
-        >
-          {HAND_SIZE_SETTINGS.map((option) => (
-            <ChoiceCard
-              key={option}
-              value={String(option)}
-              className={cn(
-                option === WINNER_CHOOSES_HAND_SIZE && 'col-span-2',
-              )}
-            >
-              <ChoiceCardTitle>
-                {HAND_SIZE_CHOICES[option].title}
-              </ChoiceCardTitle>
-              <ChoiceCardDescription>
-                {HAND_SIZE_CHOICES[option].description}
-              </ChoiceCardDescription>
-            </ChoiceCard>
-          ))}
-        </ChoiceGroup>
-        <h3 className='mt-4 font-semibold'>Dealer</h3>
-        <p>Who deals each new round after the first.</p>
-        <ChoiceGroup
-          className='grid-cols-2'
-          label='Dealer'
-          value={dealer}
-          isDisabled={!isHost}
-          onValueChange={handleDealerValueChange}
-        >
-          {DEALER_SETTINGS.map((option) => (
-            <ChoiceCard key={option} value={option}>
-              <ChoiceCardTitle>{DEALER_CHOICES[option].title}</ChoiceCardTitle>
-              <ChoiceCardDescription>
-                {DEALER_CHOICES[option].description}
-              </ChoiceCardDescription>
-            </ChoiceCard>
-          ))}
-        </ChoiceGroup>
+      <CardContent className='flex flex-col gap-6'>
+        {GAME_SETTINGS.map((setting) => {
+          const handleValueChange = (value: string) => {
+            const option = setting.options.find(
+              (choice) => String(choice.value) === value,
+            );
+            if (option === undefined) return;
+            // Parsing ties the value back to its setting, which the loop loses
+            onSettingChange(
+              settingUpdateSchema.parse({ [setting.key]: option.value }),
+            );
+          };
+
+          return (
+            <section key={setting.key} className='flex flex-col gap-2'>
+              <h3 className='font-semibold'>{setting.title}</h3>
+              <p>{setting.description}</p>
+              <ChoiceGroup
+                className='grid-cols-2'
+                label={setting.title}
+                value={String(settings[setting.key])}
+                isDisabled={!isHost}
+                onValueChange={handleValueChange}
+              >
+                {setting.options.map((option) => (
+                  <ChoiceCard
+                    key={String(option.value)}
+                    value={String(option.value)}
+                    className={cn(
+                      'isWide' in option && option.isWide && 'col-span-2',
+                    )}
+                  >
+                    <ChoiceCardTitle>{option.title}</ChoiceCardTitle>
+                    <ChoiceCardDescription>
+                      {option.description}
+                    </ChoiceCardDescription>
+                  </ChoiceCard>
+                ))}
+              </ChoiceGroup>
+            </section>
+          );
+        })}
       </CardContent>
     </Card>
   );

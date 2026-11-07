@@ -5,6 +5,8 @@ import type { GameCode, Player } from '~/types/game';
 import {
   type DealerSetting,
   type HandSizeSetting,
+  type Settings,
+  type SettingUpdate,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
@@ -58,20 +60,18 @@ vi.mock('~/trpc/react', () => ({
 
 vi.mock('./lobby.view', () => ({
   default: (props: {
-    handSize: HandSizeSetting;
-    dealer: DealerSetting;
+    settings: Settings;
     user: { isReady: boolean; name: string };
     handleNameChange: (name: string) => void;
-    handleHandSizeChange: (handSize: HandSizeSetting) => void;
-    handleDealerChange: (dealer: DealerSetting) => void;
+    handleSettingChange: (update: SettingUpdate) => void;
     handleReadyChange: (isReady: boolean) => void;
   }) => (
     <div>
-      <p>Hand size: {props.handSize}</p>
-      <p>Dealer: {props.dealer}</p>
+      <p>Hand size: {props.settings.handSize}</p>
+      <p>Dealer: {props.settings.dealer}</p>
       <button
         type='button'
-        onClick={() => props.handleDealerChange('hand-winner')}
+        onClick={() => props.handleSettingChange({ dealer: 'hand-winner' })}
       >
         Hand winner deals
       </button>
@@ -81,15 +81,23 @@ vi.mock('./lobby.view', () => ({
         value={props.user.name}
         onChange={(event) => props.handleNameChange(event.target.value)}
       />
-      <button type='button' onClick={() => props.handleHandSizeChange(5)}>
+      <button
+        type='button'
+        onClick={() => props.handleSettingChange({ handSize: 5 })}
+      >
         Choose 5
       </button>
-      <button type='button' onClick={() => props.handleHandSizeChange(7)}>
+      <button
+        type='button'
+        onClick={() => props.handleSettingChange({ handSize: 7 })}
+      >
         Choose 7
       </button>
       <button
         type='button'
-        onClick={() => props.handleHandSizeChange(WINNER_CHOOSES_HAND_SIZE)}
+        onClick={() =>
+          props.handleSettingChange({ handSize: WINNER_CHOOSES_HAND_SIZE })
+        }
       >
         Let the winner choose
       </button>

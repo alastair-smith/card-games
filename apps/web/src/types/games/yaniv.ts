@@ -39,16 +39,9 @@ export const handSizeSettingSchema = z.union([
 
 export type HandSizeSetting = z.infer<typeof handSizeSettingSchema>;
 
-export const HAND_SIZE_SETTINGS = [
-  ...FIXED_HAND_SIZES,
-  WINNER_CHOOSES_HAND_SIZE,
-] as const satisfies HandSizeSetting[];
-
 export const dealerSettingSchema = z.enum(['rotates', 'hand-winner']);
 
 export type DealerSetting = z.infer<typeof dealerSettingSchema>;
-
-export const DEALER_SETTINGS = dealerSettingSchema.options;
 
 export const DEFAULT_DEALER = 'rotates' satisfies DealerSetting;
 

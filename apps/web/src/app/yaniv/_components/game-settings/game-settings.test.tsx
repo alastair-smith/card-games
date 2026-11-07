@@ -1,16 +1,18 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import { WINNER_CHOOSES_HAND_SIZE } from '~/types/games/yaniv';
-import GameSettings from '.';
+import {
+  DEFAULT_SETTINGS,
+  settingsSchema,
+  WINNER_CHOOSES_HAND_SIZE,
+} from '~/types/games/yaniv';
+import GameSettings, { GAME_SETTINGS } from '.';
 
 const noop = vi.fn();
 
 const defaultProps = {
-  handSize: 5 as const,
-  dealer: 'rotates' as const,
+  settings: DEFAULT_SETTINGS,
   isHost: true,
-  onHandSizeChange: noop,
-  onDealerChange: noop,
+  onSettingChange: noop,
 };
 
 describe('GameSettings', () => {
@@ -19,6 +21,14 @@ describe('GameSettings', () => {
     expect(
       screen.getByRole('heading', { name: 'Settings' }),
     ).toBeInTheDocument();
+  });
+
+  test('offers every setting once', () => {
+    const settingKeys = settingsSchema.keyof().options;
+    const offeredKeys = GAME_SETTINGS.map((setting) => setting.key);
+
+    expect(offeredKeys).toHaveLength(settingKeys.length);
+    expect(offeredKeys).toEqual(expect.arrayContaining(settingKeys));
   });
 
   describe('hand size', () => {
@@ -33,46 +43,54 @@ describe('GameSettings', () => {
     });
 
     test('shows the chosen hand size as selected', () => {
-      render(<GameSettings {...defaultProps} handSize={7} />);
+      render(
+        <GameSettings
+          {...defaultProps}
+          settings={{ ...DEFAULT_SETTINGS, handSize: 7 }}
+        />,
+      );
       expect(screen.getByRole('radio', { name: /7 Cards/ })).toBeChecked();
       expect(screen.getByRole('radio', { name: /5 Cards/ })).not.toBeChecked();
     });
 
-    test('calls the hand size handler when another size is chosen', () => {
-      const handleHandSizeChange = vi.fn();
+    test('calls the setting handler when another size is chosen', () => {
+      const handleSettingChange = vi.fn();
       render(
         <GameSettings
           {...defaultProps}
-          onHandSizeChange={handleHandSizeChange}
+          onSettingChange={handleSettingChange}
         />,
       );
 
       fireEvent.click(screen.getByRole('radio', { name: /7 Cards/ }));
 
-      expect(handleHandSizeChange).toHaveBeenCalledOnce();
-      expect(handleHandSizeChange).toHaveBeenCalledWith(7);
+      expect(handleSettingChange).toHaveBeenCalledOnce();
+      expect(handleSettingChange).toHaveBeenCalledWith({ handSize: 7 });
     });
 
     test('offers to let the winner of each hand choose', () => {
-      const handleHandSizeChange = vi.fn();
+      const handleSettingChange = vi.fn();
       render(
         <GameSettings
           {...defaultProps}
-          onHandSizeChange={handleHandSizeChange}
+          onSettingChange={handleSettingChange}
         />,
       );
 
       fireEvent.click(screen.getByRole('radio', { name: /Winner Chooses/ }));
 
-      expect(handleHandSizeChange).toHaveBeenCalledOnce();
-      expect(handleHandSizeChange).toHaveBeenCalledWith(
-        WINNER_CHOOSES_HAND_SIZE,
-      );
+      expect(handleSettingChange).toHaveBeenCalledOnce();
+      expect(handleSettingChange).toHaveBeenCalledWith({
+        handSize: WINNER_CHOOSES_HAND_SIZE,
+      });
     });
 
     test('shows the winner choosing as selected', () => {
       render(
-        <GameSettings {...defaultProps} handSize={WINNER_CHOOSES_HAND_SIZE} />,
+        <GameSettings
+          {...defaultProps}
+          settings={{ ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE }}
+        />,
       );
       expect(
         screen.getByRole('radio', { name: /Winner Chooses/ }),
@@ -90,52 +108,62 @@ describe('GameSettings', () => {
     });
 
     test('shows the hand winner dealing as selected', () => {
-      render(<GameSettings {...defaultProps} dealer='hand-winner' />);
+      render(
+        <GameSettings
+          {...defaultProps}
+          settings={{ ...DEFAULT_SETTINGS, dealer: 'hand-winner' }}
+        />,
+      );
       expect(screen.getByRole('radio', { name: /Hand Winner/ })).toBeChecked();
     });
 
-    test('calls the dealer handler when the hand winner is chosen to deal', () => {
-      const handleDealerChange = vi.fn();
+    test('calls the setting handler when the hand winner is chosen to deal', () => {
+      const handleSettingChange = vi.fn();
       render(
-        <GameSettings {...defaultProps} onDealerChange={handleDealerChange} />,
+        <GameSettings
+          {...defaultProps}
+          onSettingChange={handleSettingChange}
+        />,
       );
 
       fireEvent.click(screen.getByRole('radio', { name: /Hand Winner/ }));
 
-      expect(handleDealerChange).toHaveBeenCalledOnce();
-      expect(handleDealerChange).toHaveBeenCalledWith('hand-winner');
+      expect(handleSettingChange).toHaveBeenCalledOnce();
+      expect(handleSettingChange).toHaveBeenCalledWith({
+        dealer: 'hand-winner',
+      });
     });
   });
 
   describe('players who are not the host', () => {
     test('cannot change the dealer', () => {
-      const handleDealerChange = vi.fn();
+      const handleSettingChange = vi.fn();
       render(
         <GameSettings
           {...defaultProps}
           isHost={false}
-          onDealerChange={handleDealerChange}
+          onSettingChange={handleSettingChange}
         />,
       );
 
       fireEvent.click(screen.getByRole('radio', { name: /Hand Winner/ }));
 
-      expect(handleDealerChange).not.toHaveBeenCalled();
+      expect(handleSettingChange).not.toHaveBeenCalled();
     });
 
     test('cannot change the hand size', () => {
-      const handleHandSizeChange = vi.fn();
+      const handleSettingChange = vi.fn();
       render(
         <GameSettings
           {...defaultProps}
           isHost={false}
-          onHandSizeChange={handleHandSizeChange}
+          onSettingChange={handleSettingChange}
         />,
       );
 
       fireEvent.click(screen.getByRole('radio', { name: /7 Cards/ }));
 
-      expect(handleHandSizeChange).not.toHaveBeenCalled();
+      expect(handleSettingChange).not.toHaveBeenCalled();
       expect(screen.getByRole('radio', { name: /5 Cards/ })).toBeChecked();
     });
 
