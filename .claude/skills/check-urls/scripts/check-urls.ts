@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import {
+  DEV_SERVERS,
+  escapeRegExp,
   exitWithError,
   exitWithUsage,
+  isDevServerPort,
   parseArguments,
 } from '../../lib/script-helpers.ts';
 
@@ -12,20 +15,30 @@ const usage =
 // GitHub issues and PRs with gh
 const ALLOWED_HOSTS = ['playcards.games'] as const;
 
-// The app, Storybook and the docs site, as the dev-servers skill runs them
-const DEV_SERVER_PORTS = ['3000', '6006', '5173'] as const;
-
-// VitePress's and Storybook's dev servers send an empty page and render it
-// in the browser, so there's no id to find
-const BROWSER_RENDERED_PORTS = ['6006', '5173'] as const;
-
-const isBrowserRendered = (url: URL) =>
-  isDevServer(url) && BROWSER_RENDERED_PORTS.some((port) => port === url.port);
+const STORYBOOK_HOST = 'stories.playcards.games';
+const STORYBOOK_DEV_PORT = '6006';
+const DOCS_DEV_PORT = '5173';
 
 const isDevServer = (url: URL) =>
   url.protocol === 'http:' &&
   url.hostname === 'localhost' &&
-  DEV_SERVER_PORTS.some((port) => port === url.port);
+  isDevServerPort(url.port);
+
+// Storybook, hosted or not, and VitePress's dev server send an empty page and
+// render it in the browser, so there's no id to find
+const isBrowserRendered = (url: URL) =>
+  url.hostname === STORYBOOK_HOST ||
+  url.hostname.endsWith(`.${STORYBOOK_HOST}`) ||
+  (isDevServer(url) &&
+    (url.port === STORYBOOK_DEV_PORT || url.port === DOCS_DEV_PORT));
+
+function decodeFragment(hash: string): string | undefined {
+  try {
+    return decodeURIComponent(hash.slice(1));
+  } catch {
+    return undefined;
+  }
+}
 
 const HEADER_NAME = /^[A-Za-z0-9-]+$/;
 const MAX_REDIRECTS = 10;
@@ -71,7 +84,7 @@ function parseAllowedUrl(value: string, option: string): URL {
   }
   if (url.protocol !== 'https:') {
     exitWithError(
-      `${option} must be https, or http://localhost on port ${DEV_SERVER_PORTS.join(', ')}, not '${value}'.`,
+      `${option} must be https, or http://localhost on port ${Object.keys(DEV_SERVERS).join(', ')}, not '${value}'.`,
     );
   }
   if (!isAllowedHost(url.hostname)) {
@@ -115,13 +128,10 @@ async function fetchFollowingRedirects(url: URL, accept: string) {
   exitWithError(`${url.href} redirected more than ${MAX_REDIRECTS} times.`);
 }
 
-const escapeForPattern = (text: string) =>
-  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 let hasFailure = false;
 
 for (const url of requestedUrls) {
-  const fragment = decodeURIComponent(url.hash.slice(1));
+  const fragment = decodeFragment(url.hash);
   const { response, finalUrl } = await fetchFollowingRedirects(
     url,
     'text/html',
@@ -138,18 +148,25 @@ for (const url of requestedUrls) {
     );
   }
 
-  if (fragment && isBrowserRendered(finalUrl)) {
+  if (fragment === undefined) {
+    await response.body?.cancel();
+    lines.push(`  ${url.hash}: not a valid fragment`);
+    hasFailure = true;
+  } else if (fragment && isBrowserRendered(finalUrl)) {
     await response.body?.cancel();
     lines.push(
-      `  #${fragment}: not checked, as this dev server renders pages in the browser`,
+      `  #${fragment}: not checked, as this page renders in the browser`,
     );
   } else if (fragment) {
-    // Read only to look for the fragment's id, never printed
+    // Read only to look for the fragment's target, never printed. That's an
+    // element's id, or an anchor's name, not a meta or form field's name
     const html = await response.text();
-    const idPattern = new RegExp(
-      `\\s(id|name)=["']?${escapeForPattern(fragment)}["'\\s>]`,
+    const value = `["']?${escapeRegExp(fragment)}["'\\s>]`;
+    const targetPattern = new RegExp(
+      `\\sid=${value}|<a\\s[^>]*\\bname=${value}`,
+      'i',
     );
-    const isFound = idPattern.test(html);
+    const isFound = targetPattern.test(html);
     lines.push(`  #${fragment}: ${isFound ? 'found' : 'not found'}`);
     if (!isFound) hasFailure = true;
   } else {

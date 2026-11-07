@@ -14,22 +14,22 @@ import {
 } from './watch-list-store.ts';
 
 const usage =
-  'Usage: log-retro.ts --session <session id> --points <count> [--retro-of-retro-points <count>] [--fix-pr <number>] --changes  (changes made read from stdin)';
+  'Usage: log-retro.ts --session <session id> --points <count> [--fix-pr <number>] [--retro-of-retro] --changes  (changes made read from stdin)';
 
 const COUNT = /^(0|[1-9][0-9]*)$/;
 
 const {
   session,
   points,
-  'retro-of-retro-points': retroOfRetroPoints = '0',
   'fix-pr': fixPr,
+  'retro-of-retro': isRetroOfRetro = false,
   changes: isChangesPiped = false,
 } = parseArguments(usage, {
   options: {
     session: { type: 'string' },
     points: { type: 'string' },
-    'retro-of-retro-points': { type: 'string' },
     'fix-pr': { type: 'string' },
+    'retro-of-retro': { type: 'boolean' },
     changes: { type: 'boolean' },
   },
 }).values;
@@ -38,13 +38,8 @@ if (!points || !isChangesPiped) {
   exitWithUsage(usage);
 }
 
-for (const [option, value] of [
-  ['--points', points],
-  ['--retro-of-retro-points', retroOfRetroPoints],
-] as const) {
-  if (!COUNT.test(value)) {
-    exitWithError(`${option} must be a count such as 3, not '${value}'.`);
-  }
+if (!COUNT.test(points)) {
+  exitWithError(`--points must be a count such as 3, not '${points}'.`);
 }
 
 const sessionId = parseSessionId(session);
@@ -60,12 +55,32 @@ if (!retro) {
   );
 }
 
-retro.result = {
-  pointsRaised: Number(points),
-  retroOfRetroPoints: Number(retroOfRetroPoints),
-  changesMade,
-  ...(fixPrNumber && { fixPr: fixPrNumber }),
-};
+if (isRetroOfRetro) {
+  if (!retro.result) {
+    exitWithError(
+      "Log the retro's own result first, then the retro of the retro.",
+    );
+  }
+  const existingFixPr = retro.result.fixPr ?? fixPrNumber;
+  retro.result = {
+    ...retro.result,
+    retroOfRetroPoints: Number(points),
+    changesMade: `${retro.result.changesMade}; from the retro of the retro, ${changesMade}`,
+    ...(existingFixPr && { fixPr: existingFixPr }),
+  };
+} else {
+  if (retro.result) {
+    exitWithError(
+      `The retro of ${sessionId} is already logged. For the retro of the retro, pass --retro-of-retro.`,
+    );
+  }
+  retro.result = {
+    pointsRaised: Number(points),
+    retroOfRetroPoints: 0,
+    changesMade,
+    ...(fixPrNumber && { fixPr: fixPrNumber }),
+  };
+}
 
 await writeWatchList(watchList);
 console.log(`Logged the retro of ${retro.sessions.join(', ')}.`);

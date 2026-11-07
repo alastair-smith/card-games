@@ -5,6 +5,7 @@ import {
   $capture,
   exitIfFailed,
   exitWithError,
+  POSITIVE_INTEGER,
 } from '../../lib/script-helpers.ts';
 
 export const WATCH_LIST_PATH = fileURLToPath(
@@ -66,7 +67,9 @@ const watchListSchema = z.object({
 
 export type WatchList = z.infer<typeof watchListSchema>;
 
-export const today = () => new Date().toISOString().slice(0, 10);
+// The local date, as a retro just after midnight belongs to that day.
+// en-CA writes dates as YYYY-MM-DD
+export const today = () => new Date().toLocaleDateString('en-CA');
 
 export function parseSessionId(value: string | undefined): SessionId {
   const parsed = sessionIdSchema.safeParse(value);
@@ -80,7 +83,7 @@ export function parseSessionId(value: string | undefined): SessionId {
 
 export function parsePrNumber(value: string, option: string): number {
   const parsed = prNumberSchema.safeParse(
-    /^[1-9][0-9]*$/.test(value) ? Number(value) : Number.NaN,
+    POSITIVE_INTEGER.test(value) ? Number(value) : Number.NaN,
   );
   if (!parsed.success) {
     exitWithError(`${option} must be a PR number such as 400, not '${value}'.`);
@@ -122,10 +125,8 @@ export async function readWatchList(): Promise<WatchList> {
   return parsed.data;
 }
 
-// Formatted with Biome afterwards, so the file passes the Lint job
+// Fixed with the same checks as the Lint job afterwards, so the file passes it
 export async function writeWatchList(watchList: WatchList): Promise<void> {
   await writeFile(WATCH_LIST_PATH, `${JSON.stringify(watchList, null, 2)}\n`);
-  exitIfFailed(
-    await $capture`pnpm exec biome format --write ${WATCH_LIST_PATH}`,
-  );
+  exitIfFailed(await $capture`pnpm format:fix ${WATCH_LIST_PATH}`);
 }

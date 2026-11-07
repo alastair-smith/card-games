@@ -49,7 +49,9 @@ entry and adds one to the count of retros without it for every other pattern:
 ./.claude/skills/run-retro/scripts/record-watch-retro.ts --session <id> --pr 400 --seen 12:400
 ```
 
-Edit `watch-list.json` only through these scripts.
+For a retro of several sessions, pass `--session` once for each, and name the
+session each sighting came from, as in `--seen 12:400@<id>`. Edit
+`watch-list.json` only through these scripts.
 
 ## 2. Sort into categories
 
@@ -180,11 +182,12 @@ EOF
 ```
 
 Then finish the retro's log entry with the points raised and the changes
-made, and the retro's PR if it has one:
+made, and the retro's PR if it has one. Issues filed for ideas count as
+changes:
 
 ```bash
-./.claude/skills/run-retro/scripts/log-retro.ts --session <id> --points 3 --retro-of-retro-points 1 --fix-pr 405 --changes <<'EOF'
-1 CI check and 1 rule in `run-retro`
+./.claude/skills/run-retro/scripts/log-retro.ts --session <id> --points 3 --fix-pr 405 --changes <<'EOF'
+1 CI check and 1 rule in `run-retro`; 1 issue (#403) filed
 EOF
 ```
 
@@ -197,3 +200,7 @@ Only if the user corrected how the retro ran, run steps 1 to 6 once more on
 the retro conversation itself, putting its fixes into this skill. If the
 retro ran without corrections, skip this step. Either way, stop there: don't
 offer a retro of that one.
+
+It's the same session, so pass `--retro-of-retro` to `record-watch-retro.ts`
+and `log-retro.ts`. They add its sightings, points and changes to the retro's
+entry, rather than counting the retro again or replacing its result.

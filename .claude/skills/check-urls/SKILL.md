@@ -25,14 +25,15 @@ Pass `--url` once per URL, so one call checks every link in a change, and
 - **final address:** where redirects led, and whether there were any
 - **each `--header`:** its value, or `not set`
 - **`#fragment`:** for a URL with one, whether the page has an element with
-  that `id` or `name`. The docs site's and Storybook's dev servers render
-  pages in the browser, so it can't check fragments there; check those
-  against the deployed site
+  that `id`, or an `<a>` with that `name`. Storybook, hosted or local, and the
+  docs site's dev server render pages in the browser, so it can't check
+  fragments there. Check docs fragments against docs.playcards.games, which
+  serves built pages
 - **markdown:** whether the page is served as markdown when asked with
   `Accept: text/markdown`
 
 It never prints the page itself. It exits with 1 if any URL isn't a 2xx or
-its fragment isn't found, and rejects other hosts, `http` URLs other than the
+its fragment isn't found or isn't valid, and rejects other hosts, `http` URLs other than the
 dev servers, and URLs with credentials. Redirects that leave the list stop the check.
 
 ## Other links
