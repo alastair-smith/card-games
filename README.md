@@ -20,6 +20,8 @@
   <a href="#about">About</a>
   | <a href="#contributing">Contributing</a>
   | <a href="#licence">Licence</a>
+  | <a href="https://docs.playcards.games">Documentation</a>
+  | <a href="https://stories.playcards.games">Storybook</a>
 </p>
 
 ## About
@@ -27,9 +29,6 @@
 Play Cards is a browser-based platform for playing classic card games in real time with friends. Start a game, share the lobby link, and everyone joins from their own device — no sign-up, no install.
 
 Hosted at **[https://playcards.games](https://playcards.games)**.
-
-- **Docs:** how the app is built and how each game works, at [docs.playcards.games](https://docs.playcards.games)
-- **Storybook:** the app's components and screens, at [stories.playcards.games](https://stories.playcards.games)
 
 ### Games
 
