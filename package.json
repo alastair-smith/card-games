@@ -30,8 +30,5 @@
       "name": "pnpm",
       "onFail": "error"
     }
-  },
-  "engines": {
-    "pnpm": "12.18.0"
   }
 }
