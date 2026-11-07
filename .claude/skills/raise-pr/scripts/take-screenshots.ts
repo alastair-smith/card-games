@@ -10,13 +10,14 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog]) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
 const DOCS_ORIGIN = 'http://localhost:5173';
 const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const STORY_ID = /^[a-z0-9-]+--[a-z0-9-]+$/;
+const STORYBOOK_DOCS_ID = /^[a-z0-9-]+--docs$/;
 
 const SIZES = [
   { label: 'desktop', width: 1280, height: 800, isMobile: false },
@@ -27,6 +28,7 @@ const {
   path,
   docs,
   story,
+  'storybook-docs': storybookDocs,
   name,
   'full-page': isFullPage = false,
   'scroll-to-bottom': isScrollingToBottom = false,
@@ -37,6 +39,7 @@ const {
     path: { type: 'string' },
     docs: { type: 'string' },
     story: { type: 'string' },
+    'storybook-docs': { type: 'string' },
     name: { type: 'string' },
     'full-page': { type: 'boolean' },
     'scroll-to-bottom': { type: 'boolean' },
@@ -52,12 +55,12 @@ if (!isTheme(theme)) {
   exitWithError(`--theme must be light or dark, not '${theme}'.`);
 }
 
-// Only the docs site has a dark theme so far
-if (theme === 'dark' && !docs) {
-  exitWithError('--theme dark only applies to --docs.');
+// The app has no dark theme yet, unlike the docs site and Storybook's docs
+if (theme === 'dark' && !docs && !storybookDocs) {
+  exitWithError('--theme dark only applies to --docs and --storybook-docs.');
 }
 
-if (!name || [path, docs, story].filter(Boolean).length !== 1) {
+if (!name || [path, docs, story, storybookDocs].filter(Boolean).length !== 1) {
   exitWithUsage(usage);
 }
 
@@ -71,7 +74,7 @@ if (isFullPage && isScrollingToBottom) {
 
 if (story && (isFullPage || isScrollingToBottom)) {
   exitWithError(
-    '--full-page and --scroll-to-bottom only apply to --path and --docs, since --story captures just the component.',
+    '--full-page and --scroll-to-bottom only apply to --path, --docs and --storybook-docs, since --story captures just the component.',
   );
 }
 
@@ -91,6 +94,18 @@ function getUrl(): URL {
     const url = new URL('/iframe.html', STORYBOOK_ORIGIN);
     url.searchParams.set('id', story);
     url.searchParams.set('viewMode', 'story');
+    return url;
+  }
+
+  if (storybookDocs) {
+    if (!STORYBOOK_DOCS_ID.test(storybookDocs)) {
+      exitWithError(
+        `--storybook-docs must be a Storybook docs ID such as 'introduction--docs', not '${storybookDocs}'.`,
+      );
+    }
+    const url = new URL('/iframe.html', STORYBOOK_ORIGIN);
+    url.searchParams.set('id', storybookDocs);
+    url.searchParams.set('viewMode', 'docs');
     return url;
   }
 
@@ -225,7 +240,7 @@ const LAYOUT_SETTLE_TIMEOUT_MILLISECONDS = 2_000;
 const LAYOUT_SETTLED_SCRIPT = `new Promise((resolve) => {
   setTimeout(() => resolve(false), ${LAYOUT_SETTLE_TIMEOUT_MILLISECONDS});
   const getPositions = () =>
-    [...document.querySelectorAll('#storybook-root *, [role="dialog"] *')]
+    [...document.querySelectorAll('#storybook-root *, #storybook-docs *, [role="dialog"] *')]
       .map((element) => {
         const rect = element.getBoundingClientRect();
         return rect.left + ',' + rect.top;
@@ -317,9 +332,25 @@ async function captureDialog(page: Page, file: string) {
   });
 }
 
+// Docs pages have no render phase to wait on, unlike stories
+async function captureStorybookDocs(page: Page, file: string) {
+  try {
+    await page.waitForSelector('#storybook-docs .sbdocs-content > *', {
+      timeout: 15_000,
+    });
+  } catch {
+    exitWithError(
+      `The docs page '${storybookDocs}' didn't render. Check its ID, which follows ?path=/docs/ in Storybook's URL.`,
+    );
+  }
+  await page.evaluate(LAYOUT_SETTLED_SCRIPT);
+  await capturePage(page, file);
+}
+
 function capture(page: Page, file: string) {
   if (isDialog) return captureDialog(page, file);
   if (story) return captureStory(page, file);
+  if (storybookDocs) return captureStorybookDocs(page, file);
   return capturePage(page, file);
 }
 
@@ -345,7 +376,7 @@ try {
       await page.goto(url.href, { waitUntil: 'load' });
     } catch {
       exitWithError(
-        `Couldn't load ${url.href}. Is ${story ? 'Storybook' : docs ? 'the docs site' : 'the dev server'} running on ${url.origin}?`,
+        `Couldn't load ${url.href}. Is ${story || storybookDocs ? 'Storybook' : docs ? 'the docs site' : 'the dev server'} running on ${url.origin}?`,
       );
     }
 
