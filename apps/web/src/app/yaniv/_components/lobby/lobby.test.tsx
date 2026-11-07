@@ -31,9 +31,18 @@ const createMutationStub = (): MutationStub => ({
 });
 
 const readyMutation = createMutationStub();
-const handSizeMutation = createMutationStub();
-const dealerMutation = createMutationStub();
+const settingsMutation = createMutationStub();
 const otherMutation = createMutationStub();
+
+// Variables of the settings saves still in progress, oldest first
+let pendingSettingsVariables: unknown[] = [];
+
+vi.mock('@tanstack/react-query', () => ({
+  useMutationState: () => pendingSettingsVariables,
+}));
+vi.mock('@trpc/react-query', () => ({
+  getMutationKey: () => [['yaniv', 'updateSettings']],
+}));
 
 vi.mock('~/trpc/react', () => ({
   api: {
@@ -48,12 +57,7 @@ vi.mock('~/trpc/react', () => ({
     },
     yaniv: {
       startGame: { useMutation: () => otherMutation },
-      updateSettings: {
-        useMutation: (options: { scope: { id: string } }) =>
-          options.scope.id.startsWith('settings-dealer')
-            ? dealerMutation
-            : handSizeMutation,
-      },
+      updateSettings: { useMutation: () => settingsMutation },
     },
   },
 }));
@@ -111,7 +115,7 @@ vi.mock('./lobby.view', () => ({
   ),
 }));
 
-const code = 'ABCD' as GameCode;
+const code = 'ABCDEF' as GameCode;
 
 const player = (overrides: Partial<Player> = {}): Player => ({
   id: 'player-1' as UserId,
@@ -142,12 +146,8 @@ const renderLobby = ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  for (const mutation of [
-    readyMutation,
-    handSizeMutation,
-    dealerMutation,
-    otherMutation,
-  ]) {
+  pendingSettingsVariables = [];
+  for (const mutation of [readyMutation, settingsMutation, otherMutation]) {
     mutation.isPending = false;
     mutation.variables = undefined;
   }
@@ -166,8 +166,8 @@ describe('Lobby', () => {
 
       fireEvent.click(screen.getByRole('button', { name: 'Choose 7' }));
 
-      expect(handSizeMutation.mutate).toHaveBeenCalledOnce();
-      expect(handSizeMutation.mutate).toHaveBeenCalledWith({
+      expect(settingsMutation.mutate).toHaveBeenCalledOnce();
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
         code,
         settings: { handSize: 7 },
       });
@@ -180,16 +180,15 @@ describe('Lobby', () => {
         screen.getByRole('button', { name: 'Let the winner choose' }),
       );
 
-      expect(handSizeMutation.mutate).toHaveBeenCalledOnce();
-      expect(handSizeMutation.mutate).toHaveBeenCalledWith({
+      expect(settingsMutation.mutate).toHaveBeenCalledOnce();
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
         code,
         settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
       });
     });
 
     test('shows the chosen hand size while it is still being saved', () => {
-      handSizeMutation.isPending = true;
-      handSizeMutation.variables = { code, settings: { handSize: 7 } };
+      pendingSettingsVariables = [{ code, settings: { handSize: 7 } }];
 
       renderLobby({ handSize: 5 });
 
@@ -197,8 +196,28 @@ describe('Lobby', () => {
     });
 
     test('shows the lobby hand size again once the change has been saved', () => {
-      handSizeMutation.isPending = false;
-      handSizeMutation.variables = { code, settings: { handSize: 7 } };
+      renderLobby({ handSize: 5 });
+
+      expect(screen.getByText('Hand size: 5')).toBeInTheDocument();
+    });
+
+    test('shows the latest hand size chosen while several are being saved', () => {
+      pendingSettingsVariables = [
+        { code, settings: { handSize: 7 } },
+        { code, settings: { handSize: WINNER_CHOOSES_HAND_SIZE } },
+      ];
+
+      renderLobby({ handSize: 5 });
+
+      expect(
+        screen.getByText(`Hand size: ${WINNER_CHOOSES_HAND_SIZE}`),
+      ).toBeInTheDocument();
+    });
+
+    test('ignores a hand size being saved for another lobby', () => {
+      pendingSettingsVariables = [
+        { code: 'UVWXYZ' as GameCode, settings: { handSize: 7 } },
+      ];
 
       renderLobby({ handSize: 5 });
 
@@ -220,29 +239,33 @@ describe('Lobby', () => {
         screen.getByRole('button', { name: 'Hand winner deals' }),
       );
 
-      expect(dealerMutation.mutate).toHaveBeenCalledOnce();
-      expect(dealerMutation.mutate).toHaveBeenCalledWith({
+      expect(settingsMutation.mutate).toHaveBeenCalledOnce();
+      expect(settingsMutation.mutate).toHaveBeenCalledWith({
         code,
         settings: { dealer: 'hand-winner' },
       });
     });
 
     test('shows the chosen dealer while it is still being saved', () => {
-      dealerMutation.isPending = true;
-      dealerMutation.variables = { code, settings: { dealer: 'hand-winner' } };
+      pendingSettingsVariables = [
+        { code, settings: { dealer: 'hand-winner' } },
+      ];
 
       renderLobby({ dealer: 'rotates' });
 
       expect(screen.getByText('Dealer: hand-winner')).toBeInTheDocument();
     });
 
-    test('keeps the chosen hand size while the dealer is being saved', () => {
-      dealerMutation.isPending = true;
-      dealerMutation.variables = { code, settings: { dealer: 'hand-winner' } };
+    test('shows both choices while the hand size and dealer are being saved', () => {
+      pendingSettingsVariables = [
+        { code, settings: { handSize: 7 } },
+        { code, settings: { dealer: 'hand-winner' } },
+      ];
 
-      renderLobby({ handSize: 7 });
+      renderLobby({ handSize: 5, dealer: 'rotates' });
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
+      expect(screen.getByText('Dealer: hand-winner')).toBeInTheDocument();
     });
   });
 

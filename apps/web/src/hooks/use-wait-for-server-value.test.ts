@@ -76,6 +76,39 @@ describe('useWaitForServerValue', () => {
     expect(hasFinished()).toBe(true);
   });
 
+  describe('with a custom match', () => {
+    const hasName = (
+      serverValue: { name: string; age: number },
+      name: string,
+    ) => serverValue.name === name;
+
+    test('finishes when the server value matches', async () => {
+      const { result, rerender } = renderHook(
+        ({ serverValue }) => useWaitForServerValue(serverValue, hasName),
+        { initialProps: { serverValue: { name: 'Ada', age: 36 } } },
+      );
+
+      const hasFinished = settled(result.current('Grace'));
+      rerender({ serverValue: { name: 'Grace', age: 36 } });
+      await act(async () => {});
+
+      expect(hasFinished()).toBe(true);
+    });
+
+    test('keeps waiting while the server value does not match', async () => {
+      const { result, rerender } = renderHook(
+        ({ serverValue }) => useWaitForServerValue(serverValue, hasName),
+        { initialProps: { serverValue: { name: 'Ada', age: 36 } } },
+      );
+
+      const hasFinished = settled(result.current('Grace'));
+      rerender({ serverValue: { name: 'Ada', age: 37 } });
+      await act(async () => {});
+
+      expect(hasFinished()).toBe(false);
+    });
+  });
+
   test('finishes each wait with the value it was waiting for', async () => {
     const { result, rerender } = renderHook(
       ({ serverValue }) => useWaitForServerValue(serverValue),

@@ -6,6 +6,7 @@ import {
   standardPlayingCardSchema,
 } from '~/types/cards';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
+import { gameCodeSchema } from '~/types/game';
 import { playerColorSchema } from '~/utils/player-color';
 
 export const MIN_PLAYERS = 2;
@@ -59,6 +60,11 @@ export const settingUpdateSchema = z.union([
 ]);
 
 export type SettingUpdate = z.infer<typeof settingUpdateSchema>;
+
+export const updateSettingsInputSchema = z.object({
+  code: gameCodeSchema,
+  settings: settingUpdateSchema,
+});
 
 /** What a new Yaniv lobby starts with. */
 export const DEFAULT_SETTINGS: Settings = {

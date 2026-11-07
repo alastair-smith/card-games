@@ -7,14 +7,23 @@ const SERVER_VALUE_TIMEOUT_MS = 5000;
  * given to it, or after a timeout if it never does. Return that promise from a
  * mutation callback to hold the mutation pending until the change lands.
  *
- * @example
- * const waitForHandSize = useWaitForServerValue(handSize);
+ * Pass `isMatch` to wait for something other than an identical value, such as
+ * a change to one field of an object.
  *
- * api.yaniv.updateSettings.useMutation({
- *   onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+ * @example
+ * const waitForIsReady = useWaitForServerValue(isReady);
+ *
+ * api.lobby.updatePlayer.useMutation({
+ *   onSuccess: (_data, variables) =>
+ *     variables.field === 'isReady'
+ *       ? waitForIsReady(variables.isReady)
+ *       : undefined,
  * });
  */
-export function useWaitForServerValue<Value>(serverValue: Value) {
+export function useWaitForServerValue<ServerValue, Value = ServerValue>(
+  serverValue: ServerValue,
+  isMatch: (serverValue: ServerValue, value: Value) => boolean = Object.is,
+) {
   const latestServerValue = useRef(serverValue);
   const waiting = useRef<{ value: Value; resolve: () => void }[]>([]);
 
@@ -22,18 +31,18 @@ export function useWaitForServerValue<Value>(serverValue: Value) {
     latestServerValue.current = serverValue;
 
     waiting.current = waiting.current.filter((waiter) => {
-      if (waiter.value !== serverValue) {
+      if (!isMatch(serverValue, waiter.value)) {
         return true;
       }
 
       waiter.resolve();
       return false;
     });
-  }, [serverValue]);
+  }, [serverValue, isMatch]);
 
   return (value: Value) =>
     new Promise<void>((resolve) => {
-      if (latestServerValue.current === value) {
+      if (isMatch(latestServerValue.current, value)) {
         resolve();
         return;
       }
