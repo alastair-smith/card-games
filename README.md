@@ -20,6 +20,8 @@
   <a href="#about">About</a>
   | <a href="#contributing">Contributing</a>
   | <a href="#licence">Licence</a>
+  | <a href="https://docs.playcards.games">Documentation</a>
+  | <a href="https://stories.playcards.games">Storybook</a>
 </p>
 
 ## About

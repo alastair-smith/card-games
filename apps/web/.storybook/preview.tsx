@@ -11,6 +11,9 @@ const preview: Preview = {
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
+    options: {
+      storySort: { order: ['Introduction'] },
+    },
     docs: {
       theme: getSystemTheme(),
       page: DocsPage,
