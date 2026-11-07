@@ -24,12 +24,11 @@ export const endTurn = async (code: GameCode, userId: UserId) =>
     if (currentPlayer.hand.length === 0)
       throw new Error('You must call Yaniv when you have no cards');
 
-    const nextPlayerId = getPlayerAfter(state.players, userId);
-    const nextPlayer = state.players.find(({ id }) => id === nextPlayerId);
+    const nextPlayer = getPlayerAfter(state.players, userId);
 
     await yanivDiscard.pushDiscard(code, state.playedCards);
 
-    if (nextPlayer?.isYanivCalled) {
+    if (nextPlayer.isYanivCalled) {
       await scoreYanivRound(code, state);
     } else {
       const newState = {
@@ -37,7 +36,7 @@ export const endTurn = async (code: GameCode, userId: UserId) =>
         playedCards: [],
         drawnCard: undefined,
         drawnFrom: null,
-        currentPlayerId: nextPlayerId,
+        currentPlayerId: nextPlayer.id,
         gameStep: GameStep.PLAY_CARDS,
       };
 

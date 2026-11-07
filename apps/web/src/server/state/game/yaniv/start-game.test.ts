@@ -5,6 +5,7 @@ import { type GameCode, GameType } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
   DEFAULT_SETTINGS,
+  dealerSettingSchema,
   GameStage,
   GameStep,
   MAX_PLAYERS,
@@ -232,7 +233,7 @@ describe('startGame', () => {
     );
   });
 
-  describe.each(['rotates', 'hand-winner'] as const)(
+  describe.each(dealerSettingSchema.options)(
     'when the dealer setting is %s',
     (dealer) => {
       test('gives the second player the first turn', async () => {

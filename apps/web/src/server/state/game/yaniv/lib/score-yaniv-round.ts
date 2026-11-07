@@ -105,7 +105,7 @@ export const scoreYanivRound = async (
       const nextDealerId =
         state.settings.dealer === 'hand-winner'
           ? handWinner.id
-          : getPlayerAfter(state.players, state.dealerId);
+          : getPlayerAfter(state.players, state.dealerId).id;
 
       const isHandSizeChosenByWinner =
         state.settings.handSize === WINNER_CHOOSES_HAND_SIZE;

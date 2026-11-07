@@ -54,7 +54,7 @@ export const getFirstTurnPlayerId = ({
   );
   return settings.dealer === 'hand-winner' && !isFirstRound
     ? dealerId
-    : getPlayerAfter(players, dealerId);
+    : getPlayerAfter(players, dealerId).id;
 };
 
 export const dealNextRound = async (

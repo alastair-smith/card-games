@@ -12,8 +12,7 @@ import {
   MIN_PLAYERS,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
-import { dealRound } from './lib/deal-round';
-import { getPlayerAfter } from './lib/get-player-after';
+import { dealRound, getFirstTurnPlayerId } from './lib/deal-round';
 
 export const startGame = async (code: GameCode, userId: UserId) =>
   withLock('lobby', code, async () => {
@@ -71,7 +70,11 @@ export const startGame = async (code: GameCode, userId: UserId) =>
             ...startingState,
             gameStep: GameStep.PLAY_CARDS,
             handSize: settings.handSize,
-            currentPlayerId: getPlayerAfter(players, firstPlayer.id),
+            currentPlayerId: getFirstTurnPlayerId({
+              players,
+              dealerId: firstPlayer.id,
+              settings,
+            }),
             players: await dealRound(code, players, settings.handSize),
           };
 
