@@ -11,6 +11,7 @@ import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
   GAME_OVER_SCORE,
   GameStage,
   type GameState,
@@ -287,9 +288,11 @@ describe('scoreYanivRound', () => {
   });
 
   describe('next round', () => {
-    // USER_2 wins the hand, but USER_1 has the lowest total of the callers
+    // USER_2 deals and wins the hand, but USER_1 has the lowest total of the
+    // callers
     const makeSplitWinnerState = (overrides: Partial<State> = {}) =>
       makeState({
+        dealerId: USER_2,
         players: [
           buildPlayer({
             id: USER_1,
@@ -306,28 +309,70 @@ describe('scoreYanivRound', () => {
         ...overrides,
       });
 
-    test('lets the dealer deal when the hand size is fixed', async () => {
-      await scoreYanivRound(CODE, makeSplitWinnerState());
+    describe('when the deal rotates', () => {
+      test('passes the deal to the next player, wrapping round', async () => {
+        await scoreYanivRound(CODE, makeSplitWinnerState());
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        gameStep: GameStep.REDEAL,
-        currentPlayerId: USER_1,
-        dealerId: USER_1,
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStep: GameStep.REDEAL,
+          currentPlayerId: USER_1,
+          dealerId: USER_1,
+        });
+      });
+
+      test('lets the winner of the hand choose and the next dealer deal when the winner chooses', async () => {
+        await scoreYanivRound(
+          CODE,
+          makeSplitWinnerState({
+            settings: {
+              ...DEFAULT_SETTINGS,
+              handSize: WINNER_CHOOSES_HAND_SIZE,
+            },
+          }),
+        );
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStep: GameStep.CHOOSE_HAND_SIZE,
+          currentPlayerId: USER_2,
+          dealerId: USER_1,
+        });
       });
     });
 
-    test('lets the winner of the hand choose the hand size when the winner chooses', async () => {
-      await scoreYanivRound(
-        CODE,
-        makeSplitWinnerState({
-          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
-        }),
-      );
+    describe('when the hand winner deals', () => {
+      test('lets the winner of the hand deal, even with a higher total', async () => {
+        await scoreYanivRound(
+          CODE,
+          makeSplitWinnerState({
+            dealerId: USER_1,
+            settings: { ...DEFAULT_SETTINGS, dealer: 'hand-winner' },
+          }),
+        );
 
-      expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
-        gameStep: GameStep.CHOOSE_HAND_SIZE,
-        currentPlayerId: USER_2,
-        dealerId: USER_1,
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStep: GameStep.REDEAL,
+          currentPlayerId: USER_2,
+          dealerId: USER_2,
+        });
+      });
+
+      test('lets the winner of the hand choose and deal when the winner chooses', async () => {
+        await scoreYanivRound(
+          CODE,
+          makeSplitWinnerState({
+            dealerId: USER_1,
+            settings: {
+              handSize: WINNER_CHOOSES_HAND_SIZE,
+              dealer: 'hand-winner',
+            },
+          }),
+        );
+
+        expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+          gameStep: GameStep.CHOOSE_HAND_SIZE,
+          currentPlayerId: USER_2,
+          dealerId: USER_2,
+        });
       });
     });
 
@@ -335,7 +380,7 @@ describe('scoreYanivRound', () => {
       await scoreYanivRound(
         CODE,
         makeState({
-          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
           players: [
             buildPlayer({
               id: USER_1,
@@ -359,11 +404,14 @@ describe('scoreYanivRound', () => {
       expect(savedState).not.toHaveProperty('gameStep');
     });
 
-    test('lets whoever called first choose when the lowest hands tie, though both score nothing', async () => {
+    test('lets whoever called first choose and deal when the lowest hands tie, though both score nothing', async () => {
       await scoreYanivRound(
         CODE,
         makeState({
-          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          settings: {
+            handSize: WINNER_CHOOSES_HAND_SIZE,
+            dealer: 'hand-winner',
+          },
           yanivCallerIds: [USER_2, USER_1],
           players: [
             buildPlayer({
@@ -386,7 +434,7 @@ describe('scoreYanivRound', () => {
       );
       expect(savedState).toMatchObject({
         currentPlayerId: USER_2,
-        dealerId: USER_1,
+        dealerId: USER_2,
       });
       expect(savedState.players.map((player) => player.score)).toEqual([0, 30]);
     });

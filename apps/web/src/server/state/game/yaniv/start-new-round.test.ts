@@ -13,6 +13,7 @@ import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
   GameStage,
   type GameState,
   GameStep,
@@ -259,7 +260,18 @@ describe('startNewRound', () => {
     expect(savedState).toMatchObject({ gameStep: GameStep.PLAY_CARDS });
   });
 
-  test('keeps current player unchanged', async () => {
+  test('gives the player after the dealer the first turn when the deal rotates', async () => {
+    await startNewRound(CODE, USER_1);
+
+    const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
+    expect(savedState).toMatchObject({ currentPlayerId: USER_2 });
+  });
+
+  test('gives the dealer the first turn when the hand winner deals', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({ settings: { ...DEFAULT_SETTINGS, dealer: 'hand-winner' } }),
+    );
+
     await startNewRound(CODE, USER_1);
 
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];

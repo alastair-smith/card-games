@@ -5,6 +5,7 @@ import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep } from '~/types/games/yaniv';
+import { getPlayerAfter } from './lib/get-player-after';
 import { scoreYanivRound } from './lib/score-yaniv-round';
 
 export const endTurn = async (code: GameCode, userId: UserId) =>
@@ -23,16 +24,12 @@ export const endTurn = async (code: GameCode, userId: UserId) =>
     if (currentPlayer.hand.length === 0)
       throw new Error('You must call Yaniv when you have no cards');
 
-    const currentIndex = state.players.findIndex(({ id }) => id === userId);
-    const nextIndex = (currentIndex + 1) % state.players.length;
-    const nextPlayer = state.players[nextIndex];
-    const nextPlayerId = nextPlayer?.id;
-
-    if (!nextPlayerId) throw new Error('Next player not found');
+    const nextPlayerId = getPlayerAfter(state.players, userId);
+    const nextPlayer = state.players.find(({ id }) => id === nextPlayerId);
 
     await yanivDiscard.pushDiscard(code, state.playedCards);
 
-    if (nextPlayer.isYanivCalled) {
+    if (nextPlayer?.isYanivCalled) {
       await scoreYanivRound(code, state);
     } else {
       const newState = {

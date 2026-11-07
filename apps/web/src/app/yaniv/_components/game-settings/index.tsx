@@ -8,6 +8,8 @@ import {
   ChoiceGroup,
 } from '~/components/ui/choice-group';
 import {
+  DEALER_SETTINGS,
+  type DealerSetting,
   HAND_SIZE_SETTINGS,
   type HandSizeSetting,
   WINNER_CHOOSES_HAND_SIZE,
@@ -26,24 +28,47 @@ const HAND_SIZE_CHOICES = {
   { title: string; description: string }
 >;
 
+const DEALER_CHOICES = {
+  rotates: {
+    title: 'Rotates',
+    description: 'The deal passes to the next player each round.',
+  },
+  'hand-winner': {
+    title: 'Hand Winner',
+    description: `The last hand's winner deals and goes first.`,
+  },
+} as const satisfies Record<
+  DealerSetting,
+  { title: string; description: string }
+>;
+
 type GameSettingsProps = {
   className?: string;
   handSize: HandSizeSetting;
+  dealer: DealerSetting;
   isHost: boolean;
   onHandSizeChange: (handSize: HandSizeSetting) => void;
+  onDealerChange: (dealer: DealerSetting) => void;
 };
 
 export default function GameSettings({
   className,
   handSize,
+  dealer,
   isHost,
   onHandSizeChange,
+  onDealerChange,
 }: GameSettingsProps) {
-  const handleValueChange = (value: string) => {
+  const handleHandSizeValueChange = (value: string) => {
     const option = HAND_SIZE_SETTINGS.find(
       (setting) => String(setting) === value,
     );
     if (option !== undefined) onHandSizeChange(option);
+  };
+
+  const handleDealerValueChange = (value: string) => {
+    const option = DEALER_SETTINGS.find((setting) => setting === value);
+    if (option !== undefined) onDealerChange(option);
   };
 
   return (
@@ -61,7 +86,7 @@ export default function GameSettings({
           label='Hand Size'
           value={String(handSize)}
           isDisabled={!isHost}
-          onValueChange={handleValueChange}
+          onValueChange={handleHandSizeValueChange}
         >
           {HAND_SIZE_SETTINGS.map((option) => (
             <ChoiceCard
@@ -76,6 +101,24 @@ export default function GameSettings({
               </ChoiceCardTitle>
               <ChoiceCardDescription>
                 {HAND_SIZE_CHOICES[option].description}
+              </ChoiceCardDescription>
+            </ChoiceCard>
+          ))}
+        </ChoiceGroup>
+        <h3 className='mt-4 font-semibold'>Dealer</h3>
+        <p>Who deals each new round after the first.</p>
+        <ChoiceGroup
+          className='grid-cols-2'
+          label='Dealer'
+          value={dealer}
+          isDisabled={!isHost}
+          onValueChange={handleDealerValueChange}
+        >
+          {DEALER_SETTINGS.map((option) => (
+            <ChoiceCard key={option} value={option}>
+              <ChoiceCardTitle>{DEALER_CHOICES[option].title}</ChoiceCardTitle>
+              <ChoiceCardDescription>
+                {DEALER_CHOICES[option].description}
               </ChoiceCardDescription>
             </ChoiceCard>
           ))}

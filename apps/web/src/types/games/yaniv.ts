@@ -44,15 +44,34 @@ export const HAND_SIZE_SETTINGS = [
   WINNER_CHOOSES_HAND_SIZE,
 ] as const satisfies HandSizeSetting[];
 
+export const dealerSettingSchema = z.enum(['rotates', 'hand-winner']);
+
+export type DealerSetting = z.infer<typeof dealerSettingSchema>;
+
+export const DEALER_SETTINGS = dealerSettingSchema.options;
+
+export const DEFAULT_DEALER = 'rotates' satisfies DealerSetting;
+
 /** Host-chosen settings, picked in the lobby before the game starts. */
 export const settingsSchema = z.object({
   handSize: handSizeSettingSchema,
+  dealer: dealerSettingSchema,
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 
+export const settingUpdateSchema = z.union([
+  settingsSchema.pick({ handSize: true }),
+  settingsSchema.pick({ dealer: true }),
+]);
+
+export type SettingUpdate = z.infer<typeof settingUpdateSchema>;
+
 /** What a new Yaniv lobby starts with. */
-export const DEFAULT_SETTINGS: Settings = { handSize: DEFAULT_HAND_SIZE };
+export const DEFAULT_SETTINGS: Settings = {
+  handSize: DEFAULT_HAND_SIZE,
+  dealer: DEFAULT_DEALER,
+};
 
 export const YANIV_RANK_SCORE = {
   [Rank.TWO]: 2,

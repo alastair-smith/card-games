@@ -1,6 +1,6 @@
 direction: down
 
-lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses (see below)"
+lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses (see below),\nand whether the deal rotates\nor the hand winner deals"
 deal: "Deal\nshuffle the deck with jokers, deal each hand,\nturn over the first discard"
 
 turn: "Turn" {
@@ -27,11 +27,11 @@ score: "Score the round\nlowest caller scores 0, other callers 25,\neveryone els
   shape: page
 }
 over: "Is anyone over 100?" {shape: diamond}
-redeal: "REDEAL\nthe lowest-scoring caller\nstarts a new round"
+redeal: "REDEAL\nthe next dealer\nstarts a new round"
 finished: "FINISHED\nlowest score wins"
 
-lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals and goes first"
-deal -> turn.play
+lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals"
+deal -> turn.play: "the player after the dealer goes first,\nor the dealer when the hand winner deals\n(after the first round)"
 
 turn.proceed -> end-turn
 turn.proceed -> call-yaniv

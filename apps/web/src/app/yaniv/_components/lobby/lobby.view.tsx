@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import {
+  type DealerSetting,
   type HandSizeSetting,
   MAX_PLAYERS,
   MIN_PLAYERS,
@@ -19,6 +20,7 @@ export type LobbyProps = {
   code: GameCode;
   players: Player[];
   handSize: HandSizeSetting;
+  dealer: DealerSetting;
   user: {
     isReady: boolean;
     name: string;
@@ -29,6 +31,7 @@ export type LobbyProps = {
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange: (color: string) => void;
   handleHandSizeChange: (handSize: HandSizeSetting) => void;
+  handleDealerChange: (dealer: DealerSetting) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -38,7 +41,9 @@ export type LobbyProps = {
 export default function LobbyView({
   code,
   handSize,
+  dealer,
   handleHandSizeChange,
+  handleDealerChange,
   ...playerProps
 }: LobbyProps) {
   const isHost = playerProps.players.some(
@@ -62,8 +67,10 @@ export default function LobbyView({
           <GameSettings
             className='w-full'
             handSize={handSize}
+            dealer={dealer}
             isHost={isHost}
             onHandSizeChange={handleHandSizeChange}
+            onDealerChange={handleDealerChange}
           />
           <Card className='flex-1'>
             <CardHeader>

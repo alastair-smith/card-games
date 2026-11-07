@@ -6,12 +6,14 @@ import { publishYanivState } from '~/server/events/yaniv';
 import {
   buildInProgressState,
   buildPlayer,
+  buildRoundScore,
   expectInProgressState,
 } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
+  DEFAULT_SETTINGS,
   GameStage,
   type GameState,
   GameStep,
@@ -58,10 +60,12 @@ const DEALT_CARDS: YanivPlayingCard[] = [
   { suit: Suit.DIAMONDS, rank: Rank.FOUR },
 ];
 
+const PLAYED_ROUND = [buildRoundScore()];
+
 const makeState = (overrides: Partial<State> = {}): State =>
   buildInProgressState({
     gameStep: GameStep.CHOOSE_HAND_SIZE,
-    settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+    settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
     handSize: null,
     currentPlayerId: WINNER,
     dealerId: WINNER,
@@ -132,16 +136,39 @@ describe('chooseHandSize', () => {
       }
     });
 
-    test('starts the round with the winner playing first', async () => {
+    test('starts the first round with the player after the dealer', async () => {
       await chooseHandSize(CODE, WINNER, 3);
 
       expect(getSavedState()).toMatchObject({
         gameStep: GameStep.PLAY_CARDS,
         handSize: 3,
-        currentPlayerId: WINNER,
+        currentPlayerId: DEALER,
         playedCards: [],
         drawnFrom: null,
       });
+    });
+
+    test('starts a later round with the winner when the hand winner deals', async () => {
+      vi.mocked(getYanivState).mockResolvedValue(
+        makeState({
+          settings: {
+            handSize: WINNER_CHOOSES_HAND_SIZE,
+            dealer: 'hand-winner',
+          },
+          players: [
+            buildPlayer({
+              id: WINNER,
+              isYanivCalled: true,
+              roundScores: PLAYED_ROUND,
+            }),
+            buildPlayer({ id: DEALER, roundScores: PLAYED_ROUND }),
+          ],
+        }),
+      );
+
+      await chooseHandSize(CODE, WINNER, 3);
+
+      expect(getSavedState().currentPlayerId).toBe(WINNER);
     });
   });
 

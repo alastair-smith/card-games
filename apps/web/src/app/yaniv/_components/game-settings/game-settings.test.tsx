@@ -7,8 +7,10 @@ const noop = vi.fn();
 
 const defaultProps = {
   handSize: 5 as const,
+  dealer: 'rotates' as const,
   isHost: true,
   onHandSizeChange: noop,
+  onDealerChange: noop,
 };
 
 describe('GameSettings', () => {
@@ -78,7 +80,49 @@ describe('GameSettings', () => {
     });
   });
 
+  describe('dealer', () => {
+    test('shows the dealer rotating as selected', () => {
+      render(<GameSettings {...defaultProps} />);
+      expect(screen.getByRole('radio', { name: /Rotates/ })).toBeChecked();
+      expect(
+        screen.getByRole('radio', { name: /Hand Winner/ }),
+      ).not.toBeChecked();
+    });
+
+    test('shows the hand winner dealing as selected', () => {
+      render(<GameSettings {...defaultProps} dealer='hand-winner' />);
+      expect(screen.getByRole('radio', { name: /Hand Winner/ })).toBeChecked();
+    });
+
+    test('calls the dealer handler when the hand winner is chosen to deal', () => {
+      const handleDealerChange = vi.fn();
+      render(
+        <GameSettings {...defaultProps} onDealerChange={handleDealerChange} />,
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: /Hand Winner/ }));
+
+      expect(handleDealerChange).toHaveBeenCalledOnce();
+      expect(handleDealerChange).toHaveBeenCalledWith('hand-winner');
+    });
+  });
+
   describe('players who are not the host', () => {
+    test('cannot change the dealer', () => {
+      const handleDealerChange = vi.fn();
+      render(
+        <GameSettings
+          {...defaultProps}
+          isHost={false}
+          onDealerChange={handleDealerChange}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('radio', { name: /Hand Winner/ }));
+
+      expect(handleDealerChange).not.toHaveBeenCalled();
+    });
+
     test('cannot change the hand size', () => {
       const handleHandSizeChange = vi.fn();
       render(
