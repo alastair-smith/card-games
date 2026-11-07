@@ -26,6 +26,8 @@ export const startGame = async (code: GameCode, userId: UserId) =>
       throw new Error('Not enough players to start the game');
     if (lobby.players.length > MAX_PLAYERS)
       throw new Error('Too many players to start the game');
+    if (!lobby.players.every((player) => player.isReady))
+      throw new Error('Not every player is ready');
 
     const { settings } = lobby;
 
