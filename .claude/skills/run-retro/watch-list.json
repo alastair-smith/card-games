@@ -1,18 +1,6 @@
 {
   "patterns": [
     {
-      "id": 3,
-      "pattern": "Pushing without running `pnpm format:fix` across the change, so CI's Lint job finds the errors first, e.g. generated SVGs Biome couldn't parse; or running the undocumented `pnpm lint` instead of the format script",
-      "sightings": [
-        {
-          "date": "2026-11-02",
-          "session": "78153c9b-91d4-4efd-88e4-65a59adc3dd6",
-          "pr": 373
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
       "id": 4,
       "pattern": "Giving a new control its own focus, hover, selected or border styles instead of an existing component's variants, e.g. `ButtonGroupChoice` before it took `Button`'s secondary and primary variants and focus ring",
       "sightings": [
