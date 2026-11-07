@@ -28,6 +28,11 @@ allowlist. This lists every tool call the user approved or rejected by hand
 ./.claude/skills/run-retro/scripts/list-llm-approvals.ts
 ```
 
+Look in that list for network commands such as `curl` or `wget`. For each,
+suggest the tool that should have been used, such as the `check-urls` skill
+for our own sites or web fetch for third-party docs, or a new script or
+narrow allow rule if neither fits.
+
 Then read `watch-list.md` next to this file. For each pattern on it, check
 whether it happened again this session. If it did, it's now on its second
 sighting and a candidate for a change in step 3. If it didn't, add one to its
