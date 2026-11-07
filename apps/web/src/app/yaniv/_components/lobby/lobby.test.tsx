@@ -36,9 +36,13 @@ const otherMutation = createMutationStub();
 
 // Variables of the settings saves still in progress, oldest first
 let pendingSettingsVariables: unknown[] = [];
+let mutationStateOptions: unknown;
 
 vi.mock('@tanstack/react-query', () => ({
-  useMutationState: () => pendingSettingsVariables,
+  useMutationState: (options: unknown) => {
+    mutationStateOptions = options;
+    return pendingSettingsVariables;
+  },
 }));
 vi.mock('@trpc/react-query', () => ({
   getMutationKey: () => [['yaniv', 'updateSettings']],
@@ -147,6 +151,7 @@ const renderLobby = ({
 beforeEach(() => {
   vi.clearAllMocks();
   pendingSettingsVariables = [];
+  mutationStateOptions = undefined;
   for (const mutation of [readyMutation, settingsMutation, otherMutation]) {
     mutation.isPending = false;
     mutation.variables = undefined;
@@ -195,10 +200,15 @@ describe('Lobby', () => {
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
     });
 
-    test('shows the lobby hand size again once the change has been saved', () => {
-      renderLobby({ handSize: 5 });
+    test('only shows settings saves that are still in progress', () => {
+      renderLobby();
 
-      expect(screen.getByText('Hand size: 5')).toBeInTheDocument();
+      expect(mutationStateOptions).toMatchObject({
+        filters: {
+          mutationKey: [['yaniv', 'updateSettings']],
+          status: 'pending',
+        },
+      });
     });
 
     test('shows the latest hand size chosen while several are being saved', () => {
