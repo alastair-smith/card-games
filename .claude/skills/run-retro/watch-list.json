@@ -10,7 +10,7 @@
           "pr": 336
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 2,
@@ -22,7 +22,7 @@
           "pr": 336
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 3,
@@ -34,7 +34,7 @@
           "pr": 373
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 4,
@@ -46,7 +46,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 5,
@@ -58,7 +58,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 6,
@@ -70,7 +70,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 7,
@@ -82,7 +82,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 8,
@@ -94,7 +94,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 9,
@@ -106,7 +106,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 10,
@@ -118,7 +118,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 11,
@@ -130,7 +130,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 12,
@@ -142,7 +142,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 13,
@@ -154,7 +154,7 @@
           "pr": 402
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 14,
@@ -166,7 +166,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 15,
@@ -178,7 +178,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 16,
@@ -190,7 +190,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     }
   ],
   "retros": [
@@ -240,6 +240,11 @@
         "changesMade": "1 CI check, 1 script and skill, 1 rule in `run-retro`; 1 issue (#403) filed on request; watch-list scripts and JSON from the retro of the retro",
         "fixPr": 405
       }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["60a7d890-2983-4d7a-ac8c-5e8fc8d89b83"],
+      "prs": [406]
     }
   ]
 }
