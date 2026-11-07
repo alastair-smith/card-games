@@ -382,6 +382,9 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
     );
   }
 
+  // The deal rotates, so the player after the dealer goes first
+  await expect(p1.getByRole('radio', { name: /Rotates/ })).toBeChecked();
+
   // Player 1 marks ready too (other players' switches are disabled)
   await p1
     .getByRole('switch')
