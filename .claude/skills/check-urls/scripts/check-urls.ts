@@ -8,8 +8,9 @@ import {
 const usage =
   'Usage: check-urls.ts --url <url> [--url <url> …] [--header <name> …]';
 
-// Third-party docs are read with Claude Code's web fetch instead
-const ALLOWED_HOSTS = ['playcards.games', 'github.com'] as const;
+// Third-party docs are read with Claude Code's web fetch instead, and our
+// GitHub issues and PRs with gh
+const ALLOWED_HOSTS = ['playcards.games'] as const;
 
 // The app, Storybook and the docs site, as the dev-servers skill runs them
 const DEV_SERVER_PORTS = ['3000', '6006', '5173'] as const;
