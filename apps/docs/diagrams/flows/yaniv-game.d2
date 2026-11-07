@@ -1,9 +1,6 @@
 direction: down
 
-lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses"
-first-hand-size: "Winner Chooses?" {shape: diamond}
-choose: "CHOOSE_HAND_SIZE\nchoose 1 to 10 cards"
-chooser-deals: "Is the chooser\nthe dealer?" {shape: diamond}
+lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses (see below)"
 deal: "Deal\nshuffle the deck with jokers, deal each hand,\nturn over the first discard"
 
 turn: "Turn" {
@@ -30,16 +27,10 @@ score: "Score the round\nlowest caller scores 0, other callers 25,\neveryone els
   shape: page
 }
 over: "Is anyone over 100?" {shape: diamond}
-next-hand-size: "Winner Chooses?" {shape: diamond}
 redeal: "REDEAL\nthe lowest-scoring caller\nstarts a new round"
 finished: "FINISHED\nlowest score wins"
 
-lobby -> first-hand-size: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals and goes first"
-first-hand-size -> deal: no
-first-hand-size -> choose: "yes, the first player chooses"
-choose -> chooser-deals
-chooser-deals -> deal: "yes, deal the chosen size"
-chooser-deals -> redeal: no
+lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals and goes first"
 deal -> turn.play
 
 turn.proceed -> end-turn
@@ -52,7 +43,5 @@ next-called -> score: "yes, everyone else\nhas had one more turn"
 
 score -> over
 over -> finished: yes
-over -> next-hand-size: no
-next-hand-size -> redeal: no
-next-hand-size -> choose: "yes, the first caller\nwith the lowest hand chooses"
+over -> redeal: no
 redeal -> deal: start a new round
