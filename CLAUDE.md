@@ -219,6 +219,10 @@ Don't add `Claude-Session:` trailers or any other Claude attribution lines.
 
 Use the `raise-pr` skill when opening a PR or updating its title or description.
 
+Once the work for an issue is done and the tests, type check and formatting
+pass, commit it and raise the PR without asking first. Ask first only when
+part of the scope is still undecided.
+
 ## Docs
 
 Docs live in `apps/docs`: how the app is built under `technical/`, how each
