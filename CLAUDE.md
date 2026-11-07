@@ -126,10 +126,8 @@ pnpm --filter @repo/web test:e2e --project=chromium-desktop-winner-chooses
 ```
 
 To check a change to how tests or tools run, such as Playwright's config,
-use a real run that reaches the part you changed, not a stand-in that skips
-it: `playwright test --list` loads the config only in the main process, not
-in the workers that run the tests. Keep that run short, stopping once it
-gets there, rather than playing a whole E2E game.
+use a real run that reaches the part you changed, and keep it short: stop
+once it gets there rather than playing a whole E2E game.
 
 ### Dev servers
 
