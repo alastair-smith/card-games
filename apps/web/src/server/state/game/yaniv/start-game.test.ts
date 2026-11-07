@@ -135,6 +135,22 @@ describe('startGame', () => {
     );
   });
 
+  test('does not start until every player is ready', async () => {
+    const lobby = makeLobby();
+    mockGetLobby.mockResolvedValue({
+      ...lobby,
+      players: lobby.players.map((player) =>
+        player.id === PLAYER_2 ? { ...player, isReady: false } : player,
+      ),
+    });
+
+    await expect(startGame(CODE, HOST)).rejects.toThrow(
+      'Not every player is ready',
+    );
+    expect(mockCreateDeck).not.toHaveBeenCalled();
+    expect(mockRunTransaction).not.toHaveBeenCalled();
+  });
+
   test('creates a shuffled deck', async () => {
     await startGame(CODE, HOST);
     expect(mockCreateDeck).toHaveBeenCalledOnce();
