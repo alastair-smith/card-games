@@ -85,9 +85,10 @@ shown.
 - **Storybook docs:** `--storybook-docs` takes the ID that follows
   `?path=/docs/` in Storybook's URL, such as a component's docs or an MDX
   page, and works like `--path`
-- **Docs:** `--docs` takes a path on the docs site and works like `--path`.
-  Screenshots are light by default; pass `--theme dark` for dark mode. Only
-  the docs site has a dark theme so far, so the script rejects it elsewhere
+- **Docs:** `--docs` takes a path on the docs site and works like `--path`
+- **Dark mode:** screenshots are light by default; pass `--theme dark` for
+  dark mode. Only the docs site and Storybook's docs pages have a dark theme
+  so far, so the script rejects it elsewhere
 
 Look at each screenshot before listing it for the user, and retake any that
 shows a loading or empty state.

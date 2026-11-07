@@ -55,9 +55,9 @@ if (!isTheme(theme)) {
   exitWithError(`--theme must be light or dark, not '${theme}'.`);
 }
 
-// Only the docs site has a dark theme so far
-if (theme === 'dark' && !docs) {
-  exitWithError('--theme dark only applies to --docs.');
+// The app has no dark theme yet, unlike the docs site and Storybook's docs
+if (theme === 'dark' && !docs && !storybookDocs) {
+  exitWithError('--theme dark only applies to --docs and --storybook-docs.');
 }
 
 if (!name || [path, docs, story, storybookDocs].filter(Boolean).length !== 1) {
