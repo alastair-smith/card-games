@@ -15,20 +15,39 @@ import {
 } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
 
+type SettingOption<Value> = {
+  value: Value;
+  title: string;
+  description: string;
+  isWide?: boolean;
+};
+
 type SettingConfig<Key extends keyof Settings> = {
   key: Key;
   title: string;
   description: string;
-  options: readonly {
-    value: Settings[Key];
-    title: string;
-    description: string;
-    isWide?: boolean;
-  }[];
+  options: readonly SettingOption<Settings[Key]>[];
 };
 
+type MissingOptions<
+  Key extends keyof Settings,
+  Options extends readonly SettingOption<Settings[Key]>[],
+> = Exclude<Settings[Key], Options[number]['value']>;
+
+// A setting value without an option fails type checking, naming the value
+const defineSetting = <
+  Key extends keyof Settings,
+  const Options extends readonly SettingOption<Settings[Key]>[],
+>(
+  setting: SettingConfig<Key> & { options: Options } & ([
+      MissingOptions<Key, Options>,
+    ] extends [never]
+      ? unknown
+      : { missingOptions: MissingOptions<Key, Options> }),
+): SettingConfig<Key> => setting;
+
 export const GAME_SETTINGS = [
-  {
+  defineSetting({
     key: 'handSize',
     title: 'Hand Size',
     description: 'How many cards each player is dealt at the start of a round.',
@@ -42,8 +61,8 @@ export const GAME_SETTINGS = [
         isWide: true,
       },
     ],
-  },
-  {
+  }),
+  defineSetting({
     key: 'dealer',
     title: 'Dealer',
     description: 'Who deals each new round after the first.',
@@ -60,10 +79,8 @@ export const GAME_SETTINGS = [
         description: `The last hand's winner deals and goes first.`,
       },
     ],
-  },
-] as const satisfies readonly {
-  [Key in keyof Settings]: SettingConfig<Key>;
-}[keyof Settings][];
+  }),
+];
 
 type GameSettingsProps = {
   className?: string;
@@ -113,9 +130,7 @@ export default function GameSettings({
                   <ChoiceCard
                     key={String(option.value)}
                     value={String(option.value)}
-                    className={cn(
-                      'isWide' in option && option.isWide && 'col-span-2',
-                    )}
+                    className={cn(option.isWide && 'col-span-2')}
                   >
                     <ChoiceCardTitle>{option.title}</ChoiceCardTitle>
                     <ChoiceCardDescription>
