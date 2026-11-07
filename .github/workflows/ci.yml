@@ -47,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app: ${{ steps.filter.outputs.app }}
+      built_app: ${{ steps.filter.outputs.built_app }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -74,6 +75,23 @@ jobs:
           else
             echo "No app changes"
             echo "app=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Storybook and stories aren't part of the built app, so the build and
+          # E2E tests skip them
+          built_app_paths=(
+            "${app_paths[@]}"
+            ':(exclude)apps/web/.storybook/'
+            ':(exclude,glob)apps/web/src/**/*.stories.*'
+          )
+          built_app_changed_files=$(git diff --name-only HEAD^1 HEAD -- "${built_app_paths[@]}")
+          if [[ -n "$built_app_changed_files" ]]; then
+            echo "Built app changes:"
+            echo "$built_app_changed_files"
+            echo "built_app=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No built app changes"
+            echo "built_app=false" >> "$GITHUB_OUTPUT"
           fi
 
   test:
@@ -124,7 +142,7 @@ jobs:
   build:
     name: Build
     needs: changes
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -145,7 +163,7 @@ jobs:
   test-e2e-chromium-desktop:
     name: E2E Tests (chromium-desktop)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: &e2e-services
       redis:
@@ -167,7 +185,7 @@ jobs:
   test-e2e-chromium-mobile:
     name: E2E Tests (chromium-mobile)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env
@@ -182,7 +200,7 @@ jobs:
   test-e2e-firefox-desktop:
     name: E2E Tests (firefox-desktop)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env
@@ -197,7 +215,7 @@ jobs:
   test-e2e-firefox-mobile:
     name: E2E Tests (firefox-mobile)
     needs: [changes, build]
-    if: needs.changes.outputs.app == 'true'
+    if: needs.changes.outputs.built_app == 'true'
     runs-on: ubuntu-latest
     services: *e2e-services
     env: *e2e-env
