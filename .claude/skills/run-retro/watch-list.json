@@ -1,30 +1,6 @@
 {
   "patterns": [
     {
-      "id": 1,
-      "pattern": "Adding a story for an edge case another story already covers, e.g. a game story for stickers on every tag when the player strip's story already shows it",
-      "sightings": [
-        {
-          "date": "2026-10-30",
-          "session": "4d3d8f54-0392-416a-9118-7e8c83d1dfde",
-          "pr": 336
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 2,
-      "pattern": "Committing without checking that staging worked, so a commit goes out half done, e.g. `git add` failing on a path already removed with `git rm` while the commit went ahead",
-      "sightings": [
-        {
-          "date": "2026-10-30",
-          "session": "4d3d8f54-0392-416a-9118-7e8c83d1dfde",
-          "pr": 336
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
       "id": 3,
       "pattern": "Pushing without running `pnpm format:fix` across the change, so CI's Lint job finds the errors first, e.g. generated SVGs Biome couldn't parse; or running the undocumented `pnpm lint` instead of the format script",
       "sightings": [
@@ -244,7 +220,13 @@
     {
       "date": "2026-11-07",
       "sessions": ["60a7d890-2983-4d7a-ac8c-5e8fc8d89b83"],
-      "prs": [406]
+      "prs": [406],
+      "result": {
+        "pointsRaised": 1,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `CLAUDE.md`",
+        "fixPr": 408
+      }
     }
   ]
 }
