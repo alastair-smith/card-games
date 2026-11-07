@@ -6,7 +6,7 @@
 
 ## Lifecycle
 
-![Lobby lifecycle: the lobby waits for 2 players, then for everyone to be ready, then the host starts the game; players joining, leaving or becoming not ready move it back a step](../diagrams/flows/lobby.light.svg)
+![Lobby lifecycle: the lobby waits for 2 players, then for everyone to be ready, then the host starts the game; players joining, leaving or becoming not ready move it back a step, and the lobby is deleted when the last player leaves](../diagrams/flows/lobby.light.svg)
 
 Until the game starts, players can change the lobby:
 
@@ -14,3 +14,6 @@ Until the game starts, players can change the lobby:
 | ------------ | -------------------------------------------------------------------------------------------------------- |
 | The host     | Change the hand size (5, 7 or Winner Chooses), make another player host, remove a player, start the game |
 | Every player | Change their name, change their colour if no one else has it, mark themselves ready or not, leave        |
+
+When the host leaves, the player who has been in the lobby longest becomes host. When the
+last player leaves, the lobby is deleted.

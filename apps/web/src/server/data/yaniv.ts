@@ -6,6 +6,7 @@ export const {
   get: getYanivState,
   set: setYanivState,
   exists: yanivStateExists,
+  delete: deleteYanivState,
 } = dataLayer(
   ({ code }: { code: GameCode }) => `yaniv:${code}`,
   gameStateSchema,

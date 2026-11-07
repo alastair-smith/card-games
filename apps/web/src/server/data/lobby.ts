@@ -44,4 +44,5 @@ export const {
   get: getLobby,
   set: setLobby,
   exists: lobbyExists,
+  delete: deleteLobby,
 } = dataLayer(({ code }: { code: GameCode }) => `lobby:${code}`, lobbySchema);
