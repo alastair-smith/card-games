@@ -82,6 +82,59 @@ export const GAME_SETTINGS = [
   }),
 ];
 
+// Looping over the settings loses which value goes with which key, so the
+// pairing is checked here instead
+const toSettingUpdate = (
+  key: keyof Settings,
+  value: Settings[keyof Settings],
+): SettingUpdate => settingUpdateSchema.parse({ [key]: value });
+
+type GameSettingProps<Key extends keyof Settings> = {
+  setting: SettingConfig<Key>;
+  value: Settings[Key];
+  isDisabled: boolean;
+  onChange: (value: Settings[Key]) => void;
+};
+
+function GameSetting<Key extends keyof Settings>({
+  setting,
+  value,
+  isDisabled,
+  onChange,
+}: GameSettingProps<Key>) {
+  const handleValueChange = (chosenValue: string) => {
+    const option = setting.options.find(
+      (choice) => String(choice.value) === chosenValue,
+    );
+    if (option !== undefined) onChange(option.value);
+  };
+
+  return (
+    <section className='flex flex-col gap-2'>
+      <h3 className='font-semibold'>{setting.title}</h3>
+      <p>{setting.description}</p>
+      <ChoiceGroup
+        className='grid-cols-2'
+        label={setting.title}
+        value={String(value)}
+        isDisabled={isDisabled}
+        onValueChange={handleValueChange}
+      >
+        {setting.options.map((option) => (
+          <ChoiceCard
+            key={String(option.value)}
+            value={String(option.value)}
+            className={cn(option.isWide && 'col-span-2')}
+          >
+            <ChoiceCardTitle>{option.title}</ChoiceCardTitle>
+            <ChoiceCardDescription>{option.description}</ChoiceCardDescription>
+          </ChoiceCard>
+        ))}
+      </ChoiceGroup>
+    </section>
+  );
+}
+
 type GameSettingsProps = {
   className?: string;
   settings: Settings;
@@ -103,45 +156,17 @@ export default function GameSettings({
         </h2>
       </CardHeader>
       <CardContent className='flex flex-col gap-6'>
-        {GAME_SETTINGS.map((setting) => {
-          const handleValueChange = (value: string) => {
-            const option = setting.options.find(
-              (choice) => String(choice.value) === value,
-            );
-            if (option === undefined) return;
-            // Parsing ties the value back to its setting, which the loop loses
-            onSettingChange(
-              settingUpdateSchema.parse({ [setting.key]: option.value }),
-            );
-          };
-
-          return (
-            <section key={setting.key} className='flex flex-col gap-2'>
-              <h3 className='font-semibold'>{setting.title}</h3>
-              <p>{setting.description}</p>
-              <ChoiceGroup
-                className='grid-cols-2'
-                label={setting.title}
-                value={String(settings[setting.key])}
-                isDisabled={!isHost}
-                onValueChange={handleValueChange}
-              >
-                {setting.options.map((option) => (
-                  <ChoiceCard
-                    key={String(option.value)}
-                    value={String(option.value)}
-                    className={cn(option.isWide && 'col-span-2')}
-                  >
-                    <ChoiceCardTitle>{option.title}</ChoiceCardTitle>
-                    <ChoiceCardDescription>
-                      {option.description}
-                    </ChoiceCardDescription>
-                  </ChoiceCard>
-                ))}
-              </ChoiceGroup>
-            </section>
-          );
-        })}
+        {GAME_SETTINGS.map((setting) => (
+          <GameSetting
+            key={setting.key}
+            setting={setting}
+            value={settings[setting.key]}
+            isDisabled={!isHost}
+            onChange={(value) =>
+              onSettingChange(toSettingUpdate(setting.key, value))
+            }
+          />
+        ))}
       </CardContent>
     </Card>
   );
