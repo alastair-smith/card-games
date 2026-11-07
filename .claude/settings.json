@@ -89,6 +89,8 @@
       "WebFetch(domain:code.claude.com)",
       "WebFetch(domain:developers.cloudflare.com)",
       "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:nodejs.org)",
+      "WebFetch(domain:pnpm.io)",
       "WebFetch(domain:storybook.js.org)",
       "WebFetch(domain:tailwindcss.com)",
       "WebFetch(domain:ui.shadcn.com)",
