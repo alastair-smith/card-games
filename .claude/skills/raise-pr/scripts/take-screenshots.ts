@@ -10,7 +10,7 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog]) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
@@ -31,6 +31,7 @@ const {
   'full-page': isFullPage = false,
   'scroll-to-bottom': isScrollingToBottom = false,
   theme = 'light',
+  dialog: isDialog = false,
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
@@ -40,6 +41,7 @@ const {
     'full-page': { type: 'boolean' },
     'scroll-to-bottom': { type: 'boolean' },
     theme: { type: 'string' },
+    dialog: { type: 'boolean' },
   },
 }).values;
 
@@ -70,6 +72,12 @@ if (isFullPage && isScrollingToBottom) {
 if (story && (isFullPage || isScrollingToBottom)) {
   exitWithError(
     '--full-page and --scroll-to-bottom only apply to --path and --docs, since --story captures just the component.',
+  );
+}
+
+if (isDialog && !story) {
+  exitWithError(
+    '--dialog only applies to --story, whose play function opens the dialog.',
   );
 }
 
@@ -205,19 +213,54 @@ const STORY_BOUNDS_SCRIPT = `(() => {
 // Matches the decorator's p-4, so the felt background frames the component
 const STORY_PADDING = 16;
 
-async function captureStory(page: Page, file: string) {
+// Storybook finishes a story once its play function has run and its CSS
+// animations have ended
+const STORY_FINISHED_SCRIPT = `window.__STORYBOOK_PREVIEW__?.currentRender?.phase === 'finished'`;
+
+// Movement driven from JavaScript, such as a carousel sliding to the tab a
+// play function picked, isn't something Storybook waits for, so wait until
+// nothing moves between two frames. Looping movement, such as a spinner,
+// never settles, so the deadline stops the wait
+const LAYOUT_SETTLE_TIMEOUT_MILLISECONDS = 2_000;
+const LAYOUT_SETTLED_SCRIPT = `new Promise((resolve) => {
+  setTimeout(() => resolve(false), ${LAYOUT_SETTLE_TIMEOUT_MILLISECONDS});
+  const getPositions = () =>
+    [...document.querySelectorAll('#storybook-root *, [role="dialog"] *')]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left + ',' + rect.top;
+      })
+      .join('|');
+  let previous = getPositions();
+  const check = () =>
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const current = getPositions();
+        if (current === previous) resolve(true);
+        else {
+          previous = current;
+          check();
+        }
+      }),
+    );
+  check();
+})`;
+
+async function waitForStoryToSettle(page: Page) {
   try {
-    await page
-      .locator(
-        '#storybook-root > div > :not(section[aria-label^="Notifications"])',
-      )
-      .first()
-      .waitFor({ timeout: 10_000 });
+    await page.waitForFunction(STORY_FINISHED_SCRIPT, undefined, {
+      timeout: 15_000,
+    });
   } catch {
     exitWithError(
-      `The story '${story}' didn't render. Check its ID, which follows ?path=/story/ in Storybook's URL.`,
+      `The story '${story}' didn't finish. Check its ID, which follows ?path=/story/ in Storybook's URL, and that its play function passes.`,
     );
   }
+  await page.evaluate(LAYOUT_SETTLED_SCRIPT);
+}
+
+async function captureStory(page: Page, file: string) {
+  await waitForStoryToSettle(page);
 
   const bounds = boundsSchema.safeParse(
     await page.evaluate(STORY_BOUNDS_SCRIPT),
@@ -238,6 +281,46 @@ async function captureStory(page: Page, file: string) {
       height: bounds.data.y + bounds.data.height + STORY_PADDING - y,
     },
   });
+}
+
+const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
+
+// A dialog renders in a portal outside the story's root, so crop to the
+// dialog itself, framed by the overlay behind it
+async function captureDialog(page: Page, file: string) {
+  await waitForStoryToSettle(page);
+  const dialog = page.locator(DIALOG_SELECTOR).first();
+  if (!(await dialog.isVisible())) {
+    exitWithError(
+      `The story '${story}' didn't open a dialog. Its play function needs to open one and leave it open.`,
+    );
+  }
+
+  const bounds = boundsSchema.safeParse(await dialog.boundingBox());
+  if (!bounds.success) {
+    exitWithError(`The dialog in '${story}' has no visible size.`);
+  }
+
+  const viewport = page.viewportSize();
+  const x = Math.max(bounds.data.x - STORY_PADDING, 0);
+  const y = Math.max(bounds.data.y - STORY_PADDING, 0);
+  const right = bounds.data.x + bounds.data.width + STORY_PADDING;
+  const bottom = bounds.data.y + bounds.data.height + STORY_PADDING;
+  await page.screenshot({
+    path: file,
+    clip: {
+      x,
+      y,
+      width: Math.min(right, viewport?.width ?? right) - x,
+      height: Math.min(bottom, viewport?.height ?? bottom) - y,
+    },
+  });
+}
+
+function capture(page: Page, file: string) {
+  if (isDialog) return captureDialog(page, file);
+  if (story) return captureStory(page, file);
+  return capturePage(page, file);
 }
 
 const url = getUrl();
@@ -267,7 +350,7 @@ try {
     }
 
     const file = `${directory}/${name}-${size.label}.png`;
-    await (story ? captureStory(page, file) : capturePage(page, file));
+    await capture(page, file);
     console.log(file);
 
     await context.close();

@@ -3,13 +3,13 @@
 import debounce from 'lodash/debounce';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
+import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import { api } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-import { type HandSize, handSizeSchema } from '~/types/games/yaniv';
+import type { HandSizeSetting } from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
-import { useWaitForServerValue } from './use-wait-for-server-value';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
@@ -21,7 +21,7 @@ export default function Lobby({
 }: {
   code: GameCode;
   players: Player[];
-  handSize: HandSize;
+  handSize: HandSizeSetting;
 }) {
   const currentPlayer = players.find((player) => player.isUser);
 
@@ -132,11 +132,8 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
-  const handleHandSizeChange = (newHandSize: string) => {
-    updateSettingsMutation.mutate({
-      code,
-      handSize: handSizeSchema.parse(Number(newHandSize)),
-    });
+  const handleHandSizeChange = (newHandSize: HandSizeSetting) => {
+    updateSettingsMutation.mutate({ code, handSize: newHandSize });
   };
 
   const handleReadyChange = (nextIsReady: boolean) => {

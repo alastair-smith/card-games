@@ -140,6 +140,15 @@ describe('startNewRound', () => {
     await expect(startNewRound(CODE, USER_2)).rejects.toThrow('Not your turn');
   });
 
+  test('throws when the hand size has not been chosen', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(makeState({ handSize: null }));
+
+    await expect(startNewRound(CODE, USER_1)).rejects.toThrow(
+      'Hand size not chosen',
+    );
+    expect(vi.mocked(yanivDeck.createDeck)).not.toHaveBeenCalled();
+  });
+
   test('throws when deck runs out seeding discard', async () => {
     vi.mocked(yanivDeck.drawCard).mockResolvedValue(null);
 
@@ -157,6 +166,14 @@ describe('startNewRound', () => {
         expect.objectContaining({ id: USER_1, isYanivCalled: false }),
         expect.objectContaining({ id: USER_2, isYanivCalled: false }),
       ]),
+    });
+  });
+
+  test('forgets who called Yaniv last round', async () => {
+    await startNewRound(CODE, USER_1);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      yanivCallerIds: [],
     });
   });
 

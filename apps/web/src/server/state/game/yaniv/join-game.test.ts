@@ -3,7 +3,7 @@ import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, GameUpdate } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
-  type HandSize,
+  type HandSizeSetting,
   MAX_PLAYERS,
 } from '~/types/games/yaniv';
 
@@ -34,7 +34,7 @@ const NEW_PLAYER_NAME = 'Brave Otter';
 
 const makeLobby = (
   playerIds: UserId[],
-  settings: { handSize: HandSize } = { handSize: DEFAULT_HAND_SIZE },
+  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
 ) => ({
   code: CODE,
   type: GameType.YANIV,

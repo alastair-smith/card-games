@@ -1,0 +1,20 @@
+direction: down
+
+game-start: "Host starts the game"
+first-choice: "CHOOSE_HAND_SIZE\nthe first player, who also deals,\nchooses 1 to 10 cards"
+
+round-scored: "Round scored,\nno one over 100"
+choice: "CHOOSE_HAND_SIZE\nthe first caller with the lowest hand\nchooses 1 to 10 cards"
+chooser-deals: "Is the chooser\nthe dealer?" {shape: diamond}
+redeal: "REDEAL\nthe lowest-scoring caller\ndeals the chosen size"
+
+deal: "Deal the chosen size"
+
+game-start -> first-choice
+first-choice -> deal
+
+round-scored -> choice
+choice -> chooser-deals
+chooser-deals -> deal: yes
+chooser-deals -> redeal: no
+redeal -> deal

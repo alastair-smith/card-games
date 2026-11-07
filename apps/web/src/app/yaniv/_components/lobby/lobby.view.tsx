@@ -8,13 +8,17 @@ import Players from '~/components/lobby/players.view';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
-import { type HandSize, MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/yaniv';
+import {
+  type HandSizeSetting,
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+} from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 
 export type LobbyProps = {
   code: GameCode;
   players: Player[];
-  handSize: HandSize;
+  handSize: HandSizeSetting;
   user: {
     isReady: boolean;
     name: string;
@@ -24,7 +28,7 @@ export type LobbyProps = {
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange: (color: string) => void;
-  handleHandSizeChange: (handSize: string) => void;
+  handleHandSizeChange: (handSize: HandSizeSetting) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;

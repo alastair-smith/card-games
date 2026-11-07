@@ -9,6 +9,8 @@ const baseProps = {
   onYanivClick: noop,
   onPlayCards: noop,
   onStartNewRoundClick: noop,
+  onChooseHandSize: noop,
+  isDealer: true,
 };
 
 describe('TurnActions', () => {
@@ -164,6 +166,21 @@ describe('TurnActions', () => {
       );
       fireEvent.click(screen.getByRole('button', { name: /start new round/i }));
       expect(handleStartNewRoundClick).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('choosing hand size', () => {
+    test('offers to choose the hand size', () => {
+      render(
+        <TurnActions
+          {...baseProps}
+          stage={GameViewStage.CHOOSING_HAND_SIZE}
+          isDealer={false}
+        />,
+      );
+      expect(
+        screen.getByRole('button', { name: 'Choose hand size' }),
+      ).toBeInTheDocument();
     });
   });
 });

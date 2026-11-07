@@ -2,6 +2,7 @@ import type { ClientPlayer } from '~/server/state/game/yaniv/lib/to-client-game-
 import type { PlayerName, UserId } from '~/types/entities';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
   GameStage,
   type GameState,
   GameStep,
@@ -48,13 +49,28 @@ export const buildClientPlayer = (
   return { ...player, isUser: false, ...overrides };
 };
 
+/** Narrows a state a test saved, failing the test if it isn't in progress. */
+export const expectInProgressState = (
+  state: GameState | undefined,
+): InProgressState => {
+  if (state?.gameStage !== GameStage.IN_PROGRESS) {
+    throw new Error('Expected an in-progress Yaniv state');
+  }
+  return state;
+};
+
 export const buildInProgressState = (
   overrides: Partial<InProgressState> &
     Pick<InProgressState, 'players' | 'currentPlayerId'>,
 ): InProgressState => ({
   gameStage: GameStage.IN_PROGRESS,
   gameStep: GameStep.PLAY_CARDS,
+  settings: DEFAULT_SETTINGS,
   handSize: DEFAULT_HAND_SIZE,
+  dealerId: overrides.currentPlayerId,
+  yanivCallerIds: overrides.players
+    .filter((player) => player.isYanivCalled)
+    .map((player) => player.id),
   playedCards: [],
   drawnFrom: null,
   ...overrides,

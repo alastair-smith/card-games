@@ -1,6 +1,6 @@
 direction: down
 
-lobby: "Lobby\nhost picks a hand size of 5 or 7"
+lobby: "Lobby\nhost picks a hand size of 5 or 7,\nor Winner Chooses (see below)"
 deal: "Deal\nshuffle the deck with jokers, deal each hand,\nturn over the first discard"
 
 turn: "Turn" {
@@ -12,7 +12,7 @@ turn: "Turn" {
 
   play -> matches
   matches -> pickup: no
-  matches -> proceed: yes, skip picking up
+  matches -> proceed: yes
   pickup -> proceed
   proceed -> play-back: optional
   play-back -> proceed
@@ -30,7 +30,7 @@ over: "Is anyone over 100?" {shape: diamond}
 redeal: "REDEAL\nthe lowest-scoring caller\nstarts a new round"
 finished: "FINISHED\nlowest score wins"
 
-lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby goes first"
+lobby -> deal: "host starts the game with 2 to 5 players;\nthe first player in the lobby deals and goes first"
 deal -> turn.play
 
 turn.proceed -> end-turn

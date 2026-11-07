@@ -149,6 +149,18 @@ describe('callYaniv', () => {
     );
   });
 
+  test('records the call after the calls before it', async () => {
+    vi.mocked(getYanivState).mockResolvedValue(
+      makeState({ yanivCallerIds: [USER_3] }),
+    );
+
+    await callYaniv(CODE, USER_1);
+
+    expect(vi.mocked(setYanivState).mock.calls[0]?.[1]).toMatchObject({
+      yanivCallerIds: [USER_3, USER_1],
+    });
+  });
+
   test('does not score players', async () => {
     await callYaniv(CODE, USER_1);
 
