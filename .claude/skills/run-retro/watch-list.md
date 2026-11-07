@@ -19,15 +19,17 @@ Each retro checks for them; see step 1 of `SKILL.md`.
 | A new page built to the letter of the issue but thinner than the sites around it, e.g. a Storybook Introduction of three bare links, before it took nav-styled links, its purpose and guides to writing stories      | 2026-11-07 (`ccb4c7f3-a1e1-4575-b60f-6422de8669fe`) | 0                 |
 | A PR that changes a tool with visible output, such as the screenshot script, without an example of that output in its description                                                                                    | 2026-11-07 (`ccb4c7f3-a1e1-4575-b60f-6422de8669fe`) | 0                 |
 | Existing `raise-pr` rule not followed: a screenshot left out of a PR as impossible to take, without suggesting an issue to make it possible                                                                          | 2026-11-07 (`ccb4c7f3-a1e1-4575-b60f-6422de8669fe`) | 0                 |
+| Existing `run-retro` step 4 not followed: proposing a new check rather than extending the one the repo already runs, e.g. a new CI path filter beside the `changes` job                                              | 2026-11-07 (`ccb4c7f3-a1e1-4575-b60f-6422de8669fe`) | 0                 |
+| Existing `run-retro` step 4 not followed: proposing a script for something an allowed tool already does, e.g. curl-free URL checks for docs sites web fetch is already allowed to read                               | 2026-11-07 (`ccb4c7f3-a1e1-4575-b60f-6422de8669fe`) | 0                 |
 
 ## Retro log
 
 One row per retro, to see whether the changes each retro makes are trending
 towards zero. Issues filed for ideas count as changes.
 
-| Date       | Session                                                                           | Points raised                       | Changes made                                                                           |
-| :--------- | --------------------------------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------- |
-| 2026-11-01 | `27975623-bfa0-4649-bdb7-f8f38c162130`                                            | 9, plus 2 in the retro of the retro | 11 rule or script changes and 3 issues, before the stricter bar in step 3              |
-| 2026-11-02 | `78153c9b-91d4-4efd-88e4-65a59adc3dd6`                                            | 2                                   | 1 rule change in `CLAUDE.md`                                                           |
-| 2026-11-07 | `62ab084d-4021-43cb-9b4e-f29cf898ce55` and `88a05b01-be7c-4a65-ac1b-d9248524d962` | 2, plus 2 in the retro of the retro | 1 rule change in `CLAUDE.md`; none from the retro of the retro                         |
-| 2026-11-07 | `ccb4c7f3-a1e1-4575-b60f-6422de8669fe`                                            | 3                                   | 1 CI check, 1 script and skill, 1 rule in `run-retro`; 1 issue (#403) filed on request |
+| Date       | Session                                                                           | Points raised                       | Changes made                                                                                                             |
+| :--------- | --------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 2026-11-01 | `27975623-bfa0-4649-bdb7-f8f38c162130`                                            | 9, plus 2 in the retro of the retro | 11 rule or script changes and 3 issues, before the stricter bar in step 3                                                |
+| 2026-11-02 | `78153c9b-91d4-4efd-88e4-65a59adc3dd6`                                            | 2                                   | 1 rule change in `CLAUDE.md`                                                                                             |
+| 2026-11-07 | `62ab084d-4021-43cb-9b4e-f29cf898ce55` and `88a05b01-be7c-4a65-ac1b-d9248524d962` | 2, plus 2 in the retro of the retro | 1 rule change in `CLAUDE.md`; none from the retro of the retro                                                           |
+| 2026-11-07 | `ccb4c7f3-a1e1-4575-b60f-6422de8669fe`                                            | 3                                   | 1 CI check, 1 script and skill, 1 rule in `run-retro`; 1 issue (#403) filed on request; none from the retro of the retro |
