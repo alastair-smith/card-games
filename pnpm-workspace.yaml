@@ -14,6 +14,11 @@ allowBuilds:
   sharp: true
   workerd: false
 
+# Our own skills and CLAUDE.md cover how we use each library, so don't link
+# the generic agent skills dependencies ship.
+skills:
+  dirs: []
+
 # Storybook's Next plugin skips vite-tsconfig-paths, and with it tsconfck, on
 # Vite 8, so tsconfck's TypeScript 5 peer requirement doesn't matter.
 peerDependencyRules:
