@@ -68,10 +68,7 @@ export function Hand({
       </div>
       <ol
         aria-label='Your hand'
-        // A step up from the play area's cards on smaller screens, where the
-        // hand has its own tab to fill; the same as the play area from md up.
-        // Smaller on the narrowest screens so a 10-card hand fits, and holds
-        // a card's height before the deal
+        // Placeholder space for the hand when there are no cards
         className='m-0 flex min-h-[5.65em] list-none flex-wrap justify-center gap-1 p-0 pt-[0.4em] text-base min-[360px]:gap-2 min-[360px]:text-lg md:text-2xl'
       >
         {sortedCards.map((card) => (
