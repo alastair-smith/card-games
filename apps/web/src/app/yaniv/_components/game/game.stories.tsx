@@ -274,25 +274,32 @@ export const WaitingForHandSize: Story = {
   },
 };
 
+const playersBeforeFirstDeal = players.map((player) => ({
+  ...player,
+  cardCount: 0,
+  score: 0,
+  roundScores: [],
+  isFiftyScoreHalved: false,
+  isHundredScoreHalved: false,
+}));
+
 // The first player chooses the hand size before anything is dealt.
 export const ChoosingFirstHandSize: Story = {
   args: {
-    players: withTurn(
-      0,
-      players.map((player) => ({
-        ...player,
-        cardCount: 0,
-        score: 0,
-        roundScores: [],
-        isFiftyScoreHalved: false,
-        isHundredScoreHalved: false,
-      })),
-    ),
+    players: withTurn(0, playersBeforeFirstDeal),
     cards: [],
     playedCards: [],
     discardCard: null,
     stage: GameViewStage.CHOOSING_HAND_SIZE,
     step: GameStep.CHOOSE_HAND_SIZE,
+  },
+};
+
+export const WaitingForFirstHandSize: Story = {
+  args: {
+    ...ChoosingFirstHandSize.args,
+    players: withTurn(2, playersBeforeFirstDeal),
+    stage: GameViewStage.WAITING_FOR_NEW_ROUND,
   },
 };
 

@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { stubBrowserApis } from '~/test-utils/browser';
-import { buildClientPlayer } from '~/test-utils/yaniv';
+import { buildClientPlayer, buildRoundScore } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameStep, GameViewStage } from '~/types/games/yaniv';
@@ -93,6 +93,7 @@ const baseProps = {
         cardCount: 7,
         name: 'Alice' as PlayerName,
         score: 10,
+        roundScores: [buildRoundScore({ original: 10 })],
       }),
       isPlayersTurn: true,
     },
@@ -101,6 +102,7 @@ const baseProps = {
       cardCount: 5,
       name: 'Bob' as PlayerName,
       score: 20,
+      roundScores: [buildRoundScore({ original: 20 })],
     }),
   ],
   userId: '1' as UserId,
@@ -110,6 +112,21 @@ const baseProps = {
   stage: GameViewStage.PICKING_CARDS,
   step: GameStep.PLAY_CARDS,
   drawnFrom: null,
+};
+
+const beforeFirstDealProps = {
+  ...baseProps,
+  players: baseProps.players.map((player) => ({
+    ...player,
+    cardCount: 0,
+    score: 0,
+    roundScores: [],
+  })),
+  cards: [],
+  playedCards: [],
+  discardCard: null,
+  stage: GameViewStage.CHOOSING_HAND_SIZE,
+  step: GameStep.CHOOSE_HAND_SIZE,
 };
 
 const getPanel = (name: string | RegExp) =>
@@ -182,6 +199,40 @@ describe('Game', () => {
       render(<Game {...baseProps} />);
       expect(
         within(getPanel('Scores')).getByTestId('scores'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('before the first deal', () => {
+    test('shows the deck in place of the round summary', () => {
+      render(<Game {...beforeFirstDealProps} />);
+      const table = within(getPanel('Table'));
+      expect(table.getByTestId('deck')).toBeInTheDocument();
+      expect(table.queryByTestId('round-summary')).not.toBeInTheDocument();
+    });
+
+    test('opens the table for the player choosing the hand size', () => {
+      render(<Game {...beforeFirstDealProps} />);
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('opens the table for everyone waiting on the choice', () => {
+      render(
+        <Game
+          {...beforeFirstDealProps}
+          userId={'2' as UserId}
+          stage={GameViewStage.WAITING_FOR_NEW_ROUND}
+        />,
+      );
+      expect(getTab(/Table/)).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('puts choosing the hand size on the table tab', () => {
+      render(<Game {...beforeFirstDealProps} />);
+      expect(
+        within(getPanel('Table')).getByRole('button', {
+          name: 'Choose hand size',
+        }),
       ).toBeInTheDocument();
     });
   });

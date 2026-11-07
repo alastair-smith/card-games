@@ -27,6 +27,7 @@ import { HowToDialog } from '../how-to';
 import PlayArea from '../play-area';
 import { PlayerStrip } from '../player-strip';
 import { RoundSummary } from '../round-summary';
+import { getRoundCount } from '../scoreboard';
 import { ScoresDialog } from '../scores-dialog';
 import { TurnActions } from '../turn-actions';
 import { TurnAnnouncement } from '../turn-status';
@@ -141,10 +142,18 @@ export default function Game({
     !!userPlayer && userPlayer.id === playerTakingTurn?.id;
 
   const isRoundOver = BETWEEN_ROUNDS_STAGES.includes(stage);
+  // Before the first deal there are no scores to show, so everyone stays at
+  // the table
+  const isBeforeFirstDeal = isRoundOver && getRoundCount(players) === 0;
+  const isShowingScores = isRoundOver && !isBeforeFirstDeal;
 
-  const actionTab = isUserTakingTurn ? ACTION_TAB_BY_STAGE[stage] : null;
+  const actionTab = isUserTakingTurn
+    ? isBeforeFirstDeal
+      ? 'table'
+      : ACTION_TAB_BY_STAGE[stage]
+    : null;
   const [activeTab, setActiveTab] = useState<string>(
-    isRoundOver ? 'scores' : 'table',
+    isShowingScores ? 'scores' : 'table',
   );
 
   // Players pick their own tab, except that playing cards moves you to the
@@ -154,7 +163,7 @@ export default function Game({
   if (stage !== previousStage) {
     setPreviousStage(stage);
     const wasRoundOver = BETWEEN_ROUNDS_STAGES.includes(previousStage);
-    if (isRoundOver) setActiveTab('scores');
+    if (isShowingScores) setActiveTab('scores');
     else if (wasRoundOver || previousStage === GameViewStage.PICKING_CARDS)
       setActiveTab('table');
   }
@@ -278,7 +287,7 @@ export default function Game({
                   drawnFrom={drawnFrom}
                 />
                 <div className='grid flex-1 place-items-center'>
-                  {isRoundOver ? (
+                  {isShowingScores ? (
                     <>
                       {/* Smaller screens show the round summary in the
                           Scores tab */}
