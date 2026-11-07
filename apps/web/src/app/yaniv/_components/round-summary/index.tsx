@@ -33,7 +33,6 @@ export function RoundSummary({
   const roundNumber = getRoundCount(players);
   const scoresDescription =
     roundNumber === 0 ? 'No rounds played yet' : `After round ${roundNumber}`;
-  // Before the first deal there's no round result to show yet
   const isShowingRoundResult = isRoundOver && roundNumber > 0;
 
   return (

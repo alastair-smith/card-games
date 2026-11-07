@@ -10,8 +10,6 @@ import {
 import {
   HAND_SIZE_SETTINGS,
   type HandSizeSetting,
-  MAX_HAND_SIZE,
-  MIN_HAND_SIZE,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import { cn } from '~/utils/cn';
@@ -21,7 +19,7 @@ const HAND_SIZE_CHOICES = {
   7: { title: '7 Cards', description: 'For a longer game' },
   [WINNER_CHOOSES_HAND_SIZE]: {
     title: 'Winner Chooses',
-    description: `The winner of each hand picks ${MIN_HAND_SIZE} to ${MAX_HAND_SIZE} cards for the next`,
+    description: `Each round's winner chooses how many cards are dealt in the next round.`,
   },
 } as const satisfies Record<
   HandSizeSetting,

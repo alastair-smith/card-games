@@ -70,9 +70,8 @@ export function Hand({
         aria-label='Your hand'
         // A step up from the play area's cards on smaller screens, where the
         // hand has its own tab to fill; the same as the play area from md up.
-        // Below 360px wide, smaller cards fit 4 to a row, so a 10-card hand
-        // fits without scrolling. The minimum height, one card plus the top
-        // padding, keeps the hand's size before anything is dealt
+        // Smaller on the narrowest screens so a 10-card hand fits, and holds
+        // a card's height before the deal
         className='m-0 flex min-h-[5.65em] list-none flex-wrap justify-center gap-1 p-0 pt-[0.4em] text-base min-[360px]:gap-2 min-[360px]:text-lg md:text-2xl'
       >
         {sortedCards.map((card) => (
