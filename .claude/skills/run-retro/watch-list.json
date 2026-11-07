@@ -10,7 +10,7 @@
           "pr": 373
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 4,
@@ -22,7 +22,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 5,
@@ -34,7 +34,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 6,
@@ -46,7 +46,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 7,
@@ -58,7 +58,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 8,
@@ -70,7 +70,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 9,
@@ -82,7 +82,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 10,
@@ -94,7 +94,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 11,
@@ -106,7 +106,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 12,
@@ -118,7 +118,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 13,
@@ -130,7 +130,7 @@
           "pr": 402
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 14,
@@ -142,7 +142,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 15,
@@ -154,7 +154,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 16,
@@ -166,7 +166,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     }
   ],
   "retros": [
@@ -226,6 +226,16 @@
         "retroOfRetroPoints": 0,
         "changesMade": "1 rule in `CLAUDE.md`",
         "fixPr": 408
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["8f2a0551-a7a6-43c4-b11b-de3d0e70d388"],
+      "prs": [409],
+      "result": {
+        "pointsRaised": 0,
+        "retroOfRetroPoints": 0,
+        "changesMade": "No changes"
       }
     }
   ]
