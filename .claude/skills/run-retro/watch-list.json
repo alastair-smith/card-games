@@ -277,7 +277,13 @@
     {
       "date": "2026-11-07",
       "sessions": ["525fb026-d8c1-46ae-a568-7381ac820e98"],
-      "prs": [412]
+      "prs": [412],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "2 allow rules in `.claude/settings.json` (web fetch for pnpm.io and nodejs.org); 3 patterns added to the watch list",
+        "fixPr": 414
+      }
     }
   ]
 }
