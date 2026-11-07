@@ -11,6 +11,21 @@ const usage =
 // Third-party docs are read with Claude Code's web fetch instead
 const ALLOWED_HOSTS = ['playcards.games', 'github.com'] as const;
 
+// The app, Storybook and the docs site, as the dev-servers skill runs them
+const DEV_SERVER_PORTS = ['3000', '6006', '5173'] as const;
+
+// VitePress's and Storybook's dev servers send an empty page and render it
+// in the browser, so there's no id to find
+const BROWSER_RENDERED_PORTS = ['6006', '5173'] as const;
+
+const isBrowserRendered = (url: URL) =>
+  isDevServer(url) && BROWSER_RENDERED_PORTS.some((port) => port === url.port);
+
+const isDevServer = (url: URL) =>
+  url.protocol === 'http:' &&
+  url.hostname === 'localhost' &&
+  DEV_SERVER_PORTS.some((port) => port === url.port);
+
 const HEADER_NAME = /^[A-Za-z0-9-]+$/;
 const MAX_REDIRECTS = 10;
 const REQUEST_TIMEOUT_MILLISECONDS = 15_000;
@@ -47,9 +62,15 @@ function parseAllowedUrl(value: string, option: string): URL {
   } catch {
     exitWithError(`${option} must be a full URL, not '${value}'.`);
   }
-  if (url.protocol !== 'https:' || url.username || url.password) {
+  if (url.username || url.password) {
+    exitWithError(`${option} must have no credentials, not '${value}'.`);
+  }
+  if (isDevServer(url)) {
+    return url;
+  }
+  if (url.protocol !== 'https:') {
     exitWithError(
-      `${option} must be an https URL with no credentials, not '${value}'.`,
+      `${option} must be https, or http://localhost on port ${DEV_SERVER_PORTS.join(', ')}, not '${value}'.`,
     );
   }
   if (!isAllowedHost(url.hostname)) {
@@ -66,11 +87,20 @@ const requestedUrls = urls.map((value) => parseAllowedUrl(value, '--url'));
 async function fetchFollowingRedirects(url: URL, accept: string) {
   let current = url;
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-    const response = await fetch(current, {
-      redirect: 'manual',
-      headers: { accept },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MILLISECONDS),
-    });
+    let response: Response;
+    try {
+      response = await fetch(current, {
+        redirect: 'manual',
+        headers: { accept },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MILLISECONDS),
+      });
+    } catch {
+      exitWithError(
+        isDevServer(current)
+          ? `Couldn't reach ${current.origin}. Start it with the dev-servers skill.`
+          : `Couldn't reach ${current.origin}.`,
+      );
+    }
     const location = response.headers.get('location');
     if (response.status < 300 || response.status >= 400 || !location) {
       return { response, finalUrl: current };
@@ -107,7 +137,12 @@ for (const url of requestedUrls) {
     );
   }
 
-  if (fragment) {
+  if (fragment && isBrowserRendered(finalUrl)) {
+    await response.body?.cancel();
+    lines.push(
+      `  #${fragment}: not checked, as this dev server renders pages in the browser`,
+    );
+  } else if (fragment) {
     // Read only to look for the fragment's id, never printed
     const html = await response.text();
     const idPattern = new RegExp(
