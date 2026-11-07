@@ -11,10 +11,23 @@ const OPT_IN_PROJECTS: Project[] = [
   },
 ];
 
-const isNamedOnCommandLine = (project: Project) =>
+// Workers load this config again without the command line, so the main
+// process passes the named projects on through the environment they inherit
+const NAMED_OPT_IN_PROJECTS_ENV = 'E2E_NAMED_OPT_IN_PROJECTS';
+
+process.env[NAMED_OPT_IN_PROJECTS_ENV] ??= OPT_IN_PROJECTS.filter((project) =>
   process.argv.some(
     (argument) => project.name !== undefined && argument.includes(project.name),
-  );
+  ),
+)
+  .map((project) => project.name)
+  .join(',');
+
+const isNamedOnCommandLine = (project: Project) =>
+  project.name !== undefined &&
+  (process.env[NAMED_OPT_IN_PROJECTS_ENV] ?? '')
+    .split(',')
+    .includes(project.name);
 
 export default defineConfig({
   testDir: './e2e',
