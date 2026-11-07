@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(./.claude/skills/check-css/scripts/show-compiled-css.ts *)",
+      "Bash(./.claude/skills/check-urls/scripts/check-urls.ts *)",
       "Bash(./.claude/skills/dev-servers/scripts/wait-for-server.ts *)",
       "Bash(./.claude/skills/link-stories/scripts/find-stories.ts *)",
       "Bash(./.claude/skills/link-stories/scripts/story-url.ts *)",
