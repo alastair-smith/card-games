@@ -10,7 +10,7 @@
           "pr": 373
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 4,
@@ -22,7 +22,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 5,
@@ -34,7 +34,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 6,
@@ -46,7 +46,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 7,
@@ -58,7 +58,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 8,
@@ -70,7 +70,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 9,
@@ -82,7 +82,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 10,
@@ -94,7 +94,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 11,
@@ -106,7 +106,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 12,
@@ -118,7 +118,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 13,
@@ -130,7 +130,7 @@
           "pr": 402
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 14,
@@ -142,7 +142,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 15,
@@ -154,7 +154,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 16,
@@ -166,7 +166,43 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
+    },
+    {
+      "id": 17,
+      "pattern": "Existing `manage-branch` rule not followed: resuming an existing issue branch with `git checkout` and `git merge main` instead of `git switch` and `update-branch.ts`, as the skill wasn't loaded when not creating a branch",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
+          "pr": 412
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 18,
+      "pattern": "Removing a config file after checking only one tool that reads it, e.g. deleting `.npmrc` because pnpm stopped reading it, while npm still needed its `engine-strict` for the `engines` guard",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
+          "pr": 412
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 19,
+      "pattern": "Running a command that prompts when an allowlisted one does the same job, e.g. `npm view` instead of `pnpm view`",
+      "sightings": [
+        {
+          "date": "2026-11-07",
+          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
+          "pr": 412
+        }
+      ],
+      "retrosWithout": 0
     }
   ],
   "retros": [
@@ -237,6 +273,11 @@
         "retroOfRetroPoints": 0,
         "changesMade": "No changes"
       }
+    },
+    {
+      "date": "2026-11-07",
+      "sessions": ["525fb026-d8c1-46ae-a568-7381ac820e98"],
+      "prs": [412]
     }
   ]
 }
