@@ -57,42 +57,49 @@ jobs:
         id: filter
         # Pull request runs check out the merge commit, so its first parent is the base branch
         run: |
-          app_paths=(
-            apps/web/
-            packages/
-            package.json
-            pnpm-lock.yaml
-            pnpm-workspace.yaml
-            turbo.json
-            .github/workflows/
-            .github/actions/
+          # Changes to these run the test jobs. Those marked ! aren't part of
+          # the built app, so the build and E2E jobs skip them
+          paths=(
+            'apps/web/**'
+            '!apps/web/.storybook/**'
+            '!apps/web/src/**/*.stories.*'
+            'packages/**'
+            'package.json'
+            'pnpm-lock.yaml'
+            'pnpm-workspace.yaml'
+            'turbo.json'
+            '.github/workflows/**'
+            '.github/actions/**'
           )
-          changed_files=$(git diff --name-only HEAD^1 HEAD -- "${app_paths[@]}")
-          if [[ -n "$changed_files" ]]; then
-            echo "App changes:"
-            echo "$changed_files"
-            echo "app=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No app changes"
-            echo "app=false" >> "$GITHUB_OUTPUT"
-          fi
 
-          # Storybook and stories aren't part of the built app, so the build and
-          # E2E tests skip them
-          built_app_paths=(
-            "${app_paths[@]}"
-            ':(exclude)apps/web/.storybook/'
-            ':(exclude,glob)apps/web/src/**/*.stories.*'
-          )
-          built_app_changed_files=$(git diff --name-only HEAD^1 HEAD -- "${built_app_paths[@]}")
-          if [[ -n "$built_app_changed_files" ]]; then
-            echo "Built app changes:"
-            echo "$built_app_changed_files"
-            echo "built_app=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No built app changes"
-            echo "built_app=false" >> "$GITHUB_OUTPUT"
-          fi
+          app_paths=()
+          built_app_paths=()
+          for path in "${paths[@]}"; do
+            if [[ "$path" == '!'* ]]; then
+              built_app_paths+=(":(glob,exclude)${path#!}")
+            else
+              app_paths+=(":(glob)$path")
+              built_app_paths+=(":(glob)$path")
+            fi
+          done
+
+          check_changes() {
+            local output=$1
+            shift
+            local changed_files
+            changed_files=$(git diff --name-only HEAD^1 HEAD -- "$@")
+            if [[ -n "$changed_files" ]]; then
+              echo "Changes for $output:"
+              echo "$changed_files"
+              echo "$output=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "No changes for $output"
+              echo "$output=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+
+          check_changes app "${app_paths[@]}"
+          check_changes built_app "${built_app_paths[@]}"
 
   test:
     name: Test
