@@ -20,5 +20,11 @@
     "vitepress": "^1.6.4",
     "vue": "^3.5.44",
     "wrangler": "^4.155.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "error"
+    }
   }
 }

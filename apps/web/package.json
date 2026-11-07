@@ -107,5 +107,10 @@
     "vitest": "^5.0.5",
     "wrangler": "^4.155.0"
   },
-  "packageManager": "pnpm@12.18.0"
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "error"
+    }
+  }
 }

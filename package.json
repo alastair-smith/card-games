@@ -25,9 +25,13 @@
     "turbo": "^2.11.10"
   },
   "packageManager": "pnpm@12.18.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "error"
+    }
+  },
   "engines": {
-    "npm": "please-use-pnpm",
-    "yarn": "please-use-pnpm",
     "pnpm": "12.18.0"
   }
 }
