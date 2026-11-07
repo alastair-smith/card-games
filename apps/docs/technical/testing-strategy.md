@@ -12,7 +12,7 @@ Every pull request runs static checks, and one that changes the app also runs fo
 | Integration tests | [Vitest](https://www.npmjs.com/package/vitest), [Redis](https://redis.io)                                                    | The data layer against a real Redis                    | Integration Tests    |
 | E2E tests         | [Playwright](https://www.npmjs.com/package/@playwright/test)                                                                 | A full game of Yaniv in real browsers, against a build | E2E Tests (4 setups) |
 
-The test, build and E2E jobs only run when a pull request changes the app: `apps/web/`, `packages/`, the root package, workspace and `turbo.json` files, or the CI workflows and actions. The Lint, Docs and PR Title jobs always run.
+The test jobs only run when a pull request changes the app: `apps/web/`, `packages/`, the root package, workspace and `turbo.json` files, or the CI workflows and actions. The build and E2E jobs also skip changes only to Storybook's config in `apps/web/.storybook/` or to story files, as neither is part of the built app. The Lint, Docs and PR Title jobs always run.
 
 ## Static checks
 

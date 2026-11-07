@@ -4,6 +4,7 @@ import path from 'node:path';
 import tailwindPostcss from '@tailwindcss/postcss';
 import postcss, { type Rule } from 'postcss';
 import {
+  escapeRegExp,
   exitWithError,
   exitWithUsage,
   parseArguments,
@@ -41,10 +42,6 @@ function escapeClassName(className: string): string {
   return /^[0-9]/.test(escaped)
     ? `\\3${escaped[0]} ${escaped.slice(1)}`
     : escaped;
-}
-
-function escapeRegExp(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /** The at-rules around a rule, outermost first, e.g. `@media (…)`. */

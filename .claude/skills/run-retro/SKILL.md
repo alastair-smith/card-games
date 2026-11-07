@@ -28,10 +28,30 @@ allowlist. This lists every tool call the user approved or rejected by hand
 ./.claude/skills/run-retro/scripts/list-llm-approvals.ts
 ```
 
-Then read `watch-list.md` next to this file. For each pattern on it, check
-whether it happened again this session. If it did, it's now on its second
-sighting and a candidate for a change in step 3. If it didn't, add one to its
-count of retros without it.
+Look in that list for network commands such as `curl` or `wget`. For each,
+suggest the tool that should have been used, such as the `check-urls` skill
+for our own sites or web fetch for third-party docs, or a new script or
+narrow allow rule if neither fits.
+
+Then read the watch list, the patterns earlier retros chose to watch, and
+check whether each happened again this session:
+
+```bash
+./.claude/skills/run-retro/scripts/show-watch-list.ts
+```
+
+A pattern that happened again is now on its second sighting and a candidate
+for a change in step 3. Record which ones did, with the PR it happened in,
+along with the PRs the session's work went into. This starts the retro's log
+entry and adds one to the count of retros without it for every other pattern:
+
+```bash
+./.claude/skills/run-retro/scripts/record-watch-retro.ts --session <id> --pr 400 --seen 12:400
+```
+
+For a retro of several sessions, pass `--session` once for each, and name the
+session each sighting came from, as in `--seen 12:400@<id>`. Edit
+`watch-list.json` only through these scripts.
 
 ## 2. Sort into categories
 
@@ -149,10 +169,30 @@ and milestone, as the `manage-issue` skill asks.
 End with a table of every item, its decision, and where it landed: the PR,
 memory, the watch list, an existing rule, or dropped.
 
-Update `watch-list.md` in the retro's PR: add the patterns being watched,
-remove any that got a fix, propose dropping any that have gone 5 retros
-without recurring, and add a row to its retro log with the points raised and
-the changes made. If the changes aren't trending towards zero, say so.
+Update the watch list in the retro's PR. Add each pattern being watched, with
+the PR it happened in, and remove any that got a fix or that the user agrees
+to drop. `show-watch-list.ts` marks those that have gone 5 retros without
+recurring:
+
+```bash
+./.claude/skills/run-retro/scripts/add-watch-pattern.ts --session <id> --pr 400 --pattern <<'EOF'
+…
+EOF
+./.claude/skills/run-retro/scripts/remove-watch-pattern.ts --id 7
+```
+
+Then finish the retro's log entry with the points raised and the changes
+made, and the retro's PR if it has one. Issues filed for ideas count as
+changes:
+
+```bash
+./.claude/skills/run-retro/scripts/log-retro.ts --session <id> --points 3 --fix-pr 405 --changes <<'EOF'
+1 CI check and 1 rule in `run-retro`; 1 issue (#403) filed
+EOF
+```
+
+`show-watch-list.ts --log` lists past retros. If the changes aren't trending
+towards zero, say so.
 
 ## 7. Retro of the retro
 
@@ -160,3 +200,7 @@ Only if the user corrected how the retro ran, run steps 1 to 6 once more on
 the retro conversation itself, putting its fixes into this skill. If the
 retro ran without corrections, skip this step. Either way, stop there: don't
 offer a retro of that one.
+
+It's the same session, so pass `--retro-of-retro` to `record-watch-retro.ts`
+and `log-retro.ts`. They add its sightings, points and changes to the retro's
+entry, rather than counting the retro again or replacing its result.

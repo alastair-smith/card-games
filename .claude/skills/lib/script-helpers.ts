@@ -6,10 +6,28 @@ import { $, type ProcessOutput } from 'zx';
  * A GitHub issue number: digits with no leading zero, so it reads the same
  * in a branch name (`i-123/…`) as it does on GitHub.
  */
+export const POSITIVE_INTEGER = /^[1-9][0-9]*$/;
+
 export const issueNumberSchema = z
   .string()
-  .regex(/^[1-9][0-9]*$/)
+  .regex(POSITIVE_INTEGER)
   .brand<'IssueNumber'>();
+
+/** The dev servers the `dev-servers` skill runs, by port. */
+export const DEV_SERVERS = {
+  '3000': 'The app',
+  '6006': 'Storybook',
+  '5173': 'The docs site',
+} as const satisfies Record<string, string>;
+
+export const isDevServerPort = (
+  value: string,
+): value is keyof typeof DEV_SERVERS => Object.hasOwn(DEV_SERVERS, value);
+
+/** Escapes `text` to match itself literally inside a `RegExp`. */
+export function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 export type IssueNumber = z.infer<typeof issueNumberSchema>;
 
