@@ -1,5 +1,7 @@
 import { TRPCError } from '@trpc/server';
-import { getLobby, setLobby } from '~/server/data/lobby';
+import { deleteLobby, getLobby, setLobby } from '~/server/data/lobby';
+import { runTransaction } from '~/server/data/redis';
+import { deleteYanivState } from '~/server/data/yaniv';
 import emitter from '~/server/events/emitter';
 import { getLobbyChannel } from '~/server/events/lobby';
 import { withLock } from '~/server/state/lib/locks';
@@ -66,9 +68,23 @@ export async function removePlayer({
     const updatedPlayers = lobby.players.filter(
       (player) => player.id !== target,
     );
-    const updatedLobby = { ...lobby, players: updatedPlayers };
+    const [nextHost] = updatedPlayers;
+    const updatedLobby = {
+      ...lobby,
+      players: updatedPlayers,
+      host: lobby.host === target && nextHost ? nextHost.id : lobby.host,
+    };
 
-    await setLobby({ code: gameCode }, updatedLobby);
+    if (nextHost) {
+      await setLobby({ code: gameCode }, updatedLobby);
+    } else {
+      await runTransaction(async (transaction) => {
+        await deleteLobby({ code: gameCode }, transaction);
+        if (lobby.type === GameType.YANIV) {
+          await deleteYanivState({ code: gameCode }, transaction);
+        }
+      });
+    }
 
     const updateType =
       isHost && !isTarget ? GameUpdate.KICKED : GameUpdate.LEFT_GAME;

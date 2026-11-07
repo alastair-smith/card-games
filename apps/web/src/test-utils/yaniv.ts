@@ -1,5 +1,7 @@
+import type { YanivLobby } from '~/server/data/lobby';
 import type { ClientPlayer } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import type { PlayerName, UserId } from '~/types/entities';
+import { type GameCode, GameType } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
   DEFAULT_SETTINGS,
@@ -48,6 +50,27 @@ export const buildClientPlayer = (
   const { hand: _hand, ...player } = buildPlayer();
   return { ...player, isUser: false, ...overrides };
 };
+
+export const buildLobbyPlayer = (
+  overrides: Partial<YanivLobby['players'][number]> = {},
+): YanivLobby['players'][number] => ({
+  id: 'user-1' as UserId,
+  name: 'Player 1' as PlayerName,
+  color: 'cyan',
+  isReady: false,
+  ...overrides,
+});
+
+export const buildYanivLobby = (
+  overrides: Partial<YanivLobby> & Pick<YanivLobby, 'players'>,
+): YanivLobby => ({
+  code: 'ABCDEF' as GameCode,
+  type: GameType.YANIV,
+  host: overrides.players[0]?.id ?? ('user-1' as UserId),
+  settings: DEFAULT_SETTINGS,
+  isGameStarted: false,
+  ...overrides,
+});
 
 /** Narrows a state a test saved, failing the test if it isn't in progress. */
 export const expectInProgressState = (
