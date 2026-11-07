@@ -28,6 +28,9 @@ Play Cards is a browser-based platform for playing classic card games in real ti
 
 Hosted at **[https://playcards.games](https://playcards.games)**.
 
+- **Docs:** how the app is built and how each game works, at [docs.playcards.games](https://docs.playcards.games)
+- **Storybook:** the app's components and screens, at [stories.playcards.games](https://stories.playcards.games)
+
 ### Games
 
 | Game          | Description                                                                                    |

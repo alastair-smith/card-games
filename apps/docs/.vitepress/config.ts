@@ -73,6 +73,10 @@ export default defineConfig({
         text: '<img class="app-link-icon" src="/app-icon.svg" alt="">PlayCards.Games',
         link: 'https://playcards.games',
       },
+      {
+        text: '<img class="app-link-icon" src="/stories-icon.svg" alt="">Storybook',
+        link: 'https://stories.playcards.games',
+      },
     ],
     socialLinks: [{ icon: 'github', link: REPO_URL }],
     search: { provider: 'local' },
