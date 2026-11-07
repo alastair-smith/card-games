@@ -31,7 +31,7 @@ const HAND_SIZE_CHOICES = {
 const DEALER_CHOICES = {
   rotates: {
     title: 'Rotates',
-    description: 'The deal passes to the next player each round.',
+    description: 'Take turns to deal. The player after the dealer goes first.',
   },
   'hand-winner': {
     title: 'Hand Winner',
