@@ -49,7 +49,7 @@ export const Player: Story = {
   args: { handSize: 7, isHost: false },
 };
 
-// The winner of each hand picks how many cards the next round deals.
+// Each round's winner chooses how many cards are dealt in the next round.
 export const WinnerChooses: Story = {
   args: { handSize: WINNER_CHOOSES_HAND_SIZE },
 };
