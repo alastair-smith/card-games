@@ -456,6 +456,12 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
         await expect(page.getByRole('link', gameOverLink)).toBeVisible({
           timeout: 15_000,
         });
+        await expect(
+          page.getByRole('button', { name: 'Choose hand size' }),
+        ).not.toBeVisible();
+        await expect(
+          page.getByRole('dialog', { name: 'Choose the hand size' }),
+        ).not.toBeVisible();
       }
       return;
     }

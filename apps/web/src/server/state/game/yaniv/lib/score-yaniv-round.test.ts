@@ -11,7 +11,8 @@ import { Rank, Suit } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
-  type GameStage,
+  GAME_OVER_SCORE,
+  GameStage,
   type GameState,
   GameStep,
   WINNER_CHOOSES_HAND_SIZE,
@@ -328,6 +329,34 @@ describe('scoreYanivRound', () => {
         currentPlayerId: USER_2,
         dealerId: USER_1,
       });
+    });
+
+    test('ends the game without asking the winner to choose a hand size when a score goes over the limit', async () => {
+      await scoreYanivRound(
+        CODE,
+        makeState({
+          settings: { handSize: WINNER_CHOOSES_HAND_SIZE },
+          players: [
+            buildPlayer({
+              id: USER_1,
+              hand: [{ suit: Suit.HEARTS, rank: Rank.ACE }],
+              isYanivCalled: true,
+            }),
+            buildPlayer({
+              id: USER_2,
+              hand: [{ suit: Suit.DIAMONDS, rank: Rank.TEN }],
+              score: GAME_OVER_SCORE - 5,
+            }),
+          ],
+        }),
+      );
+
+      const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1];
+      expect(savedState).toMatchObject({
+        gameStage: GameStage.FINISHED,
+        winners: [USER_1],
+      });
+      expect(savedState).not.toHaveProperty('gameStep');
     });
 
     test('lets whoever called first choose when the lowest hands tie, though both score nothing', async () => {
