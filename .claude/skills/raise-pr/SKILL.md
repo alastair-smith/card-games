@@ -53,8 +53,8 @@ Fill in `.github/pull_request_template.md`:
 ## Screenshots
 
 For visual changes, take screenshots at desktop and mobile sizes, of a page
-on the dev server (port 3000), of a single story in Storybook (port 6006) or
-of a page on the docs site (port 5173).
+on the dev server (port 3000), of a single story or a docs page in Storybook
+(port 6006) or of a page on the docs site (port 5173).
 Start the one you need if it isn't running, with the `dev-servers` skill:
 
 ```bash
@@ -63,6 +63,7 @@ Start the one you need if it isn't running, with the `dev-servers` skill:
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-hand-size-dialog--dealer --dialog --name hand-size-dialog
+./.claude/skills/raise-pr/scripts/take-screenshots.ts --storybook-docs yaniv-hand--docs --name hand-docs
 ./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --theme dark
 ```
 
@@ -81,6 +82,9 @@ shown.
 - **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
   renders outside the story's own area. The story's `play` function must
   open it and leave it open
+- **Storybook docs:** `--storybook-docs` takes the ID that follows
+  `?path=/docs/` in Storybook's URL, such as a component's docs or an MDX
+  page, and works like `--path`
 - **Docs:** `--docs` takes a path on the docs site and works like `--path`.
   Screenshots are light by default; pass `--theme dark` for dark mode. Only
   the docs site has a dark theme so far, so the script rejects it elsewhere
