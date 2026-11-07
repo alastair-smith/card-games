@@ -14,6 +14,8 @@ Each retro checks for them; see step 1 of `SKILL.md`.
 | Existing `CLAUDE.md` rule not followed: a state left unchecked in a layout change, e.g. the empty hand collapsing before the first deal                                                                              | 2026-11-01 (`62ab084d-4021-43cb-9b4e-f29cf898ce55`) | 0                 |
 | Existing `CLAUDE.md` rule not followed: a control built from buttons with a role instead of the native input, e.g. radio buttons as `<button role="radio">`                                                          | 2026-11-01 (`62ab084d-4021-43cb-9b4e-f29cf898ce55`) | 0                 |
 | Existing `raise-pr` rule not followed: a PR description's Details longer than a reviewer needs                                                                                                                       | 2026-11-01 (`62ab084d-4021-43cb-9b4e-f29cf898ce55`) | 0                 |
+| Existing `run-retro` step 4 not followed: a drafted rule that names the incident's details rather than the principle, e.g. calling out `playwright test --list`                                                      | 2026-11-07 (`88a05b01-be7c-4a65-ac1b-d9248524d962`) | 0                 |
+| Existing `run-retro` step 4 not followed: a drafted rule that doesn't say what it leaves out, so it could be read too widely, e.g. "do a real run" read as "run the E2E games more"                                  | 2026-11-07 (`88a05b01-be7c-4a65-ac1b-d9248524d962`) | 0                 |
 
 ## Retro log
 
@@ -24,4 +26,4 @@ towards zero. Issues filed for ideas count as changes.
 | :--------- | --------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------- |
 | 2026-11-01 | `27975623-bfa0-4649-bdb7-f8f38c162130`                                            | 9, plus 2 in the retro of the retro | 11 rule or script changes and 3 issues, before the stricter bar in step 3 |
 | 2026-11-02 | `78153c9b-91d4-4efd-88e4-65a59adc3dd6`                                            | 2                                   | 1 rule change in `CLAUDE.md`                                              |
-| 2026-11-07 | `62ab084d-4021-43cb-9b4e-f29cf898ce55` and `88a05b01-be7c-4a65-ac1b-d9248524d962` | 2                                   | 1 rule change in `CLAUDE.md`                                              |
+| 2026-11-07 | `62ab084d-4021-43cb-9b4e-f29cf898ce55` and `88a05b01-be7c-4a65-ac1b-d9248524d962` | 2, plus 2 in the retro of the retro | 1 rule change in `CLAUDE.md`; none from the retro of the retro            |
