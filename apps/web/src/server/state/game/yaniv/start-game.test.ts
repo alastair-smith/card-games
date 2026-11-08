@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { expectInProgressState } from '~/test-utils/yaniv';
+import {
+  buildLobbyPlayer,
+  buildYanivLobby,
+  expectInProgressState,
+} from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
-import { type GameCode, GameType } from '~/types/game';
+import type { GameCode } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
   DEFAULT_SETTINGS,
@@ -59,14 +63,13 @@ const PLAYER_2 = 'user-2' as UserId;
 const makeLobby = (
   players = [HOST, PLAYER_2],
   settings: Settings = DEFAULT_SETTINGS,
-) => ({
-  code: CODE,
-  type: GameType.YANIV,
-  host: HOST,
-  settings,
-  players: players.map((id) => ({ id, name: `Player ${id}`, isReady: true })),
-  isGameStarted: false,
-});
+) =>
+  buildYanivLobby({
+    code: CODE,
+    host: HOST,
+    settings,
+    players: players.map((id) => buildLobbyPlayer({ id, isReady: true })),
+  });
 
 const makeCard = (i: number) => ({ suit: 'hearts', rank: i + 2 });
 
