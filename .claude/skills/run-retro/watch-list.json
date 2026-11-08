@@ -10,7 +10,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 5,
@@ -22,7 +22,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 6,
@@ -34,7 +34,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 7,
@@ -44,9 +44,14 @@
           "date": "2026-11-01",
           "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
           "pr": 362
+        },
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 0
     },
     {
       "id": 8,
@@ -58,7 +63,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 9,
@@ -70,7 +75,7 @@
           "pr": 362
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 10,
@@ -82,7 +87,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 11,
@@ -94,7 +99,7 @@
           "pr": 399
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 12,
@@ -106,7 +111,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 13,
@@ -118,7 +123,7 @@
           "pr": 402
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 14,
@@ -130,7 +135,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 15,
@@ -142,7 +147,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 16,
@@ -154,7 +159,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 17,
@@ -166,7 +171,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 18,
@@ -178,7 +183,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 19,
@@ -188,6 +193,78 @@
           "date": "2026-11-07",
           "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
           "pr": 412
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 20,
+      "pattern": "Existing memory \"several topics: list with summaries, detail one at a time\" not followed: detailing every review finding in one reply",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 21,
+      "pattern": "A markdown list numbered out of order, e.g. a reviewer's 1, 3, 4, 5, rendered as 1, 2, 3, 4 so the numbers no longer matched the findings",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 22,
+      "pattern": "Existing memory \"check the library's docs before building bespoke machinery\" not followed: extending `useWaitForServerValue` before checking TanStack Query's own pattern of writing mutation results into the query cache",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 23,
+      "pattern": "Existing `CLAUDE.md` rule not followed: running a whole long E2E game, e.g. the Winner Chooses project, to check a step at its start, rather than stopping once past it",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 24,
+      "pattern": "A game's docs given a section for a new option but no overview of the options around it, e.g. a Dealer section without a breakdown of all the Yaniv settings",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 25,
+      "pattern": "A second copy of something other games will likely share written out by hand rather than shaped for later extraction, e.g. a second settings block in the lobby before the settings card became config-driven",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "7f13715d-599b-49d0-9135-da31b42da054",
+          "pr": 415
         }
       ],
       "retrosWithout": 0
@@ -272,6 +349,11 @@
         "changesMade": "2 allow rules in `.claude/settings.json` (web fetch for pnpm.io and nodejs.org); 3 patterns added to the watch list",
         "fixPr": 414
       }
+    },
+    {
+      "date": "2026-11-08",
+      "sessions": ["7f13715d-599b-49d0-9135-da31b42da054"],
+      "prs": [415]
     }
   ]
 }
