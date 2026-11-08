@@ -16,13 +16,7 @@ player is dealt:
 - 3 cards in their hand
 
 One card goes on the discard pile as part of the deal, and the rest form the
-deck. That card counts as played, so its magic applies and it counts towards
-four in a row:
-
-- **2 or 5:** the first player can play any card
-- **7:** the first player must play a 7 or lower
-- **10:** the discard pile burns, leaving it empty, so the first player can play
-  any card
+deck. That card counts as played.
 
 ## Swapping
 
@@ -87,6 +81,15 @@ otherwise lasts for one card: with a 4 of clubs on the discard pile, player 1
 plays a 7 of hearts, player 2 plays a 3 of diamonds, and player 3 can then play
 an 8 of spades.
 
+### On the deal
+
+If the card dealt onto the discard pile is a magic card, its magic applies:
+
+- **2 or 5:** the first player can play any card
+- **7:** the first player must play a 7 or lower
+- **10:** the discard pile burns, leaving it empty, so the first player can play
+  any card
+
 ## Burning
 
 A burn takes every card in the discard pile out of the game. It's triggered by:
@@ -96,7 +99,8 @@ A burn takes every card in the discard pile out of the game. It's triggered by:
 
 5s don't break a run of four. If player 1 plays a Queen of hearts, player 2
 plays a 5 of diamonds and player 3 plays the other three Queens, the pile burns.
-Four 2s, four 5s and four 7s all burn too.
+Four 2s, four 5s and four 7s all burn too. The card dealt onto the discard pile
+counts towards a run.
 
 The player who burnt the pile draws back up to 3 cards if the deck has any left,
 then plays again and can play any card, drawing again afterwards. If that player
@@ -138,10 +142,6 @@ replaced by an end screen. It shows the finishing order, including 5th for the
 last player in a 5-player game, and congratulates the winner. It has a button to
 share the results and a button to play another game, which links to the home
 page for now.
-
-## Emoji reactions
-
-Shithead has the same emoji reactions as Yaniv, with 🪄 in place of 🤔.
 
 ## Settings
 
