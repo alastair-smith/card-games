@@ -1,42 +1,6 @@
 {
   "patterns": [
     {
-      "id": 4,
-      "pattern": "Giving a new control its own focus, hover, selected or border styles instead of an existing component's variants, e.g. `ButtonGroupChoice` before it took `Button`'s secondary and primary variants and focus ring",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 5,
-      "pattern": "Existing `CLAUDE.md` rule not followed: a diagram not updated in the PR that changed the flow it shows",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 6,
-      "pattern": "Existing `CLAUDE.md` rule not followed: comments longer than their reason, or restating what the classes say, e.g. exact widths in the hand's comment",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
       "id": 7,
       "pattern": "Existing `CLAUDE.md` rule not followed: a state left unchecked in a layout change, e.g. the empty hand collapsing before the first deal",
       "sightings": [
@@ -52,54 +16,6 @@
         }
       ],
       "retrosWithout": 0
-    },
-    {
-      "id": 8,
-      "pattern": "Existing `CLAUDE.md` rule not followed: a control built from buttons with a role instead of the native input, e.g. radio buttons as `<button role=\"radio\">`",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 9,
-      "pattern": "Existing `raise-pr` rule not followed: a PR description's Details longer than a reviewer needs",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 10,
-      "pattern": "Existing `run-retro` step 4 not followed: a drafted rule that names the incident's details rather than the principle, e.g. calling out `playwright test --list`",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "88a05b01-be7c-4a65-ac1b-d9248524d962",
-          "pr": 399
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 11,
-      "pattern": "Existing `run-retro` step 4 not followed: a drafted rule that doesn't say what it leaves out, so it could be read too widely, e.g. \"do a real run\" read as \"run the E2E games more\"",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "88a05b01-be7c-4a65-ac1b-d9248524d962",
-          "pr": 399
-        }
-      ],
-      "retrosWithout": 5
     },
     {
       "id": 12,
@@ -353,7 +269,13 @@
     {
       "date": "2026-11-08",
       "sessions": ["7f13715d-599b-49d0-9135-da31b42da054"],
-      "prs": [415]
+      "prs": [415],
+      "result": {
+        "pointsRaised": 5,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule relaxed in `CLAUDE.md`; 2 issues (#419, #420) filed",
+        "fixPr": 421
+      }
     }
   ]
 }
