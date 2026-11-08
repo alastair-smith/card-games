@@ -190,7 +190,7 @@ export const Overview: Story = {
           One choice from a small set of options, each explained on a card that
           is clickable in full. A card takes whatever content you give it,
           except buttons, links and other controls: the card is the radio&apos;s
-          label, so their text would join the radio&apos;s name.
+          label, and HTML allows no other form control inside a label.
         </p>
         <Table>
           <TableCaption>Variations of the Choice Group component</TableCaption>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   ChoiceCard,
@@ -102,6 +103,8 @@ function GameSetting<Key extends keyof Settings>({
   isDisabled,
   onChange,
 }: GameSettingProps<Key>) {
+  const descriptionId = useId();
+
   const handleValueChange = (chosenValue: string) => {
     const option = setting.options.find(
       (choice) => String(choice.value) === chosenValue,
@@ -112,10 +115,11 @@ function GameSetting<Key extends keyof Settings>({
   return (
     <section className='flex flex-col gap-2'>
       <h3 className='font-semibold'>{setting.title}</h3>
-      <p>{setting.description}</p>
+      <p id={descriptionId}>{setting.description}</p>
       <ChoiceGroup
         className='grid-cols-2'
         label={setting.title}
+        descriptionId={descriptionId}
         value={String(value)}
         isDisabled={isDisabled}
         onValueChange={handleValueChange}

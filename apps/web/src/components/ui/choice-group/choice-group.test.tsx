@@ -45,6 +45,51 @@ describe('Choice group', () => {
     ).toBeInTheDocument();
   });
 
+  test('names each choice by its title and describes it by its description', () => {
+    renderHandSizes();
+
+    expect(
+      screen.getByRole('radio', {
+        name: '7 cards',
+        description: 'Longer rounds.',
+      }),
+    ).toBeInTheDocument();
+  });
+
+  test('names a choice without a title by all of its text', () => {
+    render(
+      <ChoiceGroup label='Scorecard colour' defaultValue='yellow'>
+        <ChoiceCard value='yellow'>
+          <span>Butter</span>
+        </ChoiceCard>
+      </ChoiceGroup>,
+    );
+
+    expect(screen.getByRole('radio', { name: 'Butter' })).toBeInTheDocument();
+  });
+
+  test('describes the group by the text that explains it', () => {
+    render(
+      <>
+        <p id='hand-size-description'>How many cards each player is dealt.</p>
+        <ChoiceGroup
+          label='Hand size'
+          descriptionId='hand-size-description'
+          defaultValue='5'
+        >
+          <ChoiceCard value='5'>5 cards</ChoiceCard>
+        </ChoiceGroup>
+      </>,
+    );
+
+    expect(
+      screen.getByRole('group', {
+        name: 'Hand size',
+        description: 'How many cards each player is dealt.',
+      }),
+    ).toBeInTheDocument();
+  });
+
   test('starts with the default choice made', () => {
     renderHandSizes();
 
