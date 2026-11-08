@@ -16,6 +16,8 @@ type ChoiceGroupContextValue = {
   value: string | undefined;
   defaultValue: string | undefined;
   onValueChange: ((value: string) => void) | undefined;
+  descriptionId: string;
+  setHasDescription: (hasDescription: boolean) => void;
 };
 
 const ChoiceGroupContext = createContext<ChoiceGroupContextValue | null>(null);
@@ -23,8 +25,6 @@ const ChoiceGroupContext = createContext<ChoiceGroupContextValue | null>(null);
 type ChoiceGroupProps = {
   /** Accessible name for the group, e.g. "Game mode". */
   label: string;
-  /** The id of text that explains the choice, read after the group's name. */
-  descriptionId?: string;
   /** The selected value, for a controlled group. */
   value?: string;
   /** The initially selected value, for an uncontrolled group. */
@@ -37,14 +37,14 @@ type ChoiceGroupProps = {
 };
 
 /**
- * Choose an option via cards, which are native radio inputs.
+ * Choose an option via cards, which are native radio inputs. A
+ * `ChoiceGroupDescription` inside it describes the group.
  *
  * Keep buttons, links and other controls out of a `ChoiceCard`. Each card is
  * its radio's `<label>`, and HTML allows no other form control inside a label.
  */
 export function ChoiceGroup({
   label,
-  descriptionId,
   value,
   defaultValue,
   onValueChange,
@@ -53,19 +53,59 @@ export function ChoiceGroup({
   children,
 }: ChoiceGroupProps) {
   const name = useId();
+  const descriptionId = `${name}-description`;
+  const [hasDescription, setHasDescription] = useState(false);
 
   return (
-    <ChoiceGroupContext value={{ name, value, defaultValue, onValueChange }}>
+    <ChoiceGroupContext
+      value={{
+        name,
+        value,
+        defaultValue,
+        onValueChange,
+        descriptionId,
+        setHasDescription,
+      }}
+    >
       <fieldset
         data-slot='choice-group'
         disabled={isDisabled}
-        aria-describedby={descriptionId}
+        aria-describedby={hasDescription ? descriptionId : undefined}
         className={cn('grid w-full min-w-0 gap-3', className)}
       >
         <legend className='sr-only'>{label}</legend>
         {children}
       </fieldset>
     </ChoiceGroupContext>
+  );
+}
+
+export function ChoiceGroupDescription({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  const choice = useContext(ChoiceGroupContext);
+  if (!choice) {
+    throw new Error('ChoiceGroupDescription must be inside a ChoiceGroup');
+  }
+  const { descriptionId, setHasDescription } = choice;
+
+  useEffect(() => {
+    setHasDescription(true);
+    return () => setHasDescription(false);
+  }, [setHasDescription]);
+
+  return (
+    <p
+      id={descriptionId}
+      data-slot='choice-group-description'
+      className={cn('col-span-full', className)}
+    >
+      {children}
+    </p>
   );
 }
 

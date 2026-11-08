@@ -5,6 +5,7 @@ import {
   ChoiceCardDescription,
   ChoiceCardTitle,
   ChoiceGroup,
+  ChoiceGroupDescription,
 } from '.';
 
 const noop = () => {};
@@ -70,16 +71,12 @@ describe('Choice group', () => {
 
   test('describes the group by the text that explains it', () => {
     render(
-      <>
-        <p id='hand-size-description'>How many cards each player is dealt.</p>
-        <ChoiceGroup
-          label='Hand size'
-          descriptionId='hand-size-description'
-          defaultValue='5'
-        >
-          <ChoiceCard value='5'>5 cards</ChoiceCard>
-        </ChoiceGroup>
-      </>,
+      <ChoiceGroup label='Hand size' defaultValue='5'>
+        <ChoiceGroupDescription>
+          How many cards each player is dealt.
+        </ChoiceGroupDescription>
+        <ChoiceCard value='5'>5 cards</ChoiceCard>
+      </ChoiceGroup>,
     );
 
     expect(

@@ -18,6 +18,7 @@ import {
   ChoiceCardDescription,
   ChoiceCardTitle,
   ChoiceGroup,
+  ChoiceGroupDescription,
 } from '.';
 
 const gameModes = [
@@ -100,6 +101,9 @@ export const Default: Story = {
             onValueChange?.(value);
           }}
         >
+          <ChoiceGroupDescription>
+            How long the game lasts and how scores are halved.
+          </ChoiceGroupDescription>
           {gameModes.map((mode) => (
             <ChoiceCard key={mode.value} value={mode.value}>
               <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
