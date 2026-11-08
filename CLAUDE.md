@@ -419,8 +419,11 @@ Components live in kebab-case directories with an `index.tsx` entry point:
 components/my-component/index.tsx
 ```
 
-Give new UI elements their own component file rather than adding JSX inline
-to an existing component.
+Give new UI elements their own component rather than adding JSX inline to an
+existing component. A simple component that only its parent uses can live in
+the parent's file while that file is still small. Give a bigger one its own
+file in the parent's folder, and its own directory once anything else uses
+it.
 
 `~/components/ui/` holds the base components: buttons, links, inputs, cards
 and so on. Build standard elements from these rather than styling raw
