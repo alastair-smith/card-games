@@ -13,3 +13,4 @@ Docs for [Play Cards](https://playcards.games), a platform for playing card game
 
 - [Lobby](./games/lobby.md) — creating and joining a game, and what players and the host can do before it starts
 - [Yaniv](./games/yaniv.md) — the flow of a game, from dealing to scoring
+- [Shithead](./games/shithead.md) — the rules, from swapping cards to finishing order
