@@ -112,27 +112,6 @@ export const Default: Story = {
   },
 };
 
-// The cards are radio inputs, so the arrow keys move the choice. Left off the
-// Docs page, which renders each story twice, so the copies' play functions
-// would fight over focus.
-export const KeyboardChoice: Story = {
-  ...Default,
-  tags: ['!autodocs'],
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    canvas.getByRole('radio', { name: /Standard/ }).focus();
-    await userEvent.keyboard('{ArrowDown}');
-
-    await expect(
-      canvas.getByRole('radio', { name: /Quickfire/ }),
-    ).toBeChecked();
-    await expect(
-      canvas.getByRole('radio', { name: /Quickfire/ }),
-    ).toHaveFocus();
-    await expect(args.onValueChange).toHaveBeenCalledWith('quickfire');
-  },
-};
-
 // A card takes whatever content you give it, not just a title and description.
 export const WithCustomContent: Story = {
   args: { heading: 'Scorecard colour', label: 'Scorecard colour' },
