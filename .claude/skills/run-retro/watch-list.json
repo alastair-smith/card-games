@@ -15,7 +15,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 12,
@@ -27,7 +27,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 13,
@@ -39,7 +39,7 @@
           "pr": 402
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 14,
@@ -51,7 +51,7 @@
           "pr": 400
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 15,
@@ -63,7 +63,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 16,
@@ -75,7 +75,7 @@
           "pr": 405
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 17,
@@ -87,7 +87,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 18,
@@ -99,7 +99,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 19,
@@ -111,7 +111,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 20,
@@ -123,7 +123,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 21,
@@ -135,7 +135,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 22,
@@ -147,7 +147,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 23,
@@ -159,7 +159,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 24,
@@ -171,7 +171,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 25,
@@ -181,6 +181,30 @@
           "date": "2026-11-08",
           "session": "7f13715d-599b-49d0-9135-da31b42da054",
           "pr": 415
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 26,
+      "pattern": "An implementation detail written into a game's rules doc, e.g. which emoji reaction replaces another, when it only matters for building the game",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "eddc6ca1-7245-4e0f-acff-ec317431341a",
+          "pr": 441
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 27,
+      "pattern": "Separate rules merged into one sentence of a doc, e.g. a dealt card's magic and its four-in-a-row effect in Setup, rather than each going in the section it belongs to",
+      "sightings": [
+        {
+          "date": "2026-11-08",
+          "session": "eddc6ca1-7245-4e0f-acff-ec317431341a",
+          "pr": 441
         }
       ],
       "retrosWithout": 0
@@ -275,6 +299,16 @@
         "retroOfRetroPoints": 0,
         "changesMade": "1 rule relaxed in `CLAUDE.md`; 2 issues (#419, #420) filed",
         "fixPr": 421
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "sessions": ["eddc6ca1-7245-4e0f-acff-ec317431341a"],
+      "prs": [441],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "No changes; 2 patterns added to the watch list"
       }
     }
   ]
