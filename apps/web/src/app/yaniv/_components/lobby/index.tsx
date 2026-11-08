@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutationState } from '@tanstack/react-query';
+import { getMutationKey } from '@trpc/react-query';
 import debounce from 'lodash/debounce';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
@@ -7,21 +9,32 @@ import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import { api } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
-import type { HandSizeSetting } from '~/types/games/yaniv';
+import {
+  type Settings,
+  type SettingUpdate,
+  updateSettingsInputSchema,
+} from '~/types/games/yaniv';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 import LobbyView from './lobby.view';
 
 const PLAYER_NAME_UPDATE_DELAY_MS = 800;
 const PLAYER_COLOR_UPDATE_DELAY_MS = 300;
 
+const isSettingUpdateApplied = (settings: Settings, update: SettingUpdate) => {
+  const currentSettings = new Map(Object.entries(settings));
+  return Object.entries(update).every(
+    ([key, value]) => currentSettings.get(key) === value,
+  );
+};
+
 export default function Lobby({
   code,
   players,
-  handSize,
+  settings,
 }: {
   code: GameCode;
   players: Player[];
-  handSize: HandSizeSetting;
+  settings: Settings;
 }) {
   const currentPlayer = players.find((player) => player.isUser);
 
@@ -42,7 +55,10 @@ export default function Lobby({
   const confirmedColor = useRef(user.color);
 
   const waitForIsReady = useWaitForServerValue(currentPlayer.isReady);
-  const waitForHandSize = useWaitForServerValue(handSize);
+  const waitForSettingUpdate = useWaitForServerValue(
+    settings,
+    isSettingUpdateApplied,
+  );
 
   const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
 
@@ -67,10 +83,17 @@ export default function Lobby({
   const startGameMutation = api.yaniv.startGame.useMutation();
   const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
     scope: { id: `settings-${code}` },
-    onSuccess: (_data, variables) => waitForHandSize(variables.handSize),
+    onSuccess: (_data, { settings: update }) => waitForSettingUpdate(update),
     onError: () => {
       toast.error('Error updating settings.');
     },
+  });
+  const pendingSettingsVariables = useMutationState({
+    filters: {
+      mutationKey: getMutationKey(api.yaniv.updateSettings),
+      status: 'pending',
+    },
+    select: (mutation) => mutation.state.variables,
   });
 
   const readyUpdate = updateReadyMutation.variables;
@@ -80,10 +103,14 @@ export default function Lobby({
       : undefined;
   const isReady = pendingIsReady ?? currentPlayer.isReady;
 
-  const pendingHandSize = updateSettingsMutation.isPending
-    ? updateSettingsMutation.variables?.handSize
-    : undefined;
-  const selectedHandSize = pendingHandSize ?? handSize;
+  // Show each setting as chosen while it saves, in the order they were chosen
+  const selectedSettings: Settings = { ...settings };
+  for (const variables of pendingSettingsVariables) {
+    const pending = updateSettingsInputSchema.safeParse(variables);
+    if (pending.success && pending.data.code === code) {
+      Object.assign(selectedSettings, pending.data.settings);
+    }
+  }
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {
@@ -132,8 +159,8 @@ export default function Lobby({
     debouncedUpdatePlayerColor(nextColor);
   };
 
-  const handleHandSizeChange = (newHandSize: HandSizeSetting) => {
-    updateSettingsMutation.mutate({ code, handSize: newHandSize });
+  const handleSettingChange = (update: SettingUpdate) => {
+    updateSettingsMutation.mutate({ code, settings: update });
   };
 
   const handleReadyChange = (nextIsReady: boolean) => {
@@ -148,12 +175,12 @@ export default function Lobby({
     <LobbyView
       code={code}
       players={players}
-      handSize={selectedHandSize}
+      settings={selectedSettings}
       user={{ ...user, isReady }}
       handleNameChange={handleNameChange}
       handleReadyChange={handleReadyChange}
       handleColorChange={handleColorChange}
-      handleHandSizeChange={handleHandSizeChange}
+      handleSettingChange={handleSettingChange}
       handleStartGame={() => {
         startGameMutation.mutate({ code });
       }}

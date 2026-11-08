@@ -1,6 +1,7 @@
 import { yanivDeck } from '~/server/data/deck';
 import { yanivDiscard } from '~/server/data/discard';
 import { deckWithJokers } from '~/types/cards';
+import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import {
   type GameStage,
@@ -9,6 +10,7 @@ import {
   type HandSize,
 } from '~/types/games/yaniv';
 import { shuffle } from '~/utils/cards/index';
+import { getPlayerAfter } from './get-player-after';
 
 type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
 
@@ -41,7 +43,20 @@ export const dealRound = async (
   return dealtPlayers;
 };
 
-/** Deals the next round, starting with the player whose turn it already is. */
+export const getFirstTurnPlayerId = ({
+  players,
+  dealerId,
+  settings,
+}: Pick<InProgressState, 'players' | 'dealerId' | 'settings'>): UserId => {
+  // The first round has no hand winner, so the player after the dealer starts
+  const isFirstRound = players.every(
+    (player) => player.roundScores.length === 0,
+  );
+  return settings.dealer === 'hand-winner' && !isFirstRound
+    ? dealerId
+    : getPlayerAfter(players, dealerId).id;
+};
+
 export const dealNextRound = async (
   code: GameCode,
   state: InProgressState,
@@ -54,5 +69,6 @@ export const dealNextRound = async (
   playedCards: [],
   drawnCard: undefined,
   drawnFrom: null,
+  currentPlayerId: getFirstTurnPlayerId(state),
   gameStep: GameStep.PLAY_CARDS,
 });

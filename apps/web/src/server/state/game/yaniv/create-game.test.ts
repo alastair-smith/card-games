@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameType } from '~/types/game';
-import { DEFAULT_HAND_SIZE, GameStage } from '~/types/games/yaniv';
+import {
+  DEFAULT_DEALER,
+  DEFAULT_HAND_SIZE,
+  GameStage,
+} from '~/types/games/yaniv';
 
 const mockLobbyExists = vi.fn();
 const mockSetLobby = vi.fn();
@@ -61,7 +65,7 @@ describe('createGame', () => {
         code: CODE,
         type: GameType.YANIV,
         host: HOST,
-        settings: { handSize: DEFAULT_HAND_SIZE },
+        settings: { handSize: DEFAULT_HAND_SIZE, dealer: DEFAULT_DEALER },
         players: [
           {
             id: HOST,

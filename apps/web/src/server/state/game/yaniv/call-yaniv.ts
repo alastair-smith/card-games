@@ -8,6 +8,7 @@ import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { GameStage, GameStep, YANIV_CALL_THRESHOLD } from '~/types/games/yaniv';
 import { sumYanivHand } from '~/utils/yaniv';
+import { getPlayerAfter } from './lib/get-player-after';
 import { scoreYanivRound } from './lib/score-yaniv-round';
 
 export const callYaniv = async (code: GameCode, userId: UserId) =>
@@ -33,12 +34,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) =>
       id: randomUUID() as EmojiReactionId,
     });
 
-    const currentIndex = state.players.findIndex(({ id }) => id === userId);
-    const nextIndex = (currentIndex + 1) % state.players.length;
-    const nextPlayer = state.players[nextIndex];
-    const nextPlayerId = nextPlayer?.id;
-
-    if (!nextPlayerId) throw new Error('Next player not found');
+    const nextPlayer = getPlayerAfter(state.players, userId);
 
     const stateWithCall = {
       ...state,
@@ -57,7 +53,7 @@ export const callYaniv = async (code: GameCode, userId: UserId) =>
         playedCards: [],
         drawnCard: undefined,
         drawnFrom: null,
-        currentPlayerId: nextPlayerId,
+        currentPlayerId: nextPlayer.id,
         gameStep: GameStep.PLAY_CARDS,
       };
 

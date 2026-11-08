@@ -3,7 +3,7 @@ import { publishLobbyState } from '~/server/events/lobby';
 import { withLock } from '~/server/state/lib/locks';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
-import type { Settings } from '~/types/games/yaniv';
+import type { SettingUpdate } from '~/types/games/yaniv';
 
 export const updateSettings = async ({
   code,
@@ -12,7 +12,7 @@ export const updateSettings = async ({
 }: {
   code: GameCode;
   userId: UserId;
-  settings: Settings;
+  settings: SettingUpdate;
 }) =>
   withLock('lobby', code, async () => {
     const lobby = await getLobby({ code });
@@ -33,7 +33,10 @@ export const updateSettings = async ({
       throw new Error('only the host can change the settings');
     }
 
-    const updatedLobby = await setLobby({ code }, { ...lobby, settings });
+    const updatedLobby = await setLobby(
+      { code },
+      { ...lobby, settings: { ...lobby.settings, ...settings } },
+    );
 
     await publishLobbyState(code, updatedLobby);
 

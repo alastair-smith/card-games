@@ -201,7 +201,6 @@ describe('callYaniv', () => {
     expect(savedState.gameStep).toBe(GameStep.REDEAL);
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(35);
-    expect(savedState.currentPlayerId).toBe(USER_1);
   });
 
   test('caller with higher hand value among those who called Yaniv gets +25 penalty', async () => {
@@ -235,7 +234,6 @@ describe('callYaniv', () => {
     const savedState = vi.mocked(setYanivState).mock.calls[0]?.[1] as State;
     expect(savedState.players.find((p) => p.id === USER_1)?.score).toBe(0);
     expect(savedState.players.find((p) => p.id === USER_2)?.score).toBe(45);
-    expect(savedState.currentPlayerId).toBe(USER_1);
   });
 
   test('preserves isYanivCalled flag of earlier callers when a second player calls Yaniv', async () => {

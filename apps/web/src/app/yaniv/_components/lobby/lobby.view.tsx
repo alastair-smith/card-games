@@ -9,16 +9,17 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import {
-  type HandSizeSetting,
   MAX_PLAYERS,
   MIN_PLAYERS,
+  type Settings,
+  type SettingUpdate,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
 
 export type LobbyProps = {
   code: GameCode;
   players: Player[];
-  handSize: HandSizeSetting;
+  settings: Settings;
   user: {
     isReady: boolean;
     name: string;
@@ -28,7 +29,7 @@ export type LobbyProps = {
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange: (color: string) => void;
-  handleHandSizeChange: (handSize: HandSizeSetting) => void;
+  handleSettingChange: (update: SettingUpdate) => void;
   handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -37,8 +38,8 @@ export type LobbyProps = {
 
 export default function LobbyView({
   code,
-  handSize,
-  handleHandSizeChange,
+  settings,
+  handleSettingChange,
   ...playerProps
 }: LobbyProps) {
   const isHost = playerProps.players.some(
@@ -61,9 +62,9 @@ export default function LobbyView({
         <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
           <GameSettings
             className='w-full'
-            handSize={handSize}
+            settings={settings}
             isHost={isHost}
-            onHandSizeChange={handleHandSizeChange}
+            onSettingChange={handleSettingChange}
           />
           <Card className='flex-1'>
             <CardHeader>

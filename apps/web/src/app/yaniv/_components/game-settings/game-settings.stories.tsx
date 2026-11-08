@@ -2,9 +2,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import {
-  DEFAULT_HAND_SIZE,
-  HAND_SIZE_SETTINGS,
-  type HandSizeSetting,
+  DEFAULT_SETTINGS,
+  type Settings,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 import GameSettings from '.';
@@ -14,12 +13,9 @@ const meta = {
   component: GameSettings,
   args: {
     className: 'm-4 w-100 max-w-full',
-    handSize: DEFAULT_HAND_SIZE,
+    settings: DEFAULT_SETTINGS,
     isHost: true,
-    onHandSizeChange: fn(),
-  },
-  argTypes: {
-    handSize: { control: 'inline-radio', options: HAND_SIZE_SETTINGS },
+    onSettingChange: fn(),
   },
 } satisfies Meta<typeof GameSettings>;
 
@@ -29,15 +25,15 @@ type Story = StoryObj<typeof meta>;
 
 // The host picks the settings the game is played with.
 export const Host: Story = {
-  render: function Render({ onHandSizeChange, ...args }) {
-    const [, updateArgs] = useArgs<{ handSize: HandSizeSetting }>();
+  render: function Render({ onSettingChange, ...args }) {
+    const [, updateArgs] = useArgs<{ settings: Settings }>();
 
     return (
       <GameSettings
         {...args}
-        onHandSizeChange={(value) => {
-          updateArgs({ handSize: value });
-          onHandSizeChange(value);
+        onSettingChange={(update) => {
+          updateArgs({ settings: { ...args.settings, ...update } });
+          onSettingChange(update);
         }}
       />
     );
@@ -46,10 +42,17 @@ export const Host: Story = {
 
 // Everyone else sees the host's choice, but cannot change it.
 export const Player: Story = {
-  args: { handSize: 7, isHost: false },
+  args: { settings: { ...DEFAULT_SETTINGS, handSize: 7 }, isHost: false },
 };
 
 // Each round's winner chooses how many cards are dealt in the next round.
 export const WinnerChooses: Story = {
-  args: { handSize: WINNER_CHOOSES_HAND_SIZE },
+  args: {
+    settings: { ...DEFAULT_SETTINGS, handSize: WINNER_CHOOSES_HAND_SIZE },
+  },
+};
+
+// The winner of each hand deals the next round and goes first.
+export const HandWinnerDeals: Story = {
+  args: { settings: { ...DEFAULT_SETTINGS, dealer: 'hand-winner' } },
 };

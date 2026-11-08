@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { buildLobbyPlayer, buildYanivLobby } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
-import { type GameCode, GameType } from '~/types/game';
-import { DEFAULT_HAND_SIZE } from '~/types/games/yaniv';
+import type { GameCode } from '~/types/game';
+import { DEFAULT_SETTINGS } from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetLobby = vi.fn();
@@ -22,18 +23,12 @@ const CODE = 'ABCDEF' as GameCode;
 const HOST_ID = 'host-1' as UserId;
 const USER_ID = 'user-2' as UserId;
 
-const makeLobby = () => ({
-  code: CODE,
-  type: GameType.YANIV,
-  host: HOST_ID,
-  settings: { handSize: DEFAULT_HAND_SIZE },
-  players: [HOST_ID, USER_ID].map((id) => ({
-    id,
-    name: `Player ${id}`,
-    isReady: false,
-  })),
-  isGameStarted: false,
-});
+const makeLobby = () =>
+  buildYanivLobby({
+    code: CODE,
+    host: HOST_ID,
+    players: [HOST_ID, USER_ID].map((id) => buildLobbyPlayer({ id })),
+  });
 
 describe('updateSettings', () => {
   beforeEach(() => {
@@ -93,7 +88,29 @@ describe('updateSettings', () => {
     expect(mockSetLobby).toHaveBeenCalledOnce();
     expect(mockSetLobby).toHaveBeenCalledWith(
       { code: CODE },
-      expect.objectContaining({ settings: { handSize: 7 } }),
+      expect.objectContaining({
+        settings: { ...DEFAULT_SETTINGS, handSize: 7 },
+      }),
+    );
+  });
+
+  test('saves the dealer the host chose and keeps the hand size', async () => {
+    mockGetLobby.mockResolvedValue({
+      ...makeLobby(),
+      settings: { ...DEFAULT_SETTINGS, handSize: 7 },
+    });
+
+    await updateSettings({
+      code: CODE,
+      userId: HOST_ID,
+      settings: { dealer: 'hand-winner' },
+    });
+
+    expect(mockSetLobby).toHaveBeenCalledWith(
+      { code: CODE },
+      expect.objectContaining({
+        settings: { handSize: 7, dealer: 'hand-winner' },
+      }),
     );
   });
 
@@ -124,7 +141,9 @@ describe('updateSettings', () => {
     expect(mockPublishLobbyState).toHaveBeenCalledOnce();
     expect(mockPublishLobbyState).toHaveBeenCalledWith(
       CODE,
-      expect.objectContaining({ settings: { handSize: 7 } }),
+      expect.objectContaining({
+        settings: { ...DEFAULT_SETTINGS, handSize: 7 },
+      }),
     );
   });
 });

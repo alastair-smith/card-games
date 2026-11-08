@@ -1,13 +1,19 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { expectInProgressState } from '~/test-utils/yaniv';
+import {
+  buildLobbyPlayer,
+  buildYanivLobby,
+  expectInProgressState,
+} from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
-import { type GameCode, GameType } from '~/types/game';
+import type { GameCode } from '~/types/game';
 import {
   DEFAULT_HAND_SIZE,
+  DEFAULT_SETTINGS,
+  dealerSettingSchema,
   GameStage,
   GameStep,
-  type HandSizeSetting,
   MAX_PLAYERS,
+  type Settings,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
 
@@ -56,15 +62,14 @@ const PLAYER_2 = 'user-2' as UserId;
 
 const makeLobby = (
   players = [HOST, PLAYER_2],
-  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
-) => ({
-  code: CODE,
-  type: GameType.YANIV,
-  host: HOST,
-  settings,
-  players: players.map((id) => ({ id, name: `Player ${id}`, isReady: true })),
-  isGameStarted: false,
-});
+  settings: Settings = DEFAULT_SETTINGS,
+) =>
+  buildYanivLobby({
+    code: CODE,
+    host: HOST,
+    settings,
+    players: players.map((id) => buildLobbyPlayer({ id, isReady: true })),
+  });
 
 const makeCard = (i: number) => ({ suit: 'hearts', rank: i + 2 });
 
@@ -181,7 +186,7 @@ describe('startGame', () => {
 
   test('deals the hand size the host chose', async () => {
     mockGetLobby.mockResolvedValue(
-      makeLobby([HOST, PLAYER_2], { handSize: 7 }),
+      makeLobby([HOST, PLAYER_2], { ...DEFAULT_SETTINGS, handSize: 7 }),
     );
 
     await startGame(CODE, HOST);
@@ -213,7 +218,6 @@ describe('startGame', () => {
       expect.objectContaining({
         gameStage: GameStage.IN_PROGRESS,
         gameStep: GameStep.PLAY_CARDS,
-        currentPlayerId: HOST,
         playedCards: [],
       }),
       TRANSACTION,
@@ -226,16 +230,37 @@ describe('startGame', () => {
       { code: CODE },
       expect.objectContaining({
         dealerId: HOST,
-        settings: { handSize: DEFAULT_HAND_SIZE },
+        settings: DEFAULT_SETTINGS,
       }),
       TRANSACTION,
     );
   });
 
+  describe.each(dealerSettingSchema.options)(
+    'when the dealer setting is %s',
+    (dealer) => {
+      test('gives the second player the first turn', async () => {
+        mockGetLobby.mockResolvedValue(
+          makeLobby([HOST, PLAYER_2], { ...DEFAULT_SETTINGS, dealer }),
+        );
+
+        await startGame(CODE, HOST);
+
+        const state = expectInProgressState(
+          mockSetYanivState.mock.calls[0]?.[1],
+        );
+        expect(state.currentPlayerId).toBe(PLAYER_2);
+      });
+    },
+  );
+
   describe('when the winner chooses the hand size', () => {
     beforeEach(() => {
       mockGetLobby.mockResolvedValue(
-        makeLobby([HOST, PLAYER_2], { handSize: WINNER_CHOOSES_HAND_SIZE }),
+        makeLobby([HOST, PLAYER_2], {
+          ...DEFAULT_SETTINGS,
+          handSize: WINNER_CHOOSES_HAND_SIZE,
+        }),
       );
     });
 

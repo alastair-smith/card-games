@@ -6,6 +6,7 @@ import {
   standardPlayingCardSchema,
 } from '~/types/cards';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
+import { gameCodeSchema } from '~/types/game';
 import { playerColorSchema } from '~/utils/player-color';
 
 export const MIN_PLAYERS = 2;
@@ -39,20 +40,37 @@ export const handSizeSettingSchema = z.union([
 
 export type HandSizeSetting = z.infer<typeof handSizeSettingSchema>;
 
-export const HAND_SIZE_SETTINGS = [
-  ...FIXED_HAND_SIZES,
-  WINNER_CHOOSES_HAND_SIZE,
-] as const satisfies HandSizeSetting[];
+export const dealerSettingSchema = z.enum(['rotates', 'hand-winner']);
+
+export type DealerSetting = z.infer<typeof dealerSettingSchema>;
+
+export const DEFAULT_DEALER = 'rotates' satisfies DealerSetting;
 
 /** Host-chosen settings, picked in the lobby before the game starts. */
 export const settingsSchema = z.object({
   handSize: handSizeSettingSchema,
+  dealer: dealerSettingSchema,
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
 
+export const settingUpdateSchema = z.union([
+  settingsSchema.pick({ handSize: true }),
+  settingsSchema.pick({ dealer: true }),
+]);
+
+export type SettingUpdate = z.infer<typeof settingUpdateSchema>;
+
+export const updateSettingsInputSchema = z.object({
+  code: gameCodeSchema,
+  settings: settingUpdateSchema,
+});
+
 /** What a new Yaniv lobby starts with. */
-export const DEFAULT_SETTINGS: Settings = { handSize: DEFAULT_HAND_SIZE };
+export const DEFAULT_SETTINGS: Settings = {
+  handSize: DEFAULT_HAND_SIZE,
+  dealer: DEFAULT_DEALER,
+};
 
 export const YANIV_RANK_SCORE = {
   [Rank.TWO]: 2,

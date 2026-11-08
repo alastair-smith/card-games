@@ -1,11 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { UserId } from '~/types/entities';
-import { type GameCode, GameType, GameUpdate } from '~/types/game';
-import {
-  DEFAULT_HAND_SIZE,
-  type HandSizeSetting,
-  MAX_PLAYERS,
-} from '~/types/games/yaniv';
+import { buildLobbyPlayer, buildYanivLobby } from '~/test-utils/yaniv';
+import type { PlayerName, UserId } from '~/types/entities';
+import { type GameCode, GameUpdate } from '~/types/game';
+import { DEFAULT_SETTINGS, MAX_PLAYERS } from '~/types/games/yaniv';
 
 const mockGetLobby = vi.fn();
 const mockSetLobby = vi.fn();
@@ -32,21 +29,15 @@ const HOST_ID = 'host-1' as UserId;
 const USER_ID = 'user-2' as UserId;
 const NEW_PLAYER_NAME = 'Brave Otter';
 
-const makeLobby = (
-  playerIds: UserId[],
-  settings: { handSize: HandSizeSetting } = { handSize: DEFAULT_HAND_SIZE },
-) => ({
-  code: CODE,
-  type: GameType.YANIV,
-  host: HOST_ID,
-  settings,
-  players: playerIds.map((id) => ({
-    id,
-    name: `Player ${id}`,
-    isReady: false,
-  })),
-  isGameStarted: false,
-});
+const makeLobby = (playerIds: UserId[], settings = DEFAULT_SETTINGS) =>
+  buildYanivLobby({
+    code: CODE,
+    host: HOST_ID,
+    settings,
+    players: playerIds.map((id) =>
+      buildLobbyPlayer({ id, name: `Player ${id}` as PlayerName }),
+    ),
+  });
 
 describe('joinGame', () => {
   beforeEach(() => {
@@ -70,7 +61,7 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
     expect(mockSetLobby).not.toHaveBeenCalled();
   });
@@ -84,18 +75,17 @@ describe('joinGame', () => {
         expect.objectContaining({ id: HOST_ID, isHost: true }),
         expect.objectContaining({ id: USER_ID, isHost: false }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
   });
 
-  test('returns the hand size the host has chosen', async () => {
-    mockGetLobby.mockResolvedValue(
-      makeLobby([HOST_ID, USER_ID], { handSize: 7 }),
-    );
+  test('returns the settings the host has chosen', async () => {
+    const settings = { handSize: 7, dealer: 'hand-winner' } as const;
+    mockGetLobby.mockResolvedValue(makeLobby([HOST_ID, USER_ID], settings));
 
     const result = await joinGame({ code: CODE, userId: USER_ID });
 
-    expect(result).toMatchObject({ settings: { handSize: 7 } });
+    expect(result).toMatchObject({ settings });
   });
 
   test('does not let a new player join once the game has started', async () => {
@@ -122,13 +112,7 @@ describe('joinGame', () => {
 
   test('adds the player and returns updated lobby state', async () => {
     const existingLobby = makeLobby([HOST_ID]);
-    const updatedLobby = {
-      ...existingLobby,
-      players: [
-        ...existingLobby.players,
-        { id: USER_ID, name: NEW_PLAYER_NAME, isReady: false },
-      ],
-    };
+    const updatedLobby = makeLobby([HOST_ID, USER_ID]);
     mockGetLobby.mockResolvedValue(existingLobby);
     mockSetLobby.mockResolvedValue(updatedLobby);
 
@@ -147,19 +131,13 @@ describe('joinGame', () => {
       players: expect.arrayContaining([
         expect.objectContaining({ id: USER_ID, isUser: true }),
       ]),
-      settings: { handSize: DEFAULT_HAND_SIZE },
+      settings: DEFAULT_SETTINGS,
     });
   });
 
   test('publishes the lobby state after a player joins', async () => {
     const existingLobby = makeLobby([HOST_ID]);
-    const updatedLobby = {
-      ...existingLobby,
-      players: [
-        ...existingLobby.players,
-        { id: USER_ID, name: NEW_PLAYER_NAME, isReady: false },
-      ],
-    };
+    const updatedLobby = makeLobby([HOST_ID, USER_ID]);
     mockGetLobby.mockResolvedValue(existingLobby);
     mockSetLobby.mockResolvedValue(updatedLobby);
 
