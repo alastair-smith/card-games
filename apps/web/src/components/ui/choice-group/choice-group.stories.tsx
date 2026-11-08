@@ -85,22 +85,8 @@ export default meta;
 
 type Story = StoryObj<ChoiceGroupStoryProps>;
 
-// One choice from a set of options that need explaining. The cards are radio
-// inputs, so the arrow keys move the choice.
+// One choice from a set of options that need explaining.
 export const Default: Story = {
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-    canvas.getByRole('radio', { name: /Standard/ }).focus();
-    await userEvent.keyboard('{ArrowDown}');
-
-    await expect(
-      canvas.getByRole('radio', { name: /Quickfire/ }),
-    ).toBeChecked();
-    await expect(
-      canvas.getByRole('radio', { name: /Quickfire/ }),
-    ).toHaveFocus();
-    await expect(args.onValueChange).toHaveBeenCalledWith('quickfire');
-  },
   render: ({ heading, onValueChange, ...args }) => {
     const [gameMode, setGameMode] = useState('standard');
 
@@ -123,6 +109,27 @@ export const Default: Story = {
         </ChoiceGroup>
       </SettingsCard>
     );
+  },
+};
+
+// The cards are radio inputs, so the arrow keys move the choice. Left off the
+// Docs page, which renders each story twice, so the copies' play functions
+// would fight over focus.
+export const KeyboardChoice: Story = {
+  ...Default,
+  tags: ['!autodocs'],
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    canvas.getByRole('radio', { name: /Standard/ }).focus();
+    await userEvent.keyboard('{ArrowDown}');
+
+    await expect(
+      canvas.getByRole('radio', { name: /Quickfire/ }),
+    ).toBeChecked();
+    await expect(
+      canvas.getByRole('radio', { name: /Quickfire/ }),
+    ).toHaveFocus();
+    await expect(args.onValueChange).toHaveBeenCalledWith('quickfire');
   },
 };
 

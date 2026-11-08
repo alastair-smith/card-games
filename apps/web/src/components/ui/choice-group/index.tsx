@@ -27,7 +27,13 @@ type ChoiceGroupProps = {
   children: ReactNode;
 };
 
-/** Choose an option via cards, which are native radio inputs. */
+/**
+ * Choose an option via cards, which are native radio inputs.
+ *
+ * Keep buttons, links and other controls out of a `ChoiceCard`. Each
+ * card is its radio's `<label>`, so their text joins the radio's name, and
+ * HTML allows no other form control inside a label.
+ */
 export function ChoiceGroup({
   label,
   value,
