@@ -1,10 +1,17 @@
 'use client';
 
-import { Radio as RadioPrimitive } from '@base-ui/react/radio';
-import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
-import type { ReactNode } from 'react';
+import { createContext, type ReactNode, useContext, useId } from 'react';
 import { Label } from '~/components/ui/label';
 import { cn } from '~/utils/cn';
+
+type ChoiceGroupContextValue = {
+  name: string;
+  value: string | undefined;
+  defaultValue: string | undefined;
+  onValueChange: ((value: string) => void) | undefined;
+};
+
+const ChoiceGroupContext = createContext<ChoiceGroupContextValue | null>(null);
 
 type ChoiceGroupProps = {
   /** Accessible name for the group, e.g. "Game mode". */
@@ -20,7 +27,7 @@ type ChoiceGroupProps = {
   children: ReactNode;
 };
 
-/** Choose an option via radio-like cards. */
+/** Choose an option via cards, which are native radio inputs. */
 export function ChoiceGroup({
   label,
   value,
@@ -30,18 +37,19 @@ export function ChoiceGroup({
   className,
   children,
 }: ChoiceGroupProps) {
+  const name = useId();
+
   return (
-    <RadioGroupPrimitive
-      data-slot='choice-group'
-      aria-label={label}
-      value={value}
-      defaultValue={defaultValue}
-      disabled={isDisabled}
-      className={cn('grid w-full gap-3', className)}
-      onValueChange={(newValue: string) => onValueChange?.(newValue)}
-    >
-      {children}
-    </RadioGroupPrimitive>
+    <ChoiceGroupContext value={{ name, value, defaultValue, onValueChange }}>
+      <fieldset
+        data-slot='choice-group'
+        disabled={isDisabled}
+        className={cn('grid w-full min-w-0 gap-3', className)}
+      >
+        <legend className='sr-only'>{label}</legend>
+        {children}
+      </fieldset>
+    </ChoiceGroupContext>
   );
 }
 
@@ -54,31 +62,53 @@ type ChoiceCardProps = {
   children: ReactNode;
 };
 
-/** Clickable choice within a {@link ChoiceGroup}. */
+/**
+ * Clickable choice within a {@link ChoiceGroup}.
+ *
+ * Keep buttons, links and other controls out of a card. The card is the
+ * radio's `<label>`, so their text joins the radio's name, and HTML allows no
+ * other form control inside a label.
+ */
 export function ChoiceCard({
   value,
   isDisabled = false,
   className,
   children,
 }: ChoiceCardProps) {
+  const choice = useContext(ChoiceGroupContext);
+  if (!choice) {
+    throw new Error('ChoiceCard must be inside a ChoiceGroup');
+  }
+
+  const isControlled = choice.value !== undefined;
+
   return (
     <Label
       data-slot='choice-card'
       className={cn(
-        'flex cursor-pointer items-start gap-3 rounded-lg border-2 border-border bg-input-background p-4 text-base leading-normal text-light-text transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-data-checked:border-dark-yellow has-data-checked:bg-primary/25 has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50',
+        'group/choice-card flex cursor-pointer items-start gap-3 rounded-lg border-2 border-border bg-input-background p-4 text-base leading-normal text-light-text transition-colors has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-checked:border-dark-yellow has-checked:bg-primary/25 has-disabled:cursor-not-allowed has-disabled:opacity-50',
         className,
       )}
     >
-      <RadioPrimitive.Root
-        data-slot='choice-card-radio'
+      <input
+        type='radio'
+        className='sr-only'
+        name={choice.name}
         value={value}
         disabled={isDisabled}
-        className='relative mt-1 flex aspect-square size-4 shrink-0 rounded-full border border-border outline-none'
+        checked={isControlled ? choice.value === value : undefined}
+        defaultChecked={
+          isControlled ? undefined : choice.defaultValue === value
+        }
+        onChange={() => choice.onValueChange?.(value)}
+      />
+      <span
+        aria-hidden
+        className='relative mt-1 size-4 shrink-0 rounded-full border border-border'
       >
-        <RadioPrimitive.Indicator className='flex size-4 items-center justify-center'>
-          <span className='absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-light-text' />
-        </RadioPrimitive.Indicator>
-      </RadioPrimitive.Root>
+        {/* Forced colours replace backgrounds, so the dot uses the text colour */}
+        <span className='absolute top-1/2 left-1/2 hidden size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-light-text group-has-checked/choice-card:block forced-colors:bg-[CanvasText] forced-colors:forced-color-adjust-none' />
+      </span>
       <span className='flex flex-col gap-1'>{children}</span>
     </Label>
   );

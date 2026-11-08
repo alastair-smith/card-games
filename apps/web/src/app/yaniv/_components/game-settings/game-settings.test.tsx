@@ -137,34 +137,20 @@ describe('GameSettings', () => {
 
   describe('players who are not the host', () => {
     test('cannot change the dealer', () => {
-      const handleSettingChange = vi.fn();
-      render(
-        <GameSettings
-          {...defaultProps}
-          isHost={false}
-          onSettingChange={handleSettingChange}
-        />,
-      );
+      render(<GameSettings {...defaultProps} isHost={false} />);
 
-      fireEvent.click(screen.getByRole('radio', { name: /Hand Winner/ }));
-
-      expect(handleSettingChange).not.toHaveBeenCalled();
+      expect(screen.getByRole('radio', { name: /Rotates/ })).toBeDisabled();
+      expect(screen.getByRole('radio', { name: /Hand Winner/ })).toBeDisabled();
     });
 
     test('cannot change the hand size', () => {
-      const handleSettingChange = vi.fn();
-      render(
-        <GameSettings
-          {...defaultProps}
-          isHost={false}
-          onSettingChange={handleSettingChange}
-        />,
-      );
+      render(<GameSettings {...defaultProps} isHost={false} />);
 
-      fireEvent.click(screen.getByRole('radio', { name: /7 Cards/ }));
-
-      expect(handleSettingChange).not.toHaveBeenCalled();
-      expect(screen.getByRole('radio', { name: /5 Cards/ })).toBeChecked();
+      expect(screen.getByRole('radio', { name: /5 Cards/ })).toBeDisabled();
+      expect(screen.getByRole('radio', { name: /7 Cards/ })).toBeDisabled();
+      expect(
+        screen.getByRole('radio', { name: /Winner Chooses/ }),
+      ).toBeDisabled();
     });
 
     test('are told the host configures the settings', () => {
