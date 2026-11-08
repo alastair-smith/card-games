@@ -26,7 +26,7 @@
 
 ## About
 
-Play Cards is a browser-based platform for playing classic card games in real time with friends. Start a game, share the lobby link, and everyone joins from their own device — no sign-up, no install.
+PlayCards.Games is a browser-based multiplayer platform for playing lesser-known card games.
 
 Hosted at **[https://playcards.games](https://playcards.games)**.
 
@@ -57,9 +57,9 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 
 Contributions are welcome! A few guidelines to keep things smooth:
 
-- **Open an issue before a pull request** — This helps avoid wasted effort and ensures the change is likely to be accepted before you invest time in it.
-- **Keep changes small and focused** — One thing per PR makes review faster and reduces the chance of conflicts.
-- **Game rules are intentionally opinionated** — Bug reports and fun/balance suggestions are welcome, but variations on rules are unlikely to be accepted at this time.
+- **Open an issue before a pull request** - This helps avoid wasted effort and ensures the change is likely to be accepted before you invest time in it.
+- **Keep changes small and focused** - One thing per PR makes review faster and reduces the chance of conflicts.
+- **Game rules are intentionally opinionated** - Bug reports and fun/balance suggestions are welcome, but variations on rules are unlikely to be accepted at this time.
 
 If you've spotted a bug or have a suggestion, please [open an issue](https://github.com/alastair-smith/card-games/issues/new/choose).
 
