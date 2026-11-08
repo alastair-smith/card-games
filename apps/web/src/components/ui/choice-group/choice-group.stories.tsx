@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import type { ComponentProps, ReactNode } from 'react';
 import { useState } from 'react';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   Table,
@@ -18,6 +18,7 @@ import {
   ChoiceCardDescription,
   ChoiceCardTitle,
   ChoiceGroup,
+  ChoiceGroupDescription,
 } from '.';
 
 const gameModes = [
@@ -100,6 +101,9 @@ export const Default: Story = {
             onValueChange?.(value);
           }}
         >
+          <ChoiceGroupDescription>
+            How long the game lasts and how scores are halved.
+          </ChoiceGroupDescription>
           {gameModes.map((mode) => (
             <ChoiceCard key={mode.value} value={mode.value}>
               <ChoiceCardTitle>{mode.name}</ChoiceCardTitle>
@@ -159,6 +163,13 @@ export const WithDisabledChoice: Story = {
 // The whole group can be turned off, e.g. for players who are not the host.
 export const Disabled: Story = {
   args: { isDisabled: true },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText('Quickfire'));
+
+    await expect(canvas.getByRole('radio', { name: /Standard/ })).toBeChecked();
+    await expect(args.onValueChange).not.toHaveBeenCalled();
+  },
   render: ({ heading, ...args }) => (
     <SettingsCard heading={heading}>
       <ChoiceGroup {...args} defaultValue='standard'>
@@ -181,7 +192,9 @@ export const Overview: Story = {
       <CardContent>
         <p>
           One choice from a small set of options, each explained on a card that
-          is clickable in full. A card takes whatever content you give it.
+          is clickable in full. A card takes whatever content you give it,
+          except buttons, links and other controls: the card is the radio&apos;s
+          label, and HTML allows no other form control inside a label.
         </p>
         <Table>
           <TableCaption>Variations of the Choice Group component</TableCaption>

@@ -1,11 +1,11 @@
 'use client';
-
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
   ChoiceCard,
   ChoiceCardDescription,
   ChoiceCardTitle,
   ChoiceGroup,
+  ChoiceGroupDescription,
 } from '~/components/ui/choice-group';
 import {
   type Settings,
@@ -112,7 +112,6 @@ function GameSetting<Key extends keyof Settings>({
   return (
     <section className='flex flex-col gap-2'>
       <h3 className='font-semibold'>{setting.title}</h3>
-      <p>{setting.description}</p>
       <ChoiceGroup
         className='grid-cols-2'
         label={setting.title}
@@ -120,6 +119,7 @@ function GameSetting<Key extends keyof Settings>({
         isDisabled={isDisabled}
         onValueChange={handleValueChange}
       >
+        <ChoiceGroupDescription>{setting.description}</ChoiceGroupDescription>
         {setting.options.map((option) => (
           <ChoiceCard
             key={String(option.value)}
