@@ -47,11 +47,15 @@ export function PlayerTag({
         <span className='whitespace-nowrap font-extrabold text-white text-outline-black'>
           {name}
         </span>
+        <MiniCard
+          aria-hidden='true'
+          // Still takes up space, so the tag keeps its size without a count
+          className={cn(cardCount === null && 'invisible')}
+        >
+          {cardCount}
+        </MiniCard>
         {cardCount !== null && (
-          <>
-            <MiniCard aria-hidden='true'>{cardCount}</MiniCard>
-            <span className='sr-only'>, {cardCount} cards</span>
-          </>
+          <span className='sr-only'>, {cardCount} cards</span>
         )}
 
         {children}
