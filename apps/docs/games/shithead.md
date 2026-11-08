@@ -28,7 +28,8 @@ four in a row:
 
 Before the first turn, all players swap at the same time. A player can switch
 any of their hand cards with any of their face-up cards, and can swap back and
-forth as often as they like. Everyone can see each other's face-up cards.
+forth as often as they like. Everyone can see each other's face-up cards, which
+update live as players swap. There's no summary of the swaps that took place.
 
 Each player confirms when they're done, whether or not they swapped anything.
 Once confirmed, they're locked in. The game starts when everyone has confirmed.
