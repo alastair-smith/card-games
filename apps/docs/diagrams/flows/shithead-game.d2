@@ -1,0 +1,38 @@
+direction: down
+
+lobby: "Lobby\nno settings"
+deal: "Deal\n3 face down, 3 face up and 3 in hand to each player,\none card onto the discard pile, and its magic applies"
+swap: "Swap\neveryone swaps hand and face-up cards at the same time,\nthen confirms and is locked in"
+
+turn: "Turn" {
+  source: "Play from the first source with cards:\nhand, then face up, then face down"
+  valid: "Can the cards be played?\n(face-down cards are only known\nonce turned over)" {shape: diamond}
+  play: "Play the cards\none or more of the same rank,\nor one face-down card"
+  pickup: "Pick up the discard pile\nalong with any face-up or\nface-down card that was chosen"
+  draw: "Draw up to 3 cards in hand\nwhile the deck has cards\n(emoji rain when it empties)"
+  out: "Has the player\nrun out of cards?" {shape: diamond}
+  burnt: "Did the play burn the pile?\n(a 10 or four in a row)" {shape: diamond}
+
+  source -> valid
+  valid -> play: yes
+  valid -> pickup: no
+  play -> draw
+  draw -> out
+  out -> burnt: no
+  burnt -> source: "yes, they go again\nand can play any card"
+}
+
+one-left: "Does only one player\nstill have cards?" {shape: diamond}
+finished: "End screen\nfinishing order, congratulate the winner,\nshare results or play another game"
+next-player: "Next player's turn, clockwise\n(any card can be played on an empty pile)"
+
+lobby -> deal: "host starts the game with 2 to 5 players"
+deal -> swap
+swap -> turn.source: "everyone has confirmed;\nthe host goes first"
+
+turn.pickup -> next-player
+turn.burnt -> next-player: no
+turn.out -> one-left: "yes, show their finishing position"
+one-left -> finished: yes
+one-left -> next-player: no
+next-player -> turn.source

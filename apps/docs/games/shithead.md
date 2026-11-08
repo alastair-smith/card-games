@@ -2,6 +2,10 @@
 
 Get rid of all your cards. The game ends when only one player still has cards.
 
+## Game flow
+
+![Shithead game flow: deal, swap cards, then each turn plays from hand, face-up or face-down cards or picks up the discard pile, draws back up, goes again after a burn, and the game ends when only one player still has cards](../diagrams/flows/shithead-game.light.svg)
+
 ## Setup
 
 Shithead is for 2 to 5 players and uses one 52-card deck with no jokers. Each
@@ -57,8 +61,7 @@ After playing, a player draws from the deck until they have 3 cards in hand, so
 playing more cards means drawing more. Once the deck is empty, nobody draws and
 hands can drop below 3 cards.
 
-When the deck empties, an emoji rain plays automatically. The emoji is still to
-be decided.
+When the deck empties, 🫥 emoji rain down automatically.
 
 ### Picking up
 
@@ -134,6 +137,10 @@ replaced by an end screen. It shows the finishing order, including 5th for the
 last player in a 5-player game, and congratulates the winner. It has a button to
 share the results and a button to play another game, which links to the home
 page for now.
+
+## Emoji reactions
+
+Shithead has the same emoji reactions as Yaniv, with 🪄 in place of 🤔.
 
 ## Settings
 
