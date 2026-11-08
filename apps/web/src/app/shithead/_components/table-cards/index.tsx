@@ -49,7 +49,6 @@ export function TableCards({ className, slots }: TableCardsProps) {
             {slot.faceUpCard && (
               <PlayingCard
                 card={slot.faceUpCard}
-                design='simple'
                 border
                 className='absolute top-[0.5em] left-0'
               />
