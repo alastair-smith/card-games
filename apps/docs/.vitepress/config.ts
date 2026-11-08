@@ -65,6 +65,7 @@ export default defineConfig({
         items: [
           { text: 'Lobby', link: '/games/lobby' },
           { text: 'Yaniv', link: '/games/yaniv' },
+          { text: 'Shithead', link: '/games/shithead' },
         ],
       },
     ],
