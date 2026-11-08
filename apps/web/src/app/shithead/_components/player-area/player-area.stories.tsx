@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { buildTableCards } from '~/test-utils/shithead';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
 import type { PlayerColor } from '~/utils/player-color';
-import { PlayerArea } from '.';
+import { type FinishingPosition, PlayerArea } from '.';
 
 const emptyTableCards = buildTableCards().map(() => ({
   faceUpCard: null,
@@ -76,29 +76,62 @@ export const FinishedFourth: Story = {
   args: { cardCount: 0, tableCards: emptyTableCards, finishingPosition: 4 },
 };
 
-const worstCasePlayers = [
-  { name: 'WWWWWWWWWWWW', color: 'red' },
-  { name: 'MMMMMMMMMMMM', color: 'cyan' },
-  { name: 'Christophers', color: 'purple' },
-  { name: 'WWWWWWWWWWWW', color: 'green' },
-  { name: 'MMMMMMMMMMMM', color: 'plum' },
-] as const satisfies { name: string; color: PlayerColor }[];
+type FivePlayer = {
+  name: string;
+  color: PlayerColor;
+  finishingPosition: FinishingPosition;
+};
 
-/** The worst case for overlaps: 5 long names, every card on the table. */
-export const FivePlayersLongestNames: Story = {
-  parameters: { controls: { disable: true } },
-  render: (args) => (
+const longestNamePlayers = [
+  { name: 'WWWWWWWWWWWW', color: 'red', finishingPosition: 1 },
+  { name: 'MMMMMMMMMMMM', color: 'cyan', finishingPosition: 2 },
+  { name: 'Christophers', color: 'purple', finishingPosition: 3 },
+  { name: 'WWWWWWWWWWWW', color: 'green', finishingPosition: 4 },
+  { name: 'MMMMMMMMMMMM', color: 'plum', finishingPosition: 5 },
+] as const satisfies FivePlayer[];
+
+const normalNamePlayers = [
+  { name: 'Al', color: 'red', finishingPosition: 1 },
+  { name: 'Kevin', color: 'cyan', finishingPosition: 2 },
+  { name: 'Paul', color: 'purple', finishingPosition: 3 },
+  { name: 'Viola', color: 'green', finishingPosition: 4 },
+  { name: 'Sarah', color: 'plum', finishingPosition: 5 },
+] as const satisfies FivePlayer[];
+
+const renderFivePlayers =
+  (
+    players: readonly FivePlayer[],
+    { isFinished }: { isFinished: boolean },
+  ): NonNullable<Story['render']> =>
+  (args) => (
     <div className='flex flex-wrap justify-evenly gap-x-4 gap-y-4 p-1.5'>
-      {worstCasePlayers.map((player, playerIndex) => (
+      {players.map((player, playerIndex) => (
         <PlayerArea
           {...args}
           key={`${player.name}-${player.color}`}
           name={player.name as PlayerName}
           color={player.color}
           isUser={playerIndex === 0}
-          isPlayersTurn={playerIndex === 1}
+          isPlayersTurn={!isFinished && playerIndex === 1}
+          finishingPosition={isFinished ? player.finishingPosition : null}
         />
       ))}
     </div>
-  ),
+  );
+
+export const FivePlayers: Story = {
+  parameters: { controls: { disable: true } },
+  render: renderFivePlayers(normalNamePlayers, { isFinished: false }),
+};
+
+/** The worst case for overlaps: 5 long names, every card on the table. */
+export const FivePlayersLongestNames: Story = {
+  parameters: { controls: { disable: true } },
+  render: renderFivePlayers(longestNamePlayers, { isFinished: false }),
+};
+
+export const FivePlayersAllFinished: Story = {
+  parameters: { controls: { disable: true } },
+  args: { cardCount: 0, tableCards: emptyTableCards },
+  render: renderFivePlayers(longestNamePlayers, { isFinished: true }),
 };
