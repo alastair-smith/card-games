@@ -56,6 +56,16 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return cards;
   };
 
+  const drawCardsUpTo = async (code: GameCode, count: number): Promise<T[]> => {
+    const cards: T[] = [];
+    for (let drawn = 0; drawn < count; drawn++) {
+      const card = await drawCard(code);
+      if (!card) break;
+      cards.push(card);
+    }
+    return cards;
+  };
+
   const deckExists = async (code: GameCode): Promise<boolean> => {
     const key = getDeckKey(code);
     const exists = await redis.exists(key);
@@ -67,7 +77,14 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  return { createDeck, drawCard, drawCards, deckExists, getDeckSize };
+  return {
+    createDeck,
+    drawCard,
+    drawCards,
+    drawCardsUpTo,
+    deckExists,
+    getDeckSize,
+  };
 };
 
 export const highCardDeck = createDeckStore<StandardPlayingCard>(
@@ -78,6 +95,11 @@ export const highCardDeck = createDeckStore<StandardPlayingCard>(
 export const yanivDeck = createDeckStore<YanivPlayingCard>(
   'yaniv',
   yanivPlayingCardSchema,
+);
+
+export const shitheadDeck = createDeckStore<StandardPlayingCard>(
+  'shithead',
+  standardPlayingCardSchema,
 );
 
 // Backward-compatible named exports for high-card

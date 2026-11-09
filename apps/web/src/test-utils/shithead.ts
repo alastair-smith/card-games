@@ -1,5 +1,18 @@
-import type { TableCardSlot } from '~/app/shithead/_components/table-cards';
+import type { ShitheadLobby } from '~/server/data/lobby';
 import { Rank, Suit } from '~/types/cards';
+import type { PlayerName, UserId } from '~/types/entities';
+import { type GameCode, GameType } from '~/types/game';
+import {
+  GameStage,
+  type GameState,
+  type TableCardSlot,
+} from '~/types/games/shithead';
+
+type SwappingState = Extract<GameState, { gameStage: GameStage.SWAPPING }>;
+type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
+type FinishedState = Extract<GameState, { gameStage: GameStage.FINISHED }>;
+
+type Player = SwappingState['players'][number];
 
 export function buildTableCards(): TableCardSlot[] {
   return [
@@ -17,3 +30,47 @@ export function buildTableCards(): TableCardSlot[] {
     },
   ];
 }
+
+export const buildPlayer = (overrides: Partial<Player> = {}): Player => ({
+  id: 'user-1' as UserId,
+  name: 'Player 1' as PlayerName,
+  color: 'cyan',
+  hand: [],
+  tableCards: [],
+  isSwapConfirmed: false,
+  ...overrides,
+});
+
+export const buildSwappingState = (
+  overrides: Partial<SwappingState> & Pick<SwappingState, 'players'>,
+): SwappingState => ({
+  gameStage: GameStage.SWAPPING,
+  ...overrides,
+});
+
+export const buildInProgressState = (
+  overrides: Partial<InProgressState> &
+    Pick<InProgressState, 'players' | 'currentPlayerId'>,
+): InProgressState => ({
+  gameStage: GameStage.IN_PROGRESS,
+  finishingOrder: [],
+  ...overrides,
+});
+
+export const buildFinishedState = (
+  overrides: Partial<FinishedState> & Pick<FinishedState, 'players'>,
+): FinishedState => ({
+  gameStage: GameStage.FINISHED,
+  finishingOrder: overrides.players.map((player) => player.id),
+  ...overrides,
+});
+
+export const buildShitheadLobby = (
+  overrides: Partial<ShitheadLobby> & Pick<ShitheadLobby, 'players'>,
+): ShitheadLobby => ({
+  code: 'ABCDEF' as GameCode,
+  type: GameType.SHITHEAD,
+  host: overrides.players[0]?.id ?? ('user-1' as UserId),
+  isGameStarted: false,
+  ...overrides,
+});

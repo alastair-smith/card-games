@@ -13,6 +13,12 @@ import {
 const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
   const getDiscardKey = (code: GameCode) => `discard:${gamePrefix}:${code}`;
 
+  const parseCard = (json: string) => {
+    const card = cardSchema.safeParse(JSON.parse(json));
+    if (!card.success) throw new Error('Invalid card found in discard pile');
+    return card.data;
+  };
+
   const createDiscard = async (code: GameCode) => {
     const key = getDiscardKey(code);
     const pipeline = redis.pipeline();
@@ -89,14 +95,14 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     const restJsons = await redis.lrange(key, 0, -1);
     await redis.del(key);
 
-    const parseCard = (json: string) => {
-      const card = cardSchema.safeParse(JSON.parse(json));
-      if (!card.success) throw new Error('Invalid card found in discard pile');
-      return card.data;
-    };
-
     // lrange returns bottom-to-top; reverse so remaining cards are also top-first
     return [parseCard(topJson), ...[...restJsons].reverse().map(parseCard)];
+  };
+
+  // Returns all cards top-first, leaving the pile in place.
+  const getDiscardCards = async (code: GameCode): Promise<T[]> => {
+    const cardJsons = await redis.lrange(getDiscardKey(code), 0, -1);
+    return [...cardJsons].reverse().map(parseCard);
   };
 
   return {
@@ -107,6 +113,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     discardExists,
     getDiscardSize,
     drainDiscard,
+    getDiscardCards,
   };
 };
 
@@ -118,4 +125,9 @@ export const highCardDiscard = createDiscardStore<StandardPlayingCard>(
 export const yanivDiscard = createDiscardStore<YanivPlayingCard>(
   'yaniv',
   yanivPlayingCardSchema,
+);
+
+export const shitheadDiscard = createDiscardStore<StandardPlayingCard>(
+  'shithead',
+  standardPlayingCardSchema,
 );

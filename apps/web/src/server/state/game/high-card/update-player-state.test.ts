@@ -65,6 +65,23 @@ describe('updatePlayerState', () => {
     expect(mockSetLobby).not.toHaveBeenCalled();
   });
 
+  test('throws when a Shithead game has already started', async () => {
+    mockGetLobby.mockResolvedValue({
+      ...makeLobby(),
+      type: GameType.SHITHEAD,
+      isGameStarted: true,
+    });
+    await expect(
+      updatePlayerState({
+        code: CODE,
+        userId: USER_ID,
+        field: 'isReady',
+        value: true,
+      }),
+    ).rejects.toThrow('game has already started');
+    expect(mockSetLobby).not.toHaveBeenCalled();
+  });
+
   test('throws when the player is not in the lobby', async () => {
     await expect(
       updatePlayerState({

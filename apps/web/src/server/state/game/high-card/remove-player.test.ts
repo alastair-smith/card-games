@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { buildShitheadLobby } from '~/test-utils/shithead';
 import { buildLobbyPlayer, buildYanivLobby } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import type { GameCode } from '~/types/game';
@@ -9,6 +10,7 @@ const mockGetLobby = vi.fn();
 const mockSetLobby = vi.fn();
 const mockDeleteLobby = vi.fn();
 const mockDeleteYanivState = vi.fn();
+const mockDeleteShitheadState = vi.fn();
 const mockRunTransaction = vi.fn();
 const mockEmit = vi.fn();
 
@@ -19,6 +21,9 @@ vi.mock('~/server/data/lobby', () => ({
 }));
 vi.mock('~/server/data/yaniv', () => ({
   deleteYanivState: mockDeleteYanivState,
+}));
+vi.mock('~/server/data/shithead', () => ({
+  deleteShitheadState: mockDeleteShitheadState,
 }));
 vi.mock('~/server/data/redis', () => ({ runTransaction: mockRunTransaction }));
 vi.mock('~/server/events/emitter', () => ({ default: { emit: mockEmit } }));
@@ -124,6 +129,36 @@ describe('removePlayer', () => {
         expect.any(String),
         expect.objectContaining({ players: [] }),
       );
+    });
+  });
+
+  describe('in a Shithead lobby', () => {
+    const buildShitheadLobbyWith = (isGameStarted: boolean) =>
+      buildShitheadLobby({
+        code: CODE,
+        host: HOST,
+        isGameStarted,
+        players: [buildLobbyPlayer({ id: HOST })],
+      });
+
+    test('deletes the Shithead game with the last player', async () => {
+      mockGetLobby.mockResolvedValue(buildShitheadLobbyWith(false));
+
+      await removePlayer({ gameCode: CODE, actor: HOST, target: HOST });
+
+      expect(mockDeleteShitheadState).toHaveBeenCalledWith(
+        { code: CODE },
+        TRANSACTION,
+      );
+      expect(mockDeleteYanivState).not.toHaveBeenCalled();
+    });
+
+    test('refuses to remove a player once the game has started', async () => {
+      mockGetLobby.mockResolvedValue(buildShitheadLobbyWith(true));
+
+      await expect(
+        removePlayer({ gameCode: CODE, actor: HOST, target: HOST }),
+      ).rejects.toThrow('The game has already started.');
     });
   });
 });

@@ -71,6 +71,26 @@ describe('yanivDiscard', () => {
     });
   });
 
+  describe('getDiscardCards', () => {
+    it('returns all cards top-first without removing them', async () => {
+      await yanivDiscard.pushDiscard(code, [
+        aceOfSpades,
+        twoOfHearts,
+        threeOfDiamonds,
+      ]);
+      expect(await yanivDiscard.getDiscardCards(code)).toEqual([
+        threeOfDiamonds,
+        twoOfHearts,
+        aceOfSpades,
+      ]);
+      expect(await yanivDiscard.getDiscardSize(code)).toBe(3);
+    });
+
+    it('returns an empty array when the pile is empty', async () => {
+      expect(await yanivDiscard.getDiscardCards(code)).toEqual([]);
+    });
+  });
+
   describe('getDiscardSize', () => {
     it('reflects accurate count after pushes and pops', async () => {
       expect(await yanivDiscard.getDiscardSize(code)).toBe(0);

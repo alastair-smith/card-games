@@ -25,6 +25,12 @@ export const yanivLobbySchema = z.object({
   isGameStarted: z.boolean(),
 });
 
+export const shitheadLobbySchema = z.object({
+  ...lobbyFields,
+  type: z.literal(GameType.SHITHEAD),
+  isGameStarted: z.boolean(),
+});
+
 export const highCardLobbySchema = z.object({
   ...lobbyFields,
   type: z.literal(GameType.HIGH_CARD),
@@ -33,12 +39,15 @@ export const highCardLobbySchema = z.object({
 // A game brings its own settings, or none at all
 export const lobbySchema = z.discriminatedUnion('type', [
   yanivLobbySchema,
+  shitheadLobbySchema,
   highCardLobbySchema,
 ]);
 
 export type Lobby = z.infer<typeof lobbySchema>;
 
 export type YanivLobby = z.infer<typeof yanivLobbySchema>;
+
+export type ShitheadLobby = z.infer<typeof shitheadLobbySchema>;
 
 export const {
   get: getLobby,

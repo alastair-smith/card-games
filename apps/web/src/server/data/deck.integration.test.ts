@@ -75,6 +75,25 @@ describe('yanivDeck', () => {
     });
   });
 
+  describe('drawCardsUpTo', () => {
+    it('draws the number asked for when the deck has enough', async () => {
+      await yanivDeck.createDeck(code, testCards);
+      const drawn = await yanivDeck.drawCardsUpTo(code, 2);
+      expect(drawn).toEqual([aceOfSpades, twoOfHearts]);
+      expect(await yanivDeck.getDeckSize(code)).toBe(1);
+    });
+
+    it('takes whatever is left when the deck runs out', async () => {
+      await yanivDeck.createDeck(code, [aceOfSpades, twoOfHearts]);
+      const drawn = await yanivDeck.drawCardsUpTo(code, 3);
+      expect(drawn).toEqual([aceOfSpades, twoOfHearts]);
+    });
+
+    it('returns no cards from an empty deck', async () => {
+      expect(await yanivDeck.drawCardsUpTo(code, 3)).toEqual([]);
+    });
+  });
+
   describe('deckExists', () => {
     it('returns true when cards remain', async () => {
       await yanivDeck.createDeck(code, [aceOfSpades]);

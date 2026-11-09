@@ -1,7 +1,8 @@
 import type { ComponentProps } from 'react';
 import { PlayerTag } from '~/components/player-tag';
+import type { TableCardSlot } from '~/types/games/shithead';
 import { cn } from '~/utils/cn';
-import { type TableCardSlot, TableCards } from '../table-cards';
+import { TableCards } from '../table-cards';
 
 const FINISHING_POSITIONS = {
   1: { label: '1st', medal: '🥇' },
