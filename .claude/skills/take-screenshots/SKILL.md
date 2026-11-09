@@ -54,11 +54,13 @@ showing those states and a CSS selector for the elements to compare:
 ./.claude/skills/take-screenshots/scripts/measure-stories.ts \
   --story shithead-player-area--five-players-longest-names \
   --story shithead-player-area--five-players-all-finished \
-  --selector '.rounded.border-2'
+  --selector '.rounded.border-2, [class*="pb-[0.5em]"]'
 ```
 
 At each of the two sizes it prints where the selector's matches sit in the
 first story, then a `DIFFERS` line for each element that sits elsewhere or is
 a different size in a later story, or `No differences`. Elements are compared
-in page order. Comparing screenshots by eye misses small shifts, so measure
-before saying that nothing moves.
+in page order. Only elements the selector matches are checked, so make it
+cover every key element, including the content below or beside whatever
+changes. Comparing screenshots by eye misses small shifts, so measure before
+saying that nothing moves.
