@@ -52,46 +52,8 @@ Fill in `.github/pull_request_template.md`:
 
 ## Screenshots
 
-For visual changes, take screenshots at desktop and mobile sizes, of a page
-on the dev server (port 3000), of a single story or a docs page in Storybook
-(port 6006) or of a page on the docs site (port 5173).
-Start the one you need if it isn't running, with the `dev-servers` skill:
-
-```bash
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-footer --scroll-to-bottom
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --path / --name home-page --full-page
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-scorecard--start --name scorecard
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --story yaniv-hand-size-dialog--dealer --dialog --name hand-size-dialog
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --storybook-docs yaniv-hand--docs --name hand-docs
-./.claude/skills/raise-pr/scripts/take-screenshots.ts --docs /games/lobby --name docs-lobby --theme dark
-```
-
-It saves `<name>-desktop.png` (1280×800) and `<name>-mobile.png` (390×844)
-under `.pr-screenshots/<branch name>/` at the repo root (gitignored), and
-prints their paths. `--name` is lowercase kebab-case, describing what's
-shown.
-
-- **Page:** the visible screen by default. Pass `--scroll-to-bottom` when the
-  change is at the foot of the page, or `--full-page` for the whole page.
-  Both also work on game pages, which scroll inside `main` rather than the
-  window
-- **Story:** just the component, framed by the felt background. The story ID
-  follows `?path=/story/` in Storybook's URL. Prefer a story when the change
-  is to one component, since it needs no game set up
-- **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
-  renders outside the story's own area. The story's `play` function must
-  open it and leave it open
-- **Storybook docs:** `--storybook-docs` takes the ID that follows
-  `?path=/docs/` in Storybook's URL, such as a component's docs or an MDX
-  page, and works like `--path`
-- **Docs:** `--docs` takes a path on the docs site and works like `--path`
-- **Dark mode:** screenshots are light by default; pass `--theme dark` for
-  dark mode. Only the docs site and Storybook's docs pages have a dark theme
-  so far, so the script rejects it elsewhere
-
-Look at each screenshot before listing it for the user, and retake any that
-shows a loading or empty state.
+For visual changes, take screenshots at desktop and mobile sizes with the
+`take-screenshots` skill.
 
 Screenshot every state the change affects. When no story shows one, such as
 another player's step or a message that only appears mid-turn, add a story

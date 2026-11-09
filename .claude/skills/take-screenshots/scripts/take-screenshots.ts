@@ -8,21 +8,21 @@ import {
   getIssueBranch,
   parseArguments,
 } from '../../lib/script-helpers.ts';
+import {
+  getStorybookDocsUrl,
+  getStoryUrl,
+  LAYOUT_SETTLED_SCRIPT,
+  SIZES,
+  waitForStoryToSettle,
+} from './story-page.ts';
 
 const usage =
   'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
-const STORYBOOK_ORIGIN = 'http://localhost:6006';
 const DOCS_ORIGIN = 'http://localhost:5173';
 const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const STORY_ID = /^[a-z0-9-]+--[a-z0-9-]+$/;
 const STORYBOOK_DOCS_ID = /^[a-z0-9-]+--docs$/;
-
-const SIZES = [
-  { label: 'desktop', width: 1280, height: 800, isMobile: false },
-  { label: 'mobile', width: 390, height: 844, isMobile: true },
-] as const;
 
 const {
   path,
@@ -85,17 +85,7 @@ if (isDialog && !story) {
 }
 
 function getUrl(): URL {
-  if (story) {
-    if (!STORY_ID.test(story)) {
-      exitWithError(
-        `--story must be a Storybook story ID such as 'yaniv-scorecard--start', not '${story}'.`,
-      );
-    }
-    const url = new URL('/iframe.html', STORYBOOK_ORIGIN);
-    url.searchParams.set('id', story);
-    url.searchParams.set('viewMode', 'story');
-    return url;
-  }
+  if (story) return getStoryUrl(story);
 
   if (storybookDocs) {
     if (!STORYBOOK_DOCS_ID.test(storybookDocs)) {
@@ -103,10 +93,7 @@ function getUrl(): URL {
         `--storybook-docs must be a Storybook docs ID such as 'introduction--docs', not '${storybookDocs}'.`,
       );
     }
-    const url = new URL('/iframe.html', STORYBOOK_ORIGIN);
-    url.searchParams.set('id', storybookDocs);
-    url.searchParams.set('viewMode', 'docs');
-    return url;
+    return getStorybookDocsUrl(storybookDocs);
   }
 
   const [option, pagePath, origin] = docs
@@ -228,54 +215,8 @@ const STORY_BOUNDS_SCRIPT = `(() => {
 // Matches the decorator's p-4, so the felt background frames the component
 const STORY_PADDING = 16;
 
-// Storybook finishes a story once its play function has run and its CSS
-// animations have ended
-const STORY_FINISHED_SCRIPT = `window.__STORYBOOK_PREVIEW__?.currentRender?.phase === 'finished'`;
-
-// Movement driven from JavaScript, such as a carousel sliding to the tab a
-// play function picked, isn't something Storybook waits for, so wait until
-// nothing moves between two frames. Looping movement, such as a spinner,
-// never settles, so the deadline stops the wait
-const LAYOUT_SETTLE_TIMEOUT_MILLISECONDS = 2_000;
-const LAYOUT_SETTLED_SCRIPT = `new Promise((resolve) => {
-  setTimeout(() => resolve(false), ${LAYOUT_SETTLE_TIMEOUT_MILLISECONDS});
-  const getPositions = () =>
-    [...document.querySelectorAll('#storybook-root *, #storybook-docs *, [role="dialog"] *')]
-      .map((element) => {
-        const rect = element.getBoundingClientRect();
-        return rect.left + ',' + rect.top;
-      })
-      .join('|');
-  let previous = getPositions();
-  const check = () =>
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        const current = getPositions();
-        if (current === previous) resolve(true);
-        else {
-          previous = current;
-          check();
-        }
-      }),
-    );
-  check();
-})`;
-
-async function waitForStoryToSettle(page: Page) {
-  try {
-    await page.waitForFunction(STORY_FINISHED_SCRIPT, undefined, {
-      timeout: 15_000,
-    });
-  } catch {
-    exitWithError(
-      `The story '${story}' didn't finish. Check its ID, which follows ?path=/story/ in Storybook's URL, and that its play function passes.`,
-    );
-  }
-  await page.evaluate(LAYOUT_SETTLED_SCRIPT);
-}
-
-async function captureStory(page: Page, file: string) {
-  await waitForStoryToSettle(page);
+async function captureStory(page: Page, file: string, storyId: string) {
+  await waitForStoryToSettle(page, storyId);
 
   const bounds = boundsSchema.safeParse(
     await page.evaluate(STORY_BOUNDS_SCRIPT),
@@ -302,8 +243,8 @@ const DIALOG_SELECTOR = '[role="dialog"], [role="alertdialog"]';
 
 // A dialog renders in a portal outside the story's root, so crop to the
 // dialog itself, framed by the overlay behind it
-async function captureDialog(page: Page, file: string) {
-  await waitForStoryToSettle(page);
+async function captureDialog(page: Page, file: string, storyId: string) {
+  await waitForStoryToSettle(page, storyId);
   const dialog = page.locator(DIALOG_SELECTOR).first();
   if (!(await dialog.isVisible())) {
     exitWithError(
@@ -348,8 +289,11 @@ async function captureStorybookDocs(page: Page, file: string) {
 }
 
 function capture(page: Page, file: string) {
-  if (isDialog) return captureDialog(page, file);
-  if (story) return captureStory(page, file);
+  if (story) {
+    return isDialog
+      ? captureDialog(page, file, story)
+      : captureStory(page, file, story);
+  }
   if (storybookDocs) return captureStorybookDocs(page, file);
   return capturePage(page, file);
 }

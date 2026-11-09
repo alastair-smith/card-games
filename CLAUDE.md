@@ -267,7 +267,8 @@ elements sit in each), overlap, and content cut off at the worst case: the
 most players, the longest names, every optional element showing, such as
 a Yaniv sticker on every tag, and every message or state the element can show,
 not just one example. Measure sizes in the running page or story rather than
-adding them up from the classes.
+adding them up from the classes, comparing states with the `take-screenshots`
+skill's `measure-stories.ts`.
 
 ### Naming
 
