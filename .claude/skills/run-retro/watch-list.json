@@ -249,7 +249,13 @@
     {
       "date": "2026-11-09",
       "sessions": ["a1f0d41a-f811-48b3-a59b-53bd1f96fd48"],
-      "prs": [444]
+      "prs": [444],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "New `take-screenshots` skill moved out of `raise-pr`; new `measure-stories.ts` script named in the `CLAUDE.md` layout rule",
+        "fixPr": 448
+      }
     }
   ]
 }
