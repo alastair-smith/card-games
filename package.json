@@ -21,7 +21,7 @@
     "test:integration": "turbo run test:integration"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.3",
+    "@biomejs/biome": "^2.6.4",
     "turbo": "^2.11.10"
   },
   "packageManager": "pnpm@12.18.0",
