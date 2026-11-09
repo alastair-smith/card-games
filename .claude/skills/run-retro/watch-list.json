@@ -1,83 +1,6 @@
 {
   "patterns": [
     {
-      "id": 7,
-      "pattern": "Existing `CLAUDE.md` rule not followed: a state left unchecked in a layout change, e.g. the empty hand collapsing before the first deal",
-      "sightings": [
-        {
-          "date": "2026-11-01",
-          "session": "62ab084d-4021-43cb-9b4e-f29cf898ce55",
-          "pr": 362
-        },
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 1
-    },
-    {
-      "id": 12,
-      "pattern": "A new page built to the letter of the issue but thinner than the sites around it, e.g. a Storybook Introduction of three bare links, before it took nav-styled links, its purpose and guides to writing stories",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
-          "pr": 400
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 13,
-      "pattern": "A PR that changes a tool with visible output, such as the screenshot script, without an example of that output in its description",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
-          "pr": 402
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 14,
-      "pattern": "Existing `raise-pr` rule not followed: a screenshot left out of a PR as impossible to take, without suggesting an issue to make it possible",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
-          "pr": 400
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 15,
-      "pattern": "Existing `run-retro` step 4 not followed: proposing a new check rather than extending the one the repo already runs, e.g. a new CI path filter beside the `changes` job",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
-          "pr": 405
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 16,
-      "pattern": "Existing `run-retro` step 4 not followed: proposing a script for something an allowed tool already does, e.g. curl-free URL checks for docs sites web fetch is already allowed to read",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "ccb4c7f3-a1e1-4575-b60f-6422de8669fe",
-          "pr": 405
-        }
-      ],
-      "retrosWithout": 5
-    },
-    {
       "id": 17,
       "pattern": "Existing `manage-branch` rule not followed: resuming an existing issue branch with `git checkout` and `git merge main` instead of `git switch` and `update-branch.ts`, as the skill wasn't loaded when not creating a branch",
       "sightings": [
@@ -87,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 18,
@@ -99,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 19,
@@ -111,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 20,
@@ -123,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 21,
@@ -135,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 22,
@@ -147,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 23,
@@ -159,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 24,
@@ -171,7 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 25,
@@ -183,7 +106,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 26,
@@ -195,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 27,
@@ -205,6 +128,18 @@
           "date": "2026-11-08",
           "session": "eddc6ca1-7245-4e0f-acff-ec317431341a",
           "pr": 441
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 28,
+      "pattern": "A new component given no stories of its own when it's only shown through a parent's stories, e.g. `TableCards` covered only by `PlayerArea`'s until the user asked",
+      "sightings": [
+        {
+          "date": "2026-11-09",
+          "session": "a1f0d41a-f811-48b3-a59b-53bd1f96fd48",
+          "pr": 444
         }
       ],
       "retrosWithout": 0
@@ -310,6 +245,11 @@
         "retroOfRetroPoints": 0,
         "changesMade": "No changes; 2 patterns added to the watch list"
       }
+    },
+    {
+      "date": "2026-11-09",
+      "sessions": ["a1f0d41a-f811-48b3-a59b-53bd1f96fd48"],
+      "prs": [444]
     }
   ]
 }
