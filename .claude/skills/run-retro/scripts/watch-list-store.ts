@@ -13,7 +13,7 @@ export const WATCH_LIST_PATH = fileURLToPath(
 );
 
 /** Retros without a pattern after which a retro proposes dropping it */
-export const RETROS_BEFORE_DROPPING = 5;
+export const RETROS_BEFORE_DROPPING = 10;
 
 export const sessionIdSchema = z
   .string()
