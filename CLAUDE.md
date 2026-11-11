@@ -91,9 +91,9 @@ Run the full suite only when needed:
 pnpm test
 ```
 
-Integration tests run the `*.integration.test.ts` files against a real Redis,
-which they start first with `docker compose up -d`. Run them after changing
-a store in `~/server/data/`:
+Integration tests run the deck and discard stores (`~/server/data/deck.ts` and
+`~/server/data/discard.ts`) against a real Redis, which they start first with
+`docker compose up -d`. Run them after changing either store:
 
 ```bash
 pnpm test:integration
