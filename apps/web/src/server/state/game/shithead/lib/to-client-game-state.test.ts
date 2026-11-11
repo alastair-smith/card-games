@@ -58,14 +58,14 @@ const finishedState = buildFinishedState({
       ...USER_1_DEALT,
       hand: [],
       isSwapConfirmed: true,
+      finishingPosition: 1,
       tableCards: USER_1_DEALT.tableCards.map(() => ({
         faceUpCard: null,
         faceDownCard: null,
       })),
     },
-    { ...USER_2_DEALT, isSwapConfirmed: true },
+    { ...USER_2_DEALT, isSwapConfirmed: true, finishingPosition: 2 },
   ],
-  finishingOrder: [USER_1, USER_2],
 });
 
 // Hearts, as the deal above only reaches the diamonds
@@ -182,6 +182,15 @@ describe('toClientGameState', () => {
         currentPlayerId: USER_2,
       });
     });
+
+    test('gives players still in the game no finishing position', () => {
+      const result = toClientGameState(inProgressState, USER_1, TABLE);
+
+      expect(result.players.map((player) => player.finishingPosition)).toEqual([
+        null,
+        null,
+      ]);
+    });
   });
 
   describe('finished', () => {
@@ -196,10 +205,12 @@ describe('toClientGameState', () => {
       );
     });
 
-    test('sends the finishing order', () => {
-      const result = toClientGameState(finishedState, USER_1, TABLE);
+    test('tells everyone where each player finished', () => {
+      const result = toClientGameState(finishedState, USER_2, TABLE);
 
-      expect(result).toMatchObject({ finishingOrder: [USER_1, USER_2] });
+      expect(result.players.map((player) => player.finishingPosition)).toEqual([
+        1, 2,
+      ]);
     });
   });
 });

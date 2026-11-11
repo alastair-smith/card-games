@@ -12,7 +12,7 @@ import { getVisibleDiscardCards } from './get-visible-discard-cards';
 
 export type ClientPlayer = Pick<
   Player,
-  'id' | 'name' | 'color' | 'isSwapConfirmed'
+  'id' | 'name' | 'color' | 'isSwapConfirmed' | 'finishingPosition'
 > & {
   cardCount: number;
   tableCards: TableCardSlot[];
@@ -27,8 +27,8 @@ export type ClientGameState = {
   deckSize: number;
 } & (
   | { gameStage: GameStage.SWAPPING }
-  | Pick<InProgressState, 'gameStage' | 'currentPlayerId' | 'finishingOrder'>
-  | Pick<FinishedState, 'gameStage' | 'finishingOrder'>
+  | Pick<InProgressState, 'gameStage' | 'currentPlayerId'>
+  | Pick<FinishedState, 'gameStage'>
 );
 
 // Each field is listed rather than spread, so a new hidden field isn't sent by default
@@ -37,6 +37,7 @@ const toClientPlayer = (player: Player, userId: UserId): ClientPlayer => ({
   name: player.name,
   color: player.color,
   isSwapConfirmed: player.isSwapConfirmed,
+  finishingPosition: player.finishingPosition,
   cardCount: player.hand.length,
   tableCards: player.tableCards.map(({ faceUpCard, faceDownCard }) => ({
     faceUpCard,
@@ -77,13 +78,8 @@ export const toClientGameState = (
         ...clientView,
         gameStage: rawState.gameStage,
         currentPlayerId: rawState.currentPlayerId,
-        finishingOrder: rawState.finishingOrder,
       };
     case GameStage.FINISHED:
-      return {
-        ...clientView,
-        gameStage: rawState.gameStage,
-        finishingOrder: rawState.finishingOrder,
-      };
+      return { ...clientView, gameStage: rawState.gameStage };
   }
 };

@@ -35,6 +35,7 @@ export const buildPlayer = (overrides: Partial<Player> = {}): Player => ({
   hand: [],
   tableCards: [],
   isSwapConfirmed: false,
+  finishingPosition: null,
   ...overrides,
 });
 
@@ -50,7 +51,6 @@ export const buildInProgressState = (
     Pick<InProgressState, 'players' | 'currentPlayerId'>,
 ): InProgressState => ({
   gameStage: GameStage.IN_PROGRESS,
-  finishingOrder: [],
   ...overrides,
 });
 
@@ -58,7 +58,6 @@ export const buildFinishedState = (
   overrides: Partial<FinishedState> & Pick<FinishedState, 'players'>,
 ): FinishedState => ({
   gameStage: GameStage.FINISHED,
-  finishingOrder: overrides.players.map((player) => player.id),
   ...overrides,
 });
 
