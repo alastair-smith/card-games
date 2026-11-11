@@ -65,6 +65,7 @@
       "Bash(pnpm format:check *)",
       "Bash(pnpm format:fix *)",
       "Bash(pnpm test *)",
+      "Bash(pnpm test:integration)",
       "Bash(pnpm typecheck *)",
       "Bash(pnpm view *)",
       "Bash(pnpm why *)",

@@ -91,6 +91,14 @@ Run the full suite only when needed:
 pnpm test
 ```
 
+Integration tests run the `*.integration.test.ts` files against a real Redis,
+which they start first with `docker compose up -d`. Run them after changing
+a store in `~/server/data/`:
+
+```bash
+pnpm test:integration
+```
+
 Story tests run each story's `play` function in a browser. Run one story file
 the same way:
 
