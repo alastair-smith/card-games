@@ -19,25 +19,23 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return card.data;
   };
 
+  // Clears any old discard pile that might exist
   const createDiscard = async (code: GameCode) => {
-    const key = getDiscardKey(code);
-    const pipeline = redis.pipeline();
-
-    // Clear any old discard pile that might exist
-    pipeline.del(key);
-
-    // Set expiry for the discard key
-    pipeline.expire(key, REDIS_EXPIRE_TIME_SECONDS);
-
-    await pipeline.exec();
+    await redis.del(getDiscardKey(code));
   };
 
+  // Sets the expiry on every push, as the key is recreated after each drain
   const pushDiscard = async (code: GameCode, card: T | T[]) => {
     const key = getDiscardKey(code);
     const cards = Array.isArray(card) ? card : [card];
-    for (const singleCard of cards) {
-      await redis.rpush(key, JSON.stringify(singleCard));
-    }
+    // Redis rejects an RPUSH with no values
+    if (cards.length === 0) return;
+
+    await redis
+      .pipeline()
+      .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
+      .expire(key, REDIS_EXPIRE_TIME_SECONDS)
+      .exec();
   };
 
   const popDiscard = async (code: GameCode): Promise<T | null> => {

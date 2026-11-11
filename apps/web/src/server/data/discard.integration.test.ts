@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { yanivDiscard } from '~/server/data/discard';
-import { redis } from '~/server/data/redis';
+import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
 import { generateLobbyCode } from '~/server/state/lib/generate-lobby-code';
 import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
@@ -58,6 +58,23 @@ describe('yanivDiscard', () => {
       expect(first).toEqual(threeOfDiamonds);
       const second = await yanivDiscard.popDiscard(code);
       expect(second).toEqual(twoOfHearts);
+    });
+
+    it('sets the pile to expire when a card is pushed after it is created', async () => {
+      await yanivDiscard.createDiscard(code);
+      await yanivDiscard.pushDiscard(code, aceOfSpades);
+      const ttl = await redis.ttl(discardKey(code));
+      expect(ttl).toBeGreaterThan(0);
+      expect(ttl).toBeLessThanOrEqual(REDIS_EXPIRE_TIME_SECONDS);
+    });
+
+    it('sets the pile to expire again when a card is pushed after it is drained', async () => {
+      await yanivDiscard.pushDiscard(code, [aceOfSpades, twoOfHearts]);
+      await yanivDiscard.drainDiscard(code);
+      await yanivDiscard.pushDiscard(code, threeOfDiamonds);
+      const ttl = await redis.ttl(discardKey(code));
+      expect(ttl).toBeGreaterThan(0);
+      expect(ttl).toBeLessThanOrEqual(REDIS_EXPIRE_TIME_SECONDS);
     });
   });
 
