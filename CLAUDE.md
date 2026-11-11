@@ -5,6 +5,10 @@
 Next.js (App Router), tRPC, TypeScript, Redis (game state), Tailwind.
 Multiplayer card game — server actions transmit state to clients.
 
+Production Redis is Render Key Value, which runs Valkey 8, or Redis 6.2.14 on
+instances created before 12 February 2025, so Redis commands must work on
+Redis 6.2.
+
 ## Commands
 
 ### Running commands
@@ -370,7 +374,10 @@ need, such as an object's exact keys.
 
 ### Types and schemas
 
-New domain types should be paired with a Zod schema in the same file:
+Pair a Zod schema with each new type for data the server parses: what the
+data stores hold, tRPC route inputs, and event inputs and outputs. Client
+views built on the server, such as `toClientGameState`, don't need one. Put
+the schema in the same file as the type:
 
 ```ts
 export const fooSchema = z.object({ ... });

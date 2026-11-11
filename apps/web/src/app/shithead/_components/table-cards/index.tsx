@@ -2,14 +2,9 @@ import {
   PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
-import type { StandardPlayingCard } from '~/types/cards';
+import type { TableCardSlot } from '~/types/games/shithead';
 import { cardAriaLabel } from '~/utils/cards';
 import { cn } from '~/utils/cn';
-
-export type TableCardSlot = {
-  faceUpCard: StandardPlayingCard | null;
-  hasFaceDownCard: boolean;
-};
 
 type TableCardsProps = {
   className?: string | undefined;

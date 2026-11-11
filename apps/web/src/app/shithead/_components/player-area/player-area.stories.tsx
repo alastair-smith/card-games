@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { buildTableCards } from '~/test-utils/shithead';
 import type { EmojiReactionId, PlayerName } from '~/types/entities';
+import type { FinishingPosition } from '~/types/games/shithead';
 import type { PlayerColor } from '~/utils/player-color';
-import { type FinishingPosition, PlayerArea } from '.';
+import { PlayerArea } from '.';
 
 const emptyTableCards = buildTableCards().map(() => ({
   faceUpCard: null,

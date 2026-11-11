@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { buildShitheadLobby } from '~/test-utils/shithead';
+import { buildLobbyPlayer } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 
@@ -54,6 +56,25 @@ describe('updatePlayerState', () => {
 
   test('throws when the game has already started', async () => {
     mockGetLobby.mockResolvedValue({ ...makeLobby(), isGameStarted: true });
+    await expect(
+      updatePlayerState({
+        code: CODE,
+        userId: USER_ID,
+        field: 'isReady',
+        value: true,
+      }),
+    ).rejects.toThrow('game has already started');
+    expect(mockSetLobby).not.toHaveBeenCalled();
+  });
+
+  test('throws when a Shithead game has already started', async () => {
+    mockGetLobby.mockResolvedValue(
+      buildShitheadLobby({
+        code: CODE,
+        isGameStarted: true,
+        players: [buildLobbyPlayer({ id: USER_ID })],
+      }),
+    );
     await expect(
       updatePlayerState({
         code: CODE,

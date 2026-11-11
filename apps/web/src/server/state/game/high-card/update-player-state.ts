@@ -20,7 +20,7 @@ export const updatePlayerState = async ({
       throw new Error('lobby not found');
     }
 
-    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+    if (lobby.type !== GameType.HIGH_CARD && lobby.isGameStarted) {
       throw new Error('game has already started');
     }
 

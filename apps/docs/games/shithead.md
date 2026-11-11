@@ -106,6 +106,21 @@ The player who burnt the pile draws back up to 3 cards if the deck has any left,
 then plays again and can play any card, drawing again afterwards. If that player
 is now out of the game, the next player can play any card instead.
 
+## Showing the discard pile
+
+The discard pile shows enough cards for players to see what to play on it.
+Usually that's just the top card. It shows more when:
+
+- **5s are on top:** every 5 on top shows, along with the first card under
+  them. If the pile is only 5s, they all show
+- **A run of the same rank is on top:** every card in the run shows, including
+  any 5s between them
+
+These combine. With a Jack, a 5, a Jack, a 5, a Jack, a 5 and a 5 played in
+that order, all seven cards show. A 5 under the cards that set what to beat
+doesn't show: with an 8, a 5 and a King played in that order, only the King
+shows.
+
 ## Playing out your cards
 
 A player plays from one source at a time, in this order, and can't mix sources

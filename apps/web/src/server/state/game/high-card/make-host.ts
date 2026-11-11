@@ -27,7 +27,7 @@ export async function makeHost({
       });
     }
 
-    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+    if (lobby.type !== GameType.HIGH_CARD && lobby.isGameStarted) {
       logger.warn(`Lobby ${gameCode} has already started.`);
       throw new TRPCError({
         code: 'CONFLICT',

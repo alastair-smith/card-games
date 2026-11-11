@@ -29,31 +29,31 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await pipeline.exec();
   };
 
-  const drawCard = async (code: GameCode): Promise<T | null> => {
-    const key = getDeckKey(code);
-    const cardJson = await redis.lpop(key);
-
-    if (!cardJson) {
-      return null;
-    }
-
-    const card = cardSchema.safeParse(JSON.parse(cardJson));
-
-    if (!card.success) {
-      throw new Error('Invalid card found in deck');
-    }
-
+  const parseCard = (json: string) => {
+    const card = cardSchema.safeParse(JSON.parse(json));
+    if (!card.success) throw new Error('Invalid card found in deck');
     return card.data;
   };
 
-  const drawCards = async (code: GameCode, count: number): Promise<T[]> => {
-    const cards: T[] = [];
-    for (let i = 0; i < count; i++) {
-      const card = await drawCard(code);
-      if (!card) throw new Error('Deck ran out of cards');
-      cards.push(card);
+  const drawCard = async (code: GameCode): Promise<T | null> => {
+    const cardJson = await redis.lpop(getDeckKey(code));
+    return cardJson ? parseCard(cardJson) : null;
+  };
+
+  // Without errorOnNoCards, takes whatever is left once the deck runs out
+  const drawCards = async (
+    code: GameCode,
+    count: number,
+    { errorOnNoCards }: { errorOnNoCards: boolean } = { errorOnNoCards: true },
+  ): Promise<T[]> => {
+    // Redis rejects a negative count
+    if (count <= 0) return [];
+
+    const cardJsons = (await redis.lpop(getDeckKey(code), count)) ?? [];
+    if (errorOnNoCards && cardJsons.length < count) {
+      throw new Error('Deck ran out of cards');
     }
-    return cards;
+    return cardJsons.map(parseCard);
   };
 
   const deckExists = async (code: GameCode): Promise<boolean> => {
@@ -78,6 +78,11 @@ export const highCardDeck = createDeckStore<StandardPlayingCard>(
 export const yanivDeck = createDeckStore<YanivPlayingCard>(
   'yaniv',
   yanivPlayingCardSchema,
+);
+
+export const shitheadDeck = createDeckStore<StandardPlayingCard>(
+  'shithead',
+  standardPlayingCardSchema,
 );
 
 // Backward-compatible named exports for high-card

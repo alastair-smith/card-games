@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { deleteLobby, getLobby, setLobby } from '~/server/data/lobby';
 import { runTransaction } from '~/server/data/redis';
+import { deleteShitheadState } from '~/server/data/shithead';
 import { deleteYanivState } from '~/server/data/yaniv';
 import emitter from '~/server/events/emitter';
 import { getLobbyChannel } from '~/server/events/lobby';
@@ -29,7 +30,7 @@ export async function removePlayer({
       });
     }
 
-    if (lobby.type === GameType.YANIV && lobby.isGameStarted) {
+    if (lobby.type !== GameType.HIGH_CARD && lobby.isGameStarted) {
       logger.warn(`Lobby ${gameCode} has already started.`);
       throw new TRPCError({
         code: 'CONFLICT',
@@ -82,6 +83,9 @@ export async function removePlayer({
         await deleteLobby({ code: gameCode }, transaction);
         if (lobby.type === GameType.YANIV) {
           await deleteYanivState({ code: gameCode }, transaction);
+        }
+        if (lobby.type === GameType.SHITHEAD) {
+          await deleteShitheadState({ code: gameCode }, transaction);
         }
       });
     }
