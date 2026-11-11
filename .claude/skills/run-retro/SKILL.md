@@ -171,7 +171,7 @@ memory, the watch list, an existing rule, or dropped.
 
 Update the watch list in the retro's PR. Add each pattern being watched, with
 the PR it happened in, and remove any that got a fix or that the user agrees
-to drop. `show-watch-list.ts` marks those that have gone 5 retros without
+to drop. `show-watch-list.ts` marks those that have gone 10 retros without
 recurring:
 
 ```bash

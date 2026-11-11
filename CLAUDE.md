@@ -168,7 +168,8 @@ All work that changes files happens on a branch for an issue. Before starting:
    that covers the work, and file one with the `manage-issue` skill if there
    isn't one. This applies on another issue's branch too: work outside that
    issue gets its own issue and branch, unless the current PR needs it to
-   pass CI
+   pass CI, or the PR's own change is what makes it needed, such as a
+   CLAUDE.md rule the change makes unclear or out of date
 2. Create a branch for it with the `manage-branch` skill — unless the issue
    already has an open PR, in which case work on that PR's branch
 3. Before changing anything, refine the issue, unless it was filed in this
