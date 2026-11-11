@@ -145,18 +145,6 @@
       "retrosWithout": 1
     },
     {
-      "id": 29,
-      "pattern": "A second function added beside an existing one when an option on the existing function would do, e.g. `drawCardsUpTo` beside `drawCards`, whose name didn't say whether it draws up to a hand size or up to a count",
-      "sightings": [
-        {
-          "date": "2026-11-11",
-          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
-          "pr": 449
-        }
-      ],
-      "retrosWithout": 0
-    },
-    {
       "id": 30,
       "pattern": "Existing `CLAUDE.md` rule \"only state how the app behaves once you've checked it\" not followed: writing that the integration tests cover \"a store in `~/server/data/`\" when only the deck and discard stores have them",
       "sightings": [
@@ -169,8 +157,20 @@
       "retrosWithout": 0
     },
     {
-      "id": 31,
-      "pattern": "A recursive rewrite proposed that recurses before checking the current item, so it walks the whole list instead of stopping at the first item that ends the result, e.g. the first sketch of `getVisibleDiscardCards`",
+      "id": 32,
+      "pattern": "Existing `run-retro` step 4 \"find what actually went wrong\" not followed: drafting a rule around where the work came from (a PR's review) rather than why it belonged in the PR (the PR's own change made it necessary)",
+      "sightings": [
+        {
+          "date": "2026-11-11",
+          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
+          "pr": 468
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 33,
+      "pattern": "Code that doesn't read the way the rule is applied by hand, so it's harder to follow than it needs to be, e.g. `getVisibleDiscardCards` should look at the top cards first and only read further down the pile when they call for it",
       "sightings": [
         {
           "date": "2026-11-11",
@@ -181,13 +181,13 @@
       "retrosWithout": 0
     },
     {
-      "id": 32,
-      "pattern": "Existing `run-retro` step 4 \"find what actually went wrong\" not followed: drafting a rule around where the work came from (a PR's review) rather than why it belonged in the PR (the PR's own change made it necessary)",
+      "id": 34,
+      "pattern": "A new function added where extending an existing one would do, and named outside the domain's terms, e.g. `drawCardsUpTo` beside `drawCards`, which could mean drawing up to a hand size or up to a count, when an option on `drawCards` kept one term for drawing (a glossary, #356, would give the terms)",
       "sightings": [
         {
           "date": "2026-11-11",
           "session": "c6151018-8d39-430f-b2af-835aca47d71c",
-          "pr": 468
+          "pr": 449
         }
       ],
       "retrosWithout": 0
