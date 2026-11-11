@@ -19,7 +19,7 @@
     "typescript": "^7.0.2",
     "vitepress": "^1.6.4",
     "vue": "^3.5.44",
-    "wrangler": "^4.155.0"
+    "wrangler": "^4.157.0"
   },
   "devEngines": {
     "packageManager": {
