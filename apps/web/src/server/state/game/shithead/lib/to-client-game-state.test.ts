@@ -114,19 +114,10 @@ describe('toClientGameState', () => {
       expect(result.visibleDiscardCards).toEqual(DISCARD_PILE.slice(0, 2));
     });
 
-    test('says the deck has cards left while it has any', () => {
+    test('tells players how many cards are left in the deck', () => {
       const result = toClientGameState(state, USER_1, TABLE);
 
-      expect(result.isDeckEmpty).toBe(false);
-    });
-
-    test('says the deck has run out once it is empty', () => {
-      const result = toClientGameState(state, USER_1, {
-        ...TABLE,
-        deckSize: 0,
-      });
-
-      expect(result.isDeckEmpty).toBe(true);
+      expect(result.deckSize).toBe(31);
     });
 
     test('rejects someone who is not in the game', () => {
