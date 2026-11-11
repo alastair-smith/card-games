@@ -38,6 +38,11 @@ const playerSchema = z.object({
   finishingPosition: finishingPositionSchema.nullable(),
 });
 
+// Once the game is over, everyone has a place, including the last player out
+const finishedPlayerSchema = playerSchema.extend({
+  finishingPosition: finishingPositionSchema,
+});
+
 export const gameStateSchema = z.discriminatedUnion('gameStage', [
   z.object({
     gameStage: z.literal(GameStage.LOBBY),
@@ -53,7 +58,7 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
   }),
   z.object({
     gameStage: z.literal(GameStage.FINISHED),
-    players: z.array(playerSchema),
+    players: z.array(finishedPlayerSchema),
   }),
 ]);
 
@@ -74,3 +79,5 @@ export type FinishedState = Extract<
 export type ActiveGameState = SwappingState | InProgressState | FinishedState;
 
 export type Player = z.infer<typeof playerSchema>;
+
+export type FinishedPlayer = z.infer<typeof finishedPlayerSchema>;

@@ -2,9 +2,8 @@ import type { StandardPlayingCard } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import {
   type ActiveGameState,
-  type FinishedState,
+  type FinishedPlayer,
   GameStage,
-  type InProgressState,
   type Player,
   type TableCardSlot,
 } from '~/types/games/shithead';
@@ -19,16 +18,22 @@ export type ClientPlayer = Pick<
   isUser: boolean;
 };
 
+export type ClientFinishedPlayer = ClientPlayer &
+  Pick<FinishedPlayer, 'finishingPosition'>;
+
 export type ClientGameState = {
   hand: StandardPlayingCard[];
-  players: ClientPlayer[];
   // Top-first
   visibleDiscardCards: StandardPlayingCard[];
   deckSize: number;
 } & (
-  | { gameStage: GameStage.SWAPPING }
-  | Pick<InProgressState, 'gameStage' | 'currentPlayerId'>
-  | Pick<FinishedState, 'gameStage'>
+  | { gameStage: GameStage.SWAPPING; players: ClientPlayer[] }
+  | {
+      gameStage: GameStage.IN_PROGRESS;
+      currentPlayerId: UserId;
+      players: ClientPlayer[];
+    }
+  | { gameStage: GameStage.FINISHED; players: ClientFinishedPlayer[] }
 );
 
 // Each field is listed rather than spread, so a new hidden field isn't sent by default
@@ -65,21 +70,37 @@ export const toClientGameState = (
 
   const clientView = {
     hand: requestingPlayer.hand,
-    players: rawState.players.map((player) => toClientPlayer(player, userId)),
     visibleDiscardCards: getVisibleDiscardCards(discardCards),
     deckSize,
   };
 
   switch (rawState.gameStage) {
     case GameStage.SWAPPING:
-      return { ...clientView, gameStage: rawState.gameStage };
+      return {
+        ...clientView,
+        gameStage: rawState.gameStage,
+        players: rawState.players.map((player) =>
+          toClientPlayer(player, userId),
+        ),
+      };
     case GameStage.IN_PROGRESS:
       return {
         ...clientView,
         gameStage: rawState.gameStage,
         currentPlayerId: rawState.currentPlayerId,
+        players: rawState.players.map((player) =>
+          toClientPlayer(player, userId),
+        ),
       };
     case GameStage.FINISHED:
-      return { ...clientView, gameStage: rawState.gameStage };
+      return {
+        ...clientView,
+        gameStage: rawState.gameStage,
+        players: rawState.players.map((player) => ({
+          ...toClientPlayer(player, userId),
+          // Repeated so the type keeps the position a finished player always has
+          finishingPosition: player.finishingPosition,
+        })),
+      };
   }
 };
