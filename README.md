@@ -52,7 +52,6 @@ Built with the [T3 Stack](https://create.t3.gg/), extended for real-time multipl
 | Testing    | [Vitest](https://vitest.dev/) (unit) · [Playwright](https://playwright.dev/) (E2E) |
 | Linting    | [Biome](https://biomejs.dev/)                                                      |
 
-
 ## Contributing
 
 Contributions are welcome! A few guidelines to keep things smooth:
