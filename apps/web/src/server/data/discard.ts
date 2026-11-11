@@ -1,5 +1,9 @@
 import type { ZodType } from 'zod';
-import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
+import {
+  REDIS_EXPIRE_TIME_SECONDS,
+  redis,
+  runTransaction,
+} from '~/server/data/redis';
 import {
   type StandardPlayingCard,
   standardPlayingCardSchema,
@@ -30,12 +34,12 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     // Redis rejects an RPUSH with no values
     if (cards.length === 0) return;
 
-    await redis
-      .pipeline()
-      .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
-      // On every push, as a drain deletes the key
-      .expire(key, REDIS_EXPIRE_TIME_SECONDS)
-      .exec();
+    await runTransaction(async (transaction) => {
+      transaction
+        .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
+        // On every push, as a drain deletes the key
+        .expire(key, REDIS_EXPIRE_TIME_SECONDS);
+    });
   };
 
   const popDiscard = async (code: GameCode): Promise<T | null> => {

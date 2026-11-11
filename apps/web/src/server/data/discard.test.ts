@@ -3,16 +3,15 @@ import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
 
-const mockPipeline = {
+const mockTransaction = {
   rpush: vi.fn(),
   expire: vi.fn(),
-  exec: vi.fn(),
 };
+const mockRunTransaction = vi.fn();
 
 vi.mock('~/server/data/redis', () => ({
-  redis: {
-    pipeline: vi.fn(() => mockPipeline),
-  },
+  redis: {},
+  runTransaction: mockRunTransaction,
   REDIS_EXPIRE_TIME_SECONDS: 86400,
 }));
 
@@ -25,15 +24,19 @@ const CARD_2: YanivPlayingCard = { suit: Suit.SPADES, rank: Rank.SEVEN };
 describe('yanivDiscard.pushDiscard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPipeline.rpush.mockReturnValue(mockPipeline);
-    mockPipeline.expire.mockReturnValue(mockPipeline);
-    mockPipeline.exec.mockResolvedValue([]);
+    mockTransaction.rpush.mockReturnValue(mockTransaction);
+    mockTransaction.expire.mockReturnValue(mockTransaction);
+    mockRunTransaction.mockImplementation(
+      async (
+        queueWrites: (transaction: typeof mockTransaction) => Promise<void>,
+      ) => queueWrites(mockTransaction),
+    );
   });
 
   test('pushes a single card to the discard pile', async () => {
     await yanivDiscard.pushDiscard(CODE, CARD_1);
-    expect(mockPipeline.rpush).toHaveBeenCalledOnce();
-    expect(mockPipeline.rpush).toHaveBeenCalledWith(
+    expect(mockTransaction.rpush).toHaveBeenCalledOnce();
+    expect(mockTransaction.rpush).toHaveBeenCalledWith(
       'discard:yaniv:ABCDEF',
       JSON.stringify(CARD_1),
     );
@@ -41,26 +44,35 @@ describe('yanivDiscard.pushDiscard', () => {
 
   test('pushes each card in an array to the discard pile in order', async () => {
     await yanivDiscard.pushDiscard(CODE, [CARD_1, CARD_2]);
-    expect(mockPipeline.rpush).toHaveBeenCalledOnce();
-    expect(mockPipeline.rpush).toHaveBeenCalledWith(
+    expect(mockTransaction.rpush).toHaveBeenCalledOnce();
+    expect(mockTransaction.rpush).toHaveBeenCalledWith(
       'discard:yaniv:ABCDEF',
       JSON.stringify(CARD_1),
       JSON.stringify(CARD_2),
     );
   });
 
-  test('sets the discard pile to expire after pushing', async () => {
+  test('sets the discard pile to expire in the same transaction as the push', async () => {
     await yanivDiscard.pushDiscard(CODE, CARD_1);
-    expect(mockPipeline.expire).toHaveBeenCalledWith(
+    expect(mockRunTransaction).toHaveBeenCalledOnce();
+    expect(mockTransaction.expire).toHaveBeenCalledWith(
       'discard:yaniv:ABCDEF',
       86400,
     );
-    expect(mockPipeline.rpush).toHaveBeenCalledBefore(mockPipeline.expire);
-    expect(mockPipeline.exec).toHaveBeenCalledOnce();
+    expect(mockTransaction.rpush).toHaveBeenCalledBefore(
+      mockTransaction.expire,
+    );
+  });
+
+  test('fails when the push fails', async () => {
+    mockRunTransaction.mockRejectedValue(new Error('Transaction failed'));
+    await expect(yanivDiscard.pushDiscard(CODE, CARD_1)).rejects.toThrow(
+      'Transaction failed',
+    );
   });
 
   test('does nothing when there are no cards to push', async () => {
     await yanivDiscard.pushDiscard(CODE, []);
-    expect(mockPipeline.exec).not.toHaveBeenCalled();
+    expect(mockRunTransaction).not.toHaveBeenCalled();
   });
 });

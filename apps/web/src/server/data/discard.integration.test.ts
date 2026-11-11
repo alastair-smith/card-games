@@ -68,6 +68,13 @@ describe('yanivDiscard', () => {
       expect(ttl).toBeLessThanOrEqual(REDIS_EXPIRE_TIME_SECONDS);
     });
 
+    it('resets the expiry when a card is pushed onto an existing pile', async () => {
+      await yanivDiscard.pushDiscard(code, aceOfSpades);
+      await redis.expire(discardKey(code), 10);
+      await yanivDiscard.pushDiscard(code, twoOfHearts);
+      expect(await redis.ttl(discardKey(code))).toBeGreaterThan(10);
+    });
+
     it('sets the pile to expire again when a card is pushed after it is drained', async () => {
       await yanivDiscard.pushDiscard(code, [aceOfSpades, twoOfHearts]);
       await yanivDiscard.drainDiscard(code);
