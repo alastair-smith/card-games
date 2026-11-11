@@ -296,7 +296,13 @@
     {
       "date": "2026-11-11",
       "sessions": ["c6151018-8d39-430f-b2af-835aca47d71c"],
-      "prs": [449, 464]
+      "prs": [449, 464],
+      "result": {
+        "pointsRaised": 1,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `CLAUDE.md`'s Branches section; 3 patterns added to the watch list",
+        "fixPr": 468
+      }
     }
   ]
 }
