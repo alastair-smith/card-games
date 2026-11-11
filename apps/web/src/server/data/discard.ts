@@ -24,7 +24,6 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await redis.del(getDiscardKey(code));
   };
 
-  // Sets the expiry on every push, as the key is recreated after each drain
   const pushDiscard = async (code: GameCode, card: T | T[]) => {
     const key = getDiscardKey(code);
     const cards = Array.isArray(card) ? card : [card];
@@ -34,6 +33,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await redis
       .pipeline()
       .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
+      // On every push, as a drain deletes the key
       .expire(key, REDIS_EXPIRE_TIME_SECONDS)
       .exec();
   };
