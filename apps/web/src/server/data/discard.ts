@@ -19,8 +19,8 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return card.data;
   };
 
-  // Clears any old discard pile that might exist
   const createDiscard = async (code: GameCode) => {
+    // Clear any old discard pile that might exist
     await redis.del(getDiscardKey(code));
   };
 
@@ -61,8 +61,10 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  // Pops the top card then fetches and clears the rest in one batch.
-  // Returns all cards top-first.
+  /**
+   * Pops the top card then fetches and clears the rest in one batch.
+   * Returns all cards top-first.
+   */
   const drainDiscard = async (code: GameCode): Promise<T[]> => {
     const key = getDiscardKey(code);
     const topJson = await redis.rpop(key);
@@ -75,7 +77,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return [parseCard(topJson), ...[...restJsons].reverse().map(parseCard)];
   };
 
-  // Returns all cards top-first, leaving the pile in place.
+  /** Returns all cards top-first, leaving the pile in place. */
   const getDiscardCards = async (code: GameCode): Promise<T[]> => {
     const cardJsons = await redis.lrange(getDiscardKey(code), 0, -1);
     return [...cardJsons].reverse().map(parseCard);
