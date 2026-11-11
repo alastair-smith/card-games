@@ -179,6 +179,18 @@
         }
       ],
       "retrosWithout": 0
+    },
+    {
+      "id": 32,
+      "pattern": "Existing `run-retro` step 4 \"find what actually went wrong\" not followed: drafting a rule around where the work came from (a PR's review) rather than why it belonged in the PR (the PR's own change made it necessary)",
+      "sightings": [
+        {
+          "date": "2026-11-11",
+          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
+          "pr": 468
+        }
+      ],
+      "retrosWithout": 0
     }
   ],
   "retros": [
@@ -299,8 +311,8 @@
       "prs": [449, 464],
       "result": {
         "pointsRaised": 1,
-        "retroOfRetroPoints": 0,
-        "changesMade": "1 rule in `CLAUDE.md`'s Branches section; 3 patterns added to the watch list",
+        "retroOfRetroPoints": 1,
+        "changesMade": "1 rule in `CLAUDE.md`'s Branches section; 3 patterns added to the watch list; from the retro of the retro, 1 pattern added to the watch list",
         "fixPr": 468
       }
     }
