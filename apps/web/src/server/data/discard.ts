@@ -37,7 +37,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await runTransaction(async (transaction) => {
       transaction
         .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
-        // On every push, as a drain deletes the key
+        // On every push, as an emptied pile loses its expiry
         .expire(key, REDIS_EXPIRE_TIME_SECONDS);
     });
   };
@@ -65,10 +65,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  /**
-   * Pops the top card then fetches and clears the rest in one batch.
-   * Returns all cards top-first.
-   */
+  /** Empties the pile, returning its cards top-first. */
   const drainDiscard = async (code: GameCode): Promise<T[]> => {
     const key = getDiscardKey(code);
     const topJson = await redis.rpop(key);
