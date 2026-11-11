@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { buildShitheadLobby } from '~/test-utils/shithead';
+import { buildLobbyPlayer } from '~/test-utils/yaniv';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 
@@ -66,11 +68,13 @@ describe('updatePlayerState', () => {
   });
 
   test('throws when a Shithead game has already started', async () => {
-    mockGetLobby.mockResolvedValue({
-      ...makeLobby(),
-      type: GameType.SHITHEAD,
-      isGameStarted: true,
-    });
+    mockGetLobby.mockResolvedValue(
+      buildShitheadLobby({
+        code: CODE,
+        isGameStarted: true,
+        players: [buildLobbyPlayer({ id: USER_ID })],
+      }),
+    );
     await expect(
       updatePlayerState({
         code: CODE,

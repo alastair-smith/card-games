@@ -43,35 +43,13 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
   const popDiscard = async (code: GameCode): Promise<T | null> => {
     const key = getDiscardKey(code);
     const cardJson = await redis.rpop(key);
-
-    if (!cardJson) {
-      return null;
-    }
-
-    const card = cardSchema.safeParse(JSON.parse(cardJson));
-
-    if (!card.success) {
-      throw new Error('Invalid card found in discard pile');
-    }
-
-    return card.data;
+    return cardJson ? parseCard(cardJson) : null;
   };
 
   const peekDiscard = async (code: GameCode): Promise<T | null> => {
     const key = getDiscardKey(code);
     const cardJson = await redis.lindex(key, -1);
-
-    if (!cardJson) {
-      return null;
-    }
-
-    const card = cardSchema.safeParse(JSON.parse(cardJson));
-
-    if (!card.success) {
-      throw new Error('Invalid card found in discard pile');
-    }
-
-    return card.data;
+    return cardJson ? parseCard(cardJson) : null;
   };
 
   const discardExists = async (code: GameCode): Promise<boolean> => {

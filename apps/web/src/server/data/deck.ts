@@ -46,21 +46,19 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return card.data;
   };
 
-  const drawCards = async (code: GameCode, count: number): Promise<T[]> => {
-    const cards: T[] = [];
-    for (let i = 0; i < count; i++) {
-      const card = await drawCard(code);
-      if (!card) throw new Error('Deck ran out of cards');
-      cards.push(card);
-    }
-    return cards;
-  };
-
-  const drawCardsUpTo = async (code: GameCode, count: number): Promise<T[]> => {
+  // Without errorOnNoCards, takes whatever is left once the deck runs out
+  const drawCards = async (
+    code: GameCode,
+    count: number,
+    { errorOnNoCards }: { errorOnNoCards: boolean } = { errorOnNoCards: true },
+  ): Promise<T[]> => {
     const cards: T[] = [];
     for (let drawn = 0; drawn < count; drawn++) {
       const card = await drawCard(code);
-      if (!card) break;
+      if (!card) {
+        if (errorOnNoCards) throw new Error('Deck ran out of cards');
+        break;
+      }
       cards.push(card);
     }
     return cards;
@@ -77,14 +75,7 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  return {
-    createDeck,
-    drawCard,
-    drawCards,
-    drawCardsUpTo,
-    deckExists,
-    getDeckSize,
-  };
+  return { createDeck, drawCard, drawCards, deckExists, getDeckSize };
 };
 
 export const highCardDeck = createDeckStore<StandardPlayingCard>(

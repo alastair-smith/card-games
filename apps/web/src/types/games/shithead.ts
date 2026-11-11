@@ -17,8 +17,6 @@ const storedTableCardSlotSchema = z.object({
   faceDownCard: standardPlayingCardSchema.nullable(),
 });
 
-export type StoredTableCardSlot = z.infer<typeof storedTableCardSlotSchema>;
-
 export const tableCardSlotSchema = z.object({
   faceUpCard: standardPlayingCardSchema.nullable(),
   hasFaceDownCard: z.boolean(),
