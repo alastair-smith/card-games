@@ -35,6 +35,7 @@ export type ClientGameState = {
   players: ClientPlayer[];
   // Top-first
   visibleDiscardCards: StandardPlayingCard[];
+  isDeckEmpty: boolean;
 } & (
   | { gameStage: GameStage.SWAPPING }
   | Pick<
@@ -62,7 +63,10 @@ const toClientPlayer = (player: Player, userId: UserId): ClientPlayer => ({
 export const toClientGameState = (
   rawState: ActiveGameState,
   userId: UserId,
-  discardCards: StandardPlayingCard[],
+  {
+    discardCards,
+    deckSize,
+  }: { discardCards: StandardPlayingCard[]; deckSize: number },
 ): ClientGameState => {
   const requestingPlayer = rawState.players.find(
     (player) => player.id === userId,
@@ -76,6 +80,7 @@ export const toClientGameState = (
     hand: requestingPlayer.hand,
     players: rawState.players.map((player) => toClientPlayer(player, userId)),
     visibleDiscardCards: getVisibleDiscardCards(discardCards),
+    isDeckEmpty: deckSize === 0,
   };
 
   switch (rawState.gameStage) {

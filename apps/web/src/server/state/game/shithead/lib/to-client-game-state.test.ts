@@ -75,6 +75,9 @@ const DISCARD_PILE = [
   { suit: Suit.HEARTS, rank: Rank.TWO },
 ];
 
+// 52 cards less the 18 dealt and the 3 on the discard pile
+const TABLE = { discardCards: DISCARD_PILE, deckSize: 31 };
+
 describe('toClientGameState', () => {
   describe.each([
     ['swapping', swappingState],
@@ -82,7 +85,7 @@ describe('toClientGameState', () => {
     ['finished', finishedState],
   ])('%s game', (_stageName, state) => {
     test('sends a player only their own hand', () => {
-      const result = toClientGameState(state, USER_2, DISCARD_PILE);
+      const result = toClientGameState(state, USER_2, TABLE);
 
       expect(result.hand).toEqual(USER_2_DEALT.hand);
       for (const player of result.players) {
@@ -91,7 +94,7 @@ describe('toClientGameState', () => {
     });
 
     test("never sends anyone's face-down cards", () => {
-      const result = toClientGameState(state, USER_1, DISCARD_PILE);
+      const result = toClientGameState(state, USER_1, TABLE);
       const faceDownCards = state.players.flatMap((player) =>
         player.tableCards.flatMap((slot) =>
           slot.faceDownCard ? [slot.faceDownCard] : [],
@@ -106,21 +109,36 @@ describe('toClientGameState', () => {
     });
 
     test('shows only the discard cards needed to see what to beat', () => {
-      const result = toClientGameState(state, USER_1, DISCARD_PILE);
+      const result = toClientGameState(state, USER_1, TABLE);
 
       expect(result.visibleDiscardCards).toEqual(DISCARD_PILE.slice(0, 2));
     });
 
+    test('says the deck has cards left while it has any', () => {
+      const result = toClientGameState(state, USER_1, TABLE);
+
+      expect(result.isDeckEmpty).toBe(false);
+    });
+
+    test('says the deck has run out once it is empty', () => {
+      const result = toClientGameState(state, USER_1, {
+        ...TABLE,
+        deckSize: 0,
+      });
+
+      expect(result.isDeckEmpty).toBe(true);
+    });
+
     test('rejects someone who is not in the game', () => {
       expect(() =>
-        toClientGameState(state, 'other-user' as UserId, DISCARD_PILE),
+        toClientGameState(state, 'other-user' as UserId, TABLE),
       ).toThrow('Player not in game');
     });
   });
 
   describe('swapping', () => {
     test("sends every player's face-up cards", () => {
-      const result = toClientGameState(swappingState, USER_2, DISCARD_PILE);
+      const result = toClientGameState(swappingState, USER_2, TABLE);
 
       expect(result.players[0]?.tableCards).toEqual(
         USER_1_DEALT.tableCards.map(({ faceUpCard }) => ({
@@ -131,7 +149,7 @@ describe('toClientGameState', () => {
     });
 
     test('tells players who has confirmed their swaps', () => {
-      const result = toClientGameState(swappingState, USER_1, DISCARD_PILE);
+      const result = toClientGameState(swappingState, USER_1, TABLE);
 
       expect(result.players.map((player) => player.isSwapConfirmed)).toEqual([
         false,
@@ -140,13 +158,13 @@ describe('toClientGameState', () => {
     });
 
     test('tells everyone how many cards each player holds', () => {
-      const result = toClientGameState(swappingState, USER_1, DISCARD_PILE);
+      const result = toClientGameState(swappingState, USER_1, TABLE);
 
       expect(result.players.map((player) => player.cardCount)).toEqual([3, 3]);
     });
 
     test('marks which player is the user', () => {
-      const result = toClientGameState(swappingState, USER_1, DISCARD_PILE);
+      const result = toClientGameState(swappingState, USER_1, TABLE);
 
       expect(result.players.map((player) => player.isUser)).toEqual([
         true,
@@ -157,7 +175,7 @@ describe('toClientGameState', () => {
 
   describe('in progress', () => {
     test('shows a played face-up card as just its face-down card', () => {
-      const result = toClientGameState(inProgressState, USER_2, DISCARD_PILE);
+      const result = toClientGameState(inProgressState, USER_2, TABLE);
 
       expect(result.players[0]?.tableCards[0]).toEqual({
         faceUpCard: null,
@@ -166,7 +184,7 @@ describe('toClientGameState', () => {
     });
 
     test('says whose turn it is', () => {
-      const result = toClientGameState(inProgressState, USER_1, DISCARD_PILE);
+      const result = toClientGameState(inProgressState, USER_1, TABLE);
 
       expect(result).toMatchObject({
         gameStage: GameStage.IN_PROGRESS,
@@ -177,7 +195,7 @@ describe('toClientGameState', () => {
 
   describe('finished', () => {
     test('shows a finished player with no table cards left', () => {
-      const result = toClientGameState(finishedState, USER_2, DISCARD_PILE);
+      const result = toClientGameState(finishedState, USER_2, TABLE);
 
       expect(result.players[0]?.tableCards).toEqual(
         Array.from({ length: 3 }, () => ({
@@ -188,7 +206,7 @@ describe('toClientGameState', () => {
     });
 
     test('sends the finishing order', () => {
-      const result = toClientGameState(finishedState, USER_1, DISCARD_PILE);
+      const result = toClientGameState(finishedState, USER_1, TABLE);
 
       expect(result).toMatchObject({ finishingOrder: [USER_1, USER_2] });
     });
