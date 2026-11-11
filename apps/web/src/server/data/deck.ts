@@ -46,6 +46,9 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     count: number,
     { errorOnNoCards }: { errorOnNoCards: boolean } = { errorOnNoCards: true },
   ): Promise<T[]> => {
+    // Redis rejects a negative count
+    if (count <= 0) return [];
+
     const cardJsons = (await redis.lpop(getDeckKey(code), count)) ?? [];
     if (errorOnNoCards && cardJsons.length < count) {
       throw new Error('Deck ran out of cards');

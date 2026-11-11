@@ -74,6 +74,12 @@ describe('yanivDeck', () => {
       expect(await yanivDeck.getDeckSize(code)).toBe(1);
     });
 
+    it.each([0, -2])('draws nothing when asked for %i cards', async (count) => {
+      await yanivDeck.createDeck(code, testCards);
+      expect(await yanivDeck.drawCards(code, count)).toEqual([]);
+      expect(await yanivDeck.getDeckSize(code)).toBe(testCards.length);
+    });
+
     it('throws when the deck runs out', async () => {
       await yanivDeck.createDeck(code, [aceOfSpades, twoOfHearts]);
       await expect(yanivDeck.drawCards(code, 3)).rejects.toThrow(

@@ -55,3 +55,19 @@ export const gameStateSchema = z.discriminatedUnion('gameStage', [
 ]);
 
 export type GameState = z.infer<typeof gameStateSchema>;
+
+export type SwappingState = Extract<
+  GameState,
+  { gameStage: GameStage.SWAPPING }
+>;
+export type InProgressState = Extract<
+  GameState,
+  { gameStage: GameStage.IN_PROGRESS }
+>;
+export type FinishedState = Extract<
+  GameState,
+  { gameStage: GameStage.FINISHED }
+>;
+export type ActiveGameState = SwappingState | InProgressState | FinishedState;
+
+export type Player = z.infer<typeof playerSchema>;

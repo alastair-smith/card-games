@@ -1,25 +1,14 @@
 import type { StandardPlayingCard } from '~/types/cards';
 import type { UserId } from '~/types/entities';
 import {
+  type ActiveGameState,
+  type FinishedState,
   GameStage,
-  type GameState,
+  type InProgressState,
+  type Player,
   type TableCardSlot,
 } from '~/types/games/shithead';
 import { getVisibleDiscardCards } from './get-visible-discard-cards';
-
-type ActiveGameState = Extract<
-  GameState,
-  { gameStage: GameStage.SWAPPING | GameStage.IN_PROGRESS | GameStage.FINISHED }
->;
-
-type InProgressGameState = Extract<
-  GameState,
-  { gameStage: GameStage.IN_PROGRESS }
->;
-
-type FinishedGameState = Extract<GameState, { gameStage: GameStage.FINISHED }>;
-
-type Player = ActiveGameState['players'][number];
 
 export type ClientPlayer = Pick<
   Player,
@@ -38,11 +27,8 @@ export type ClientGameState = {
   deckSize: number;
 } & (
   | { gameStage: GameStage.SWAPPING }
-  | Pick<
-      InProgressGameState,
-      'gameStage' | 'currentPlayerId' | 'finishingOrder'
-    >
-  | Pick<FinishedGameState, 'gameStage' | 'finishingOrder'>
+  | Pick<InProgressState, 'gameStage' | 'currentPlayerId' | 'finishingOrder'>
+  | Pick<FinishedState, 'gameStage' | 'finishingOrder'>
 );
 
 // Each field is listed rather than spread, so a new hidden field isn't sent by default

@@ -3,16 +3,13 @@ import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
 import {
+  type FinishedState,
   GameStage,
-  type GameState,
+  type InProgressState,
+  type Player,
+  type SwappingState,
   type TableCardSlot,
 } from '~/types/games/shithead';
-
-type SwappingState = Extract<GameState, { gameStage: GameStage.SWAPPING }>;
-type InProgressState = Extract<GameState, { gameStage: GameStage.IN_PROGRESS }>;
-type FinishedState = Extract<GameState, { gameStage: GameStage.FINISHED }>;
-
-type Player = SwappingState['players'][number];
 
 export function buildTableCards(): TableCardSlot[] {
   return [
