@@ -29,21 +29,15 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     await pipeline.exec();
   };
 
-  const drawCard = async (code: GameCode): Promise<T | null> => {
-    const key = getDeckKey(code);
-    const cardJson = await redis.lpop(key);
-
-    if (!cardJson) {
-      return null;
-    }
-
-    const card = cardSchema.safeParse(JSON.parse(cardJson));
-
-    if (!card.success) {
-      throw new Error('Invalid card found in deck');
-    }
-
+  const parseCard = (json: string) => {
+    const card = cardSchema.safeParse(JSON.parse(json));
+    if (!card.success) throw new Error('Invalid card found in deck');
     return card.data;
+  };
+
+  const drawCard = async (code: GameCode): Promise<T | null> => {
+    const cardJson = await redis.lpop(getDeckKey(code));
+    return cardJson ? parseCard(cardJson) : null;
   };
 
   // Without errorOnNoCards, takes whatever is left once the deck runs out
@@ -52,16 +46,11 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     count: number,
     { errorOnNoCards }: { errorOnNoCards: boolean } = { errorOnNoCards: true },
   ): Promise<T[]> => {
-    const cards: T[] = [];
-    for (let drawn = 0; drawn < count; drawn++) {
-      const card = await drawCard(code);
-      if (!card) {
-        if (errorOnNoCards) throw new Error('Deck ran out of cards');
-        break;
-      }
-      cards.push(card);
+    const cardJsons = (await redis.lpop(getDeckKey(code), count)) ?? [];
+    if (errorOnNoCards && cardJsons.length < count) {
+      throw new Error('Deck ran out of cards');
     }
-    return cards;
+    return cardJsons.map(parseCard);
   };
 
   const deckExists = async (code: GameCode): Promise<boolean> => {
