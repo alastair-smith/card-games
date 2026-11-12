@@ -54,7 +54,10 @@ function LobbyFooter({
   const readySwitchId = useId();
 
   return (
-    <Card className='sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 shadow-lg'>
+    <Card
+      variant='panel'
+      className='sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 shadow-lg'
+    >
       <div className='flex items-center gap-2'>
         <Label htmlFor={readySwitchId}>Ready</Label>
         <Switch
@@ -110,7 +113,10 @@ export default function LobbyView({
           isHost={isHost}
           onSettingChange={handleSettingChange}
         />
-        <Card className='flex items-center justify-between gap-3 p-4 lg:col-span-2'>
+        <Card
+          variant='panel'
+          className='flex items-center justify-between gap-3 p-4 lg:col-span-2'
+        >
           <h2 className='text-xl font-semibold'>New to Yaniv?</h2>
           <HowToDialog />
         </Card>

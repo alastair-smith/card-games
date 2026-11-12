@@ -161,7 +161,7 @@ export function ChoiceCard({
       <Label
         data-slot='choice-card'
         className={cn(
-          'group/choice-card flex cursor-pointer items-start gap-3 rounded-lg border-2 border-border bg-input-background p-4 text-base leading-normal text-light-text has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-checked:border-dark-yellow has-checked:bg-primary/25 has-disabled:cursor-not-allowed has-disabled:opacity-50',
+          'group/choice-card flex cursor-pointer items-start gap-3 rounded-lg border-2 border-border bg-input-background p-4 text-base leading-normal text-light-text has-focus-visible:ring-4 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 has-checked:border-dark-yellow has-checked:bg-[color-mix(in_srgb,var(--color-primary)_25%,var(--color-card-background))] has-disabled:cursor-not-allowed has-disabled:opacity-50',
           className,
         )}
       >

@@ -10,8 +10,10 @@ function ReadyBadge({ isReady }: { isReady: boolean }) {
   return (
     <span
       className={cn(
-        'flex size-5 shrink-0 items-center justify-center rounded-full text-white',
-        isReady ? 'bg-lifted-green' : 'bg-light-slate',
+        'flex size-5 shrink-0 items-center justify-center rounded-full',
+        isReady
+          ? 'bg-primary text-light-text'
+          : 'border-2 border-(--card-muted-text) text-(--card-muted-text)',
       )}
     >
       {isReady ? (
@@ -43,7 +45,7 @@ export default function LobbyPlayers({
   const openSeats = Math.max(maxPlayers - players.length, 0);
 
   return (
-    <Card className={className}>
+    <Card variant='panel' className={className}>
       <CardHeader>
         <h2 className='text-xl font-semibold'>
           Players {players.length}/{maxPlayers}
@@ -95,7 +97,7 @@ export default function LobbyPlayers({
             <li
               // biome-ignore lint/suspicious/noArrayIndexKey: open seats are identical
               key={index}
-              className='rounded border-2 border-dashed border-light-slate px-2 py-0.5 text-xs text-light-text-disabled sm:py-1 sm:text-sm'
+              className='rounded border-2 border-dashed border-(--card-muted-text) px-2 py-0.5 text-xs text-(--card-muted-text) sm:py-1 sm:text-sm'
             >
               Open seat
             </li>

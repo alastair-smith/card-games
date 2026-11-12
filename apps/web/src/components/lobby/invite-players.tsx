@@ -36,6 +36,7 @@ export default function InvitePlayers({
 
   return (
     <Card
+      variant='panel'
       className={cn('flex items-center justify-between gap-3 p-4', className)}
     >
       <div className='flex flex-col'>
