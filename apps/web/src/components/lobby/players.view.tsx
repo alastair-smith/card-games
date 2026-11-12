@@ -351,7 +351,7 @@ export default function Players({
             </div>
           ))}
         </div>
-        <Table className='hidden sm:table'>
+        <Table className='hidden sm:table lg:[&_td]:py-2'>
           <TableHeader>
             <TableRow>
               <TableHead className='sr-only w-[1ch]'>Host</TableHead>
@@ -363,7 +363,10 @@ export default function Players({
           </TableHeader>
           <TableBody>
             {players.map((player) => (
-              <TableRow key={player.id} className='sm:h-[calc(4.5rem+1px)]'>
+              <TableRow
+                key={player.id}
+                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
+              >
                 <TableCell className='w-[1ch]'>
                   {player.isHost ? (
                     <>
@@ -420,8 +423,11 @@ export default function Players({
             ))}
 
             {Array.from({ length: requiredPlayers }).map((_, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
+              <TableRow
+                // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
+                key={index}
+                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
+              >
                 <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
@@ -432,8 +438,11 @@ export default function Players({
             ))}
 
             {Array.from({ length: optionalPlayers }).map((_, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
+              <TableRow
+                // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
+                key={index}
+                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
+              >
                 <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4 text-light-text-disabled'>
                     <UserIcon size={22} />

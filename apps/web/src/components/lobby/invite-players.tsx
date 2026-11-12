@@ -32,19 +32,19 @@ export default function InvitePlayers({
         <div className='flex items-center justify-center row-span-2'>
           <QRCode
             value={url}
-            className='border-border p-2 border-2 rounded-xl bg-true-white'
+            className='border-border p-2 border-2 rounded-xl bg-true-white lg:size-44'
           />
         </div>
         <div className='flex flex-col gap-3'>
           <Input
             placeholder='Code'
-            className='h-20 text-center font-mono text-4xl uppercase'
+            className='h-20 text-center font-mono text-4xl uppercase lg:h-14 lg:text-3xl'
             name='code'
             value={code}
             readOnly
           />
           <Button
-            className='sm:h-20 sm:text-xl px-6 w-full'
+            className='sm:h-20 sm:text-xl px-6 w-full lg:h-14 lg:text-lg'
             onClick={() => {
               void copyUrlToClipboard(url);
             }}

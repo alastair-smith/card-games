@@ -1,7 +1,7 @@
 'use client';
 
 import GameSettings from '~/app/yaniv/_components/game-settings';
-import { HowTo } from '~/app/yaniv/_components/how-to';
+import { HowTo, HowToDialog } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
@@ -47,10 +47,19 @@ export default function LobbyView({
   );
 
   return (
-    <GameLayout gameType={GameType.YANIV} className='pb-8'>
-      <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
+    <GameLayout
+      gameType={GameType.YANIV}
+      className='pb-8'
+      actions={
+        // Smaller screens show the rules in the lobby instead
+        <div className='hidden lg:block'>
+          <HowToDialog />
+        </div>
+      }
+    >
+      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2 lg:items-start'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
-        <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
+        <div className='flex flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
           <Players
             className='flex-1'
@@ -59,14 +68,14 @@ export default function LobbyView({
             {...playerProps}
           />
         </div>
-        <div className='flex min-w-[20rem] flex-1 basis-120 flex-col gap-3'>
+        <div className='flex flex-col gap-3'>
           <GameSettings
             className='w-full'
             settings={settings}
             isHost={isHost}
             onSettingChange={handleSettingChange}
           />
-          <Card className='flex-1'>
+          <Card className='lg:hidden'>
             <CardHeader>
               <h2 className='text-xl font-semibold'>How to Play Yaniv</h2>
             </CardHeader>
