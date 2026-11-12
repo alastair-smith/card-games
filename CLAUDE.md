@@ -302,8 +302,8 @@ Keep comments to a minimum and let names carry the meaning
 (`useWaitForServerValue`, `DEFAULT_HAND_SIZE`).
 
 - Do comment _why_ when a decision isn't obvious from the code
-- Put a `//` comment on the line it explains, inside the function. A comment
-  above a function is a `/** */` doc comment on what the whole function does
+- When a step needs a comment, put the `//` on that line, inside the function.
+  When the whole function needs one, use a `/** */` doc comment above it
 - Explain _how_ only in code that is rarely touched but important, such as auth
 - Don't record history — no `// added to fix the issue in i-123`; that belongs
   in the PR description
