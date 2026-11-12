@@ -346,8 +346,8 @@
       "prs": [474],
       "result": {
         "pointsRaised": 2,
-        "retroOfRetroPoints": 0,
-        "changesMade": "1 rule in `CLAUDE.md` (comment placement) and 1 rule in `raise-pr` (one-off commands give the command only); 3 patterns added to the watch list",
+        "retroOfRetroPoints": 1,
+        "changesMade": "1 rule in `CLAUDE.md` (comment placement) and 1 rule in `raise-pr` (one-off commands give the command only); 3 patterns added to the watch list; from the retro of the retro, 1 rule in `run-retro` step 3 (consider a checking agent where no lint, type, test or CI check fits), and the `check-pr-description` agent with its step in `raise-pr`; #419 updated to build on that agent; pattern #30 removed",
         "fixPr": 478
       }
     }
