@@ -106,6 +106,13 @@ export default function LobbyView({
             onKick={handleKick}
             onMakeHost={handleMakeHost}
           />
+          <Card
+            variant='panel'
+            className='flex items-center justify-between gap-3 p-4'
+          >
+            <h2 className='text-xl font-semibold'>New to Yaniv?</h2>
+            <HowToDialog />
+          </Card>
         </div>
         <GameSettings
           className='w-full'
@@ -113,13 +120,6 @@ export default function LobbyView({
           isHost={isHost}
           onSettingChange={handleSettingChange}
         />
-        <Card
-          variant='panel'
-          className='flex items-center justify-between gap-3 p-4 lg:col-span-2'
-        >
-          <h2 className='text-xl font-semibold'>New to Yaniv?</h2>
-          <HowToDialog />
-        </Card>
       </div>
       <LobbyFooter
         players={players}
