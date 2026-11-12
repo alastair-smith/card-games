@@ -41,6 +41,8 @@ export default function LobbyView({
   players,
   settings,
   user,
+  handleNameChange,
+  handleColorChange,
   handleSettingChange,
   handleStartGame,
   handleReadyChange,
@@ -80,7 +82,11 @@ export default function LobbyView({
         className='sticky bottom-0 z-10'
         players={players}
         minPlayers={MIN_PLAYERS}
+        name={user.name}
+        color={user.color}
         isReady={user.isReady}
+        onNameChange={handleNameChange}
+        onColorChange={handleColorChange}
         onReadyChange={handleReadyChange}
         onStartGame={handleStartGame}
       />
