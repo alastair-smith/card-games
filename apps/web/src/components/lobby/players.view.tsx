@@ -7,26 +7,9 @@ import {
   type PlayerColor,
   playerColorValue,
 } from '~/utils/player-color';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
 import { ColorPicker, ColorSwatch } from '../ui/color-picker';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
 import { Switch } from '../ui/switch';
 import {
   Table,
@@ -36,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table';
+import { hasPlayerActions, PlayerActionsMenu } from './player-actions-menu';
 import { PlayerNameInput } from './player-name-input';
 
 function PlayerDropdown({
@@ -53,107 +37,22 @@ function PlayerDropdown({
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
 }) {
-  const showLeave = player.isUser;
-  const showKick = userIsHost && !player.isUser;
-  const showMakeHost = userIsHost && !player.isHost;
-
-  if (!showLeave && !showKick && !showMakeHost) {
+  if (!hasPlayerActions(player, userIsHost)) {
     return null;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='secondary' size='icon'>
-          <EllipsisVertical className={className} />
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent>
-        {showLeave && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Leave
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you sure you want to leave the game?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You can rejoin by re-visiting the url.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Stay</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleLeave(player.id)}
-                  variant='danger'
-                >
-                  Leave
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-
-        {showKick && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Kick
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Kick <span className='font-semibold'>{player.name}</span> from
-                  the game?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  They will be able to rejoin by re-visiting the url.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleKick(player.id)}>
-                  Kick
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-
-        {showMakeHost && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Make Host
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Make <span className='font-semibold'>{player.name}</span> the
-                  new host?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will remain in the game, but lose host powers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleMakeHost(player.id)}>
-                  Make Host
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <PlayerActionsMenu
+      player={player}
+      isUserHost={userIsHost}
+      onLeave={handleLeave}
+      onKick={handleKick}
+      onMakeHost={handleMakeHost}
+    >
+      <Button variant='secondary' size='icon'>
+        <EllipsisVertical className={className} />
+      </Button>
+    </PlayerActionsMenu>
   );
 }
 

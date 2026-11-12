@@ -5,7 +5,7 @@ import GameSettings from '~/app/yaniv/_components/game-settings';
 import { HowToDialog } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
-import Players from '~/components/lobby/players.view';
+import LobbyPlayers from '~/components/lobby/lobby-players';
 import StartGameButton from '~/components/lobby/start-game-button';
 import { Card } from '~/components/ui/card';
 import { Label } from '~/components/ui/label';
@@ -74,32 +74,34 @@ function LobbyFooter({
 
 export default function LobbyView({
   code,
+  players,
   settings,
+  user,
   handleSettingChange,
   handleStartGame,
   handleReadyChange,
-  ...playerProps
+  handleLeave,
+  handleKick,
+  handleMakeHost,
 }: LobbyProps) {
-  const isHost = playerProps.players.some(
+  const isHost = players.some(
     ({ isHost: isPlayerHost, isUser }) => isPlayerHost && isUser,
   );
 
   return (
-    <GameLayout
-      gameType={GameType.YANIV}
-      className='gap-3 pb-3'
-      actions={<HowToDialog />}
-    >
+    <GameLayout gameType={GameType.YANIV} className='gap-3 pb-3'>
       {/* Positioned so sr-only text scrolls with main rather than stretching the page */}
       <div className='relative grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
         <div className='flex flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
-          <Players
+          <LobbyPlayers
             className='flex-1'
-            minPlayers={MIN_PLAYERS}
+            players={players}
             maxPlayers={MAX_PLAYERS}
-            {...playerProps}
+            onLeave={handleLeave}
+            onKick={handleKick}
+            onMakeHost={handleMakeHost}
           />
         </div>
         <GameSettings
@@ -108,10 +110,14 @@ export default function LobbyView({
           isHost={isHost}
           onSettingChange={handleSettingChange}
         />
+        <Card className='flex items-center justify-between gap-3 p-4 lg:col-span-2'>
+          <h2 className='text-xl font-semibold'>New to Yaniv?</h2>
+          <HowToDialog />
+        </Card>
       </div>
       <LobbyFooter
-        players={playerProps.players}
-        isReady={playerProps.user.isReady}
+        players={players}
+        isReady={user.isReady}
         onReadyChange={handleReadyChange}
         onStartGame={handleStartGame}
       />
