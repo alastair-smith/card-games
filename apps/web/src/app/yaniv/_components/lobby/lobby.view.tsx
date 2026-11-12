@@ -57,7 +57,8 @@ export default function LobbyView({
         </div>
       }
     >
-      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
+      {/* Positioned so sr-only text scrolls with main rather than stretching the page */}
+      <div className='relative grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
         <div className='flex flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
