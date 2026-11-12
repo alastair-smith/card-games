@@ -43,7 +43,9 @@ Fill in `.github/pull_request_template.md`:
   existing test. A small fix usually needs only the Summary and the `Closes`
   line, so omit the section when there's nothing to add.
 - Don't list manual follow-up steps, such as changing repo settings after
-  merge. They aren't part of the PR.
+  merge. They aren't part of the PR. When asked to include a one-off command,
+  such as a data clean-up, give the command only, not how to connect to or
+  configure the hosting.
 - End with `Closes #123` for the issue it completes, or `Part of #123` if the
   issue has more work left.
 - Strip every HTML comment (`<!-- ... -->`). The PR description becomes the
@@ -88,6 +90,19 @@ script doesn't run on `main`, named `<name>-previous`:
 | Full lobby, previous | ![…](…/lobby-previous-desktop.png) | ![…](…/lobby-previous-mobile.png) |
 | Full lobby, updated  | ![…](…/lobby-desktop.png)          | ![…](…/lobby-mobile.png)          |
 ```
+
+## Check the description
+
+When the body has a Details section, have the `check-pr-description` agent
+check it before creating the PR, and again before an update that changes the
+Details. Skip this for a body with only a Summary and the `Closes` line.
+
+Write the draft body to a file in the scratchpad, then start the agent with
+the Agent tool, giving it only the file path and the branch name. Leave out
+the branch's history and earlier reviews, so it reads the change against
+`main` as a reviewer would, rather than against commits made and undone on
+the branch. Fix what it reports, then create or update the PR.
+
 ## Create
 
 Push the branch first with the `manage-branch` skill's script — creating the

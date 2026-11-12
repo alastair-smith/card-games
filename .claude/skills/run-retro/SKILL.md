@@ -85,7 +85,9 @@ doesn't count. Then sort what's left:
   watch list, and change nothing. Reword a rule only where it was genuinely
   unclear. If the watch list shows the same rule broken before, the rule
   isn't working: propose replacing it with an automated check, or deleting
-  it. `CLAUDE.md` loads into every conversation, so removing a rule that
+  it. Where no lint rule, type, test or CI check could catch it, consider a
+  fresh agent that checks the work at the step where the mistake happens,
+  such as the description check in `raise-pr`. `CLAUDE.md` loads into every conversation, so removing a rule that
   doesn't change behaviour is progress too.
 - **First sighting:** put it on the watch list rather than writing a rule. A
   correction the user stated outright, such as "push and let CI run them", is

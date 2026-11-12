@@ -10,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 18,
@@ -22,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 19,
@@ -34,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 20,
@@ -46,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 21,
@@ -58,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 22,
@@ -70,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 23,
@@ -82,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 24,
@@ -94,7 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 25,
@@ -106,7 +106,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 26,
@@ -118,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 27,
@@ -130,7 +130,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 28,
@@ -142,19 +142,7 @@
           "pr": 444
         }
       ],
-      "retrosWithout": 1
-    },
-    {
-      "id": 30,
-      "pattern": "Existing `CLAUDE.md` rule \"only state how the app behaves once you've checked it\" not followed: writing that the integration tests cover \"a store in `~/server/data/`\" when only the deck and discard stores have them",
-      "sightings": [
-        {
-          "date": "2026-11-11",
-          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
-          "pr": 464
-        }
-      ],
-      "retrosWithout": 0
+      "retrosWithout": 2
     },
     {
       "id": 32,
@@ -166,7 +154,7 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 33,
@@ -178,7 +166,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 34,
@@ -188,6 +176,42 @@
           "date": "2026-11-11",
           "session": "c6151018-8d39-430f-b2af-835aca47d71c",
           "pr": 449
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 35,
+      "pattern": "Existing `CLAUDE.md` rule \"explain how only in code that is rarely touched but important\" not followed: a store's doc comment describing its Redis calls, e.g. `drainDiscard` \"fetches and clears the rest in one batch\", rather than what it does for the caller",
+      "sightings": [
+        {
+          "date": "2026-11-12",
+          "session": "3ca3f7d0-82fa-4555-b38c-11d799e24ec5",
+          "pr": 474
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 36,
+      "pattern": "Part of an issue's scope named only in its title left undone, e.g. #462 \"Expire and clean up discard piles\" fixed only the expiry until the user asked about existing entries",
+      "sightings": [
+        {
+          "date": "2026-11-12",
+          "session": "3ca3f7d0-82fa-4555-b38c-11d799e24ec5",
+          "pr": 474
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 37,
+      "pattern": "An allowlisted skill script prompting as \"too complex\" because its heredoc body contains a shell snippet with nested quotes or `$` variables, e.g. `update-pr.ts` with an `awk '{ print … $1 … }'` command in the PR description",
+      "sightings": [
+        {
+          "date": "2026-11-12",
+          "session": "3ca3f7d0-82fa-4555-b38c-11d799e24ec5",
+          "pr": 474
         }
       ],
       "retrosWithout": 0
@@ -314,6 +338,17 @@
         "retroOfRetroPoints": 1,
         "changesMade": "1 rule in `CLAUDE.md`'s Branches section; 3 patterns added to the watch list; from the retro of the retro, 1 pattern added to the watch list",
         "fixPr": 468
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "sessions": ["3ca3f7d0-82fa-4555-b38c-11d799e24ec5"],
+      "prs": [474],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 1,
+        "changesMade": "1 rule in `CLAUDE.md` (comment placement) and 1 rule in `raise-pr` (one-off commands give the command only); 3 patterns added to the watch list; from the retro of the retro, 1 rule in `run-retro` step 3 (consider a checking agent where no lint, type, test or CI check fits), and the `check-pr-description` agent with its step in `raise-pr`; #419 updated to build on that agent; pattern #30 removed",
+        "fixPr": 478
       }
     }
   ]
