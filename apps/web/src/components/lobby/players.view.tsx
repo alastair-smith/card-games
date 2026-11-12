@@ -1,5 +1,5 @@
 import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
 import {
@@ -189,31 +189,10 @@ function PlayerColour({
   );
 }
 
-function getButtonText({
-  userIsHost,
-  requiredPlayers,
-  playersReady,
-  playerCount,
-}: {
-  userIsHost: boolean;
-  requiredPlayers: number;
-  playersReady: number;
-  playerCount: number;
-}) {
-  if (requiredPlayers > 0) {
-    return `Need ${requiredPlayers} more player(s)`;
-  }
-  if (playersReady !== playerCount) {
-    return `${playersReady}/${playerCount} players ready`;
-  }
-  if (userIsHost) {
-    return 'Start Game';
-  }
-  return 'Awaiting Host';
-}
-
 export type PlayersProps = {
   className?: string;
+  /** Shown in the card's footer, such as a `StartGameButton` */
+  children?: ReactNode;
   players: Player[];
   minPlayers: number;
   maxPlayers: number;
@@ -224,9 +203,9 @@ export type PlayersProps = {
     color?: PlayerColor;
   };
   handleNameChange: (name: string) => void;
-  handleReadyChange: (readyStatus: boolean) => void;
+  /** Leave out when the lobby has its own ready control */
+  handleReadyChange?: (readyStatus: boolean) => void;
   handleColorChange?: (color: string) => void;
-  handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
@@ -234,6 +213,7 @@ export type PlayersProps = {
 
 export default function Players({
   className,
+  children,
   players,
   minPlayers,
   maxPlayers,
@@ -241,7 +221,6 @@ export default function Players({
   handleNameChange,
   handleReadyChange,
   handleColorChange,
-  handleStartGame,
   handleLeave,
   handleKick,
   handleMakeHost,
@@ -253,17 +232,6 @@ export default function Players({
     () => players.some(({ isHost, isUser }) => isHost && isUser),
     [players],
   );
-  const playersReady = useMemo(
-    () => players.filter((player) => player.isReady).length,
-    [players],
-  );
-
-  const buttonText = getButtonText({
-    userIsHost,
-    requiredPlayers,
-    playersReady,
-    playerCount: players.length,
-  });
 
   return (
     <Card className={className}>
@@ -315,7 +283,7 @@ export default function Players({
                   <div className='flex gap-2 items-center'>
                     <span>Ready</span>
                     <Switch
-                      disabled={!player.isUser}
+                      disabled={!player.isUser || !handleReadyChange}
                       checked={player.isUser ? user.isReady : player.isReady}
                       onCheckedChange={handleReadyChange}
                     />
@@ -405,7 +373,7 @@ export default function Players({
                 </TableCell>
                 <TableCell>
                   <Switch
-                    disabled={!player.isUser}
+                    disabled={!player.isUser || !handleReadyChange}
                     checked={player.isUser ? user.isReady : player.isReady}
                     onCheckedChange={handleReadyChange}
                   />
@@ -454,14 +422,9 @@ export default function Players({
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter className='flex gap-4 justify-end'>
-        <Button
-          disabled={buttonText !== 'Start Game'}
-          onClick={() => handleStartGame()}
-        >
-          {buttonText}
-        </Button>
-      </CardFooter>
+      {children && (
+        <CardFooter className='flex gap-4 justify-end'>{children}</CardFooter>
+      )}
     </Card>
   );
 }

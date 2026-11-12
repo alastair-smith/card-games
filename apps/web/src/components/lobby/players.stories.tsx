@@ -6,6 +6,7 @@ import {
   type UserId,
 } from '~/types/entities';
 import Players, { type PlayersProps } from './players.view';
+import StartGameButton from './start-game-button';
 
 type Player = PlayersProps['players'][number];
 
@@ -45,11 +46,19 @@ const meta = {
     handleNameChange: fn(),
     handleReadyChange: fn(),
     handleColorChange: fn(),
-    handleStartGame: fn(),
     handleKick: fn(),
     handleLeave: fn(),
     handleMakeHost: fn(),
   },
+  render: (args) => (
+    <Players {...args}>
+      <StartGameButton
+        players={args.players}
+        minPlayers={args.minPlayers}
+        onStartGame={fn()}
+      />
+    </Players>
+  ),
 } satisfies Meta<typeof Players>;
 
 export default meta;

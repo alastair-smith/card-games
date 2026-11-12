@@ -4,6 +4,7 @@ import { HowToSection } from '~/app/high-card/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
+import StartGameButton from '~/components/lobby/start-game-button';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import { MAX_PLAYERS, MIN_PLAYERS } from '~/types/games/high-card';
@@ -24,7 +25,11 @@ export type LobbyProps = {
   handleMakeHost: (userId: UserId) => void;
 };
 
-export default function Lobby({ code, ...playerProps }: LobbyProps) {
+export default function Lobby({
+  code,
+  handleStartGame,
+  ...playerProps
+}: LobbyProps) {
   return (
     <GameLayout gameType={GameType.HIGH_CARD} className='pb-8'>
       <div className='flex w-full flex-row flex-wrap justify-center gap-3'>
@@ -38,7 +43,13 @@ export default function Lobby({ code, ...playerProps }: LobbyProps) {
           minPlayers={MIN_PLAYERS}
           maxPlayers={MAX_PLAYERS}
           {...playerProps}
-        />
+        >
+          <StartGameButton
+            players={playerProps.players}
+            minPlayers={MIN_PLAYERS}
+            onStartGame={handleStartGame}
+          />
+        </Players>
       </div>
     </GameLayout>
   );

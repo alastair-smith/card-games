@@ -1,11 +1,15 @@
 'use client';
 
+import { useId } from 'react';
 import GameSettings from '~/app/yaniv/_components/game-settings';
-import { HowTo, HowToDialog } from '~/app/yaniv/_components/how-to';
+import { HowToDialog } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import Players from '~/components/lobby/players.view';
-import { Card, CardContent, CardHeader } from '~/components/ui/card';
+import StartGameButton from '~/components/lobby/start-game-button';
+import { Card } from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import {
@@ -36,10 +40,44 @@ export type LobbyProps = {
   handleMakeHost: (userId: UserId) => void;
 };
 
+function LobbyFooter({
+  players,
+  isReady,
+  onReadyChange,
+  onStartGame,
+}: {
+  players: Player[];
+  isReady: boolean;
+  onReadyChange: (isReady: boolean) => void;
+  onStartGame: () => void;
+}) {
+  const readySwitchId = useId();
+
+  return (
+    <Card className='sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 shadow-lg'>
+      <div className='flex items-center gap-2'>
+        <Label htmlFor={readySwitchId}>Ready</Label>
+        <Switch
+          id={readySwitchId}
+          checked={isReady}
+          onCheckedChange={onReadyChange}
+        />
+      </div>
+      <StartGameButton
+        players={players}
+        minPlayers={MIN_PLAYERS}
+        onStartGame={onStartGame}
+      />
+    </Card>
+  );
+}
+
 export default function LobbyView({
   code,
   settings,
   handleSettingChange,
+  handleStartGame,
+  handleReadyChange,
   ...playerProps
 }: LobbyProps) {
   const isHost = playerProps.players.some(
@@ -49,13 +87,8 @@ export default function LobbyView({
   return (
     <GameLayout
       gameType={GameType.YANIV}
-      className='pb-8 lg:pb-3'
-      actions={
-        // Smaller screens show the rules in the lobby instead
-        <div className='hidden lg:block'>
-          <HowToDialog />
-        </div>
-      }
+      className='gap-3 pb-3'
+      actions={<HowToDialog />}
     >
       {/* Positioned so sr-only text scrolls with main rather than stretching the page */}
       <div className='relative grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
@@ -69,23 +102,19 @@ export default function LobbyView({
             {...playerProps}
           />
         </div>
-        <div className='flex flex-col gap-3'>
-          <GameSettings
-            className='w-full flex-1'
-            settings={settings}
-            isHost={isHost}
-            onSettingChange={handleSettingChange}
-          />
-          <Card className='lg:hidden'>
-            <CardHeader>
-              <h2 className='text-xl font-semibold'>How to Play Yaniv</h2>
-            </CardHeader>
-            <CardContent>
-              <HowTo />
-            </CardContent>
-          </Card>
-        </div>
+        <GameSettings
+          className='w-full'
+          settings={settings}
+          isHost={isHost}
+          onSettingChange={handleSettingChange}
+        />
       </div>
+      <LobbyFooter
+        players={playerProps.players}
+        isReady={playerProps.user.isReady}
+        onReadyChange={handleReadyChange}
+        onStartGame={handleStartGame}
+      />
     </GameLayout>
   );
 }
