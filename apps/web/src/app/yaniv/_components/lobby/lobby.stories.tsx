@@ -53,6 +53,24 @@ type Story = StoryObj<typeof meta>;
 
 export const Host: Story = {};
 
+// Someone else hosts, so the settings are read-only and Start waits for them.
+export const NotHost: Story = {
+  args: {
+    players: [
+      { ...host, isUser: false, isReady: true },
+      {
+        id: 'user-2' as UserId,
+        name: 'Roz' as PlayerName,
+        color: 'rose',
+        isReady: false,
+        isUser: true,
+        isHost: false,
+      },
+    ],
+    user: { isReady: false, name: 'Roz', nameError: '', color: 'rose' },
+  },
+};
+
 // The tallest the lobby gets: every seat taken, each name at its longest.
 export const FullWithLongestNames: Story = {
   args: {
