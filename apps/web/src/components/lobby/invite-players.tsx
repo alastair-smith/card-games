@@ -32,7 +32,7 @@ export default function InvitePlayers({
         <div className='flex items-center justify-center row-span-2'>
           <QRCode
             value={url}
-            className='border-border p-2 border-2 rounded-xl bg-true-white lg:size-44'
+            className='border-border p-2 border-2 rounded-xl bg-true-white lg:size-36'
           />
         </div>
         <div className='flex flex-col gap-3'>

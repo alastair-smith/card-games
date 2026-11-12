@@ -49,7 +49,7 @@ export default function LobbyView({
   return (
     <GameLayout
       gameType={GameType.YANIV}
-      className='pb-8'
+      className='pb-8 lg:pb-3'
       actions={
         // Smaller screens show the rules in the lobby instead
         <div className='hidden lg:block'>

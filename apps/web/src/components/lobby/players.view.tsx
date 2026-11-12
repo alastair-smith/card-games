@@ -267,7 +267,7 @@ export default function Players({
 
   return (
     <Card className={className}>
-      <CardHeader>
+      <CardHeader className='lg:pb-2'>
         <h2 className='text-xl font-semibold'>Players</h2>
       </CardHeader>
       <CardContent>
@@ -351,7 +351,7 @@ export default function Players({
             </div>
           ))}
         </div>
-        <Table className='hidden sm:table lg:[&_td]:py-2'>
+        <Table className='hidden sm:table lg:[&_td]:py-2 lg:[&_th]:h-10'>
           <TableHeader>
             <TableRow>
               <TableHead className='sr-only w-[1ch]'>Host</TableHead>
