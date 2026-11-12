@@ -360,7 +360,13 @@
     {
       "date": "2026-11-12",
       "sessions": ["3ca3f7d0-82fa-4555-b38c-11d799e24ec5"],
-      "prs": [474]
+      "prs": [474],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `CLAUDE.md` (comment placement) and 1 rule in `raise-pr` (one-off commands give the command only); 3 patterns added to the watch list",
+        "fixPr": 478
+      }
     }
   ]
 }
