@@ -64,6 +64,7 @@ export default function LobbyView({
           <LobbyPlayers
             className='flex-1'
             players={players}
+            minPlayers={MIN_PLAYERS}
             maxPlayers={MAX_PLAYERS}
             onLeave={handleLeave}
             onKick={handleKick}

@@ -32,6 +32,7 @@ const meta = {
   args: {
     className: 'max-w-xl',
     players: [frank],
+    minPlayers: 2,
     maxPlayers: 5,
     onLeave: fn(),
     onKick: fn(),

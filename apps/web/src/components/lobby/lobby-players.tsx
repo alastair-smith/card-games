@@ -29,6 +29,7 @@ function ReadyBadge({ isReady }: { isReady: boolean }) {
 export default function LobbyPlayers({
   className,
   players,
+  minPlayers,
   maxPlayers,
   onLeave,
   onKick,
@@ -36,13 +37,18 @@ export default function LobbyPlayers({
 }: {
   className?: string;
   players: Player[];
+  minPlayers: number;
   maxPlayers: number;
   onLeave: (userId: UserId) => void;
   onKick: (userId: UserId) => void;
   onMakeHost: (userId: UserId) => void;
 }) {
   const isUserHost = players.some(({ isHost, isUser }) => isHost && isUser);
-  const openSeats = Math.max(maxPlayers - players.length, 0);
+  const requiredSeats = Math.max(minPlayers - players.length, 0);
+  const optionalSeats = Math.max(
+    maxPlayers - players.length - requiredSeats,
+    0,
+  );
 
   return (
     <Card variant='panel' className={className}>
@@ -93,13 +99,22 @@ export default function LobbyPlayers({
               </li>
             );
           })}
-          {Array.from({ length: openSeats }).map((_, index) => (
+          {Array.from({ length: requiredSeats }).map((_, index) => (
             <li
-              // biome-ignore lint/suspicious/noArrayIndexKey: open seats are identical
-              key={index}
+              // biome-ignore lint/suspicious/noArrayIndexKey: empty seats are identical
+              key={`required-${index}`}
+              className='rounded border-2 border-dashed border-current px-2 py-0.5 text-xs sm:py-1 sm:text-sm'
+            >
+              Required player
+            </li>
+          ))}
+          {Array.from({ length: optionalSeats }).map((_, index) => (
+            <li
+              // biome-ignore lint/suspicious/noArrayIndexKey: empty seats are identical
+              key={`optional-${index}`}
               className='rounded border-2 border-dashed border-(--card-muted-text) px-2 py-0.5 text-xs text-(--card-muted-text) sm:py-1 sm:text-sm'
             >
-              Open seat
+              Optional player
             </li>
           ))}
         </ul>
