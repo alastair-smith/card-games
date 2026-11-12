@@ -43,7 +43,9 @@ Fill in `.github/pull_request_template.md`:
   existing test. A small fix usually needs only the Summary and the `Closes`
   line, so omit the section when there's nothing to add.
 - Don't list manual follow-up steps, such as changing repo settings after
-  merge. They aren't part of the PR.
+  merge. They aren't part of the PR. When asked to include a one-off command,
+  such as a data clean-up, give the command only, not how to connect to or
+  configure the hosting.
 - End with `Closes #123` for the issue it completes, or `Part of #123` if the
   issue has more work left.
 - Strip every HTML comment (`<!-- ... -->`). The PR description becomes the
