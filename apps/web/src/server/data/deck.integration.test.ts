@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { yanivDeck } from '~/server/data/deck';
-import { redis } from '~/server/data/redis';
+import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
 import { generateLobbyCode } from '~/server/state/lib/generate-lobby-code';
 import { Rank, Suit } from '~/types/cards';
 import type { GameCode } from '~/types/game';
@@ -46,6 +46,19 @@ describe('yanivDeck', () => {
       await yanivDeck.createDeck(code, testCards);
       await yanivDeck.createDeck(code, [aceOfSpades]);
       expect(await yanivDeck.getDeckSize(code)).toBe(1);
+    });
+
+    it('clears an existing deck when created with no cards', async () => {
+      await yanivDeck.createDeck(code, testCards);
+      await yanivDeck.createDeck(code, []);
+      expect(await yanivDeck.deckExists(code)).toBe(false);
+    });
+
+    it('sets the deck to expire', async () => {
+      await yanivDeck.createDeck(code, testCards);
+      const ttl = await redis.ttl(deckKey(code));
+      expect(ttl).toBeGreaterThan(0);
+      expect(ttl).toBeLessThanOrEqual(REDIS_EXPIRE_TIME_SECONDS);
     });
   });
 

@@ -1,5 +1,9 @@
 import type { ZodType } from 'zod';
-import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
+import {
+  REDIS_EXPIRE_TIME_SECONDS,
+  redis,
+  runTransaction,
+} from '~/server/data/redis';
 import {
   type StandardPlayingCard,
   standardPlayingCardSchema,
@@ -20,24 +24,22 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
   };
 
   const createDiscard = async (code: GameCode) => {
-    const key = getDiscardKey(code);
-    const pipeline = redis.pipeline();
-
     // Clear any old discard pile that might exist
-    pipeline.del(key);
-
-    // Set expiry for the discard key
-    pipeline.expire(key, REDIS_EXPIRE_TIME_SECONDS);
-
-    await pipeline.exec();
+    await redis.del(getDiscardKey(code));
   };
 
   const pushDiscard = async (code: GameCode, card: T | T[]) => {
     const key = getDiscardKey(code);
     const cards = Array.isArray(card) ? card : [card];
-    for (const singleCard of cards) {
-      await redis.rpush(key, JSON.stringify(singleCard));
-    }
+    // Redis rejects an RPUSH with no values
+    if (cards.length === 0) return;
+
+    await runTransaction(async (transaction) => {
+      transaction
+        .rpush(key, ...cards.map((singleCard) => JSON.stringify(singleCard)))
+        // On every push, as an emptied pile loses its expiry
+        .expire(key, REDIS_EXPIRE_TIME_SECONDS);
+    });
   };
 
   const popDiscard = async (code: GameCode): Promise<T | null> => {
@@ -63,8 +65,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return redis.llen(key);
   };
 
-  // Pops the top card then fetches and clears the rest in one batch.
-  // Returns all cards top-first.
+  /** Empties the pile, returning its cards top-first. */
   const drainDiscard = async (code: GameCode): Promise<T[]> => {
     const key = getDiscardKey(code);
     const topJson = await redis.rpop(key);
@@ -77,7 +78,7 @@ const createDiscardStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
     return [parseCard(topJson), ...[...restJsons].reverse().map(parseCard)];
   };
 
-  // Returns all cards top-first, leaving the pile in place.
+  /** Returns all cards top-first, leaving the pile in place. */
   const getDiscardCards = async (code: GameCode): Promise<T[]> => {
     const cardJsons = await redis.lrange(getDiscardKey(code), 0, -1);
     return [...cardJsons].reverse().map(parseCard);
