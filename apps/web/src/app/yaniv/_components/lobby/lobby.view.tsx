@@ -57,7 +57,7 @@ export default function LobbyView({
         </div>
       }
     >
-      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2 lg:items-start'>
+      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
         <div className='flex flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />
@@ -70,7 +70,7 @@ export default function LobbyView({
         </div>
         <div className='flex flex-col gap-3'>
           <GameSettings
-            className='w-full'
+            className='w-full flex-1'
             settings={settings}
             isHost={isHost}
             onSettingChange={handleSettingChange}
