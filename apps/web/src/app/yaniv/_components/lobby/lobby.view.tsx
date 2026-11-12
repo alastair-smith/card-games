@@ -1,15 +1,10 @@
 'use client';
 
-import { useId } from 'react';
 import GameSettings from '~/app/yaniv/_components/game-settings';
-import { HowToDialog } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import InvitePlayers from '~/components/lobby/invite-players';
 import LobbyPlayers from '~/components/lobby/lobby-players';
-import StartGameButton from '~/components/lobby/start-game-button';
-import { Card } from '~/components/ui/card';
-import { Label } from '~/components/ui/label';
-import { Switch } from '~/components/ui/switch';
+import ReadyBar from '~/components/lobby/ready-bar';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import {
@@ -19,6 +14,7 @@ import {
   type SettingUpdate,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
+import HowToCard from './how-to-card';
 
 export type LobbyProps = {
   code: GameCode;
@@ -39,41 +35,6 @@ export type LobbyProps = {
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
 };
-
-function LobbyFooter({
-  players,
-  isReady,
-  onReadyChange,
-  onStartGame,
-}: {
-  players: Player[];
-  isReady: boolean;
-  onReadyChange: (isReady: boolean) => void;
-  onStartGame: () => void;
-}) {
-  const readySwitchId = useId();
-
-  return (
-    <Card
-      variant='panel'
-      className='sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 shadow-lg'
-    >
-      <div className='flex items-center gap-2'>
-        <Label htmlFor={readySwitchId}>Ready</Label>
-        <Switch
-          id={readySwitchId}
-          checked={isReady}
-          onCheckedChange={onReadyChange}
-        />
-      </div>
-      <StartGameButton
-        players={players}
-        minPlayers={MIN_PLAYERS}
-        onStartGame={onStartGame}
-      />
-    </Card>
-  );
-}
 
 export default function LobbyView({
   code,
@@ -106,13 +67,7 @@ export default function LobbyView({
             onKick={handleKick}
             onMakeHost={handleMakeHost}
           />
-          <Card
-            variant='panel'
-            className='flex items-center justify-between gap-3 p-4'
-          >
-            <h2 className='text-xl font-semibold'>New to Yaniv?</h2>
-            <HowToDialog />
-          </Card>
+          <HowToCard />
         </div>
         <GameSettings
           className='w-full'
@@ -121,8 +76,10 @@ export default function LobbyView({
           onSettingChange={handleSettingChange}
         />
       </div>
-      <LobbyFooter
+      <ReadyBar
+        className='sticky bottom-0 z-10'
         players={players}
+        minPlayers={MIN_PLAYERS}
         isReady={user.isReady}
         onReadyChange={handleReadyChange}
         onStartGame={handleStartGame}

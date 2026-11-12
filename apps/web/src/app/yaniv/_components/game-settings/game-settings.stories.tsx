@@ -9,7 +9,7 @@ import {
 import GameSettings from '.';
 
 const meta = {
-  title: 'Yaniv / Game Settings',
+  title: 'Lobby / Game Settings',
   component: GameSettings,
   args: {
     className: 'm-4 w-100 max-w-full',
