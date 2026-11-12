@@ -23,6 +23,14 @@ const host: Player = {
 const meta = {
   title: 'Yaniv / Lobby',
   component: LobbyView,
+  parameters: { isFullScreen: true },
+  decorators: [
+    (Story) => (
+      <div className='not-prose'>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     code: 'ABCDEF' as GameCode,
     players: [host],
