@@ -1,5 +1,9 @@
 import type { ZodType } from 'zod';
-import { REDIS_EXPIRE_TIME_SECONDS, redis } from '~/server/data/redis';
+import {
+  REDIS_EXPIRE_TIME_SECONDS,
+  redis,
+  runTransaction,
+} from '~/server/data/redis';
 import {
   type StandardPlayingCard,
   standardPlayingCardSchema,
@@ -15,18 +19,17 @@ const createDeckStore = <T>(gamePrefix: string, cardSchema: ZodType<T>) => {
 
   const createDeck = async (code: GameCode, cards: T[]) => {
     const key = getDeckKey(code);
-    const pipeline = redis.pipeline();
+    await runTransaction(async (transaction) => {
+      // Clear any old deck that might exist
+      transaction.del(key);
 
-    // Clear any old deck that might exist
-    pipeline.del(key);
+      // Redis rejects an RPUSH with no values
+      if (cards.length === 0) return;
 
-    // Add all cards to the list
-    pipeline.rpush(key, ...cards.map((card) => JSON.stringify(card)));
-
-    // Set expiry for the deck key
-    pipeline.expire(key, REDIS_EXPIRE_TIME_SECONDS);
-
-    await pipeline.exec();
+      transaction
+        .rpush(key, ...cards.map((card) => JSON.stringify(card)))
+        .expire(key, REDIS_EXPIRE_TIME_SECONDS);
+    });
   };
 
   const parseCard = (json: string) => {

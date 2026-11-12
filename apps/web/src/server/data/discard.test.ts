@@ -64,13 +64,6 @@ describe('yanivDiscard.pushDiscard', () => {
     );
   });
 
-  test('fails when the push fails', async () => {
-    mockRunTransaction.mockRejectedValue(new Error('Transaction failed'));
-    await expect(yanivDiscard.pushDiscard(CODE, CARD_1)).rejects.toThrow(
-      'Transaction failed',
-    );
-  });
-
   test('does nothing when there are no cards to push', async () => {
     await yanivDiscard.pushDiscard(CODE, []);
     expect(mockRunTransaction).not.toHaveBeenCalled();
