@@ -145,23 +145,6 @@
       "retrosWithout": 2
     },
     {
-      "id": 30,
-      "pattern": "Existing `CLAUDE.md` rule \"only state how the app behaves once you've checked it\" not followed: writing that the integration tests cover \"a store in `~/server/data/`\" when only the deck and discard stores have them",
-      "sightings": [
-        {
-          "date": "2026-11-11",
-          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
-          "pr": 464
-        },
-        {
-          "date": "2026-11-12",
-          "session": "3ca3f7d0-82fa-4555-b38c-11d799e24ec5",
-          "pr": 474
-        }
-      ],
-      "retrosWithout": 0
-    },
-    {
       "id": 32,
       "pattern": "Existing `run-retro` step 4 \"find what actually went wrong\" not followed: drafting a rule around where the work came from (a PR's review) rather than why it belonged in the PR (the PR's own change made it necessary)",
       "sightings": [
