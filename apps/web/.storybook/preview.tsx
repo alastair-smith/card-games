@@ -41,7 +41,8 @@ const preview: Preview = {
       <div
         className={cn(
           'bg-main-background background-noise prose text-dark-text',
-          viewMode === 'story' && 'min-h-screen',
+          // Not min-h-screen, which a phone's browser measures with its address bar hidden
+          viewMode === 'story' && 'min-h-dvh',
           !parameters.isFullScreen && 'p-4',
         )}
       >

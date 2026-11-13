@@ -39,7 +39,7 @@ const hasOpenOverlay = (frameDocument: Document) =>
       isVisible(child),
   );
 
-// The preview decorator stretches to the frame with min-h-screen, so measure
+// The preview decorator stretches to the frame with min-h-dvh, so measure
 // the story inside it instead, leaving out fixed and absolute layers such as
 // the toaster
 const measureContentHeight = (frameDocument: Document) => {
