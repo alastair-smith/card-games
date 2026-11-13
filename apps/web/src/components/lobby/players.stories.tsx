@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
+import StartGameButton from '~/components/lobby/start-game-button';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
@@ -45,11 +46,19 @@ const meta = {
     handleNameChange: fn(),
     handleReadyChange: fn(),
     handleColorChange: fn(),
-    handleStartGame: fn(),
     handleKick: fn(),
     handleLeave: fn(),
     handleMakeHost: fn(),
   },
+  render: (args) => (
+    <Players {...args}>
+      <StartGameButton
+        players={args.players}
+        minPlayers={args.minPlayers}
+        onStartGame={fn()}
+      />
+    </Players>
+  ),
 } satisfies Meta<typeof Players>;
 
 export default meta;

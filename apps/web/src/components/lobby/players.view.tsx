@@ -1,33 +1,19 @@
 import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
-import { useMemo } from 'react';
-import type { UserId } from '~/types/entities';
-import type { Player } from '~/types/game';
+import { type ReactNode, useMemo } from 'react';
 import {
-  PLAYER_COLOR_OPTIONS,
-  type PlayerColor,
-  playerColorValue,
-} from '~/utils/player-color';
+  hasPlayerActions,
+  PlayerActionsMenu,
+} from '~/components/lobby/player-actions-menu';
+import { PlayerNameInput } from '~/components/lobby/player-name-input';
+import { Button } from '~/components/ui/button';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { ColorPicker, ColorSwatch } from '../ui/color-picker';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { Switch } from '../ui/switch';
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '~/components/ui/card';
+import { ColorPicker, ColorSwatch } from '~/components/ui/color-picker';
+import { Switch } from '~/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -35,8 +21,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
-import { PlayerNameInput } from './player-name-input';
+} from '~/components/ui/table';
+import type { UserId } from '~/types/entities';
+import type { Player } from '~/types/game';
+import {
+  PLAYER_COLOR_OPTIONS,
+  type PlayerColor,
+  playerColorValue,
+} from '~/utils/player-color';
 
 function PlayerDropdown({
   className,
@@ -53,107 +45,22 @@ function PlayerDropdown({
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
 }) {
-  const showLeave = player.isUser;
-  const showKick = userIsHost && !player.isUser;
-  const showMakeHost = userIsHost && !player.isHost;
-
-  if (!showLeave && !showKick && !showMakeHost) {
+  if (!hasPlayerActions(player, userIsHost)) {
     return null;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='secondary' size='icon'>
-          <EllipsisVertical className={className} />
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent>
-        {showLeave && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Leave
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Are you sure you want to leave the game?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You can rejoin by re-visiting the url.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Stay</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => handleLeave(player.id)}
-                  variant='danger'
-                >
-                  Leave
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-
-        {showKick && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Kick
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Kick <span className='font-semibold'>{player.name}</span> from
-                  the game?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  They will be able to rejoin by re-visiting the url.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleKick(player.id)}>
-                  Kick
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-
-        {showMakeHost && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Make Host
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Make <span className='font-semibold'>{player.name}</span> the
-                  new host?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will remain in the game, but lose host powers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => handleMakeHost(player.id)}>
-                  Make Host
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <PlayerActionsMenu
+      player={player}
+      isUserHost={userIsHost}
+      onLeave={handleLeave}
+      onKick={handleKick}
+      onMakeHost={handleMakeHost}
+    >
+      <Button variant='secondary' size='icon'>
+        <EllipsisVertical className={className} />
+      </Button>
+    </PlayerActionsMenu>
   );
 }
 
@@ -189,31 +96,10 @@ function PlayerColour({
   );
 }
 
-function getButtonText({
-  userIsHost,
-  requiredPlayers,
-  playersReady,
-  playerCount,
-}: {
-  userIsHost: boolean;
-  requiredPlayers: number;
-  playersReady: number;
-  playerCount: number;
-}) {
-  if (requiredPlayers > 0) {
-    return `Need ${requiredPlayers} more player(s)`;
-  }
-  if (playersReady !== playerCount) {
-    return `${playersReady}/${playerCount} players ready`;
-  }
-  if (userIsHost) {
-    return 'Start Game';
-  }
-  return 'Awaiting Host';
-}
-
 export type PlayersProps = {
   className?: string;
+  /** Shown in the card's footer, such as a `StartGameButton` */
+  children?: ReactNode;
   players: Player[];
   minPlayers: number;
   maxPlayers: number;
@@ -226,7 +112,6 @@ export type PlayersProps = {
   handleNameChange: (name: string) => void;
   handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange?: (color: string) => void;
-  handleStartGame: () => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
   handleMakeHost: (userId: UserId) => void;
@@ -234,6 +119,7 @@ export type PlayersProps = {
 
 export default function Players({
   className,
+  children,
   players,
   minPlayers,
   maxPlayers,
@@ -241,7 +127,6 @@ export default function Players({
   handleNameChange,
   handleReadyChange,
   handleColorChange,
-  handleStartGame,
   handleLeave,
   handleKick,
   handleMakeHost,
@@ -253,17 +138,6 @@ export default function Players({
     () => players.some(({ isHost, isUser }) => isHost && isUser),
     [players],
   );
-  const playersReady = useMemo(
-    () => players.filter((player) => player.isReady).length,
-    [players],
-  );
-
-  const buttonText = getButtonText({
-    userIsHost,
-    requiredPlayers,
-    playersReady,
-    playerCount: players.length,
-  });
 
   return (
     <Card className={className}>
@@ -445,14 +319,9 @@ export default function Players({
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter className='flex gap-4 justify-end'>
-        <Button
-          disabled={buttonText !== 'Start Game'}
-          onClick={() => handleStartGame()}
-        >
-          {buttonText}
-        </Button>
-      </CardFooter>
+      {children && (
+        <CardFooter className='flex gap-4 justify-end'>{children}</CardFooter>
+      )}
     </Card>
   );
 }

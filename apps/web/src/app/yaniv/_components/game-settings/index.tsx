@@ -149,7 +149,7 @@ export default function GameSettings({
   onSettingChange,
 }: GameSettingsProps) {
   return (
-    <Card className={className}>
+    <Card variant='panel' className={className}>
       <CardHeader>
         <h2 className='text-xl font-semibold'>
           {isHost ? 'Settings' : 'Settings (Configured by Host)'}

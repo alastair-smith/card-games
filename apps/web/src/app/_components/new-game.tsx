@@ -7,7 +7,7 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
-import { GameType, gameDisplayName, gameURL } from '~/types/game';
+import { GameType, gameDisplayName, gameSummary, gameURL } from '~/types/game';
 import { cn } from '~/utils/cn';
 import { YanivThumbnail } from './thumbnails/yaniv';
 
@@ -50,7 +50,7 @@ const games: GameProps[] = [
       max: 5,
     },
     length: GameLength.medium,
-    summary: 'Win hands of 7 points or under and call Yaniv!',
+    summary: gameSummary[GameType.YANIV],
   },
   // {
   //   gameType: GameType.BLOB,

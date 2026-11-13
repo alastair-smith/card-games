@@ -26,8 +26,8 @@ kebab-case, describing what's shown.
 
 - **Page:** the visible screen by default. Pass `--scroll-to-bottom` when the
   change is at the foot of the page, or `--full-page` for the whole page.
-  Both also work on game pages, which scroll inside `main` rather than the
-  window
+  Both also work on game pages, which scroll inside a box around `main`
+  rather than the window
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up

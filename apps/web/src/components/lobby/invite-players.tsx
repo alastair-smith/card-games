@@ -2,12 +2,19 @@
 
 import { useMemo } from 'react';
 import { QRCode } from 'react-qr-code';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import { toast } from '~/components/ui/toast';
 import type { GameCode } from '~/types/game';
 import { cn } from '~/utils/cn';
-import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
-import { Input } from '../ui/input';
-import { toast } from '../ui/toast';
 
 async function copyUrlToClipboard(url: string) {
   await navigator.clipboard.writeText(url);
@@ -21,38 +28,62 @@ export default function InvitePlayers({
   code: GameCode;
   className?: string;
 }) {
-  const url = useMemo(() => {
-    const { origin, pathname } = new URL(window.location.href);
-    return `${origin}${pathname}`;
+  const { url, address } = useMemo(() => {
+    const { origin, host, pathname } = new URL(window.location.href);
+    return { url: `${origin}${pathname}`, address: `${host}${pathname}` };
   }, []);
 
   return (
-    <Card className={cn('w-fit', className)}>
-      <CardContent className='p-4 flex gap-3 justify-center items-center flex-col sm:flex-row'>
-        <div className='flex items-center justify-center row-span-2'>
-          <QRCode
-            value={url}
-            className='border-border p-2 border-2 rounded-xl bg-true-white'
-          />
-        </div>
-        <div className='flex flex-col gap-3'>
-          <Input
-            placeholder='Code'
-            className='h-20 text-center font-mono text-4xl uppercase'
-            name='code'
-            value={code}
-            readOnly
-          />
-          <Button
-            className='sm:h-20 sm:text-xl px-6 w-full'
-            onClick={() => {
-              void copyUrlToClipboard(url);
-            }}
-          >
-            Copy Link
-          </Button>
-        </div>
-      </CardContent>
+    <Card
+      variant='panel'
+      className={cn('flex items-center justify-between gap-3 p-4', className)}
+    >
+      <div className='flex flex-col items-start gap-2'>
+        <h2 className='text-sm font-semibold text-(--card-muted-text)'>
+          Game code
+        </h2>
+        <p className='font-mono text-3xl font-bold uppercase tracking-widest'>
+          {code}
+        </p>
+        <Button
+          variant='secondary'
+          size='sm'
+          onClick={() => {
+            void copyUrlToClipboard(url);
+          }}
+        >
+          Copy link
+        </Button>
+      </div>
+      <div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button
+              type='button'
+              aria-label='Show a larger QR code'
+              className='block cursor-pointer rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring'
+            >
+              <QRCode
+                value={url}
+                aria-hidden='true'
+                className='block size-28 rounded-xl border-2 border-border bg-true-white p-1.5 sm:size-32'
+              />
+            </button>
+          </DialogTrigger>
+          <DialogContent className='sm:max-w-sm'>
+            <DialogHeader>
+              <DialogTitle>Scan to join</DialogTitle>
+            </DialogHeader>
+            <QRCode
+              value={url}
+              className='mx-auto h-auto w-full max-w-64 rounded-xl border-2 border-border bg-true-white p-2'
+            />
+            <DialogDescription className='break-words text-center font-semibold'>
+              {address}
+            </DialogDescription>
+          </DialogContent>
+        </Dialog>
+      </div>
     </Card>
   );
 }
