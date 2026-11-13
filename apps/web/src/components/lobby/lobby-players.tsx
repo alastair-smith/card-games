@@ -6,8 +6,10 @@ import {
 } from 'lucide-react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
+import { playerColorValue } from '~/utils/player-color';
 import { PlayerTag } from '../player-tag';
 import { Button } from '../ui/button';
+import { ButtonGroup } from '../ui/button-group';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { hasPlayerActions, PlayerActionsMenu } from './player-actions-menu';
 
@@ -68,28 +70,41 @@ export default function LobbyPlayers({
                   <span className='sr-only'>Host:</span>
                 </>
               )}
-              <PlayerTag
-                name={player.name}
-                color={player.color}
-                isUser={player.isUser}
-                isPlayersTurn={false}
-              >
-                <ReadyStatus isReady={player.isReady} />
-              </PlayerTag>
-              {hasPlayerActions(player, isUserHost) && (
-                <PlayerActionsMenu
-                  player={player}
-                  isUserHost={isUserHost}
-                  onLeave={onLeave}
-                  onKick={onKick}
-                  onMakeHost={onMakeHost}
+              <ButtonGroup>
+                <PlayerTag
+                  name={player.name}
+                  color={player.color}
+                  isUser={player.isUser}
+                  isPlayersTurn={false}
                 >
-                  <Button variant='secondary' size='icon' className='h-8 w-8'>
-                    <EllipsisVerticalIcon aria-hidden='true' />
-                    <span className='sr-only'>Actions for {player.name}</span>
-                  </Button>
-                </PlayerActionsMenu>
-              )}
+                  <ReadyStatus isReady={player.isReady} />
+                </PlayerTag>
+                {hasPlayerActions(player, isUserHost) && (
+                  <PlayerActionsMenu
+                    player={player}
+                    isUserHost={isUserHost}
+                    onLeave={onLeave}
+                    onKick={onKick}
+                    onMakeHost={onMakeHost}
+                  >
+                    <Button
+                      variant='secondary'
+                      size='icon'
+                      style={{
+                        backgroundColor: playerColorValue(player.color),
+                      }}
+                      className='h-auto w-7 border-white text-white hover:brightness-110 sm:w-8'
+                    >
+                      <EllipsisVerticalIcon
+                        strokeWidth={3}
+                        aria-hidden='true'
+                        className='icon-outline-black'
+                      />
+                      <span className='sr-only'>Actions for {player.name}</span>
+                    </Button>
+                  </PlayerActionsMenu>
+                )}
+              </ButtonGroup>
             </li>
           ))}
           {Array.from({ length: requiredSeats }).map((_, index) => (

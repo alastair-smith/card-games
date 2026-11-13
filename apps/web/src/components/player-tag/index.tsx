@@ -30,10 +30,11 @@ export function PlayerTag({
 }: PlayerTagProps) {
   return (
     // Spans, so a tag can sit inside a button
-    <span className={cn('relative block', className)}>
+    // Rounded here, so a group such as a ButtonGroup can square its corners
+    <span className={cn('relative block rounded', className)}>
       <span
         style={{ backgroundColor: playerColorValue(color) }}
-        className='relative flex items-center gap-1 rounded border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
+        className='relative flex h-full items-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
       >
         {isUser && (
           <>
