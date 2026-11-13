@@ -14,7 +14,7 @@ import {
   type SettingUpdate,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
-import HowToCard from './how-to-card';
+import { HowToDialog } from '../how-to';
 
 export type LobbyProps = {
   code: GameCode;
@@ -57,6 +57,7 @@ export default function LobbyView({
   return (
     <GameLayout
       gameType={GameType.YANIV}
+      actions={<HowToDialog />}
       footer={
         <ReadyBar
           players={players}
@@ -85,7 +86,6 @@ export default function LobbyView({
             onKick={handleKick}
             onMakeHost={handleMakeHost}
           />
-          <HowToCard />
         </div>
         <GameSettings
           className='w-full'
