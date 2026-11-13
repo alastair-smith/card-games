@@ -32,6 +32,8 @@ Issues opened through the templates are labelled automatically.
 `create-issue.ts` skips the templates, so always pass both labels
 yourself. Quote `home page` because of the space: `--label "home page"`.
 
+An issue for a retro's changes also gets the `retro` label.
+
 ## Finding issues
 
 Search before creating, so you don't file a duplicate:
@@ -85,6 +87,7 @@ Board columns: Triage, Backlog, Ready, In progress, In review, Done.
   deliverable. Only add one when an existing milestone clearly fits, e.g. a
   bug in a feature that milestone is still delivering. Never propose a new
   milestone just to hold a bug.
+- **Retro issues**, labelled `retro`, have no milestone.
 
 ```bash
 ./.claude/skills/manage-issue/scripts/list-milestones.ts
@@ -139,6 +142,8 @@ EOF
 ```
 
 Every flag is optional and the labels can repeat, but pass at least one change.
+`--remove-milestone` takes the issue out of its milestone, in place of
+`--milestone`.
 Use the script rather than `gh issue edit`, which can target any repo.
 
 ## Changing status

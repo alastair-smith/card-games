@@ -45,7 +45,41 @@ kebab-case, describing what's shown.
 Look at each screenshot before relying on it, and retake any that shows a
 loading or empty state.
 
-## Measure layout shift
+## Measure layouts
+
+`measure-stories.ts` measures stories in Storybook, at 1280×800 and 390×844
+unless you pass `--size`. For each story, at each size, it lists every
+element that scrolls and by how much, the page itself included, or says
+nothing scrolls. Use it to check a layout fits a screen:
+
+```bash
+./.claude/skills/take-screenshots/scripts/measure-stories.ts \
+  --story yaniv-lobby--full-with-longest-names \
+  --size ipad-landscape --size small-desktop --size 1180x764
+```
+
+`--size` repeats, and takes `WxH` or one of these names:
+
+| Name             | Size      | Touch |
+| :--------------- | :-------- | :---- |
+| `desktop`        | 1280×800  | No    |
+| `mobile`         | 390×844   | Yes   |
+| `1440p`          | 2560×1440 | No    |
+| `1080p`          | 1920×1080 | No    |
+| `laptop`         | 1536×864  | No    |
+| `720p`           | 1280×720  | No    |
+| `small-desktop`  | 1024×768  | No    |
+| `ipad-landscape` | 1180×820  | Yes   |
+| `ipad-portrait`  | 820×1180  | Yes   |
+| `large-mobile`   | 414×896   | Yes   |
+| `small-mobile`   | 360×800   | Yes   |
+
+Sizes are in CSS pixels, so a 4K screen at its usual 150% or 200% scaling is
+`1440p` or `1080p`. A `WxH` size has no touch screen, so pick a named size for a phone or tablet
+where touch matters. To find the height where a layout starts to scroll,
+try a few `WxH` sizes in one call.
+
+### Layout shift
 
 To check that elements stay put between states, give two or more stories
 showing those states and a CSS selector for the elements to compare:
@@ -57,8 +91,7 @@ showing those states and a CSS selector for the elements to compare:
   --selector '.rounded.border-2, [class*="pb-[0.5em]"]'
 ```
 
-At each of the two sizes it prints where the selector's matches sit in the
-first story, then a `DIFFERS` line for each element that sits elsewhere or is
+At each size it prints where the selector's matches sit in the first story, then a `DIFFERS` line for each element that sits elsewhere or is
 a different size in a later story, or `No differences`. Elements are compared
 in page order. Only elements the selector matches are checked, so make it
 cover every key element, including the content below or beside whatever

@@ -10,7 +10,7 @@ import {
 } from '../../lib/script-helpers.ts';
 
 const usage =
-  'Usage: edit-issue.ts <issue number> [--title <title>] [--add-label <label>]... [--remove-label <label>]... [--milestone <milestone>] [--body < body]';
+  'Usage: edit-issue.ts <issue number> [--title <title>] [--add-label <label>]... [--remove-label <label>]... [--milestone <milestone> | --remove-milestone] [--body < body]';
 
 const { values, positionals } = parseArguments(usage, {
   allowPositionals: true,
@@ -19,6 +19,7 @@ const { values, positionals } = parseArguments(usage, {
     'add-label': { type: 'string', multiple: true },
     'remove-label': { type: 'string', multiple: true },
     milestone: { type: 'string' },
+    'remove-milestone': { type: 'boolean' },
     body: { type: 'boolean' },
   },
 });
@@ -28,6 +29,7 @@ const {
   'add-label': addLabels = [],
   'remove-label': removeLabels = [],
   milestone,
+  'remove-milestone': isMilestoneRemoved = false,
   body: isBodyPassed = false,
 } = values;
 
@@ -36,6 +38,7 @@ if (
   extraPositionals.length > 0 ||
   title === '' ||
   milestone === '' ||
+  (milestone && isMilestoneRemoved) ||
   addLabels.includes('') ||
   removeLabels.includes('')
 ) {
@@ -49,6 +52,7 @@ const editArguments = [
   ...addLabels.map((label) => `--add-label=${label}`),
   ...removeLabels.map((label) => `--remove-label=${label}`),
   ...(milestone ? [`--milestone=${milestone}`] : []),
+  ...(isMilestoneRemoved ? ['--remove-milestone'] : []),
   ...(body ? ['--body-file', '-'] : []),
 ];
 

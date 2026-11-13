@@ -280,8 +280,8 @@ elements sit in each), overlap, and content cut off at the worst case: the
 most players, the longest names, every optional element showing, such as
 a Yaniv sticker on every tag, and every message or state the element can show,
 not just one example. Measure sizes in the running page or story rather than
-adding them up from the classes, comparing states with the `take-screenshots`
-skill's `measure-stories.ts`.
+adding them up from the classes, comparing states and checking what scrolls
+with the `take-screenshots` skill's `measure-stories.ts`.
 
 ### Naming
 
@@ -301,7 +301,9 @@ uses for the same idea, e.g. `drawnFrom` beside `drawnCard`, not
 Keep comments to a minimum and let names carry the meaning
 (`useWaitForServerValue`, `DEFAULT_HAND_SIZE`).
 
-- Do comment _why_ when a decision isn't obvious from the code
+- Do comment _why_ when a decision isn't obvious from the code, such as one
+  that relies on browser behaviour, but not for ordinary layout choices like
+  element order or spacing
 - When a step needs a comment, put the `//` on that line, inside the function.
   When the whole function needs one, use a `/** */` doc comment above it
 - Explain _how_ only in code that is rarely touched but important, such as auth
@@ -489,6 +491,7 @@ wrapping it in a game-specific component or adding a second version beside it.
 
 ### Stories
 
+- Give each new component its own stories, even when a parent's stories already render it
 - Stories don't set a viewport or come in per-size copies; the viewport toolbar picks the size
 - A `play` function can't rely on an element that only exists at one size, as story tests render at one size
 
