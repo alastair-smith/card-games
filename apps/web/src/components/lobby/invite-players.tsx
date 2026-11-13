@@ -1,6 +1,5 @@
 'use client';
 
-import { CopyIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { QRCode } from 'react-qr-code';
 import type { GameCode } from '~/types/game';
@@ -48,13 +47,12 @@ export default function InvitePlayers({
         </p>
         <Button
           variant='secondary'
-          size='icon'
-          aria-label='Copy invite link'
+          size='sm'
           onClick={() => {
             void copyUrlToClipboard(url);
           }}
         >
-          <CopyIcon aria-hidden='true' />
+          Copy link
         </Button>
       </div>
       <div>
