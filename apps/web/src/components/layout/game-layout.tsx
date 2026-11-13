@@ -31,7 +31,8 @@ export default function GameLayout({
 
       <main
         className={cn(
-          'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto',
+          // Contained, so a swipe past the end doesn't move the page under the address bar
+          'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto overscroll-y-contain',
           className,
         )}
       >
