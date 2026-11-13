@@ -2,33 +2,28 @@ import {
   CheckIcon,
   CrownIcon,
   EllipsisVerticalIcon,
-  PauseIcon,
+  HourglassIcon,
 } from 'lucide-react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
-import { cn } from '~/utils/cn';
 import { PlayerTag } from '../player-tag';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { hasPlayerActions, PlayerActionsMenu } from './player-actions-menu';
 
-function ReadyBadge({ isReady }: { isReady: boolean }) {
+function ReadyStatus({ isReady }: { isReady: boolean }) {
+  const Icon = isReady ? CheckIcon : HourglassIcon;
+
   return (
-    <span
-      className={cn(
-        'flex size-5 shrink-0 items-center justify-center rounded-full',
-        isReady
-          ? 'bg-primary text-light-text'
-          : 'border-2 border-(--card-muted-text) text-(--card-muted-text)',
-      )}
-    >
-      {isReady ? (
-        <CheckIcon size={14} strokeWidth={3} aria-hidden='true' />
-      ) : (
-        <PauseIcon size={12} strokeWidth={3} aria-hidden='true' />
-      )}
-      <span className='sr-only'>{isReady ? 'Ready' : 'Not ready'}</span>
-    </span>
+    <>
+      <Icon
+        size='1.15em'
+        strokeWidth={isReady ? 3.5 : 2.5}
+        aria-hidden='true'
+        className='shrink-0 text-white icon-outline-black'
+      />
+      <span className='sr-only'>{isReady ? ', ready' : ', not ready'}</span>
+    </>
   );
 }
 
@@ -78,8 +73,9 @@ export default function LobbyPlayers({
                 color={player.color}
                 isUser={player.isUser}
                 isPlayersTurn={false}
-              />
-              <ReadyBadge isReady={player.isReady} />
+              >
+                <ReadyStatus isReady={player.isReady} />
+              </PlayerTag>
               {hasPlayerActions(player, isUserHost) && (
                 <PlayerActionsMenu
                   player={player}
