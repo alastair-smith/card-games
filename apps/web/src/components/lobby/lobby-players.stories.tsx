@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { buildPlayer } from '~/test-utils/lobby';
 import {
   MAX_NAME_LENGTH,
@@ -55,6 +55,18 @@ export const SomeReady: Story = {
 /** The host has a menu for everyone else. */
 export const HostMenu: Story = {
   args: { players: [frank, roz, niles] },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Actions for Roz' }),
+    );
+
+    await expect(
+      screen.getByRole('menuitem', { name: 'Kick' }),
+    ).toBeInTheDocument();
+    await expect(
+      screen.getByRole('menuitem', { name: 'Make Host' }),
+    ).toBeInTheDocument();
+  },
 };
 
 /** Players other than the host only have a menu for themselves, to leave. */
@@ -65,6 +77,15 @@ export const NotHost: Story = {
       { ...roz, isUser: true, isReady: true },
       niles,
     ],
+  },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Actions for Roz' }),
+    );
+
+    await expect(
+      screen.getByRole('menuitem', { name: 'Leave' }),
+    ).toBeInTheDocument();
   },
 };
 

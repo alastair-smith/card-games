@@ -1,12 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { PlayerTag } from '~/components/player-tag';
-import {
-  PlayerActionsButton,
-  PlayerActionsMenu,
-} from '~/components/player-tag/player-actions-menu';
+import { PlayerActionsButton } from '~/components/player-tag/player-actions-button';
 import { ButtonGroup } from '~/components/ui/button-group';
-import { buildPlayer } from '~/test-utils/lobby';
 import {
   type EmojiReactionId,
   MAX_NAME_LENGTH,
@@ -54,52 +49,12 @@ export const LongestName: Story = {
   },
 };
 
-/** The host's menu for another player, from a ⋮ joined to their tag. */
-export const ActionsForHost: Story = {
+/** A ⋮ joined to the tag, to open actions for the player. */
+export const WithActionsButton: Story = {
   render: (args) => (
     <ButtonGroup>
       <PlayerTag {...args} />
-      <PlayerActionsMenu
-        player={buildPlayer({
-          name: args.name,
-          color: args.color,
-          isUser: args.isUser,
-          isHost: args.isHost ?? false,
-        })}
-        isUserHost
-        onLeave={fn()}
-        onKick={fn()}
-        onMakeHost={fn()}
-      >
-        <PlayerActionsButton name={args.name} color={args.color} />
-      </PlayerActionsMenu>
+      <PlayerActionsButton name={args.name} color={args.color} />
     </ButtonGroup>
   ),
-  play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Actions for Frank' }),
-    );
-
-    await expect(
-      screen.getByRole('menuitem', { name: 'Kick' }),
-    ).toBeInTheDocument();
-    await expect(
-      screen.getByRole('menuitem', { name: 'Make Host' }),
-    ).toBeInTheDocument();
-  },
-};
-
-/** Your own menu, to leave the game. */
-export const ActionsForYou: Story = {
-  ...ActionsForHost,
-  args: { isUser: true, isHost: true },
-  play: async ({ canvasElement }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Actions for Frank' }),
-    );
-
-    await expect(
-      screen.getByRole('menuitem', { name: 'Leave' }),
-    ).toBeInTheDocument();
-  },
 };

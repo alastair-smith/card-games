@@ -1,10 +1,10 @@
 import { CheckIcon, HourglassIcon } from 'lucide-react';
-import { PlayerTag } from '~/components/player-tag';
 import {
   hasPlayerActions,
-  PlayerActionsButton,
   PlayerActionsMenu,
-} from '~/components/player-tag/player-actions-menu';
+} from '~/components/lobby/player-actions-menu';
+import { PlayerTag } from '~/components/player-tag';
+import { PlayerActionsButton } from '~/components/player-tag/player-actions-button';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
