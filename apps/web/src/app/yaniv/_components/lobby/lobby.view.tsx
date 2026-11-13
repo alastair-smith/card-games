@@ -83,7 +83,6 @@ export default function LobbyView({
       // whole lobby, so it sits as a card under the others
       footer={<PageFooter className='lg:hidden'>{readyBar}</PageFooter>}
     >
-      {/* Smaller screens are spaced off the bottom by the footer */}
       <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2 lg:pb-3'>
         <div className='lg:col-span-2'>
           <h1 className='text-xl font-bold'>Yaniv lobby</h1>
