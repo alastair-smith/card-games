@@ -10,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 18,
@@ -22,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 19,
@@ -34,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 20,
@@ -46,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 21,
@@ -58,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 22,
@@ -70,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 23,
@@ -82,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 24,
@@ -94,7 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 25,
@@ -106,7 +106,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 26,
@@ -118,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 27,
@@ -130,7 +130,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 32,
@@ -142,7 +142,7 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 33,
@@ -154,7 +154,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 34,
@@ -166,7 +166,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 35,
@@ -178,7 +178,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 36,
@@ -190,7 +190,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 37,
@@ -202,7 +202,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 38,
@@ -214,7 +214,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 39,
@@ -226,7 +226,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 40,
@@ -238,7 +238,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     }
   ],
   "retros": [
@@ -384,6 +384,16 @@
         "retroOfRetroPoints": 1,
         "changesMade": "`measure-stories.ts` gains `--size` (named or WxH) and scroll reporting; 2 `CLAUDE.md` rules (stories for each new component, no comments on ordinary layout choices); 2 memories removed; from the retro of the retro, 1 rule in `run-retro` and `manage-issue` (retro issues get a `retro` label and no milestone); `edit-issue.ts` gains `--remove-milestone`",
         "fixPr": 484
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "sessions": ["ea1e9a4c-c50b-4f2e-b537-1633018ee097"],
+      "prs": [485],
+      "result": {
+        "pointsRaised": 0,
+        "retroOfRetroPoints": 0,
+        "changesMade": "No changes"
       }
     }
   ]
