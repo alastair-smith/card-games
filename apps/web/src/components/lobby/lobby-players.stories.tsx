@@ -52,7 +52,7 @@ export const SomeReady: Story = {
   },
 };
 
-// The host has a menu for everyone else.
+/** The host has a menu for everyone else. */
 export const HostMenu: Story = {
   args: { players: [frank, roz, niles] },
   play: async ({ canvasElement }) => {
@@ -66,7 +66,7 @@ export const HostMenu: Story = {
   },
 };
 
-// Players other than the host only have a menu for themselves, to leave.
+/** Players other than the host only have a menu for themselves, to leave. */
 export const NotHost: Story = {
   args: {
     players: [

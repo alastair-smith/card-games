@@ -51,7 +51,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Host: Story = {};
 
-// Someone else hosts, so the settings are read-only and Start waits for them.
+/** Someone else hosts, so the settings are read-only and Start waits for them. */
 export const NotHost: Story = {
   args: {
     players: [
@@ -67,7 +67,7 @@ export const NotHost: Story = {
   },
 };
 
-// The tallest the lobby gets: every seat taken, each name at its longest.
+/** The tallest the lobby gets: every seat taken, each name at its longest. */
 export const FullWithLongestNames: Story = {
   args: {
     players: [
@@ -85,7 +85,7 @@ export const FullWithLongestNames: Story = {
   },
 };
 
-// Your tag shows your changes before they've saved.
+/** Your tag shows your changes before they've saved. */
 export const EditingYourDetails: Story = {
   args: {
     user: { isReady: true, name: 'Francesca', nameError: '', color: 'rose' },
@@ -99,7 +99,7 @@ export const EditingYourDetails: Story = {
   },
 };
 
-// A name that can't be saved leaves your tag showing the last one that was.
+/** A name that can't be saved leaves your tag showing the last one that was. */
 export const NameCleared: Story = {
   args: {
     user: { isReady: false, name: '', nameError: '', color: 'cyan' },
