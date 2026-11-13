@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
 import { buildPlayer } from '~/test-utils/lobby';
 import type { PlayerName, UserId } from '~/types/entities';
+import { Card } from '../ui/card';
 import ReadyBar from './ready-bar';
 
 const frank = buildPlayer({
@@ -23,7 +24,13 @@ const niles = buildPlayer({
 const meta = {
   title: 'Lobby / Ready Bar',
   component: ReadyBar,
-  parameters: { isFullScreen: true },
+  decorators: [
+    (Story) => (
+      <Card variant='panel' className='not-prose p-3'>
+        <Story />
+      </Card>
+    ),
+  ],
   args: {
     players: [frank],
     minPlayers: 2,

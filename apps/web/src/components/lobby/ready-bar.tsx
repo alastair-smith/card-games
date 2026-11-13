@@ -37,43 +37,35 @@ export default function ReadyBar({
     .map((player) => player.color);
 
   return (
-    <div
-      className={cn(
-        'border-t-2 border-white/30 bg-panel-background text-dark-text',
-        className,
-      )}
-    >
-      {/* Lines up with the page's content column */}
-      <div className='mx-auto flex w-7xl max-w-full flex-wrap items-center gap-3 p-3'>
-        <div className='flex flex-1 basis-60 items-center gap-2'>
-          <ColorPicker
-            label='Change your colour'
-            colors={PLAYER_COLOR_OPTIONS}
-            value={color}
-            disabledColors={takenColors}
-            onColorSelect={onColorChange}
-          />
-          <PlayerNameInput
-            className='max-w-xs'
-            name={name}
-            onNameChange={onNameChange}
-          />
-        </div>
-        <div className='flex grow items-center justify-between gap-3 sm:grow-0'>
-          <div className='flex items-center gap-2'>
-            <Label htmlFor={readySwitchId}>Ready</Label>
-            <Switch
-              id={readySwitchId}
-              checked={isReady}
-              onCheckedChange={onReadyChange}
-            />
-          </div>
-          <StartGameButton
-            players={players}
-            minPlayers={minPlayers}
-            onStartGame={onStartGame}
+    <div className={cn('flex flex-wrap items-center gap-3', className)}>
+      <div className='flex flex-1 basis-60 items-center gap-2'>
+        <ColorPicker
+          label='Change your colour'
+          colors={PLAYER_COLOR_OPTIONS}
+          value={color}
+          disabledColors={takenColors}
+          onColorSelect={onColorChange}
+        />
+        <PlayerNameInput
+          className='max-w-xs'
+          name={name}
+          onNameChange={onNameChange}
+        />
+      </div>
+      <div className='flex grow items-center justify-between gap-3 sm:grow-0'>
+        <div className='flex items-center gap-2'>
+          <Label htmlFor={readySwitchId}>Ready</Label>
+          <Switch
+            id={readySwitchId}
+            checked={isReady}
+            onCheckedChange={onReadyChange}
           />
         </div>
+        <StartGameButton
+          players={players}
+          minPlayers={minPlayers}
+          onStartGame={onStartGame}
+        />
       </div>
     </div>
   );

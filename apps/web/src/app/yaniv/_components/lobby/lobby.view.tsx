@@ -2,9 +2,11 @@
 
 import GameSettings from '~/app/yaniv/_components/game-settings';
 import GameLayout from '~/components/layout/game-layout';
+import { PageFooter } from '~/components/layout/page';
 import InvitePlayers from '~/components/lobby/invite-players';
 import LobbyPlayers from '~/components/lobby/lobby-players';
 import ReadyBar from '~/components/lobby/ready-bar';
+import { Card } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import { type GameCode, GameType, type Player } from '~/types/game';
 import {
@@ -54,23 +56,27 @@ export default function LobbyView({
     ({ isHost: isPlayerHost, isUser }) => isPlayerHost && isUser,
   );
 
+  const readyBar = (
+    <ReadyBar
+      players={players}
+      minPlayers={MIN_PLAYERS}
+      name={user.name}
+      color={user.color}
+      isReady={user.isReady}
+      onNameChange={handleNameChange}
+      onColorChange={handleColorChange}
+      onReadyChange={handleReadyChange}
+      onStartGame={handleStartGame}
+    />
+  );
+
   return (
     <GameLayout
       gameType={GameType.YANIV}
       actions={<HowToDialog />}
-      footer={
-        <ReadyBar
-          players={players}
-          minPlayers={MIN_PLAYERS}
-          name={user.name}
-          color={user.color}
-          isReady={user.isReady}
-          onNameChange={handleNameChange}
-          onColorChange={handleColorChange}
-          onReadyChange={handleReadyChange}
-          onStartGame={handleStartGame}
-        />
-      }
+      // Smaller screens keep it in view along the bottom; larger ones fit the
+      // whole lobby, so it sits as a card under the others
+      footer={<PageFooter className='lg:hidden'>{readyBar}</PageFooter>}
     >
       <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
@@ -92,6 +98,9 @@ export default function LobbyView({
           isHost={isHost}
           onSettingChange={handleSettingChange}
         />
+        <Card variant='panel' className='hidden p-3 lg:col-span-2 lg:block'>
+          {readyBar}
+        </Card>
       </div>
     </GameLayout>
   );

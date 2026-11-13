@@ -175,11 +175,7 @@ async function getGameSnapshot(
 
 async function joinLobby(page: Page, gameUrl: string): Promise<void> {
   await page.goto(gameUrl);
-  // Toggle the current player's own Ready switch (other players' switches are disabled)
-  await page
-    .getByRole('switch')
-    .filter({ hasNot: page.locator('[data-disabled]') })
-    .click();
+  await page.getByRole('switch', { name: 'Ready' }).click();
 }
 
 // ---------------------------------------------------------------------------
@@ -385,11 +381,8 @@ test('simulates a full 3-player game of Yaniv to completion', async ({
   // The default dealer rotates
   await expect(p1.getByRole('radio', { name: /Rotates/ })).toBeChecked();
 
-  // Player 1 marks ready too (other players' switches are disabled)
-  await p1
-    .getByRole('switch')
-    .filter({ hasNot: p1.locator('[data-disabled]') })
-    .click();
+  // Player 1 marks ready too
+  await p1.getByRole('switch', { name: 'Ready' }).click();
 
   // Wait for all 3 to show as ready, then player 1 starts the game
   const startGameBtn = p1.getByRole('button', { name: 'Start Game' });

@@ -17,7 +17,7 @@ type PageRootProps = {
   fullscreen?: boolean;
   /** Fits the page to the screen, for pages whose content scrolls inside it. */
   isScreenHeight?: boolean | undefined;
-  /** Spans the full width at the bottom, below the scrolling content */
+  /** Below the scrolling content, such as a `PageFooter` */
   footer?: React.ReactNode;
 };
 
@@ -48,17 +48,33 @@ export function PageRoot({
             isScreenHeight
               ? 'relative min-h-0 flex-1 overflow-y-auto'
               : 'min-h-dvh',
-            // On larger screens the footer takes the space the content
-            // doesn't need, so it sits just under the content
-            isScreenHeight && footer && 'lg:flex-initial',
           )}
         >
           {children}
         </div>
       )}
-      {footer && (
-        <div className='-mx-3 self-stretch lg:grid lg:flex-1'>{footer}</div>
+      {footer}
+    </div>
+  );
+}
+
+/** A strip across the full width of a `PageRoot`'s foot. */
+export function PageFooter({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        '-mx-3 self-stretch border-t-2 border-white/30 bg-panel-background text-dark-text',
+        className,
       )}
+    >
+      {/* Lines up with the page's content column */}
+      <div className='mx-auto w-7xl max-w-full p-3'>{children}</div>
     </div>
   );
 }
