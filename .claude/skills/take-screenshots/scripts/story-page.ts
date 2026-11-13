@@ -1,9 +1,33 @@
 import type { Page } from 'playwright';
 import { exitWithError } from '../../lib/script-helpers.ts';
 
+export type Size = {
+  label: string;
+  width: number;
+  height: number;
+  isMobile: boolean;
+};
+
+// Common resolutions from Statcounter's 2026 figures, plus the iPad and the
+// width where the app's larger-screen (`lg`) layouts start. Sizes are in CSS
+// pixels, so a 4K screen at its usual 150% or 200% scaling is 1440p or 1080p
+export const NAMED_SIZES = {
+  desktop: { width: 1280, height: 800, isMobile: false },
+  mobile: { width: 390, height: 844, isMobile: true },
+  '1440p': { width: 2560, height: 1440, isMobile: false },
+  '1080p': { width: 1920, height: 1080, isMobile: false },
+  laptop: { width: 1536, height: 864, isMobile: false },
+  '720p': { width: 1280, height: 720, isMobile: false },
+  'small-desktop': { width: 1024, height: 768, isMobile: false },
+  'ipad-landscape': { width: 1180, height: 820, isMobile: true },
+  'ipad-portrait': { width: 820, height: 1180, isMobile: true },
+  'large-mobile': { width: 414, height: 896, isMobile: true },
+  'small-mobile': { width: 360, height: 800, isMobile: true },
+} as const satisfies Record<string, Omit<Size, 'label'>>;
+
 export const SIZES = [
-  { label: 'desktop', width: 1280, height: 800, isMobile: false },
-  { label: 'mobile', width: 390, height: 844, isMobile: true },
+  { label: 'desktop', ...NAMED_SIZES.desktop },
+  { label: 'mobile', ...NAMED_SIZES.mobile },
 ] as const;
 
 const STORYBOOK_ORIGIN = 'http://localhost:6006';

@@ -163,8 +163,9 @@ out of it. When asked to explain further, explain again more simply; don't
 drop a point because it was hard to explain.
 
 Changes follow the usual issue and branch rules; put all of a retro's
-changes in one PR. Before filing the issue for them, show its title, labels
-and milestone, as the `manage-issue` skill asks.
+changes in one PR. File its issue with the `retro` label beside its type and
+area labels, and no milestone. Show its title and labels before filing it, as
+the `manage-issue` skill asks.
 
 ## 6. Recap
 
