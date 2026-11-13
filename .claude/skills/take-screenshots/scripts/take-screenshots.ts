@@ -110,26 +110,36 @@ function getUrl(): URL {
   return url;
 }
 
-// Game pages fit the screen and scroll inside main rather than the window.
-// Returns how far main's content overflows it, or 0 when the window scrolls
-// or main doesn't
-const MAIN_OVERFLOW_SCRIPT = `(() => {
+// Game pages fit the screen and scroll inside a box around main, or main
+// itself, rather than the window. Finds that box, or null when the window
+// scrolls or nothing around main does
+const FIND_MAIN_SCROLLER = `(() => {
   const scrollingElement = document.scrollingElement ?? document.documentElement;
   if (scrollingElement.scrollHeight > scrollingElement.clientHeight) {
-    return 0;
+    return null;
   }
-  const main = document.querySelector('main');
-  if (!main || !['auto', 'scroll'].includes(getComputedStyle(main).overflowY)) {
-    return 0;
+  for (
+    let element = document.querySelector('main');
+    element && element !== document.body;
+    element = element.parentElement
+  ) {
+    if (['auto', 'scroll'].includes(getComputedStyle(element).overflowY)) {
+      return element;
+    }
   }
-  return Math.max(main.scrollHeight - main.clientHeight, 0);
+  return null;
+})()`;
+
+// How far the content overflows that box, or 0 when there isn't one
+const MAIN_OVERFLOW_SCRIPT = `(() => {
+  const scroller = ${FIND_MAIN_SCROLLER};
+  return scroller ? Math.max(scroller.scrollHeight - scroller.clientHeight, 0) : 0;
 })()`;
 
 const SCROLL_TO_BOTTOM_SCRIPT = `(() => {
-  const mainOverflow = ${MAIN_OVERFLOW_SCRIPT};
-  if (mainOverflow > 0) {
-    const main = document.querySelector('main');
-    main.scrollTo(0, main.scrollHeight);
+  const scroller = ${FIND_MAIN_SCROLLER};
+  if (scroller) {
+    scroller.scrollTo(0, scroller.scrollHeight);
   } else {
     window.scrollTo(0, document.documentElement.scrollHeight);
   }
