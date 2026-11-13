@@ -16,9 +16,17 @@ import { toast } from '~/components/ui/toast';
 import type { GameCode } from '~/types/game';
 import { cn } from '~/utils/cn';
 
+const SITE_NAME = 'PlayCards.Games';
+
 async function copyUrlToClipboard(url: string) {
   await navigator.clipboard.writeText(url);
   toast.success('Copied to clipboard.');
+}
+
+/** The link as someone would type it, without the protocol. */
+export function toAddress({ host, pathname }: URL) {
+  const siteName = host === SITE_NAME.toLowerCase() ? SITE_NAME : host;
+  return [siteName, ...pathname.split('/').filter(Boolean)].join(' / ');
 }
 
 export default function InvitePlayers({
@@ -28,9 +36,12 @@ export default function InvitePlayers({
   code: GameCode;
   className?: string;
 }) {
-  const url = useMemo(() => {
-    const { origin, pathname } = new URL(window.location.href);
-    return `${origin}${pathname}`;
+  const { url, address } = useMemo(() => {
+    const pageUrl = new URL(window.location.href);
+    return {
+      url: `${pageUrl.origin}${pageUrl.pathname}`,
+      address: toAddress(pageUrl),
+    };
   }, []);
 
   return (
@@ -73,14 +84,14 @@ export default function InvitePlayers({
           <DialogContent className='sm:max-w-sm'>
             <DialogHeader>
               <DialogTitle>Scan to join</DialogTitle>
-              <DialogDescription className='break-all'>
-                Or go to {url}
-              </DialogDescription>
             </DialogHeader>
             <QRCode
               value={url}
               className='mx-auto h-auto w-full max-w-64 rounded-xl border-2 border-border bg-true-white p-2'
             />
+            <DialogDescription className='break-words text-center font-semibold'>
+              {address}
+            </DialogDescription>
           </DialogContent>
         </Dialog>
       </div>
