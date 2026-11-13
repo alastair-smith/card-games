@@ -18,10 +18,12 @@ type Story = StoryObj<typeof meta>;
 
 export const InvitePlayers: Story = {};
 
-export const QrCode: Story = {
+export const LargerQrCode: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Show QR code' }),
+      within(canvasElement).getByRole('button', {
+        name: 'Show a larger QR code',
+      }),
     );
 
     await expect(

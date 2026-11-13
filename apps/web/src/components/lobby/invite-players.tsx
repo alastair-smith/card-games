@@ -1,6 +1,6 @@
 'use client';
 
-import { CopyIcon, QrCodeIcon } from 'lucide-react';
+import { CopyIcon } from 'lucide-react';
 import { useMemo } from 'react';
 import { QRCode } from 'react-qr-code';
 import type { GameCode } from '~/types/game';
@@ -39,15 +39,13 @@ export default function InvitePlayers({
       variant='panel'
       className={cn('flex items-center justify-between gap-3 p-4', className)}
     >
-      <div className='flex flex-col'>
+      <div className='flex flex-col items-start gap-2'>
         <h2 className='text-sm font-semibold text-(--card-muted-text)'>
           Game code
         </h2>
         <p className='font-mono text-3xl font-bold uppercase tracking-widest'>
           {code}
         </p>
-      </div>
-      <div className='flex gap-2'>
         <Button
           variant='secondary'
           size='icon'
@@ -58,11 +56,21 @@ export default function InvitePlayers({
         >
           <CopyIcon aria-hidden='true' />
         </Button>
+      </div>
+      <div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant='secondary' size='icon' aria-label='Show QR code'>
-              <QrCodeIcon aria-hidden='true' />
-            </Button>
+            <button
+              type='button'
+              aria-label='Show a larger QR code'
+              className='block cursor-pointer rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring'
+            >
+              <QRCode
+                value={url}
+                aria-hidden='true'
+                className='block size-28 rounded-xl border-2 border-border bg-true-white p-1.5 sm:size-32'
+              />
+            </button>
           </DialogTrigger>
           <DialogContent className='sm:max-w-sm'>
             <DialogHeader>
