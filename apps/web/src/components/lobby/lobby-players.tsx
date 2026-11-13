@@ -1,9 +1,4 @@
-import {
-  CheckIcon,
-  CrownIcon,
-  EllipsisVerticalIcon,
-  HourglassIcon,
-} from 'lucide-react';
+import { CheckIcon, EllipsisVerticalIcon, HourglassIcon } from 'lucide-react';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
 import { playerColorValue } from '~/utils/player-color';
@@ -63,18 +58,13 @@ export default function LobbyPlayers({
       <CardContent>
         <ul className='flex flex-wrap items-center gap-x-5 gap-y-3'>
           {players.map((player) => (
-            <li key={player.id} className='flex items-center gap-1.5'>
-              {player.isHost && (
-                <>
-                  <CrownIcon size={18} aria-hidden='true' />
-                  <span className='sr-only'>Host:</span>
-                </>
-              )}
+            <li key={player.id} className='flex'>
               <ButtonGroup>
                 <PlayerTag
                   name={player.name}
                   color={player.color}
                   isUser={player.isUser}
+                  isHost={player.isHost}
                   isPlayersTurn={false}
                 >
                   <ReadyStatus isReady={player.isReady} />
