@@ -102,8 +102,7 @@ export type PlayersProps = {
     color?: PlayerColor;
   };
   handleNameChange: (name: string) => void;
-  /** Leave out when the lobby has its own ready control */
-  handleReadyChange?: (readyStatus: boolean) => void;
+  handleReadyChange: (readyStatus: boolean) => void;
   handleColorChange?: (color: string) => void;
   handleLeave: (userId: UserId) => void;
   handleKick: (userId: UserId) => void;
@@ -134,7 +133,7 @@ export default function Players({
 
   return (
     <Card className={className}>
-      <CardHeader className='lg:pb-2'>
+      <CardHeader>
         <h2 className='text-xl font-semibold'>Players</h2>
       </CardHeader>
       <CardContent>
@@ -182,7 +181,7 @@ export default function Players({
                   <div className='flex gap-2 items-center'>
                     <span>Ready</span>
                     <Switch
-                      disabled={!player.isUser || !handleReadyChange}
+                      disabled={!player.isUser}
                       checked={player.isUser ? user.isReady : player.isReady}
                       onCheckedChange={handleReadyChange}
                     />
@@ -218,7 +217,7 @@ export default function Players({
             </div>
           ))}
         </div>
-        <Table className='hidden sm:table lg:[&_td]:py-2 lg:[&_th]:h-10'>
+        <Table className='hidden sm:table'>
           <TableHeader>
             <TableRow>
               <TableHead className='sr-only w-[1ch]'>Host</TableHead>
@@ -230,10 +229,7 @@ export default function Players({
           </TableHeader>
           <TableBody>
             {players.map((player) => (
-              <TableRow
-                key={player.id}
-                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
-              >
+              <TableRow key={player.id} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell className='w-[1ch]'>
                   {player.isHost ? (
                     <>
@@ -272,7 +268,7 @@ export default function Players({
                 </TableCell>
                 <TableCell>
                   <Switch
-                    disabled={!player.isUser || !handleReadyChange}
+                    disabled={!player.isUser}
                     checked={player.isUser ? user.isReady : player.isReady}
                     onCheckedChange={handleReadyChange}
                   />
@@ -290,11 +286,8 @@ export default function Players({
             ))}
 
             {Array.from({ length: requiredPlayers }).map((_, index) => (
-              <TableRow
-                // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-                key={index}
-                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
-              >
+              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4'>
                     <UserIcon size={22} />
@@ -305,11 +298,8 @@ export default function Players({
             ))}
 
             {Array.from({ length: optionalPlayers }).map((_, index) => (
-              <TableRow
-                // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
-                key={index}
-                className='sm:h-[calc(4.5rem+1px)] lg:h-[calc(3.5rem+1px)]'
-              >
+              // biome-ignore lint/suspicious/noArrayIndexKey: rows are duplicates
+              <TableRow key={index} className='sm:h-[calc(4.5rem+1px)]'>
                 <TableCell colSpan={5}>
                   <div className='flex justify-center gap-4 text-light-text-disabled'>
                     <UserIcon size={22} />
