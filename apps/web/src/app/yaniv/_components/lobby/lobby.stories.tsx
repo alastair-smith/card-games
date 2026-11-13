@@ -8,7 +8,7 @@ import {
 } from '~/types/entities';
 import type { GameCode } from '~/types/game';
 import { DEFAULT_SETTINGS } from '~/types/games/yaniv';
-import LobbyView from './lobby.view';
+import YanivLobbyView from './lobby.view';
 
 const longName = 'W'.repeat(MAX_NAME_LENGTH) as PlayerName;
 
@@ -20,7 +20,7 @@ const host = buildPlayer({
 
 const meta = {
   title: 'Yaniv / Lobby',
-  component: LobbyView,
+  component: YanivLobbyView,
   parameters: { isFullScreen: true },
   decorators: [
     (Story) => (
@@ -34,16 +34,16 @@ const meta = {
     players: [host],
     settings: DEFAULT_SETTINGS,
     user: { isReady: false, name: 'Frank', nameError: '', color: 'cyan' },
-    handleNameChange: fn(),
-    handleReadyChange: fn(),
-    handleColorChange: fn(),
-    handleSettingChange: fn(),
-    handleStartGame: fn(),
-    handleLeave: fn(),
-    handleKick: fn(),
-    handleMakeHost: fn(),
+    onNameChange: fn(),
+    onReadyChange: fn(),
+    onColorChange: fn(),
+    onSettingChange: fn(),
+    onStartGame: fn(),
+    onLeave: fn(),
+    onKick: fn(),
+    onMakeHost: fn(),
   },
-} satisfies Meta<typeof LobbyView>;
+} satisfies Meta<typeof YanivLobbyView>;
 
 export default meta;
 
