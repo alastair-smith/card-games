@@ -30,6 +30,16 @@ export const gameDisplayName = {
   YANIV: 'Yaniv',
 } as const satisfies Record<GameType, string>;
 
+export const gameSummary = {
+  HIGH_CARD:
+    'High Card is a simple luck-based game where the player with the highest card wins.',
+  BLOB: 'Predict how many hands you will win in this trumps-like game.',
+  SHITHEAD:
+    'Play your cards and hope you have enough magic to avoid picking up too many.',
+  FOOL: 'Gang up on other players to rid yourself of all your cards.',
+  YANIV: 'Win hands of 7 points or under and call Yaniv!',
+} as const satisfies Record<GameType, string>;
+
 export type GameCode = Branded<string, 'GameCode'>;
 
 export const GAME_CODE_LENGTH = 6;
