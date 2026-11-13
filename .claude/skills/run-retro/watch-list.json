@@ -378,7 +378,13 @@
     {
       "date": "2026-11-13",
       "sessions": ["341c4b39-301a-44ff-a4a5-da4906713599"],
-      "prs": [479]
+      "prs": [479],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 1,
+        "changesMade": "`measure-stories.ts` gains `--size` (named or WxH) and scroll reporting; 2 `CLAUDE.md` rules (stories for each new component, no comments on ordinary layout choices); 2 memories removed; from the retro of the retro, 1 rule in `run-retro` and `manage-issue` (retro issues get a `retro` label and no milestone); `edit-issue.ts` gains `--remove-milestone`",
+        "fixPr": 484
+      }
     }
   ]
 }
