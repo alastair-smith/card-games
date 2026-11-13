@@ -47,7 +47,7 @@ export default function ReadyBar({
           onColorSelect={onColorChange}
         />
         <PlayerNameInput
-          className='max-w-xs sm:w-60 lg:w-xs'
+          className='sm:w-60 lg:w-xs'
           name={name}
           onNameChange={onNameChange}
         />
