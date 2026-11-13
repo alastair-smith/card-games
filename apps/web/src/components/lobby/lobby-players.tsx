@@ -1,15 +1,14 @@
-import { CheckIcon, EllipsisVerticalIcon, HourglassIcon } from 'lucide-react';
+import { CheckIcon, HourglassIcon } from 'lucide-react';
+import { PlayerTag } from '~/components/player-tag';
 import {
   hasPlayerActions,
+  PlayerActionsButton,
   PlayerActionsMenu,
-} from '~/components/lobby/player-actions-menu';
-import { PlayerTag } from '~/components/player-tag';
-import { Button } from '~/components/ui/button';
+} from '~/components/player-tag/player-actions-menu';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
-import { playerColorValue } from '~/utils/player-color';
 
 function ReadyStatus({ isReady }: { isReady: boolean }) {
   const Icon = isReady ? CheckIcon : HourglassIcon;
@@ -80,21 +79,10 @@ export default function LobbyPlayers({
                     onKick={onKick}
                     onMakeHost={onMakeHost}
                   >
-                    <Button
-                      variant='secondary'
-                      size='icon'
-                      style={{
-                        backgroundColor: playerColorValue(player.color),
-                      }}
-                      className='h-auto w-7 border-white text-white hover:brightness-110 sm:w-8'
-                    >
-                      <EllipsisVerticalIcon
-                        strokeWidth={3}
-                        aria-hidden='true'
-                        className='icon-outline-black'
-                      />
-                      <span className='sr-only'>Actions for {player.name}</span>
-                    </Button>
+                    <PlayerActionsButton
+                      name={player.name}
+                      color={player.color}
+                    />
                   </PlayerActionsMenu>
                 )}
               </ButtonGroup>

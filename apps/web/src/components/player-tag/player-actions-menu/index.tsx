@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { EllipsisVerticalIcon } from 'lucide-react';
+import type { ComponentProps, ReactNode } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,14 +11,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
+import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import type { UserId } from '~/types/entities';
+import type { PlayerName, UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
+import { cn } from '~/utils/cn';
+import { type PlayerColor, playerColorValue } from '~/utils/player-color';
 
 const getPlayerActions = (player: Player, isUserHost: boolean) => ({
   isLeaveShown: player.isUser,
@@ -27,6 +31,37 @@ const getPlayerActions = (player: Player, isUserHost: boolean) => ({
 
 export const hasPlayerActions = (player: Player, isUserHost: boolean) =>
   Object.values(getPlayerActions(player, isUserHost)).some(Boolean);
+
+/** A ⋮ button in a player's colour, to join to their tag in a `ButtonGroup`. */
+export function PlayerActionsButton({
+  className,
+  name,
+  color,
+  ...buttonProps
+}: Omit<ComponentProps<typeof Button>, 'color' | 'children'> & {
+  name: PlayerName;
+  color: PlayerColor;
+}) {
+  return (
+    <Button
+      variant='secondary'
+      size='icon'
+      style={{ backgroundColor: playerColorValue(color) }}
+      className={cn(
+        'h-auto w-7 border-white text-white hover:brightness-110 sm:w-8',
+        className,
+      )}
+      {...buttonProps}
+    >
+      <EllipsisVerticalIcon
+        strokeWidth={3}
+        aria-hidden='true'
+        className='icon-outline-black'
+      />
+      <span className='sr-only'>Actions for {name}</span>
+    </Button>
+  );
+}
 
 /** Leave, kick and make-host actions for a player, opened from `children`. */
 export function PlayerActionsMenu({

@@ -1,10 +1,10 @@
 import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
 import { type ReactNode, useMemo } from 'react';
+import { PlayerNameInput } from '~/components/lobby/player-name-input';
 import {
   hasPlayerActions,
   PlayerActionsMenu,
-} from '~/components/lobby/player-actions-menu';
-import { PlayerNameInput } from '~/components/lobby/player-name-input';
+} from '~/components/player-tag/player-actions-menu';
 import { Button } from '~/components/ui/button';
 import {
   Card,
