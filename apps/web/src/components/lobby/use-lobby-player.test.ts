@@ -48,8 +48,8 @@ const renderLobbyPlayer = ({ isReady = false }: { isReady?: boolean } = {}) =>
   );
 
 beforeEach(() => {
-  vi.clearAllMocks();
   for (const mutation of [readyMutation, otherMutation]) {
+    mutation.mutate = vi.fn();
     mutation.isPending = false;
     mutation.variables = undefined;
   }

@@ -107,7 +107,8 @@ const renderLobby = ({
   );
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  settingsMutation.mutate = vi.fn();
+  startGameMutation.mutate = vi.fn();
   pendingSettingsVariables = [];
   mutationStateOptions = undefined;
 });

@@ -74,7 +74,10 @@ export function useLobbyPlayer({
         { field: 'name', code, playerName: name },
         {
           onError: (error) => {
-            setUser((prev) => ({ ...prev, nameError: error.message }));
+            setUser((previousUser) => ({
+              ...previousUser,
+              nameError: error.message,
+            }));
           },
         },
       );
@@ -91,7 +94,10 @@ export function useLobbyPlayer({
             confirmedColor.current = color;
           },
           onError: () => {
-            setUser((prev) => ({ ...prev, color: confirmedColor.current }));
+            setUser((previousUser) => ({
+              ...previousUser,
+              color: confirmedColor.current,
+            }));
             toast.error('Error updating colour.');
           },
         },
@@ -101,7 +107,7 @@ export function useLobbyPlayer({
   );
 
   const handleNameChange = (name: string) => {
-    setUser((prev) => ({ ...prev, name, nameError: '' }));
+    setUser((previousUser) => ({ ...previousUser, name, nameError: '' }));
     if (name.length < MIN_NAME_LENGTH) {
       debouncedUpdatePlayerName.cancel();
       return;
@@ -111,7 +117,7 @@ export function useLobbyPlayer({
 
   const handleColorChange = (color: string) => {
     const nextColor = playerColorSchema.parse(color);
-    setUser((prev) => ({ ...prev, color: nextColor }));
+    setUser((previousUser) => ({ ...previousUser, color: nextColor }));
     debouncedUpdatePlayerColor(nextColor);
   };
 

@@ -36,6 +36,11 @@ export type LobbyViewProps = {
   onMakeHost: (userId: UserId) => void;
 };
 
+export type GameLobbyViewProps = Omit<
+  LobbyViewProps,
+  'gameType' | 'minPlayers' | 'maxPlayers' | 'actions' | 'children'
+>;
+
 export default function LobbyView({
   gameType,
   code,

@@ -2,7 +2,9 @@
 
 import GameSettings from '~/app/yaniv/_components/game-settings';
 import { HowToDialog } from '~/app/yaniv/_components/how-to';
-import LobbyView, { type LobbyViewProps } from '~/components/lobby/lobby-view';
+import LobbyView, {
+  type GameLobbyViewProps,
+} from '~/components/lobby/lobby-view';
 import { GameType } from '~/types/game';
 import {
   MAX_PLAYERS,
@@ -11,10 +13,7 @@ import {
   type SettingUpdate,
 } from '~/types/games/yaniv';
 
-export type YanivLobbyViewProps = Omit<
-  LobbyViewProps,
-  'gameType' | 'minPlayers' | 'maxPlayers' | 'actions' | 'children'
-> & {
+export type YanivLobbyViewProps = GameLobbyViewProps & {
   settings: Settings;
   onSettingChange: (update: SettingUpdate) => void;
 };
