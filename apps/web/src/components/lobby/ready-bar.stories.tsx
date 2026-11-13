@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
+import { Card } from '~/components/ui/card';
 import { buildPlayer } from '~/test-utils/lobby';
 import type { PlayerName, UserId } from '~/types/entities';
-import { Card } from '../ui/card';
 import ReadyBar from './ready-bar';
 
 const frank = buildPlayer({

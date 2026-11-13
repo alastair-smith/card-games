@@ -1,12 +1,15 @@
 import { CheckIcon, EllipsisVerticalIcon, HourglassIcon } from 'lucide-react';
+import {
+  hasPlayerActions,
+  PlayerActionsMenu,
+} from '~/components/lobby/player-actions-menu';
+import { PlayerTag } from '~/components/player-tag';
+import { Button } from '~/components/ui/button';
+import { ButtonGroup } from '~/components/ui/button-group';
+import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
 import { playerColorValue } from '~/utils/player-color';
-import { PlayerTag } from '../player-tag';
-import { Button } from '../ui/button';
-import { ButtonGroup } from '../ui/button-group';
-import { Card, CardContent, CardHeader } from '../ui/card';
-import { hasPlayerActions, PlayerActionsMenu } from './player-actions-menu';
 
 function ReadyStatus({ isReady }: { isReady: boolean }) {
   const Icon = isReady ? CheckIcon : HourglassIcon;

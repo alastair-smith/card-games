@@ -1,12 +1,12 @@
 import { useId } from 'react';
+import { PlayerNameInput } from '~/components/lobby/player-name-input';
+import StartGameButton from '~/components/lobby/start-game-button';
+import { ColorPicker } from '~/components/ui/color-picker';
+import { Label } from '~/components/ui/label';
+import { Switch } from '~/components/ui/switch';
 import type { Player } from '~/types/game';
 import { cn } from '~/utils/cn';
 import { PLAYER_COLOR_OPTIONS, type PlayerColor } from '~/utils/player-color';
-import { ColorPicker } from '../ui/color-picker';
-import { Label } from '../ui/label';
-import { Switch } from '../ui/switch';
-import { PlayerNameInput } from './player-name-input';
-import StartGameButton from './start-game-button';
 
 export default function ReadyBar({
   className,

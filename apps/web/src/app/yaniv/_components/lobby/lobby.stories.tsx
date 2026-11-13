@@ -1,24 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, within } from 'storybook/test';
+import { buildPlayer } from '~/test-utils/lobby';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
   type UserId,
 } from '~/types/entities';
-import type { GameCode, Player } from '~/types/game';
+import type { GameCode } from '~/types/game';
 import { DEFAULT_SETTINGS } from '~/types/games/yaniv';
 import LobbyView from './lobby.view';
 
 const longName = 'W'.repeat(MAX_NAME_LENGTH) as PlayerName;
 
-const host: Player = {
-  id: 'user-1' as UserId,
+const host = buildPlayer({
   name: 'Frank' as PlayerName,
-  color: 'cyan',
-  isReady: false,
   isUser: true,
   isHost: true,
-};
+});
 
 const meta = {
   title: 'Yaniv / Lobby',
@@ -58,14 +56,12 @@ export const NotHost: Story = {
   args: {
     players: [
       { ...host, isUser: false, isReady: true },
-      {
+      buildPlayer({
         id: 'user-2' as UserId,
         name: 'Roz' as PlayerName,
         color: 'rose',
-        isReady: false,
         isUser: true,
-        isHost: false,
-      },
+      }),
     ],
     user: { isReady: false, name: 'Roz', nameError: '', color: 'rose' },
   },
@@ -76,17 +72,39 @@ export const FullWithLongestNames: Story = {
   args: {
     players: [
       { ...host, name: longName, isReady: true },
-      ...(['rose', 'lime', 'amber', 'plum'] as const).map(
-        (color, index): Player => ({
+      ...(['rose', 'lime', 'amber', 'plum'] as const).map((color, index) =>
+        buildPlayer({
           id: `user-${index + 2}` as UserId,
           name: longName,
           color,
           isReady: true,
-          isUser: false,
-          isHost: false,
         }),
       ),
     ],
     user: { isReady: true, name: longName, nameError: '', color: 'cyan' },
+  },
+};
+
+// Your tag shows your changes before they've saved.
+export const EditingYourDetails: Story = {
+  args: {
+    user: { isReady: true, name: 'Francesca', nameError: '', color: 'rose' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('Francesca')).toBeInTheDocument();
+    await expect(canvas.queryByText('Frank')).not.toBeInTheDocument();
+    await expect(canvas.getByText(', ready')).toBeInTheDocument();
+  },
+};
+
+// A name that can't be saved leaves your tag showing the last one that was.
+export const NameCleared: Story = {
+  args: {
+    user: { isReady: false, name: '', nameError: '', color: 'cyan' },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByText('Frank')).toBeInTheDocument();
   },
 };

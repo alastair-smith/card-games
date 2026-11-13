@@ -1,16 +1,19 @@
 import { CrownIcon, EllipsisVertical, UserIcon } from 'lucide-react';
 import { type ReactNode, useMemo } from 'react';
-import type { UserId } from '~/types/entities';
-import type { Player } from '~/types/game';
 import {
-  PLAYER_COLOR_OPTIONS,
-  type PlayerColor,
-  playerColorValue,
-} from '~/utils/player-color';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/card';
-import { ColorPicker, ColorSwatch } from '../ui/color-picker';
-import { Switch } from '../ui/switch';
+  hasPlayerActions,
+  PlayerActionsMenu,
+} from '~/components/lobby/player-actions-menu';
+import { PlayerNameInput } from '~/components/lobby/player-name-input';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '~/components/ui/card';
+import { ColorPicker, ColorSwatch } from '~/components/ui/color-picker';
+import { Switch } from '~/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -18,9 +21,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
-import { hasPlayerActions, PlayerActionsMenu } from './player-actions-menu';
-import { PlayerNameInput } from './player-name-input';
+} from '~/components/ui/table';
+import type { UserId } from '~/types/entities';
+import type { Player } from '~/types/game';
+import {
+  PLAYER_COLOR_OPTIONS,
+  type PlayerColor,
+  playerColorValue,
+} from '~/utils/player-color';
 
 function PlayerDropdown({
   className,

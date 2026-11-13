@@ -1,13 +1,18 @@
 'use client';
 
 import GameSettings from '~/app/yaniv/_components/game-settings';
+import { HowToDialog } from '~/app/yaniv/_components/how-to';
 import GameLayout from '~/components/layout/game-layout';
 import { PageFooter } from '~/components/layout/page';
 import InvitePlayers from '~/components/lobby/invite-players';
 import LobbyPlayers from '~/components/lobby/lobby-players';
 import ReadyBar from '~/components/lobby/ready-bar';
 import { Card } from '~/components/ui/card';
-import type { UserId } from '~/types/entities';
+import {
+  MIN_NAME_LENGTH,
+  type PlayerName,
+  type UserId,
+} from '~/types/entities';
 import {
   type GameCode,
   GameType,
@@ -21,7 +26,6 @@ import {
   type SettingUpdate,
 } from '~/types/games/yaniv';
 import type { PlayerColor } from '~/utils/player-color';
-import { HowToDialog } from '../how-to';
 
 export type LobbyProps = {
   code: GameCode;
@@ -60,6 +64,20 @@ export default function LobbyView({
   const isHost = players.some(
     ({ isHost: isPlayerHost, isUser }) => isPlayerHost && isUser,
   );
+  // Your tag follows the ready bar as you edit, rather than once it saves
+  const playersWithUserEdits = players.map((player) =>
+    player.isUser
+      ? {
+          ...player,
+          name:
+            user.name.length >= MIN_NAME_LENGTH && !user.nameError
+              ? (user.name as PlayerName)
+              : player.name,
+          color: user.color,
+          isReady: user.isReady,
+        }
+      : player,
+  );
 
   const readyBar = (
     <ReadyBar
@@ -83,7 +101,8 @@ export default function LobbyView({
       // whole lobby, so it sits as a card under the others
       footer={<PageFooter className='lg:hidden'>{readyBar}</PageFooter>}
     >
-      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
+      {/* Smaller screens are spaced off the bottom by the footer */}
+      <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2 lg:pb-3'>
         <div className='lg:col-span-2'>
           <h1 className='text-xl font-bold'>Yaniv lobby</h1>
           <p className='text-sm'>{gameSummary[GameType.YANIV]}</p>
@@ -92,7 +111,7 @@ export default function LobbyView({
           <InvitePlayers code={code} className='w-full' />
           <LobbyPlayers
             className='flex-1'
-            players={players}
+            players={playersWithUserEdits}
             minPlayers={MIN_PLAYERS}
             maxPlayers={MAX_PLAYERS}
             onLeave={handleLeave}

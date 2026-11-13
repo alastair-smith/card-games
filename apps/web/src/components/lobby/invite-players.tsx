@@ -2,10 +2,8 @@
 
 import { useMemo } from 'react';
 import { QRCode } from 'react-qr-code';
-import type { GameCode } from '~/types/game';
-import { cn } from '~/utils/cn';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -13,8 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
-import { toast } from '../ui/toast';
+} from '~/components/ui/dialog';
+import { toast } from '~/components/ui/toast';
+import type { GameCode } from '~/types/game';
+import { cn } from '~/utils/cn';
 
 async function copyUrlToClipboard(url: string) {
   await navigator.clipboard.writeText(url);

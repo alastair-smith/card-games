@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react';
-import type { UserId } from '~/types/entities';
-import type { Player } from '~/types/game';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,13 +9,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '../ui/alert-dialog';
+} from '~/components/ui/alert-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '~/components/ui/dropdown-menu';
+import type { UserId } from '~/types/entities';
+import type { Player } from '~/types/game';
 
 const getPlayerActions = (player: Player, isUserHost: boolean) => ({
   isLeaveShown: player.isUser,

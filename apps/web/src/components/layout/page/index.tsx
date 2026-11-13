@@ -1,6 +1,6 @@
 import { HomeIcon } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import { Fragment, type ReactNode } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,13 +12,13 @@ import {
 import { cn } from '~/utils/cn';
 
 type PageRootProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   fullscreen?: boolean;
   /** Fits the page to the screen, for pages whose content scrolls inside it. */
   isScreenHeight?: boolean | undefined;
   /** Below the scrolling content, such as a `PageFooter` */
-  footer?: React.ReactNode;
+  footer?: ReactNode;
 };
 
 export function PageRoot({
@@ -64,12 +64,12 @@ export function PageFooter({
   children,
 }: {
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div
       className={cn(
-        '-mx-3 self-stretch border-t-2 border-white/30 bg-panel-background text-dark-text',
+        '-mx-3 self-stretch border-t-2 border-white/30 bg-panel-background pb-[env(safe-area-inset-bottom)] text-dark-text',
         className,
       )}
     >
@@ -84,7 +84,7 @@ type PageHeaderProps = {
     text: string;
     href?: string;
   }[];
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
@@ -93,7 +93,7 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
       <Breadcrumb>
         <BreadcrumbList>
           {breadcrumbs.map(({ text, href }, index) => (
-            <React.Fragment key={text}>
+            <Fragment key={text}>
               {index > 0 && <BreadcrumbSeparator />}
               <BreadcrumbItem>
                 {href ? (
@@ -113,7 +113,7 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
                   <BreadcrumbPage>{text}</BreadcrumbPage>
                 )}
               </BreadcrumbItem>
-            </React.Fragment>
+            </Fragment>
           ))}
         </BreadcrumbList>
       </Breadcrumb>

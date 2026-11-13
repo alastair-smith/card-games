@@ -1,5 +1,5 @@
+import { Button } from '~/components/ui/button';
 import type { Player } from '~/types/game';
-import { Button } from '../ui/button';
 
 function getButtonText({
   isUserHost,

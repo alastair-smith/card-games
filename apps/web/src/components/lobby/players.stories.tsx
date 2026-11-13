@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { fn } from 'storybook/test';
+import StartGameButton from '~/components/lobby/start-game-button';
 import {
   MAX_NAME_LENGTH,
   type PlayerName,
   type UserId,
 } from '~/types/entities';
 import Players, { type PlayersProps } from './players.view';
-import StartGameButton from './start-game-button';
 
 type Player = PlayersProps['players'][number];
 
