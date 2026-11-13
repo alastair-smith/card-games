@@ -16,17 +16,9 @@ import { toast } from '~/components/ui/toast';
 import type { GameCode } from '~/types/game';
 import { cn } from '~/utils/cn';
 
-const SITE_NAME = 'PlayCards.Games';
-
 async function copyUrlToClipboard(url: string) {
   await navigator.clipboard.writeText(url);
   toast.success('Copied to clipboard.');
-}
-
-/** The link as someone would type it, without the protocol. */
-export function toAddress({ host, pathname }: URL) {
-  const siteName = host === SITE_NAME.toLowerCase() ? SITE_NAME : host;
-  return [siteName, ...pathname.split('/').filter(Boolean)].join(' / ');
 }
 
 export default function InvitePlayers({
@@ -37,11 +29,8 @@ export default function InvitePlayers({
   className?: string;
 }) {
   const { url, address } = useMemo(() => {
-    const pageUrl = new URL(window.location.href);
-    return {
-      url: `${pageUrl.origin}${pageUrl.pathname}`,
-      address: toAddress(pageUrl),
-    };
+    const { origin, host, pathname } = new URL(window.location.href);
+    return { url: `${origin}${pathname}`, address: `${host}${pathname}` };
   }, []);
 
   return (
