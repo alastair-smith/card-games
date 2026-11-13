@@ -38,7 +38,7 @@ export default function ReadyBar({
 
   return (
     <div className={cn('flex flex-wrap items-center gap-3', className)}>
-      <div className='flex flex-1 basis-60 items-center gap-2'>
+      <div className='flex w-full items-center gap-2 sm:w-auto'>
         <ColorPicker
           label='Change your colour'
           colors={PLAYER_COLOR_OPTIONS}
@@ -47,26 +47,26 @@ export default function ReadyBar({
           onColorSelect={onColorChange}
         />
         <PlayerNameInput
-          className='max-w-xs'
+          className='max-w-xs sm:w-60 lg:w-xs'
           name={name}
           onNameChange={onNameChange}
         />
       </div>
-      <div className='flex grow items-center justify-between gap-3 sm:grow-0'>
-        <div className='flex items-center gap-2'>
-          <Label htmlFor={readySwitchId}>Ready</Label>
-          <Switch
-            id={readySwitchId}
-            checked={isReady}
-            onCheckedChange={onReadyChange}
-          />
-        </div>
-        <StartGameButton
-          players={players}
-          minPlayers={minPlayers}
-          onStartGame={onStartGame}
+      {/* Before Start, so its changing text doesn't move the switch */}
+      <div className='flex items-center gap-2'>
+        <Label htmlFor={readySwitchId}>Ready</Label>
+        <Switch
+          id={readySwitchId}
+          checked={isReady}
+          onCheckedChange={onReadyChange}
         />
       </div>
+      <StartGameButton
+        className='ml-auto'
+        players={players}
+        minPlayers={minPlayers}
+        onStartGame={onStartGame}
+      />
     </div>
   );
 }
