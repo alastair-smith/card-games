@@ -8,11 +8,7 @@ import InvitePlayers from '~/components/lobby/invite-players';
 import LobbyPlayers from '~/components/lobby/lobby-players';
 import ReadyBar from '~/components/lobby/ready-bar';
 import { Card } from '~/components/ui/card';
-import {
-  MIN_NAME_LENGTH,
-  type PlayerName,
-  type UserId,
-} from '~/types/entities';
+import type { UserId } from '~/types/entities';
 import {
   type GameCode,
   GameType,
@@ -64,20 +60,6 @@ export default function LobbyView({
   const isHost = players.some(
     ({ isHost: isPlayerHost, isUser }) => isPlayerHost && isUser,
   );
-  // Your tag follows the ready bar as you edit, rather than once it saves
-  const playersWithUserEdits = players.map((player) =>
-    player.isUser
-      ? {
-          ...player,
-          name:
-            user.name.length >= MIN_NAME_LENGTH && !user.nameError
-              ? (user.name as PlayerName)
-              : player.name,
-          color: user.color,
-          isReady: user.isReady,
-        }
-      : player,
-  );
 
   const readyBar = (
     <ReadyBar
@@ -111,7 +93,7 @@ export default function LobbyView({
           <InvitePlayers code={code} className='w-full' />
           <LobbyPlayers
             className='flex-1'
-            players={playersWithUserEdits}
+            players={players}
             minPlayers={MIN_PLAYERS}
             maxPlayers={MAX_PLAYERS}
             onLeave={handleLeave}

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { expect, fn, within } from 'storybook/test';
+import { fn } from 'storybook/test';
 import { buildPlayer } from '~/test-utils/lobby';
 import {
   MAX_NAME_LENGTH,
@@ -82,29 +82,5 @@ export const FullWithLongestNames: Story = {
       ),
     ],
     user: { isReady: true, name: longName, nameError: '', color: 'cyan' },
-  },
-};
-
-/** Your tag shows your changes before they've saved. */
-export const EditingYourDetails: Story = {
-  args: {
-    user: { isReady: true, name: 'Francesca', nameError: '', color: 'rose' },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(canvas.getByText('Francesca')).toBeInTheDocument();
-    await expect(canvas.queryByText('Frank')).not.toBeInTheDocument();
-    await expect(canvas.getByText(', ready')).toBeInTheDocument();
-  },
-};
-
-/** A name that can't be saved leaves your tag showing the last one that was. */
-export const NameCleared: Story = {
-  args: {
-    user: { isReady: false, name: '', nameError: '', color: 'cyan' },
-  },
-  play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByText('Frank')).toBeInTheDocument();
   },
 };
