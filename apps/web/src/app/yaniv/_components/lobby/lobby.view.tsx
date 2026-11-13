@@ -1,13 +1,11 @@
 'use client';
 
 import GameSettings from '~/app/yaniv/_components/game-settings';
-import { YanivThumbnail } from '~/components/game-thumbnails/yaniv';
 import GameLayout from '~/components/layout/game-layout';
 import { PageFooter } from '~/components/layout/page';
 import InvitePlayers from '~/components/lobby/invite-players';
 import LobbyPlayers from '~/components/lobby/lobby-players';
 import ReadyBar from '~/components/lobby/ready-bar';
-import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import {
@@ -80,22 +78,15 @@ export default function LobbyView({
   return (
     <GameLayout
       gameType={GameType.YANIV}
+      actions={<HowToDialog />}
       // Smaller screens keep it in view along the bottom; larger ones fit the
       // whole lobby, so it sits as a card under the others
       footer={<PageFooter className='lg:hidden'>{readyBar}</PageFooter>}
     >
       <div className='grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
-        <div className='flex items-center gap-3 lg:col-span-2'>
-          <YanivThumbnail className='shrink-0 text-[0.5rem]' />
-          <div className='flex-1'>
-            <h1 className='text-xl font-bold'>Yaniv lobby</h1>
-            <p className='text-sm'>{gameSummary[GameType.YANIV]}</p>
-          </div>
-          <HowToDialog>
-            <Button size='sm' variant='secondary' className='shrink-0'>
-              Full rules
-            </Button>
-          </HowToDialog>
+        <div className='lg:col-span-2'>
+          <h1 className='text-xl font-bold'>Yaniv lobby</h1>
+          <p className='text-sm'>{gameSummary[GameType.YANIV]}</p>
         </div>
         <div className='flex flex-col gap-3'>
           <InvitePlayers code={code} className='w-full' />

@@ -8,7 +8,7 @@ import {
   HeartIcon,
   SpadeIcon,
 } from 'lucide-react';
-import type { JSX, ReactNode } from 'react';
+import type React from 'react';
 import { Button } from '~/components/ui/button';
 import {
   Carousel,
@@ -401,7 +401,7 @@ function ScoringSlide() {
   );
 }
 
-const SLIDE_COMPONENTS: Array<() => JSX.Element> = [
+const SLIDE_COMPONENTS: Array<() => React.JSX.Element> = [
   OverviewSlide,
   TakingATurnSlide,
   CardValuesSlide,
@@ -411,7 +411,7 @@ const SLIDE_COMPONENTS: Array<() => JSX.Element> = [
 
 const SLIDE_COUNT = SLIDE_COMPONENTS.length;
 
-function SlideNav({ lastSlideAction }: { lastSlideAction?: ReactNode }) {
+function SlideNav({ lastSlideAction }: { lastSlideAction?: React.ReactNode }) {
   const { scrollPrev, scrollNext, canScrollPrev, selectedIndex } =
     useCarousel();
 
@@ -451,7 +451,7 @@ function SlideDeck({
   lastSlideAction,
 }: {
   className?: string | undefined;
-  lastSlideAction?: ReactNode;
+  lastSlideAction?: React.ReactNode;
 }) {
   return (
     <Carousel
@@ -479,15 +479,13 @@ export function HowTo({ className }: { className?: string }) {
   return <SlideDeck className={className} />;
 }
 
-export function HowToDialog({ children }: { children?: ReactNode }) {
+export function HowToDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        {children ?? (
-          <Button size='sm' variant='secondary'>
-            How to play
-          </Button>
-        )}
+        <Button size='sm' variant='secondary'>
+          How to play
+        </Button>
       </DialogTrigger>
       <DialogContent
         className='sm:max-w-4xl max-h-[90dvh] flex flex-col overflow-hidden'

@@ -3,13 +3,13 @@
 import { ClockIcon, UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
-import { YanivThumbnail } from '~/components/game-thumbnails/yaniv';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { toast } from '~/components/ui/toast';
 import { api } from '~/trpc/react';
 import { GameType, gameDisplayName, gameSummary, gameURL } from '~/types/game';
 import { cn } from '~/utils/cn';
+import { YanivThumbnail } from './thumbnails/yaniv';
 
 enum GameLength {
   short = 'Fast Game',
