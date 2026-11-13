@@ -43,7 +43,11 @@ export function PageRoot({
         <div
           className={cn(
             'w-7xl max-w-full flex flex-col gap-3',
-            isScreenHeight ? 'min-h-0 flex-1' : 'min-h-dvh',
+            // Scrolls the header with the content. Positioned, so sr-only text
+            // scrolls with it rather than stretching the page
+            isScreenHeight
+              ? 'relative min-h-0 flex-1 overflow-y-auto'
+              : 'min-h-dvh',
           )}
         >
           {children}

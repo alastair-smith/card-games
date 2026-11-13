@@ -31,7 +31,7 @@ export default function GameLayout({
 
       <main
         className={cn(
-          'flex-1 min-h-0 w-full flex flex-col justify-center-safe overflow-y-auto',
+          'flex-auto w-full flex flex-col justify-center-safe',
           className,
         )}
       >
