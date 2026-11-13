@@ -71,8 +71,7 @@ const games: GameProps[] = [
   //     max: 4,
   //   },
   //   length: GameLength.short,
-  //   summary:
-  //     'Play your cards and hope you have enough magic to avoid picking up too many.',
+  //   summary: gameSummary[GameType.SHITHEAD],
   //   disabled: true,
   // },
   // {

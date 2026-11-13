@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { PlayerName, UserId } from '~/types/entities';
-import type { GameCode, Player } from '~/types/game';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { buildPlayer } from '~/test-utils/lobby';
+import type { GameCode } from '~/types/game';
 import {
   type DealerSetting,
   type HandSizeSetting,
@@ -9,30 +9,20 @@ import {
   type SettingUpdate,
   WINNER_CHOOSES_HAND_SIZE,
 } from '~/types/games/yaniv';
-import type { PlayerColor } from '~/utils/player-color';
 import Lobby from './index';
 
 vi.mock('~/components/ui/toast', () => ({
   toast: { info: vi.fn(), error: vi.fn(), success: vi.fn() },
 }));
 
-type MutationStub = {
-  mutate: ReturnType<typeof vi.fn>;
-  mutateAsync: ReturnType<typeof vi.fn>;
-  isPending: boolean;
-  variables: unknown;
-};
+vi.mock('~/components/lobby/use-lobby-player', () => ({
+  useLobbyPlayer: () => ({
+    user: { isReady: false, name: 'Ada', nameError: '', color: 'red' },
+  }),
+}));
 
-const createMutationStub = (): MutationStub => ({
-  mutate: vi.fn(),
-  mutateAsync: vi.fn().mockResolvedValue(undefined),
-  isPending: false,
-  variables: undefined,
-});
-
-const readyMutation = createMutationStub();
-const settingsMutation = createMutationStub();
-const otherMutation = createMutationStub();
+const settingsMutation = { mutate: vi.fn() };
+const startGameMutation = { mutate: vi.fn() };
 
 // Variables of the settings saves still in progress, oldest first
 let pendingSettingsVariables: unknown[] = [];
@@ -50,17 +40,8 @@ vi.mock('@trpc/react-query', () => ({
 
 vi.mock('~/trpc/react', () => ({
   api: {
-    lobby: {
-      updatePlayer: {
-        useMutation: (options?: { scope?: { id: string } }) =>
-          options?.scope ? readyMutation : otherMutation,
-      },
-      leaveGame: { useMutation: () => otherMutation },
-      kickPlayer: { useMutation: () => otherMutation },
-      makeHost: { useMutation: () => otherMutation },
-    },
     yaniv: {
-      startGame: { useMutation: () => otherMutation },
+      startGame: { useMutation: () => startGameMutation },
       updateSettings: { useMutation: () => settingsMutation },
     },
   },
@@ -69,51 +50,40 @@ vi.mock('~/trpc/react', () => ({
 vi.mock('./lobby.view', () => ({
   default: (props: {
     settings: Settings;
-    user: { isReady: boolean; name: string };
-    handleNameChange: (name: string) => void;
-    handleSettingChange: (update: SettingUpdate) => void;
-    handleReadyChange: (isReady: boolean) => void;
+    onSettingChange: (update: SettingUpdate) => void;
+    onStartGame: () => void;
   }) => (
     <div>
       <p>Hand size: {props.settings.handSize}</p>
       <p>Dealer: {props.settings.dealer}</p>
       <button
         type='button'
-        onClick={() => props.handleSettingChange({ dealer: 'hand-winner' })}
+        onClick={() => props.onSettingChange({ dealer: 'hand-winner' })}
       >
         Hand winner deals
       </button>
-      <p>Ready: {String(props.user.isReady)}</p>
-      <input
-        aria-label='Your name'
-        value={props.user.name}
-        onChange={(event) => props.handleNameChange(event.target.value)}
-      />
       <button
         type='button'
-        onClick={() => props.handleSettingChange({ handSize: 5 })}
+        onClick={() => props.onSettingChange({ handSize: 5 })}
       >
         Choose 5
       </button>
       <button
         type='button'
-        onClick={() => props.handleSettingChange({ handSize: 7 })}
+        onClick={() => props.onSettingChange({ handSize: 7 })}
       >
         Choose 7
       </button>
       <button
         type='button'
         onClick={() =>
-          props.handleSettingChange({ handSize: WINNER_CHOOSES_HAND_SIZE })
+          props.onSettingChange({ handSize: WINNER_CHOOSES_HAND_SIZE })
         }
       >
         Let the winner choose
       </button>
-      <button type='button' onClick={() => props.handleReadyChange(true)}>
-        Ready up
-      </button>
-      <button type='button' onClick={() => props.handleReadyChange(false)}>
-        Stand down
+      <button type='button' onClick={props.onStartGame}>
+        Start Game
       </button>
     </div>
   ),
@@ -121,44 +91,38 @@ vi.mock('./lobby.view', () => ({
 
 const code = 'ABCDEF' as GameCode;
 
-const player = (overrides: Partial<Player> = {}): Player => ({
-  id: 'player-1' as UserId,
-  name: 'Ada' as PlayerName,
-  color: 'red' as PlayerColor,
-  isReady: false,
-  isUser: true,
-  isHost: true,
-  ...overrides,
-});
-
 const renderLobby = ({
   handSize = 5,
   dealer = 'rotates',
-  isReady = false,
 }: {
   handSize?: HandSizeSetting;
   dealer?: DealerSetting;
-  isReady?: boolean;
 } = {}) =>
   render(
     <Lobby
       code={code}
-      players={[player({ isReady })]}
+      players={[buildPlayer({ isUser: true, isHost: true })]}
       settings={{ handSize, dealer }}
     />,
   );
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  settingsMutation.mutate = vi.fn();
+  startGameMutation.mutate = vi.fn();
   pendingSettingsVariables = [];
   mutationStateOptions = undefined;
-  for (const mutation of [readyMutation, settingsMutation, otherMutation]) {
-    mutation.isPending = false;
-    mutation.variables = undefined;
-  }
 });
 
 describe('Lobby', () => {
+  test('starts the game for this lobby', () => {
+    renderLobby();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start Game' }));
+
+    expect(startGameMutation.mutate).toHaveBeenCalledOnce();
+    expect(startGameMutation.mutate).toHaveBeenCalledWith({ code });
+  });
+
   describe('hand size', () => {
     test('shows the hand size the lobby is on', () => {
       renderLobby({ handSize: 7 });
@@ -276,110 +240,6 @@ describe('Lobby', () => {
 
       expect(screen.getByText('Hand size: 7')).toBeInTheDocument();
       expect(screen.getByText('Dealer: hand-winner')).toBeInTheDocument();
-    });
-  });
-
-  describe('readiness', () => {
-    test('shows the readiness the lobby has for the player', () => {
-      renderLobby({ isReady: true });
-
-      expect(screen.getByText('Ready: true')).toBeInTheDocument();
-    });
-
-    test('saves the readiness that was chosen', () => {
-      renderLobby({ isReady: false });
-
-      fireEvent.click(screen.getByRole('button', { name: 'Ready up' }));
-
-      expect(readyMutation.mutate).toHaveBeenCalledOnce();
-      expect(readyMutation.mutate).toHaveBeenCalledWith({
-        field: 'isReady',
-        code,
-        isReady: true,
-      });
-    });
-
-    test('shows the chosen readiness while it is still being saved', () => {
-      readyMutation.isPending = true;
-      readyMutation.variables = { field: 'isReady', code, isReady: true };
-
-      renderLobby({ isReady: false });
-
-      expect(screen.getByText('Ready: true')).toBeInTheDocument();
-    });
-
-    test('shows standing down while it is still being saved', () => {
-      readyMutation.isPending = true;
-      readyMutation.variables = { field: 'isReady', code, isReady: false };
-
-      renderLobby({ isReady: true });
-
-      expect(screen.getByText('Ready: false')).toBeInTheDocument();
-    });
-
-    test('shows the lobby readiness again once the change has been saved', () => {
-      readyMutation.isPending = false;
-      readyMutation.variables = { field: 'isReady', code, isReady: true };
-
-      renderLobby({ isReady: false });
-
-      expect(screen.getByText('Ready: false')).toBeInTheDocument();
-    });
-
-    test('ignores a name change that is still being saved', () => {
-      readyMutation.isPending = true;
-      readyMutation.variables = { field: 'name', code, playerName: 'Grace' };
-
-      renderLobby({ isReady: true });
-
-      expect(screen.getByText('Ready: true')).toBeInTheDocument();
-    });
-  });
-
-  describe('name', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    const changeName = (name: string) =>
-      fireEvent.change(screen.getByRole('textbox', { name: 'Your name' }), {
-        target: { value: name },
-      });
-
-    test('saves the name once typing has paused', () => {
-      renderLobby();
-
-      changeName('Grace');
-      vi.runAllTimers();
-
-      expect(otherMutation.mutate).toHaveBeenCalledOnce();
-      expect(otherMutation.mutate).toHaveBeenCalledWith(
-        { field: 'name', code, playerName: 'Grace' },
-        expect.anything(),
-      );
-    });
-
-    test('does not save an empty name', () => {
-      renderLobby();
-
-      changeName('');
-      vi.runAllTimers();
-
-      expect(otherMutation.mutate).not.toHaveBeenCalled();
-    });
-
-    test('does not save a name that was cleared before it was saved', () => {
-      renderLobby();
-
-      changeName('G');
-      changeName('');
-      vi.runAllTimers();
-
-      expect(otherMutation.mutate).not.toHaveBeenCalled();
     });
   });
 });

@@ -3,6 +3,9 @@ import { standardPlayingCardSchema } from '~/types/cards';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
 import { playerColorSchema } from '~/utils/player-color';
 
+export const MIN_PLAYERS = 2;
+export const MAX_PLAYERS = 5;
+
 export enum GameStage {
   LOBBY = 'LOBBY',
   SWAPPING = 'SWAPPING',
