@@ -48,12 +48,17 @@ export function PageRoot({
             isScreenHeight
               ? 'relative min-h-0 flex-1 overflow-y-auto'
               : 'min-h-dvh',
+            // On larger screens the footer takes the space the content
+            // doesn't need, so it sits just under the content
+            isScreenHeight && footer && 'lg:flex-initial',
           )}
         >
           {children}
         </div>
       )}
-      {footer && <div className='-mx-3 self-stretch'>{footer}</div>}
+      {footer && (
+        <div className='-mx-3 self-stretch lg:grid lg:flex-1'>{footer}</div>
+      )}
     </div>
   );
 }
