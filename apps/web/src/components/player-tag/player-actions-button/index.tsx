@@ -21,7 +21,8 @@ export function PlayerActionsButton({
       size='icon'
       style={{ backgroundColor: playerColorValue(color) }}
       className={cn(
-        'h-auto w-7 border-white text-white hover:brightness-110 sm:w-8',
+        // No transition, so it changes colour with the tag
+        'h-auto w-7 border-white text-white transition-none hover:brightness-110 sm:w-8',
         className,
       )}
       {...buttonProps}
