@@ -52,12 +52,12 @@ export const SomeReady: Story = {
   },
 };
 
-// Everyone else's tag opens a menu for the host.
+// The host has a menu for everyone else.
 export const HostMenu: Story = {
   args: { players: [frank, roz, niles] },
   play: async ({ canvasElement }) => {
     await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Roz' }),
+      within(canvasElement).getByRole('button', { name: 'Actions for Roz' }),
     );
 
     await expect(
@@ -66,7 +66,7 @@ export const HostMenu: Story = {
   },
 };
 
-// Only your own tag opens a menu, to leave.
+// Players other than the host only have a menu for themselves, to leave.
 export const NotHost: Story = {
   args: {
     players: [
