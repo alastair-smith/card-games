@@ -23,8 +23,8 @@ const niles = buildPlayer({
 const meta = {
   title: 'Lobby / Ready Bar',
   component: ReadyBar,
+  parameters: { isFullScreen: true },
   args: {
-    className: 'max-w-2xl',
     players: [frank],
     minPlayers: 2,
     name: 'Frank',

@@ -7,6 +7,7 @@ type GameLayoutProps = {
   gameType: GameType;
   children: ReactNode;
   actions?: ReactNode;
+  footer?: ReactNode;
   className?: string | undefined;
 };
 
@@ -14,10 +15,11 @@ export default function GameLayout({
   gameType,
   children,
   actions,
+  footer,
   className,
 }: GameLayoutProps) {
   return (
-    <PageRoot isScreenHeight>
+    <PageRoot isScreenHeight footer={footer}>
       <PageHeader
         breadcrumbs={[
           { text: 'PlayCards.Games', href: '/' },

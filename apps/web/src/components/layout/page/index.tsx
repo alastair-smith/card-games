@@ -17,6 +17,8 @@ type PageRootProps = {
   fullscreen?: boolean;
   /** Fits the page to the screen, for pages whose content scrolls inside it. */
   isScreenHeight?: boolean | undefined;
+  /** Spans the full width at the bottom, below the scrolling content */
+  footer?: React.ReactNode;
 };
 
 export function PageRoot({
@@ -24,14 +26,13 @@ export function PageRoot({
   className,
   fullscreen,
   isScreenHeight,
+  footer,
 }: PageRootProps) {
-  const heightClassName = isScreenHeight ? 'h-dvh' : 'min-h-dvh';
-
   return (
     <div
       className={cn(
         'flex flex-col gap-3 px-3',
-        heightClassName,
+        isScreenHeight ? 'h-dvh' : 'min-h-dvh',
         fullscreen ? '' : 'items-center',
         className,
       )}
@@ -42,12 +43,13 @@ export function PageRoot({
         <div
           className={cn(
             'w-7xl max-w-full flex flex-col gap-3',
-            heightClassName,
+            isScreenHeight ? 'min-h-0 flex-1' : 'min-h-dvh',
           )}
         >
           {children}
         </div>
       )}
+      {footer && <div className='-mx-3 self-stretch'>{footer}</div>}
     </div>
   );
 }

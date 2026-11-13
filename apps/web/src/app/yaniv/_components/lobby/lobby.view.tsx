@@ -55,7 +55,22 @@ export default function LobbyView({
   );
 
   return (
-    <GameLayout gameType={GameType.YANIV} className='gap-3 pb-3'>
+    <GameLayout
+      gameType={GameType.YANIV}
+      footer={
+        <ReadyBar
+          players={players}
+          minPlayers={MIN_PLAYERS}
+          name={user.name}
+          color={user.color}
+          isReady={user.isReady}
+          onNameChange={handleNameChange}
+          onColorChange={handleColorChange}
+          onReadyChange={handleReadyChange}
+          onStartGame={handleStartGame}
+        />
+      }
+    >
       {/* Positioned so sr-only text scrolls with main rather than stretching the page */}
       <div className='relative grid w-full grid-cols-1 gap-3 lg:grid-cols-2'>
         <h1 className='sr-only'>Yaniv Lobby</h1>
@@ -79,18 +94,6 @@ export default function LobbyView({
           onSettingChange={handleSettingChange}
         />
       </div>
-      <ReadyBar
-        className='sticky bottom-0 z-10'
-        players={players}
-        minPlayers={MIN_PLAYERS}
-        name={user.name}
-        color={user.color}
-        isReady={user.isReady}
-        onNameChange={handleNameChange}
-        onColorChange={handleColorChange}
-        onReadyChange={handleReadyChange}
-        onStartGame={handleStartGame}
-      />
     </GameLayout>
   );
 }
