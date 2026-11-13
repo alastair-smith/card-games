@@ -52,7 +52,6 @@ export default function ReadyBar({
           onNameChange={onNameChange}
         />
       </div>
-      {/* Before Start, so its changing text doesn't move the switch */}
       <div className='flex items-center gap-2'>
         <Label htmlFor={readySwitchId}>Ready</Label>
         <Switch
