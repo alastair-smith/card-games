@@ -21,7 +21,7 @@ export default function GameOver({ players }: GameOverProps) {
       shareText={() => buildShareText(players)}
     >
       <div className='flex flex-col items-center gap-3'>
-        <h3 className='font-bold'>Finishing order</h3>
+        <h2 className='font-bold'>Finishing order</h2>
         <ol
           // biome-ignore lint/a11y/noRedundantRoles: Safari drops the list role from an <ol> without list-style
           role='list'

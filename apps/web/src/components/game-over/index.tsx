@@ -70,7 +70,7 @@ export function GameOver({
               >
                 <CrownIcon size='100' aria-hidden='true' />
               </Button>
-              <h2 className='text-2xl wrap-anywhere'>{title}</h2>
+              <h1 className='text-2xl wrap-anywhere'>{title}</h1>
             </CardContent>
           </Card>
 

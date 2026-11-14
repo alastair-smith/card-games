@@ -20,7 +20,7 @@ vi.mock('~/components/game-over', () => ({
     children: ReactNode;
   }) => (
     <div>
-      <h2>{title}</h2>
+      <h1>{title}</h1>
       <p>{isUserWinner ? 'User won' : 'User did not win'}</p>
       <p>Loser emoji: {loserEmoji}</p>
       <pre data-testid='share-text'>

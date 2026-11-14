@@ -37,7 +37,13 @@ export function CelebrationRain({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return;
+    if (
+      !isActive ||
+      !containerRef.current ||
+      !matchMedia('(prefers-reduced-motion: no-preference)').matches
+    ) {
+      return;
+    }
 
     const containerWidth = containerRef.current.offsetWidth;
 
@@ -73,7 +79,7 @@ export function CelebrationRain({
       {emojis.map((entry) => (
         <div
           key={entry.id}
-          className='absolute text-3xl animate-celebration-rain z-50 pointer-events-none'
+          className='absolute text-3xl motion-safe:animate-celebration-rain z-50 pointer-events-none'
           style={{
             left: `${entry.xPos}px`,
             top: '-3rem',
