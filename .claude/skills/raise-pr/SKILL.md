@@ -57,6 +57,10 @@ Fill in `.github/pull_request_template.md`:
 For visual changes, take screenshots at desktop and mobile sizes with the
 `take-screenshots` skill.
 
+A changed diagram counts as a visual change, since its D2 code doesn't show
+how it looks: screenshot the docs page it's on with `--docs`, before and
+after. Other docs changes don't need screenshots.
+
 Screenshot every state the change affects. When no story shows one, such as
 another player's step or a message that only appears mid-turn, add a story
 for it (committed with 🔧) and capture that, rather than leaving the
