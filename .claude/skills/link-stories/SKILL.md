@@ -48,16 +48,15 @@ such as JSX, give the user written steps instead.
 ## Hosted stories
 
 `main`'s stories are at `https://stories.playcards.games`, and each PR that
-changes the app gets a preview. The Deploy Stories workflow keeps a comment on
-the PR showing the preview's status. Its first line is a hidden
-`<!-- storybook-preview url=… sha=… -->` marker with the URL and commit of the
-last build that deployed:
+changes the app gets a preview. When the branch has a PR, pass `--pr` with its
+number to either script, and it prints each story's link on that preview too,
+built from the PR number:
 
 ```bash
-gh pr view --json comments
+./.claude/skills/link-stories/scripts/find-stories.ts --component apps/web/src/components/ui/dialog/index.tsx --pr 489
 ```
 
-When the branch has a PR, also give the story's link on its preview: the same
-link with `http://localhost:6006` replaced by the preview URL. The preview
-shows the last push, so push first. PRs from forks or Dependabot have no
-preview.
+Give those links straight away, without waiting for the preview. It updates a
+few minutes after each push, and the Deploy Stories workflow's comment on the
+PR shows whether the latest push has deployed. PRs from forks or Dependabot
+have no preview.

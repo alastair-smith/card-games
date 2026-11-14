@@ -94,11 +94,23 @@ export async function callStorybookTool<Schema extends z.ZodType>(
 }
 
 /**
+ * A PR's Storybook preview. Deploy Stories deploys it as preview `pr-<number>`
+ * of the `card-games-stories` worker, so its URL follows from the PR number.
+ */
+export function getPreviewOrigin(prNumber: string): string {
+  return `https://pr-${prNumber}-card-games-stories.al-smith-dev.workers.dev`;
+}
+
+/**
  * The story in Storybook's UI, where the toolbar can change the viewport.
  * `args` is the `args` parameter as Storybook encodes it, e.g.
  * `user.name:Roz;user.isReady:!true`.
  */
-export function getStoryUrl(storyId: string, args?: string): string {
-  const url = `${STORYBOOK_ORIGIN}/?path=/story/${storyId}`;
+export function getStoryUrl(
+  storyId: string,
+  args?: string,
+  origin: string = STORYBOOK_ORIGIN,
+): string {
+  const url = `${origin}/?path=/story/${storyId}`;
   return args ? `${url}&args=${args}` : url;
 }
