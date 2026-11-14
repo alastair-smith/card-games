@@ -1,19 +1,36 @@
 #!/usr/bin/env node
 import path from 'node:path';
 import { z } from 'zod';
-import { exitWithUsage, parseArguments } from '../../lib/script-helpers.ts';
-import { callStorybookTool, getStoryUrl } from './storybook-mcp.ts';
+import {
+  exitWithError,
+  exitWithUsage,
+  POSITIVE_INTEGER,
+  parseArguments,
+} from '../../lib/script-helpers.ts';
+import {
+  callStorybookTool,
+  getPreviewOrigin,
+  getStoryUrl,
+} from './storybook-mcp.ts';
 
 const usage =
-  'Usage: find-stories.ts --component <path> [--component <path> ...]';
+  'Usage: find-stories.ts --component <path> [--component <path> ...] [--pr <PR number>]';
 
 const { values } = parseArguments(usage, {
-  options: { component: { type: 'string', multiple: true } },
+  options: {
+    component: { type: 'string', multiple: true },
+    pr: { type: 'string' },
+  },
 });
 const componentPaths = values.component ?? [];
+const { pr } = values;
 
 if (componentPaths.length === 0) {
   exitWithUsage(usage);
+}
+
+if (pr !== undefined && !POSITIVE_INTEGER.test(pr)) {
+  exitWithError(`--pr must be a PR number such as 489, not '${pr}'.`);
 }
 
 const findSchema = z.object({
@@ -62,6 +79,11 @@ for (const result of results) {
     console.log(
       `${match.distance}  ${match.title}: ${match.name}\n   ${getStoryUrl(match.storyId)}`,
     );
+    if (pr) {
+      console.log(
+        `   ${getStoryUrl(match.storyId, undefined, getPreviewOrigin(pr))}`,
+      );
+    }
   }
   console.log('');
 }

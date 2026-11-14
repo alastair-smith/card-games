@@ -10,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 18,
@@ -22,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 19,
@@ -34,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 20,
@@ -46,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 21,
@@ -58,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 22,
@@ -70,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 23,
@@ -82,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 24,
@@ -94,19 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 6
-    },
-    {
-      "id": 25,
-      "pattern": "A second copy of something other games will likely share written out by hand rather than shaped for later extraction, e.g. a second settings block in the lobby before the settings card became config-driven",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 26,
@@ -118,7 +106,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 27,
@@ -130,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 32,
@@ -142,7 +130,7 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 33,
@@ -154,7 +142,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 34,
@@ -166,7 +154,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 35,
@@ -178,7 +166,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 36,
@@ -190,7 +178,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 37,
@@ -202,7 +190,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 38,
@@ -214,19 +202,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 1
-    },
-    {
-      "id": 39,
-      "pattern": "Existing behaviour dropped while redesigning a screen, e.g. the lobby's seats for required and optional players still to join, until the user noticed it was gone",
-      "sightings": [
-        {
-          "date": "2026-11-13",
-          "session": "341c4b39-301a-44ff-a4a5-da4906713599",
-          "pr": 479
-        }
-      ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 40,
@@ -238,7 +214,43 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
+    },
+    {
+      "id": 41,
+      "pattern": "Existing `CLAUDE.md` rule on reduced motion not followed: reusing a shared component whose motion ignores `prefers-reduced-motion`, e.g. `CelebrationRain`, and leaving it because the player starts it, until a review raised it",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
+          "pr": 489
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 42,
+      "pattern": "A visible heading added over content whose meaning is already clear, e.g. \"Finishing order\" above a list of 1st, 2nd and 3rd, which the user first called bland and then removed",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
+          "pr": 489
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 43,
+      "pattern": "Existing `run-retro` step 4 \"offer a change of setup that removes the step\" not followed: proposing a script to wait for a PR's Storybook preview without first checking whether its URL could be built from the PR number, so no wait was needed",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
+          "pr": 491
+        }
+      ],
+      "retrosWithout": 0
     }
   ],
   "retros": [
@@ -394,6 +406,17 @@
         "pointsRaised": 0,
         "retroOfRetroPoints": 0,
         "changesMade": "No changes"
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "sessions": ["3a41e422-37b1-4aeb-916e-ca28e0b99f6d"],
+      "prs": [489],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 1,
+        "changesMade": "2 rules in `CLAUDE.md` (one moved from memory); `--pr` option for `link-stories` scripts; from the retro of the retro, none from the retro of the retro; 1 pattern added to the watch list",
+        "fixPr": 491
       }
     }
   ]

@@ -3,22 +3,38 @@ import { z } from 'zod';
 import {
   exitWithError,
   exitWithUsage,
+  POSITIVE_INTEGER,
   parseArguments,
   readStdin,
 } from '../../lib/script-helpers.ts';
-import { callStorybookTool, getStoryUrl, STORY_ID } from './storybook-mcp.ts';
+import {
+  callStorybookTool,
+  getPreviewOrigin,
+  getStoryUrl,
+  STORY_ID,
+} from './storybook-mcp.ts';
 
-const usage = 'Usage: story-url.ts --story <story id> [--props]';
+const usage =
+  'Usage: story-url.ts --story <story id> [--pr <PR number>] [--props]';
 
-const { story, props: hasProps = false } = parseArguments(usage, {
+const {
+  story,
+  pr,
+  props: hasProps = false,
+} = parseArguments(usage, {
   options: {
     story: { type: 'string' },
+    pr: { type: 'string' },
     props: { type: 'boolean' },
   },
 }).values;
 
 if (!story) {
   exitWithUsage(usage);
+}
+
+if (pr !== undefined && !POSITIVE_INTEGER.test(pr)) {
+  exitWithError(`--pr must be a PR number such as 489, not '${pr}'.`);
 }
 
 if (!STORY_ID.test(story)) {
@@ -82,3 +98,6 @@ const args = /[?&]args=([^&]*)/.exec(preview.previewUrl)?.[1];
 
 console.log(`${preview.title}: ${preview.name}`);
 console.log(getStoryUrl(story, args));
+if (pr) {
+  console.log(getStoryUrl(story, args, getPreviewOrigin(pr)));
+}

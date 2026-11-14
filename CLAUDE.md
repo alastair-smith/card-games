@@ -274,6 +274,10 @@ screen size. Use JavaScript only for what CSS can't do, such as setting an
 attribute, and then reuse a value a library already tracks rather than
 matching the media query again.
 
+When building a screen from an existing one, or redesigning one, list what the
+existing screen does and keep each behaviour. Raise any you'd leave out with
+the user before building.
+
 While building a layout change, check every state it affects at smaller and
 larger screen sizes. Look for layout shift between states (measure where key
 elements sit in each), overlap, and content cut off at the worst case: the
@@ -451,6 +455,11 @@ and so on. Build standard elements from these rather than styling raw
 elements or `next/link` directly. When one needs more behaviour that other
 games could use, add it to that component as a prop or part, rather than
 wrapping it in a game-specific component or adding a second version beside it.
+
+When a second game needs something another game already has, such as a screen
+or a lobby section, extract the shared part into `~/components` with each
+game's own parts passed in as children or props, rather than copying it. Don't
+build the shared version before a second game needs it.
 
 ## Testing
 
