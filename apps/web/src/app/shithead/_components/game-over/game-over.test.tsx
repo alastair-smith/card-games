@@ -1,48 +1,31 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { toast } from '~/components/ui/toast';
+import { describe, expect, test, vi } from 'vitest';
 import { buildClientFinishedPlayer } from '~/test-utils/shithead';
 import type { PlayerName, UserId } from '~/types/entities';
-import { performShare } from '~/utils/share';
 import GameOver from '.';
-import { buildShareData } from './share';
 
-vi.mock('~/components/ui/toast', () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}));
-
-vi.mock('./share', () => ({
-  buildShareData: vi.fn().mockReturnValue({
-    title: 'I just played a game of Shithead!',
-    text: '🥇 Alice',
-    url: 'https://example.com/shithead',
-  }),
-}));
-
-vi.mock('~/utils/share', () => ({
-  performShare: vi.fn().mockResolvedValue('shared'),
-}));
-
-vi.mock('~/components/layout/game-layout', () => ({
-  default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-}));
-
-vi.mock('~/components/emoji-rain/celebration-rain', () => ({
-  CelebrationRain: ({
+vi.mock('~/components/game-over', () => ({
+  GameOver: ({
+    title,
+    isUserWinner,
+    loserEmoji,
+    shareText,
     children,
-    emoji,
-    isActive,
   }: {
+    title: ReactNode;
+    isUserWinner: boolean;
+    loserEmoji: string;
+    shareText: string | (() => string);
     children: ReactNode;
-    emoji: string;
-    isActive: boolean;
   }) => (
     <div>
-      {isActive && <span data-testid='celebration-rain'>{emoji}</span>}
+      <h2>{title}</h2>
+      <p>{isUserWinner ? 'User won' : 'User did not win'}</p>
+      <p>Loser emoji: {loserEmoji}</p>
+      <pre data-testid='share-text'>
+        {typeof shareText === 'function' ? shareText() : shareText}
+      </pre>
       {children}
     </div>
   ),
@@ -71,6 +54,7 @@ describe('GameOver', () => {
       expect(
         screen.getByRole('heading', { name: 'Charlie wins!' }),
       ).toBeInTheDocument();
+      expect(screen.getByText('User did not win')).toBeInTheDocument();
     });
 
     test('congratulates you when you finished first', () => {
@@ -78,33 +62,13 @@ describe('GameOver', () => {
       expect(
         screen.getByRole('heading', { name: 'You win!' }),
       ).toBeInTheDocument();
+      expect(screen.getByText('User won')).toBeInTheDocument();
     });
   });
 
-  describe('celebration', () => {
-    test('rains emoji once the crown is pressed, and stops when it is pressed again', () => {
-      render(<GameOver players={[alice, bob, charlie]} />);
-      const crown = screen.getByRole('button', { name: 'Celebrate' });
-      expect(screen.queryByTestId('celebration-rain')).not.toBeInTheDocument();
-
-      fireEvent.click(crown);
-      expect(screen.getByTestId('celebration-rain')).toBeInTheDocument();
-
-      fireEvent.click(crown);
-      expect(screen.queryByTestId('celebration-rain')).not.toBeInTheDocument();
-    });
-
-    test('rains trophies when you won', () => {
-      render(<GameOver players={[alice, bob, { ...charlie, isUser: true }]} />);
-      fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
-      expect(screen.getByTestId('celebration-rain')).toHaveTextContent('🏆');
-    });
-
-    test('rains poo when someone else won', () => {
-      render(<GameOver players={[{ ...alice, isUser: true }, bob, charlie]} />);
-      fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
-      expect(screen.getByTestId('celebration-rain')).toHaveTextContent('💩');
-    });
+  test('rains poo for the players who did not win', () => {
+    render(<GameOver players={[alice, bob, charlie]} />);
+    expect(screen.getByText('Loser emoji: 💩')).toBeInTheDocument();
   });
 
   describe('finishing order', () => {
@@ -143,53 +107,10 @@ describe('GameOver', () => {
     });
   });
 
-  describe('share button', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-      vi.mocked(performShare).mockResolvedValue('shared');
-    });
-
-    test('shares the players in the order they finished', () => {
-      render(<GameOver players={[alice, bob, charlie]} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      expect(buildShareData).toHaveBeenCalledWith(
-        [charlie, alice, bob],
-        expect.any(String),
-      );
-      expect(performShare).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'I just played a game of Shithead!',
-        }),
-      );
-    });
-
-    test('shows a toast when the results are copied to the clipboard', async () => {
-      vi.mocked(performShare).mockResolvedValue('copied');
-      render(<GameOver players={[alice, bob, charlie]} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      await vi.waitFor(() => {
-        expect(toast.success).toHaveBeenCalledWith(
-          'Results copied to clipboard!',
-        );
-      });
-    });
-
-    test('shows an error toast when sharing fails', async () => {
-      vi.mocked(performShare).mockRejectedValue(new Error('denied'));
-      render(<GameOver players={[alice, bob, charlie]} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      await vi.waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          'Failed to share the results. Please try again.',
-        );
-      });
-    });
-  });
-
-  test('links to the home page to pick another game', () => {
+  test('shares the finishing order', () => {
     render(<GameOver players={[alice, bob, charlie]} />);
-    expect(
-      screen.getByRole('link', { name: 'Pick Another Game' }),
-    ).toHaveAttribute('href', '/');
+    expect(screen.getByTestId('share-text')).toHaveTextContent(
+      '🥇 Charlie 🥈 Alice 🥉 Bob',
+    );
   });
 });

@@ -1,96 +1,38 @@
-import { CrownIcon, Share2Icon } from 'lucide-react';
-import { useState } from 'react';
-import { CelebrationRain } from '~/components/emoji-rain/celebration-rain';
-import GameLayout from '~/components/layout/game-layout';
+import { GameOver as GameOverScreen } from '~/components/game-over';
 import { PlayerTag } from '~/components/player-tag';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
-import { toast } from '~/components/ui/toast';
-import type { ClientFinishedPlayer } from '~/server/state/game/shithead/lib/to-client-game-state';
 import { GameType } from '~/types/game';
-import { performShare } from '~/utils/share';
 import { FINISHING_POSITIONS } from '~/utils/shithead/finishing-positions';
-import { buildShareData } from './share';
-
-type GameOverPlayer = Pick<
-  ClientFinishedPlayer,
-  'id' | 'name' | 'color' | 'isUser' | 'finishingPosition'
->;
+import { buildShareText, type GameOverPlayer, sortByFinish } from './share';
 
 type GameOverProps = {
   players: GameOverPlayer[];
 };
 
 export default function GameOver({ players }: GameOverProps) {
-  const finishingOrder = [...players].sort(
-    (first, second) => first.finishingPosition - second.finishingPosition,
-  );
+  const finishingOrder = sortByFinish(players);
   const winner = finishingOrder[0];
-  const [isCelebrating, setIsCelebrating] = useState(false);
-
-  const handleShare = async () => {
-    const shareData = buildShareData(finishingOrder, window.location.host);
-    try {
-      const result = await performShare(shareData);
-      if (result === 'copied') toast.success('Results copied to clipboard!');
-    } catch {
-      toast.error('Failed to share the results. Please try again.');
-    }
-  };
 
   return (
-    <CelebrationRain
-      emoji={winner?.isUser ? '🏆' : '💩'}
-      isActive={isCelebrating}
-      className='min-h-dvh'
+    <GameOverScreen
+      gameType={GameType.SHITHEAD}
+      title={winner?.isUser ? 'You win!' : `${winner?.name} wins!`}
+      isUserWinner={winner?.isUser ?? false}
+      loserEmoji='💩'
+      shareText={() => buildShareText(players)}
     >
-      <GameLayout
-        gameType={GameType.SHITHEAD}
-        className='flex flex-col w-full pb-2 gap-4 items-center'
-      >
-        <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
-          <Card variant='panel' className='w-full'>
-            <CardContent className='pt-4 flex flex-col items-center text-center'>
-              <Button
-                variant='raw'
-                size='fit'
-                aria-label='Celebrate'
-                aria-pressed={isCelebrating}
-                onClick={() => setIsCelebrating((previous) => !previous)}
-              >
-                <CrownIcon size='100' aria-hidden='true' />
-              </Button>
-              {winner && (
-                <h2 className='text-2xl wrap-anywhere'>
-                  {winner.isUser ? 'You win!' : `${winner.name} wins!`}
-                </h2>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card variant='panel' className='w-full'>
-            <CardContent className='pt-4 flex flex-col items-center gap-3'>
-              <h3 className='font-bold'>Finishing order</h3>
-              <ol className='flex flex-col gap-2'>
-                {finishingOrder.map((player) => (
-                  <FinishingOrderRow key={player.id} player={player} />
-                ))}
-              </ol>
-            </CardContent>
-          </Card>
-
-          <div className='flex flex-wrap gap-2 justify-end w-full'>
-            <Button variant='secondary' onClick={handleShare}>
-              <Share2Icon />
-              Share
-            </Button>
-            <Button asChild>
-              <a href='/'>Pick Another Game</a>
-            </Button>
-          </div>
-        </div>
-      </GameLayout>
-    </CelebrationRain>
+      <div className='flex flex-col items-center gap-3'>
+        <h3 className='font-bold'>Finishing order</h3>
+        <ol
+          // biome-ignore lint/a11y/noRedundantRoles: Safari drops the list role from an <ol> without list-style
+          role='list'
+          className='flex flex-col gap-2'
+        >
+          {finishingOrder.map((player) => (
+            <FinishingOrderRow key={player.id} player={player} />
+          ))}
+        </ol>
+      </div>
+    </GameOverScreen>
   );
 }
 

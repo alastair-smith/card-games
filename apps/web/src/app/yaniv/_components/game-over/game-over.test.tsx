@@ -1,40 +1,33 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { toast } from '~/components/ui/toast';
+import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { describe, expect, test, vi } from 'vitest';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
-import { performShare } from '~/utils/share';
 import GameOver from '.';
-import { buildShareData } from './share';
 
-vi.mock('~/components/ui/toast', () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}));
-
-vi.mock('./share', () => ({
-  buildShareData: vi.fn().mockReturnValue({
-    title: 'I just played a game of Yaniv!',
-    text: '020 Alice',
-    url: 'https://example.com/yaniv',
-  }),
-}));
-
-vi.mock('~/utils/share', () => ({
-  performShare: vi.fn().mockResolvedValue('shared'),
-}));
-
-vi.mock('~/components/layout/game-layout', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
-
-vi.mock('~/components/emoji-rain/celebration-rain', () => ({
-  CelebrationRain: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+vi.mock('~/components/game-over', () => ({
+  GameOver: ({
+    title,
+    isUserWinner,
+    loserEmoji,
+    shareText,
+    children,
+  }: {
+    title: ReactNode;
+    isUserWinner: boolean;
+    loserEmoji: string;
+    shareText: string | (() => string);
+    children: ReactNode;
+  }) => (
+    <div>
+      <h2>{title}</h2>
+      <p>{isUserWinner ? 'User won' : 'User did not win'}</p>
+      <p>Loser emoji: {loserEmoji}</p>
+      <pre data-testid='share-text'>
+        {typeof shareText === 'function' ? shareText() : shareText}
+      </pre>
+      {children}
+    </div>
   ),
 }));
 
@@ -91,81 +84,48 @@ describe('GameOver', () => {
     test('shows the winning player name when someone else won', () => {
       render(<GameOver players={players} userId={'2' as UserId} />);
       expect(
-        screen.getByText(/Alice wins with a score of 20!/),
+        screen.getByRole('heading', { name: 'Alice wins with a score of 20!' }),
       ).toBeInTheDocument();
+      expect(screen.getByText('User did not win')).toBeInTheDocument();
     });
 
     test('shows "You" when the current user won', () => {
       render(<GameOver players={players} userId={'1' as UserId} />);
       expect(
-        screen.getByText(/You win with a score of 20!/),
+        screen.getByRole('heading', { name: 'You win with a score of 20!' }),
       ).toBeInTheDocument();
+      expect(screen.getByText('User won')).toBeInTheDocument();
     });
 
     test('shows both names joined for multiple winners when user is among them', () => {
       render(<GameOver players={twoWinners} userId={'1' as UserId} />);
       expect(
-        screen.getByText(/You & Bob win with a score of 20!/),
+        screen.getByRole('heading', {
+          name: 'You & Bob win with a score of 20!',
+        }),
       ).toBeInTheDocument();
     });
 
     test('shows both names joined for multiple winners when user did not win', () => {
       render(<GameOver players={twoWinners} userId={'3' as UserId} />);
       expect(
-        screen.getByText(/Alice & Bob win with a score of 20!/),
+        screen.getByRole('heading', {
+          name: 'Alice & Bob win with a score of 20!',
+        }),
       ).toBeInTheDocument();
     });
   });
 
-  describe('share button', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-      vi.mocked(performShare).mockResolvedValue('shared');
-    });
+  test('rains rubbish bins for the players who did not win', () => {
+    render(<GameOver players={players} userId={'2' as UserId} />);
+    expect(screen.getByText('Loser emoji: 🗑️')).toBeInTheDocument();
+  });
 
-    test('calls performShare with data from buildShareData when share is clicked', async () => {
-      render(<GameOver players={players} userId={'2' as UserId} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      expect(buildShareData).toHaveBeenCalledWith(
-        players,
-        '2' as UserId,
-        expect.any(String),
-      );
-      expect(performShare).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'I just played a game of Yaniv!' }),
-      );
-    });
-
-    test('shows clipboard toast when performShare resolves as copied', async () => {
-      vi.mocked(performShare).mockResolvedValue('copied');
-      render(<GameOver players={players} userId={'2' as UserId} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      await vi.waitFor(() => {
-        expect(toast.success).toHaveBeenCalledWith(
-          'Game summary copied to clipboard!',
-        );
-      });
-    });
-
-    test('does not show clipboard toast when performShare resolves as shared', async () => {
-      vi.mocked(performShare).mockResolvedValue('shared');
-      render(<GameOver players={players} userId={'2' as UserId} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      await vi.waitFor(() => {
-        expect(toast.success).not.toHaveBeenCalled();
-      });
-    });
-
-    test('shows error toast when performShare rejects', async () => {
-      vi.mocked(performShare).mockRejectedValue(new Error('denied'));
-      render(<GameOver players={players} userId={'2' as UserId} />);
-      fireEvent.click(screen.getByRole('button', { name: /share/i }));
-      await vi.waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          'Failed to share the game summary. Please try again.',
-        );
-      });
-    });
+  test('shares every player with their score', () => {
+    render(<GameOver players={players} userId={'2' as UserId} />);
+    expect(screen.getByTestId('share-text')).toHaveTextContent(
+      '020 Alice 🏆 030 Bob 040 Charlie',
+    );
   });
 
   describe('scoreboard', () => {
