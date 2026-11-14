@@ -20,11 +20,11 @@ export default function GameOver({ players }: GameOverProps) {
       loserEmoji='💩'
       shareText={() => buildShareText(players)}
     >
-      <div className='flex flex-col items-center gap-3'>
-        <h2 className='font-bold'>Win order</h2>
+      <div className='flex justify-center'>
         <ol
           // biome-ignore lint/a11y/noRedundantRoles: Safari drops the list role from an <ol> without list-style
           role='list'
+          aria-label='Win order'
           className='flex flex-col gap-2'
         >
           {finishingOrder.map((player) => (

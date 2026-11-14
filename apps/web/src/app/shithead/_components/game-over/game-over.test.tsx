@@ -74,7 +74,9 @@ describe('GameOver', () => {
   describe('finishing order', () => {
     test('lists the players in the order they finished', () => {
       render(<GameOver players={[alice, bob, charlie]} />);
-      const rows = within(screen.getByRole('list')).getAllByRole('listitem');
+      const rows = within(
+        screen.getByRole('list', { name: 'Win order' }),
+      ).getAllByRole('listitem');
       expect(rows.map((row) => row.textContent)).toEqual([
         '1st🥇Charlie',
         '2nd🥈Alice',
