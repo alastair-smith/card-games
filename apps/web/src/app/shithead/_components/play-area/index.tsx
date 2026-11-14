@@ -33,23 +33,25 @@ export function PlayArea({
         isEmpty={isDeckEmpty}
         ariaLabel={isDeckEmpty ? 'Deck, empty' : `Deck, ${deckSize} cards`}
       />
-      {/* Wide enough for the most cards the pile can show: three of a rank
-          with four 5s among them, as a fourth of the rank would burn it. So
-          the deck doesn't shift as the pile grows */}
-      <div className='min-w-[calc(13.35em+1.2rem)]'>
-        <PlayingCardDiscardPile isFanned>
-          {/* Bottom-first, so the top card overlaps the rest */}
-          {[...visibleDiscardCards].reverse().map((card) => (
-            <div key={`${card.suit}-${card.rank}`} aria-hidden='true'>
-              <PlayingCard card={card} border />
-            </div>
-          ))}
-          {/* Last, so the fan's first card is the first child */}
-          <span className='sr-only'>
-            {describeDiscardPile(visibleDiscardCards)}
-          </span>
-        </PlayingCardDiscardPile>
-      </div>
+      <PlayingCardDiscardPile
+        isFanned
+        // Always as wide as the most cards the pile can show, seven: three of
+        // a rank with four 5s among them, as a fourth of the rank would burn
+        // it. A card, six fanned strips, the borders and the padding, so
+        // nothing shifts as the pile grows
+        className='min-w-[calc(3.75em+6*1.6em+0.112em+1rem)]'
+      >
+        {/* Bottom-first, so the top card overlaps the rest */}
+        {[...visibleDiscardCards].reverse().map((card) => (
+          <div key={`${card.suit}-${card.rank}`} aria-hidden='true'>
+            <PlayingCard card={card} border />
+          </div>
+        ))}
+        {/* Last, so the fan's first card is the first child */}
+        <span className='sr-only'>
+          {describeDiscardPile(visibleDiscardCards)}
+        </span>
+      </PlayingCardDiscardPile>
     </div>
   );
 }

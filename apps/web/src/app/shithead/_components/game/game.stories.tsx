@@ -99,6 +99,10 @@ export const TwoPlayers: Story = {
   args: { players: buildPlayers({ playerCount: 2 }) },
 };
 
+export const ThreePlayers: Story = {
+  args: { players: buildPlayers({ playerCount: 3 }) },
+};
+
 export const Swapping: Story = {
   args: {
     gameStage: GameStage.SWAPPING,
