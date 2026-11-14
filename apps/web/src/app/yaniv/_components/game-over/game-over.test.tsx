@@ -3,8 +3,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import type { PlayerName, UserId } from '~/types/entities';
+import { performShare } from '~/utils/share';
 import GameOver from '.';
-import { buildShareData, performShare } from './share';
+import { buildShareData } from './share';
 
 vi.mock('~/components/ui/toast', () => ({
   toast: {
@@ -19,6 +20,9 @@ vi.mock('./share', () => ({
     text: '020 Alice',
     url: 'https://example.com/yaniv',
   }),
+}));
+
+vi.mock('~/utils/share', () => ({
   performShare: vi.fn().mockResolvedValue('shared'),
 }));
 

@@ -2,18 +2,8 @@ import type { ComponentProps } from 'react';
 import { PlayerTag } from '~/components/player-tag';
 import type { FinishingPosition, TableCardSlot } from '~/types/games/shithead';
 import { cn } from '~/utils/cn';
+import { FINISHING_POSITIONS } from '~/utils/shithead/finishing-positions';
 import { TableCards } from '../table-cards';
-
-const FINISHING_POSITIONS = {
-  1: { label: '1st', medal: '🥇' },
-  2: { label: '2nd', medal: '🥈' },
-  3: { label: '3rd', medal: '🥉' },
-  4: { label: '4th', medal: null },
-  5: { label: '5th', medal: null },
-} as const satisfies Record<
-  FinishingPosition,
-  { label: string; medal: string | null }
->;
 
 type PlayerAreaProps = Omit<
   ComponentProps<typeof PlayerTag>,

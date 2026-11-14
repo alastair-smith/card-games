@@ -8,9 +8,10 @@ import { toast } from '~/components/ui/toast';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameType } from '~/types/game';
 import type { RoundScore } from '~/types/games/yaniv';
+import { performShare } from '~/utils/share';
 import { HowToDialog } from '../how-to';
 import { Scoreboard } from '../scoreboard';
-import { buildShareData, performShare } from './share';
+import { buildShareData } from './share';
 
 type GameOverProps = {
   players: {

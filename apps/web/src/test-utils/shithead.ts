@@ -1,4 +1,5 @@
 import type { ShitheadLobby } from '~/server/data/lobby';
+import type { ClientFinishedPlayer } from '~/server/state/game/shithead/lib/to-client-game-state';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { type GameCode, GameType } from '~/types/game';
@@ -36,6 +37,20 @@ export const buildPlayer = (overrides: Partial<Player> = {}): Player => ({
   tableCards: [],
   isSwapConfirmed: false,
   finishingPosition: null,
+  ...overrides,
+});
+
+export const buildClientFinishedPlayer = (
+  overrides: Partial<ClientFinishedPlayer> = {},
+): ClientFinishedPlayer => ({
+  id: 'user-1' as UserId,
+  name: 'Player 1' as PlayerName,
+  color: 'cyan',
+  isSwapConfirmed: true,
+  finishingPosition: 1,
+  cardCount: 0,
+  tableCards: [],
+  isUser: false,
   ...overrides,
 });
 
