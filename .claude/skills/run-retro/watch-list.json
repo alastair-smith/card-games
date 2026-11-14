@@ -239,6 +239,18 @@
         }
       ],
       "retrosWithout": 0
+    },
+    {
+      "id": 43,
+      "pattern": "Existing `run-retro` step 4 \"offer a change of setup that removes the step\" not followed: proposing a script to wait for a PR's Storybook preview without first checking whether its URL could be built from the PR number, so no wait was needed",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
+          "pr": 491
+        }
+      ],
+      "retrosWithout": 0
     }
   ],
   "retros": [
@@ -402,8 +414,8 @@
       "prs": [489],
       "result": {
         "pointsRaised": 3,
-        "retroOfRetroPoints": 0,
-        "changesMade": "2 rules in `CLAUDE.md` (one moved from memory); `--pr` option for `link-stories` scripts",
+        "retroOfRetroPoints": 1,
+        "changesMade": "2 rules in `CLAUDE.md` (one moved from memory); `--pr` option for `link-stories` scripts; from the retro of the retro, none from the retro of the retro; 1 pattern added to the watch list",
         "fixPr": 491
       }
     }
