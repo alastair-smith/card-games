@@ -399,7 +399,13 @@
     {
       "date": "2026-11-14",
       "sessions": ["3a41e422-37b1-4aeb-916e-ca28e0b99f6d"],
-      "prs": [489]
+      "prs": [489],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 0,
+        "changesMade": "2 rules in `CLAUDE.md` (one moved from memory); `--pr` option for `link-stories` scripts",
+        "fixPr": 491
+      }
     }
   ]
 }
