@@ -1,6 +1,7 @@
 import { lobbyRouter } from '~/server/api/routers/lobby';
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 import { highCardRouter } from './routers/high-card';
+import { shitheadRouter } from './routers/shithead';
 import { yanivRouter } from './routers/yaniv';
 
 /**
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   lobby: lobbyRouter,
   highCard: highCardRouter,
   yaniv: yanivRouter,
+  shithead: shitheadRouter,
 });
 
 // export type definition of API

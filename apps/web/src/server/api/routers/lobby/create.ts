@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { protectedProcedure } from '~/server/api/trpc';
 import { createGame as createHighCardGame } from '~/server/state/game/high-card/create-game';
+import { createGame as createShitheadGame } from '~/server/state/game/shithead/create-game';
 import { createGame as createYanivGame } from '~/server/state/game/yaniv/create-game';
 import { GameType } from '~/types/game';
 
@@ -18,6 +19,10 @@ export const create = protectedProcedure
       }
       case GameType.YANIV: {
         const { code } = await createYanivGame({ host: userId });
+        return { code };
+      }
+      case GameType.SHITHEAD: {
+        const { code } = await createShitheadGame({ host: userId });
         return { code };
       }
       default:

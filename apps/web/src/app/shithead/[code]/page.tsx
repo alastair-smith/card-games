@@ -1,0 +1,34 @@
+import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { connection } from 'next/server';
+import { AUTH_COOKIE_NAME, getSession } from '~/server/auth';
+import { GameType, gameCodeSchema, gameSummary } from '~/types/game';
+import ShitheadClient from './client';
+
+export const metadata: Metadata = {
+  title: 'Shithead',
+  description: `Join a game of Shithead! ${gameSummary[GameType.SHITHEAD]}`,
+};
+
+export default async function ShitheadPage({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) {
+  await connection();
+
+  const { code: codeFromUrl } = await params;
+  const { data: code, error: gameCodeParsingError } =
+    gameCodeSchema.safeParse(codeFromUrl);
+
+  if (gameCodeParsingError) {
+    throw new Error(`Invalid game code syntax: '${codeFromUrl}'`, {
+      cause: gameCodeParsingError,
+    });
+  }
+
+  const authCookie = (await cookies()).get(AUTH_COOKIE_NAME)?.value;
+  const session = await getSession(authCookie);
+
+  return <ShitheadClient code={code} userId={session?.userId} />;
+}
