@@ -15,17 +15,17 @@ code: Join with a code {
 }
 
 shared-link: Join from a link {
-  open: "Open /yaniv/<code>\nfrom the lobby's link or QR code"
+  open: "Open /<game>/<code>\nfrom the lobby's link or QR code"
 }
 
-page: "/yaniv/<code>\nvalidates the code, renders the client"
+page: "/<game>/<code>\nvalidates the code, renders the client"
 
 create.mutation -> page: navigate
 code.lobby -> page: redirect to the game's URL
 shared-link.open -> page
 
 subscription: Subscription {
-  start: "yaniv.state subscription\nlistens for lobby, game and emoji events"
+  start: "<game>.state subscription\nlistens for lobby, game and emoji events"
   exists: Does the game exist? {shape: diamond}
   stage: Game stage? {shape: diamond}
   finished-player: Is the user a player? {shape: diamond}
