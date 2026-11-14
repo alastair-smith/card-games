@@ -31,6 +31,7 @@ export function GameOver({
   children,
 }: GameOverProps) {
   const [isCelebrating, setIsCelebrating] = useState(false);
+  const celebrationEmoji = isUserWinner ? '🏆' : loserEmoji;
 
   const handleShare = async () => {
     const shareData = buildShareData({
@@ -49,7 +50,7 @@ export function GameOver({
 
   return (
     <CelebrationRain
-      emoji={isUserWinner ? '🏆' : loserEmoji}
+      emoji={celebrationEmoji}
       isActive={isCelebrating}
       className='min-h-dvh'
     >
@@ -61,15 +62,27 @@ export function GameOver({
         <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
           <Card variant='panel' className='w-full'>
             <CardContent className='pt-4 flex flex-col items-center text-center'>
-              <Button
-                variant='raw'
-                size='fit'
-                aria-label='Celebrate'
-                aria-pressed={isCelebrating}
-                onClick={() => setIsCelebrating((previous) => !previous)}
-              >
-                <CrownIcon size='100' aria-hidden='true' />
-              </Button>
+              <span className='relative'>
+                <Button
+                  variant='raw'
+                  size='fit'
+                  aria-label='Celebrate'
+                  aria-pressed={isCelebrating}
+                  onClick={() => setIsCelebrating((previous) => !previous)}
+                >
+                  <CrownIcon size='100' aria-hidden='true' />
+                </Button>
+                {isCelebrating && (
+                  <span
+                    data-testid='still-celebration-emoji'
+                    aria-hidden='true'
+                    // In place of the rain, which doesn't start for reduced motion
+                    className='pointer-events-none absolute -top-2 -right-4 hidden text-5xl motion-reduce:block'
+                  >
+                    {celebrationEmoji}
+                  </span>
+                )}
+              </span>
               <h1 className='text-2xl wrap-anywhere'>{title}</h1>
             </CardContent>
           </Card>

@@ -25,3 +25,11 @@ export const SomeoneElseWins: Story = {};
 export const YouWin: Story = {
   args: { title: 'You win!', isUserWinner: true },
 };
+
+/** Rains 🏆, or shows a still one by the crown with reduced motion on. */
+export const Celebrating: Story = {
+  args: { title: 'You win!', isUserWinner: true },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Celebrate' }));
+  },
+};

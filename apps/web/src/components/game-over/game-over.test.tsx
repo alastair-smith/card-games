@@ -106,6 +106,18 @@ describe('GameOver', () => {
       expect(screen.getByTestId('celebration-rain')).toHaveTextContent('🏆');
     });
 
+    test('shows a still emoji by the crown once it is pressed, for reduced motion', () => {
+      renderGameOver({ isUserWinner: true });
+      expect(
+        screen.queryByTestId('still-celebration-emoji'),
+      ).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
+      const stillEmoji = screen.getByTestId('still-celebration-emoji');
+      expect(stillEmoji).toHaveTextContent('🏆');
+      expect(stillEmoji).toHaveClass('hidden', 'motion-reduce:block');
+    });
+
     test("rains the game's loser emoji when someone else won", () => {
       renderGameOver();
       fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
