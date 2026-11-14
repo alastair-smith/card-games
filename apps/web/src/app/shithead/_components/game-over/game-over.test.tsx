@@ -31,6 +31,23 @@ vi.mock('~/components/layout/game-layout', () => ({
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
 
+vi.mock('~/components/emoji-rain/celebration-rain', () => ({
+  CelebrationRain: ({
+    children,
+    emoji,
+    isActive,
+  }: {
+    children: ReactNode;
+    emoji: string;
+    isActive: boolean;
+  }) => (
+    <div>
+      {isActive && <span data-testid='celebration-rain'>{emoji}</span>}
+      {children}
+    </div>
+  ),
+}));
+
 const alice = buildClientFinishedPlayer({
   id: '1' as UserId,
   name: 'Alice' as PlayerName,
@@ -61,6 +78,32 @@ describe('GameOver', () => {
       expect(
         screen.getByRole('heading', { name: 'You win!' }),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('celebration', () => {
+    test('rains emoji once the crown is pressed, and stops when it is pressed again', () => {
+      render(<GameOver players={[alice, bob, charlie]} />);
+      const crown = screen.getByRole('button', { name: 'Celebrate' });
+      expect(screen.queryByTestId('celebration-rain')).not.toBeInTheDocument();
+
+      fireEvent.click(crown);
+      expect(screen.getByTestId('celebration-rain')).toBeInTheDocument();
+
+      fireEvent.click(crown);
+      expect(screen.queryByTestId('celebration-rain')).not.toBeInTheDocument();
+    });
+
+    test('rains trophies when you won', () => {
+      render(<GameOver players={[alice, bob, { ...charlie, isUser: true }]} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
+      expect(screen.getByTestId('celebration-rain')).toHaveTextContent('🏆');
+    });
+
+    test('rains poo when someone else won', () => {
+      render(<GameOver players={[{ ...alice, isUser: true }, bob, charlie]} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Celebrate' }));
+      expect(screen.getByTestId('celebration-rain')).toHaveTextContent('💩');
     });
   });
 

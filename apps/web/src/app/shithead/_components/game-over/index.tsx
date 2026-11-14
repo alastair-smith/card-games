@@ -1,4 +1,6 @@
 import { CrownIcon, Share2Icon } from 'lucide-react';
+import { useState } from 'react';
+import { CelebrationRain } from '~/components/emoji-rain/celebration-rain';
 import GameLayout from '~/components/layout/game-layout';
 import { PlayerTag } from '~/components/player-tag';
 import { Button } from '~/components/ui/button';
@@ -24,6 +26,7 @@ export default function GameOver({ players }: GameOverProps) {
     (first, second) => first.finishingPosition - second.finishingPosition,
   );
   const winner = finishingOrder[0];
+  const [isCelebrating, setIsCelebrating] = useState(false);
 
   const handleShare = async () => {
     const shareData = buildShareData(finishingOrder, window.location.host);
@@ -36,44 +39,58 @@ export default function GameOver({ players }: GameOverProps) {
   };
 
   return (
-    <GameLayout
-      gameType={GameType.SHITHEAD}
-      className='flex flex-col w-full pb-2 gap-4 items-center'
+    <CelebrationRain
+      emoji={winner?.isUser ? '🏆' : '💩'}
+      isActive={isCelebrating}
+      className='min-h-dvh'
     >
-      <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
-        <Card variant='panel' className='w-full'>
-          <CardContent className='pt-4 flex flex-col items-center text-center'>
-            <CrownIcon size='100' aria-hidden='true' />
-            {winner && (
-              <h2 className='text-2xl wrap-anywhere'>
-                {winner.isUser ? 'You win!' : `${winner.name} wins!`}
-              </h2>
-            )}
-          </CardContent>
-        </Card>
+      <GameLayout
+        gameType={GameType.SHITHEAD}
+        className='flex flex-col w-full pb-2 gap-4 items-center'
+      >
+        <div className='flex flex-col gap-3 items-center w-full max-w-xl'>
+          <Card variant='panel' className='w-full'>
+            <CardContent className='pt-4 flex flex-col items-center text-center'>
+              <Button
+                variant='raw'
+                size='fit'
+                aria-label='Celebrate'
+                aria-pressed={isCelebrating}
+                onClick={() => setIsCelebrating((previous) => !previous)}
+              >
+                <CrownIcon size='100' aria-hidden='true' />
+              </Button>
+              {winner && (
+                <h2 className='text-2xl wrap-anywhere'>
+                  {winner.isUser ? 'You win!' : `${winner.name} wins!`}
+                </h2>
+              )}
+            </CardContent>
+          </Card>
 
-        <Card variant='panel' className='w-full'>
-          <CardContent className='pt-4 flex flex-col gap-3'>
-            <h3 className='font-bold'>Finishing order</h3>
-            <ol className='flex flex-col gap-2'>
-              {finishingOrder.map((player) => (
-                <FinishingOrderRow key={player.id} player={player} />
-              ))}
-            </ol>
-          </CardContent>
-        </Card>
+          <Card variant='panel' className='w-full'>
+            <CardContent className='pt-4 flex flex-col items-center gap-3'>
+              <h3 className='font-bold'>Finishing order</h3>
+              <ol className='flex flex-col gap-2'>
+                {finishingOrder.map((player) => (
+                  <FinishingOrderRow key={player.id} player={player} />
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
 
-        <div className='flex flex-wrap gap-2 justify-end w-full'>
-          <Button variant='secondary' onClick={handleShare}>
-            <Share2Icon />
-            Share
-          </Button>
-          <Button asChild>
-            <a href='/'>Pick Another Game</a>
-          </Button>
+          <div className='flex flex-wrap gap-2 justify-end w-full'>
+            <Button variant='secondary' onClick={handleShare}>
+              <Share2Icon />
+              Share
+            </Button>
+            <Button asChild>
+              <a href='/'>Pick Another Game</a>
+            </Button>
+          </div>
         </div>
-      </div>
-    </GameLayout>
+      </GameLayout>
+    </CelebrationRain>
   );
 }
 
