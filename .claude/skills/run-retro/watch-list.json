@@ -10,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 18,
@@ -22,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 19,
@@ -34,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 20,
@@ -46,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 21,
@@ -58,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 22,
@@ -70,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 23,
@@ -82,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 24,
@@ -94,7 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 26,
@@ -106,7 +106,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 27,
@@ -118,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7
     },
     {
       "id": 32,
@@ -130,7 +130,7 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 33,
@@ -142,7 +142,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 34,
@@ -154,7 +154,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 35,
@@ -166,7 +166,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 36,
@@ -178,7 +178,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 37,
@@ -190,7 +190,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 38,
@@ -202,7 +202,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 40,
@@ -214,7 +214,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3
     },
     {
       "id": 41,
@@ -226,7 +226,7 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 42,
@@ -238,7 +238,7 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 43,
@@ -248,6 +248,30 @@
           "date": "2026-11-14",
           "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
           "pr": 491
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 44,
+      "pattern": "Screenshots of a diagram change in a PR description that are overwhelming and make it hard to see what changed, e.g. the whole Lobby docs page for three relabelled boxes in the join-game diagram, until the user asked for them to be cropped and the change outlined",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "b7af8ad9-461e-40b4-a081-c4d2c26a51b5",
+          "pr": 492
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 45,
+      "pattern": "Docs or diagrams for a flow every game shares named for particular games, e.g. \"/yaniv/<code> or /shithead/<code>\" in the join-game diagram, rather than generically as \"/<game>/<code>\"",
+      "sightings": [
+        {
+          "date": "2026-11-14",
+          "session": "b7af8ad9-461e-40b4-a081-c4d2c26a51b5",
+          "pr": 492
         }
       ],
       "retrosWithout": 0
@@ -417,6 +441,16 @@
         "retroOfRetroPoints": 1,
         "changesMade": "2 rules in `CLAUDE.md` (one moved from memory); `--pr` option for `link-stories` scripts; from the retro of the retro, none from the retro of the retro; 1 pattern added to the watch list",
         "fixPr": 491
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "sessions": ["b7af8ad9-461e-40b4-a081-c4d2c26a51b5"],
+      "prs": [492],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `raise-pr` (changed diagrams get before and after screenshots); 2 patterns added to the watch list"
       }
     }
   ]
