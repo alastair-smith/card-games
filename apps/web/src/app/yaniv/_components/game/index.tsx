@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { PageEmojiRain } from '~/components/emoji-rain/page-emoji-rain';
+import { usePageReactions } from '~/components/emoji-rain/use-page-reactions';
 import { EmojiReactions } from '~/components/emoji-reactions';
 import GameLayout from '~/components/layout/game-layout';
 import {
@@ -10,7 +11,12 @@ import {
   TabsViewport,
 } from '~/components/ui/tabs';
 import type { EmojiReactionId, PlayerName, UserId } from '~/types/entities';
-import { GameType, type ReactionEmoji, type SystemEmoji } from '~/types/game';
+import {
+  GameType,
+  type ReactionEmoji,
+  reactionEmojis,
+  type SystemEmoji,
+} from '~/types/game';
 import {
   type DrawSource,
   type GameStep,
@@ -32,7 +38,6 @@ import { ScoresDialog } from '../scores-dialog';
 import { TurnActions } from '../turn-actions';
 import { TurnAnnouncement } from '../turn-status';
 import { useDrawnCardVisibility } from './use-drawn-card-visibility';
-import { usePageReactions } from './use-page-reactions';
 import { useYanivCalledToast } from './use-yaniv-called-toast';
 
 type GameTab = 'table' | 'hand' | 'scores';
@@ -311,6 +316,7 @@ export default function Game({
                 {actionTab === 'table' && <TurnActions {...turnActionsProps} />}
               </div>
               <EmojiReactions
+                emojis={reactionEmojis}
                 onEmojiClick={onEmojiClick}
                 className='mt-3 shrink-0 self-center lg:hidden'
               />
@@ -363,7 +369,10 @@ export default function Game({
               keeps the turn buttons' height when they're gone, so the play
               area above doesn't shift as you play and pick up */}
           <div className='hidden lg:grid lg:h-10 lg:grid-cols-2 lg:items-center lg:gap-2'>
-            <EmojiReactions onEmojiClick={onEmojiClick} />
+            <EmojiReactions
+              emojis={reactionEmojis}
+              onEmojiClick={onEmojiClick}
+            />
             {actionTab && (
               <TurnActions
                 // Face-down cards can't be played, so Play Cards hides with them

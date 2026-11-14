@@ -36,7 +36,8 @@ export function PlayerTag({
     <span className={cn('relative block rounded', className)}>
       <span
         style={{ backgroundColor: playerColorValue(color) }}
-        className='relative flex h-full items-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
+        // Wraps the card count below the name when a caller limits the width
+        className='relative flex h-full flex-wrap items-center justify-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
       >
         {isHost && (
           <>

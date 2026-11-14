@@ -55,6 +55,10 @@ export const DiscardPileThreeCards: Story = { args: { cardCount: 3 } };
 
 export const DiscardPileLotsOfCards: Story = { args: { cardCount: 4 } };
 
+export const FannedDiscardPile: Story = {
+  args: { cardCount: 4, isFanned: true },
+};
+
 const initialCardsForAnimation: PlayingCardValue[] = [
   { suit: Suit.CLUBS, rank: Rank.NINE },
   { suit: Suit.HEARTS, rank: Rank.SIX },

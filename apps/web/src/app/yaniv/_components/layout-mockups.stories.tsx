@@ -53,7 +53,7 @@ import {
   type PlayerName,
   type UserId,
 } from '~/types/entities';
-import { GameType } from '~/types/game';
+import { GameType, type ReactionEmoji, reactionEmojis } from '~/types/game';
 import {
   GameStep,
   GameViewStage,
@@ -766,7 +766,7 @@ type MockGameProps = {
   /** Cards already selected when the story opens. */
   initialSelectedCards?: YanivPlayingCard[];
   isRunSelected?: boolean;
-  onEmojiClick: ComponentProps<typeof EmojiReactions>['onEmojiClick'];
+  onEmojiClick: (emoji: ReactionEmoji) => void;
   onEndTurnClick: () => void;
   onYanivClick: () => void;
   onPlayCards: (direction?: 'ascending' | 'descending') => void;
@@ -1006,6 +1006,7 @@ function MockGame({
                   )}
                 </div>
                 <EmojiReactions
+                  emojis={reactionEmojis}
                   onEmojiClick={handleEmojiClick}
                   className='self-center lg:hidden'
                 />
@@ -1044,7 +1045,10 @@ function MockGame({
         {/* Large screens share this row with the emoji reactions, like the
             current Controls */}
         <div className='hidden lg:grid lg:grid-cols-2 lg:items-center lg:gap-2'>
-          <EmojiReactions onEmojiClick={handleEmojiClick} />
+          <EmojiReactions
+            emojis={reactionEmojis}
+            onEmojiClick={handleEmojiClick}
+          />
           {actionTab && (
             <TurnActions
               // Face-down cards can't be played, so Play Cards hides with them

@@ -1,12 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { EmojiReactionId, UserId } from '~/types/entities';
-import type { ReactionEmoji } from '~/types/game';
 import { usePageReactions } from './use-page-reactions';
 
 type TestPlayer = {
   id: UserId;
-  emojiReaction?: { emoji: ReactionEmoji; id: EmojiReactionId };
+  emojiReaction?: { emoji: string; id: EmojiReactionId };
 };
 
 const id1 = 'aaaaaaaa-0000-0000-0000-000000000001' as EmojiReactionId;
@@ -15,8 +14,8 @@ const id2 = 'aaaaaaaa-0000-0000-0000-000000000002' as EmojiReactionId;
 const alice: TestPlayer = { id: '1' as UserId };
 const bob: TestPlayer = { id: '2' as UserId };
 
-const thumbsUp = '👍' as ReactionEmoji;
-const heart = '❤️' as ReactionEmoji;
+const thumbsUp = '👍';
+const heart = '❤️';
 
 describe('usePageReactions', () => {
   beforeEach(() => {

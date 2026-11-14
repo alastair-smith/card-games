@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
-import type { ReactionEmoji, SystemEmoji } from '~/types/game';
+
+type PageReaction = { emoji: string; id: EmojiReactionId };
 
 type Player = {
   id: UserId;
-  emojiReaction?:
-    | { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }
-    | undefined;
+  emojiReaction?: PageReaction | undefined;
 };
-
-type PageReaction = { emoji: string; id: EmojiReactionId };
 
 const REACTION_EXPIRY_MS = 5000;
 
