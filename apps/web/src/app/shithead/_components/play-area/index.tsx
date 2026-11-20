@@ -2,6 +2,7 @@ import { PlayingCard } from '~/components/ui/playing-card';
 import {
   PlayingCardDeck,
   PlayingCardDiscardPile,
+  PlayingCardStack,
 } from '~/components/ui/playing-card-stacks';
 import type { StandardPlayingCard } from '~/types/cards';
 import { cardAriaLabel } from '~/utils/cards';
@@ -34,15 +35,20 @@ export function PlayArea({
         ariaLabel={isDeckEmpty ? 'Deck, empty' : `Deck, ${deckSize} cards`}
       />
       <PlayingCardDiscardPile
-        isFanned
         // Room for 7 cards
         className='min-w-[calc(3.75em+6*1.6em+0.112em+1rem)]'
       >
-        {[...visibleDiscardCards].reverse().map((card) => (
-          <div key={`${card.suit}-${card.rank}`} aria-hidden='true'>
-            <PlayingCard card={card} border />
-          </div>
-        ))}
+        <div aria-hidden='true'>
+          <PlayingCardStack>
+            {[...visibleDiscardCards].reverse().map((card) => (
+              <PlayingCard
+                key={`${card.suit}-${card.rank}`}
+                card={card}
+                border
+              />
+            ))}
+          </PlayingCardStack>
+        </div>
         <span className='sr-only'>
           {describeDiscardPile(visibleDiscardCards)}
         </span>

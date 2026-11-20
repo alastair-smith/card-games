@@ -10,7 +10,7 @@ import {
   Suit,
 } from '~/types/cards';
 import { PlayingCard } from '../playing-card';
-import { PlayingCardDiscardPile } from '.';
+import { PlayingCardDiscardPile, PlayingCardStack } from '.';
 
 const pileCards: PlayingCardValue[] = [
   { suit: Suit.CLUBS, rank: Rank.NINE },
@@ -34,9 +34,11 @@ const meta: Meta<DiscardPileStoryProps> = {
   },
   render: ({ cardCount, ...args }) => (
     <PlayingCardDiscardPile {...args}>
-      {pileCards.slice(0, cardCount).map((card) => (
-        <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
-      ))}
+      <PlayingCardStack>
+        {pileCards.slice(0, cardCount).map((card) => (
+          <PlayingCard key={`${card.suit}-${card.rank}`} card={card} />
+        ))}
+      </PlayingCardStack>
     </PlayingCardDiscardPile>
   ),
 };
@@ -54,10 +56,6 @@ export const DiscardPileTwoCards: Story = { args: { cardCount: 2 } };
 export const DiscardPileThreeCards: Story = { args: { cardCount: 3 } };
 
 export const DiscardPileLotsOfCards: Story = { args: { cardCount: 4 } };
-
-export const FannedDiscardPile: Story = {
-  args: { cardCount: 4, isFanned: true },
-};
 
 const initialCardsForAnimation: PlayingCardValue[] = [
   { suit: Suit.CLUBS, rank: Rank.NINE },

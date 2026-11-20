@@ -1,7 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import {
   PLAYING_CARD_MIN_PROPORTIONS,
-  PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
 import type { PlayingCardValue } from '~/types/cards';
@@ -90,7 +89,7 @@ export function PlayingCardStack({ className, children }: PlayingCardStack) {
       <div
         className={cn(
           PLAYING_CARD_MIN_PROPORTIONS,
-          'flex *:-ml-[1.44em] *:first:ml-0',
+          'flex *:shrink-0 *:not-first:-ml-[2.15em]',
         )}
       >
         {children}
@@ -102,17 +101,14 @@ export function PlayingCardStack({ className, children }: PlayingCardStack) {
 type PlayingCardDiscardPile = {
   className?: string;
   children?: ReactNode;
-  /** Lays the cards side by side, each overlapping the one before, so every card's rank shows */
-  isFanned?: boolean;
 };
 
 /**
- * Pass visible cards as children
+ * Pass the top card, or a `PlayingCardStack` to show several, as children
  */
 export function PlayingCardDiscardPile({
   className,
   children,
-  isFanned = false,
 }: PlayingCardDiscardPile) {
   return (
     <section
@@ -122,18 +118,7 @@ export function PlayingCardDiscardPile({
         className,
       )}
     >
-      <div
-        className={
-          isFanned
-            ? cn(
-                PLAYING_CARD_MIN_PROPORTIONS,
-                'flex *:shrink-0 *:not-first:-ml-[2.15em]',
-              )
-            : PLAYING_CARD_PROPORTIONS
-        }
-      >
-        {children}
-      </div>
+      <div className={PLAYING_CARD_MIN_PROPORTIONS}>{children}</div>
     </section>
   );
 }
