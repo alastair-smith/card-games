@@ -78,7 +78,8 @@ const meta = {
   args: {
     gameStage: GameStage.IN_PROGRESS,
     players: buildPlayers(),
-    deckSize: 30,
+    deckSize: 3,
+    discardSize: 4,
     visibleDiscardCards: [{ suit: Suit.HEARTS, rank: Rank.EIGHT }],
     hand: <HandPlaceholder />,
     onEmojiClick: fn(),
@@ -96,11 +97,11 @@ export const OtherPlayersTurn: Story = {
 };
 
 export const TwoPlayers: Story = {
-  args: { players: buildPlayers({ playerCount: 2 }) },
+  args: { players: buildPlayers({ playerCount: 2 }), deckSize: 30 },
 };
 
 export const ThreePlayers: Story = {
-  args: { players: buildPlayers({ playerCount: 3 }) },
+  args: { players: buildPlayers({ playerCount: 3 }), deckSize: 21 },
 };
 
 export const Swapping: Story = {
@@ -113,12 +114,16 @@ export const Swapping: Story = {
   },
 };
 
-export const EmptyDiscardPile: Story = { args: { visibleDiscardCards: [] } };
+export const EmptyDiscardPile: Story = {
+  args: { discardSize: 0, visibleDiscardCards: [] },
+};
 
 /** The worst case for overlaps: 5 long names, every card on the table and the most cards the pile can show. */
 export const LongestNamesAndPile: Story = {
   args: {
     players: longestNamePlayers,
+    deckSize: 0,
+    discardSize: 7,
     visibleDiscardCards: longestVisiblePile,
   },
 };

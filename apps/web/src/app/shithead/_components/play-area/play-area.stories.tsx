@@ -18,6 +18,7 @@ const meta = {
   component: PlayArea,
   args: {
     deckSize: 30,
+    discardSize: 4,
     visibleDiscardCards: [{ suit: Suit.HEARTS, rank: Rank.EIGHT }],
   },
 } satisfies Meta<typeof PlayArea>;
@@ -28,7 +29,13 @@ type Story = StoryObj<typeof meta>;
 
 export const OneCardShowing: Story = {};
 
-export const EmptyDiscardPile: Story = { args: { visibleDiscardCards: [] } };
+export const EmptyDiscardPile: Story = {
+  args: { discardSize: 0, visibleDiscardCards: [] },
+};
+
+export const OneCardInEachPile: Story = {
+  args: { deckSize: 1, discardSize: 1 },
+};
 
 export const FiveOnTop: Story = {
   args: {
@@ -51,7 +58,7 @@ export const RunOnTop: Story = {
 
 /** The most cards the pile can show. */
 export const LongestPile: Story = {
-  args: { visibleDiscardCards: longestVisiblePile },
+  args: { discardSize: 7, visibleDiscardCards: longestVisiblePile },
 };
 
 export const EmptyDeck: Story = { args: { deckSize: 0 } };

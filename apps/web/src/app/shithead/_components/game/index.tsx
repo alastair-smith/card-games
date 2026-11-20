@@ -38,6 +38,7 @@ type GameProps = {
     emojiReaction?: { emoji: ReactionEmoji; id: EmojiReactionId } | undefined;
   })[];
   deckSize: number;
+  discardSize: number;
   /** Top-first */
   visibleDiscardCards: StandardPlayingCard[];
   hand: ReactNode;
@@ -49,6 +50,7 @@ export default function Game({
   gameStage,
   players,
   deckSize,
+  discardSize,
   visibleDiscardCards,
   hand,
   onEmojiClick,
@@ -135,6 +137,7 @@ export default function Game({
                   <PlayArea
                     className='sm:text-lg'
                     deckSize={deckSize}
+                    discardSize={discardSize}
                     visibleDiscardCards={visibleDiscardCards}
                   />
                 </div>

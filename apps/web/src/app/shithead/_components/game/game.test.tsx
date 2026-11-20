@@ -34,6 +34,7 @@ const baseProps: ComponentProps<typeof Game> = {
   gameStage: GameStage.IN_PROGRESS,
   players: buildPlayers({ turnIndex: 1 }),
   deckSize: 20,
+  discardSize: 0,
   visibleDiscardCards: [],
   hand: <div>Your cards</div>,
   onEmojiClick: noop,

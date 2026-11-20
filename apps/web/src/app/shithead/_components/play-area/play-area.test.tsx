@@ -5,30 +5,31 @@ import { PlayArea } from '.';
 
 describe('PlayArea', () => {
   test('says how many cards are left in the deck', () => {
-    render(<PlayArea deckSize={12} visibleDiscardCards={[]} />);
+    render(<PlayArea deckSize={12} discardSize={0} visibleDiscardCards={[]} />);
     expect(
       screen.getByRole('img', { name: 'Deck, 12 cards' }),
     ).toBeInTheDocument();
   });
 
   test('says when the deck is empty', () => {
-    render(<PlayArea deckSize={0} visibleDiscardCards={[]} />);
+    render(<PlayArea deckSize={0} discardSize={0} visibleDiscardCards={[]} />);
     expect(
       screen.getByRole('img', { name: 'Deck, empty' }),
     ).toBeInTheDocument();
   });
 
   test('says when the discard pile is empty', () => {
-    render(<PlayArea deckSize={12} visibleDiscardCards={[]} />);
+    render(<PlayArea deckSize={12} discardSize={0} visibleDiscardCards={[]} />);
     expect(
       screen.getByRole('region', { name: 'Discard pile' }),
     ).toHaveTextContent('Empty');
   });
 
-  test('reads the discard pile from the top card down', () => {
+  test('reads how many cards are in the discard pile, then the pile from the top card down', () => {
     render(
       <PlayArea
         deckSize={12}
+        discardSize={9}
         visibleDiscardCards={[
           { suit: Suit.HEARTS, rank: Rank.FIVE },
           { suit: Suit.SPADES, rank: Rank.JACK },
@@ -37,6 +38,18 @@ describe('PlayArea', () => {
     );
     expect(
       screen.getByRole('region', { name: 'Discard pile' }),
-    ).toHaveTextContent('Five of Hearts, on Jack of Spades');
+    ).toHaveTextContent('9 cards, Five of Hearts, on Jack of Spades');
+  });
+
+  test('shows how many cards are in the deck and the discard pile', () => {
+    render(
+      <PlayArea
+        deckSize={12}
+        discardSize={1}
+        visibleDiscardCards={[{ suit: Suit.HEARTS, rank: Rank.FIVE }]}
+      />,
+    );
+    expect(screen.getByText('12 cards')).toBeInTheDocument();
+    expect(screen.getByText('1 card')).toBeInTheDocument();
   });
 });

@@ -11,25 +11,47 @@ import { cn } from '~/utils/cn';
 type PlayAreaProps = {
   className?: string;
   deckSize: number;
+  discardSize: number;
   /** Top-first */
   visibleDiscardCards: StandardPlayingCard[];
 };
 
-function describeDiscardPile(visibleDiscardCards: StandardPlayingCard[]) {
-  if (visibleDiscardCards.length === 0) return 'Empty';
-  return visibleDiscardCards.map(cardAriaLabel).join(', on ');
+const describeCardCount = (count: number) =>
+  `${count} ${count === 1 ? 'card' : 'cards'}`;
+
+function describeDiscardPile(
+  discardSize: number,
+  visibleDiscardCards: StandardPlayingCard[],
+) {
+  if (discardSize === 0) return 'Empty';
+  return `${describeCardCount(discardSize)}, ${visibleDiscardCards.map(cardAriaLabel).join(', on ')}`;
+}
+
+function PileCount({ count }: { count: number }) {
+  return (
+    // The deck and pile already say their counts to screen readers
+    <span aria-hidden='true' className='text-sm font-bold text-white'>
+      {describeCardCount(count)}
+    </span>
+  );
 }
 
 /** The deck beside the discard pile, which shows enough cards to see what to beat. */
 export function PlayArea({
   className,
   deckSize,
+  discardSize,
   visibleDiscardCards,
 }: PlayAreaProps) {
   const isDeckEmpty = deckSize === 0;
 
   return (
-    <div className={cn('flex items-center gap-3', className)}>
+    <div
+      className={cn(
+        'grid w-fit grid-cols-[auto_auto] items-center justify-items-center gap-x-3 gap-y-1',
+        className,
+      )}
+    >
       <PlayingCardDeck
         isEmpty={isDeckEmpty}
         ariaLabel={isDeckEmpty ? 'Deck, empty' : `Deck, ${deckSize} cards`}
@@ -50,9 +72,11 @@ export function PlayArea({
           </PlayingCardStack>
         </div>
         <span className='sr-only'>
-          {describeDiscardPile(visibleDiscardCards)}
+          {describeDiscardPile(discardSize, visibleDiscardCards)}
         </span>
       </PlayingCardDiscardPile>
+      <PileCount count={deckSize} />
+      <PileCount count={discardSize} />
     </div>
   );
 }

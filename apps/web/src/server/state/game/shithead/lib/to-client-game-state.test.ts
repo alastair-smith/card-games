@@ -120,6 +120,12 @@ describe('toClientGameState', () => {
       expect(result.deckSize).toBe(31);
     });
 
+    test('tells players how many cards are in the discard pile', () => {
+      const result = toClientGameState(state, USER_1, TABLE);
+
+      expect(result.discardSize).toBe(DISCARD_PILE.length);
+    });
+
     test('rejects someone who is not in the game', () => {
       expect(() =>
         toClientGameState(state, 'other-user' as UserId, TABLE),

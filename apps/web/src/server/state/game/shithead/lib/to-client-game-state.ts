@@ -25,6 +25,7 @@ export type ClientGameState = {
   hand: StandardPlayingCard[];
   // Top-first
   visibleDiscardCards: StandardPlayingCard[];
+  discardSize: number;
   deckSize: number;
 } & (
   | { gameStage: GameStage.SWAPPING; players: ClientPlayer[] }
@@ -71,6 +72,7 @@ export const toClientGameState = (
   const clientView = {
     hand: requestingPlayer.hand,
     visibleDiscardCards: getVisibleDiscardCards(discardCards),
+    discardSize: discardCards.length,
     deckSize,
   };
 
