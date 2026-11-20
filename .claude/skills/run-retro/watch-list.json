@@ -10,7 +10,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 9
+      "retrosWithout": 10
     },
     {
       "id": 18,
@@ -22,7 +22,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 9
+      "retrosWithout": 10
     },
     {
       "id": 19,
@@ -34,7 +34,7 @@
           "pr": 412
         }
       ],
-      "retrosWithout": 9
+      "retrosWithout": 10
     },
     {
       "id": 20,
@@ -46,7 +46,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 21,
@@ -58,7 +58,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 22,
@@ -70,7 +70,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 23,
@@ -82,7 +82,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 24,
@@ -94,7 +94,7 @@
           "pr": 415
         }
       ],
-      "retrosWithout": 8
+      "retrosWithout": 9
     },
     {
       "id": 26,
@@ -106,7 +106,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 27,
@@ -118,7 +118,7 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8
     },
     {
       "id": 32,
@@ -130,7 +130,7 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 33,
@@ -142,19 +142,7 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 5
-    },
-    {
-      "id": 34,
-      "pattern": "A new function added where extending an existing one would do, and named outside the domain's terms, e.g. `drawCardsUpTo` beside `drawCards`, which could mean drawing up to a hand size or up to a count, when an option on `drawCards` kept one term for drawing (a glossary, #356, would give the terms)",
-      "sightings": [
-        {
-          "date": "2026-11-11",
-          "session": "c6151018-8d39-430f-b2af-835aca47d71c",
-          "pr": 449
-        }
-      ],
-      "retrosWithout": 5
+      "retrosWithout": 6
     },
     {
       "id": 35,
@@ -166,7 +154,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 36,
@@ -178,7 +166,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 37,
@@ -190,7 +178,7 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 4
+      "retrosWithout": 5
     },
     {
       "id": 38,
@@ -202,7 +190,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 40,
@@ -214,7 +202,7 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4
     },
     {
       "id": 41,
@@ -226,7 +214,7 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 42,
@@ -238,7 +226,7 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 43,
@@ -250,7 +238,7 @@
           "pr": 491
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2
     },
     {
       "id": 44,
@@ -262,7 +250,7 @@
           "pr": 492
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1
     },
     {
       "id": 45,
@@ -272,6 +260,54 @@
           "date": "2026-11-14",
           "session": "b7af8ad9-461e-40b4-a081-c4d2c26a51b5",
           "pr": 492
+        }
+      ],
+      "retrosWithout": 1
+    },
+    {
+      "id": 46,
+      "pattern": "Shortening content the player needs to read so a layout fits, e.g. truncating player names with an ellipsis, which the user ruled out, rather than letting the layout make room, such as wrapping the card count below the name",
+      "sightings": [
+        {
+          "date": "2026-11-20",
+          "session": "42f7b21d-bad2-4bd6-bead-ca65e1a96cc5",
+          "pr": 496
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 47,
+      "pattern": "Existing `CLAUDE.md` rule \"keep a comment to the reason in a few words\" not followed: a four-line comment working through a width's arithmetic, e.g. the discard pile's min-width, which the user cut to \"Room for 7 cards\"",
+      "sightings": [
+        {
+          "date": "2026-11-20",
+          "session": "42f7b21d-bad2-4bd6-bead-ca65e1a96cc5",
+          "pr": 496
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 48,
+      "pattern": "Existing `CLAUDE.md` worst-case rule not followed: tightening a shared layout without checking its widest content, e.g. the card stack's overlap without a 10 or a Queen, whose corner suit then sat under the next card, until the user asked",
+      "sightings": [
+        {
+          "date": "2026-11-20",
+          "session": "42f7b21d-bad2-4bd6-bead-ca65e1a96cc5",
+          "pr": 496
+        }
+      ],
+      "retrosWithout": 0
+    },
+    {
+      "id": 49,
+      "pattern": "Approval prompts for read-only or rename git commands that aren't allowlisted, e.g. `git grep` (2) and `git mv` (2)",
+      "sightings": [
+        {
+          "date": "2026-11-20",
+          "session": "42f7b21d-bad2-4bd6-bead-ca65e1a96cc5",
+          "pr": 496
         }
       ],
       "retrosWithout": 0
@@ -452,6 +488,11 @@
         "retroOfRetroPoints": 0,
         "changesMade": "1 rule in `raise-pr` (changed diagrams get before and after screenshots); 2 patterns added to the watch list"
       }
+    },
+    {
+      "date": "2026-11-20",
+      "sessions": ["42f7b21d-bad2-4bd6-bead-ca65e1a96cc5"],
+      "prs": [496]
     }
   ]
 }

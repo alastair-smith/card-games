@@ -31,15 +31,17 @@ export const SIZES = [
 ] as const;
 
 const STORYBOOK_ORIGIN = 'http://localhost:6006';
+// main's stories, deployed on each merge
+export const HOSTED_STORYBOOK_ORIGIN = 'https://stories.playcards.games';
 const STORY_ID = /^[a-z0-9-]+--[a-z0-9-]+$/;
 
-export function getStoryUrl(story: string): URL {
+export function getStoryUrl(story: string, origin = STORYBOOK_ORIGIN): URL {
   if (!STORY_ID.test(story)) {
     exitWithError(
       `--story must be a Storybook story ID such as 'yaniv-scorecard--start', not '${story}'.`,
     );
   }
-  const url = new URL('/iframe.html', STORYBOOK_ORIGIN);
+  const url = new URL('/iframe.html', origin);
   url.searchParams.set('id', story);
   url.searchParams.set('viewMode', 'story');
   return url;

@@ -84,9 +84,10 @@ columns, and write the alt text in the reference:
 | Full lobby  | ![Full lobby, desktop](.pr-screenshots/i-123/lobby/lobby-desktop.png) | ![Full lobby, mobile](.pr-screenshots/i-123/lobby/lobby-mobile.png) |
 ```
 
-When something changed, show it before and after, as a row each. Take the
-previous screenshots on the issue branch before changing anything, since the
-script doesn't run on `main`, named `<name>-previous`:
+When something changed, show it before and after, as a row each, named
+`<name>-previous`. For a story, take the previous one from `main`'s hosted
+stories with `--live`, at any point. For a page, take it on the issue branch
+before changing anything, since the script doesn't run on `main`:
 
 ```md
 | Description          | Desktop                            | Mobile                            |

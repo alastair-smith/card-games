@@ -31,6 +31,10 @@ kebab-case, describing what's shown.
 - **Story:** just the component, framed by the felt background. The story ID
   follows `?path=/story/` in Storybook's URL. Prefer a story when the change
   is to one component, since it needs no game set up
+- **Live story:** pass `--live` with `--story` to capture the story from
+  `main`'s hosted stories at `https://stories.playcards.games` instead, such
+  as for a PR's previous screenshots. It needs no local Storybook, and a story
+  the branch adds isn't there yet
 - **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
   renders outside the story's own area. The story's `play` function must
   open it and leave it open
