@@ -35,19 +35,14 @@ export function PlayArea({
       />
       <PlayingCardDiscardPile
         isFanned
-        // Always as wide as the most cards the pile can show, seven: three of
-        // a rank with four 5s among them, as a fourth of the rank would burn
-        // it. A card, six fanned strips, the borders and the padding, so
-        // nothing shifts as the pile grows
+        // Room for 7 cards
         className='min-w-[calc(3.75em+6*1.6em+0.112em+1rem)]'
       >
-        {/* Bottom-first, so the top card overlaps the rest */}
         {[...visibleDiscardCards].reverse().map((card) => (
           <div key={`${card.suit}-${card.rank}`} aria-hidden='true'>
             <PlayingCard card={card} border />
           </div>
         ))}
-        {/* Last, so the fan's first card is the first child */}
         <span className='sr-only'>
           {describeDiscardPile(visibleDiscardCards)}
         </span>
