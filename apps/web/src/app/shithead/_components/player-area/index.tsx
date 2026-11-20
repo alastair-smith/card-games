@@ -21,7 +21,6 @@ export function PlayerArea({
   tableCards,
   finishingPosition,
   isPlayersTurn,
-  isUser,
   ...tagProps
 }: PlayerAreaProps) {
   const isFinished = finishingPosition !== null;
@@ -30,14 +29,6 @@ export function PlayerArea({
     <div className={cn('flex w-fit flex-col items-center gap-2', className)}>
       <PlayerTag
         {...tagProps}
-        // Fits a name of the longest length in the widest letter, with the
-        // card count wrapping below it, so smaller screens fit two players a
-        // row. Your own tag also has the user icon
-        className={cn(
-          isUser ? 'max-w-[10.9rem]' : 'max-w-[9.75rem]',
-          'sm:max-w-none',
-        )}
-        isUser={isUser}
         cardCount={isFinished ? null : cardCount}
         isPlayersTurn={isPlayersTurn}
       />
