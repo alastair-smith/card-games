@@ -36,7 +36,7 @@ export function PlayerTag({
     <span className={cn('relative block rounded', className)}>
       <span
         style={{ backgroundColor: playerColorValue(color) }}
-        className='relative flex h-full items-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
+        className='relative flex h-full items-center justify-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
       >
         {isHost && (
           <>
@@ -60,21 +60,27 @@ export function PlayerTag({
             <span className='sr-only'>You:</span>
           </>
         )}
-        <span className='whitespace-nowrap font-extrabold text-white text-outline-black'>
-          {name}
+        <span
+          // As wide as the longest name in the widest letter, so on smaller
+          // screens a long name wraps the card count below it
+          className='flex max-w-[8.75rem] flex-wrap items-center justify-center gap-1 sm:max-w-none sm:gap-1.5'
+        >
+          <span className='whitespace-nowrap font-extrabold text-white text-outline-black'>
+            {name}
+          </span>
+          {cardCount !== undefined && (
+            <MiniCard
+              aria-hidden='true'
+              // Still takes up space, so the tag keeps its size without a count
+              className={cn(cardCount === null && 'invisible')}
+            >
+              {cardCount}
+            </MiniCard>
+          )}
+          {typeof cardCount === 'number' && (
+            <span className='sr-only'>, {cardCount} cards</span>
+          )}
         </span>
-        {cardCount !== undefined && (
-          <MiniCard
-            aria-hidden='true'
-            // Still takes up space, so the tag keeps its size without a count
-            className={cn(cardCount === null && 'invisible')}
-          >
-            {cardCount}
-          </MiniCard>
-        )}
-        {typeof cardCount === 'number' && (
-          <span className='sr-only'>, {cardCount} cards</span>
-        )}
 
         {children}
 

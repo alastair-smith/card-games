@@ -3,22 +3,23 @@
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { ButtonGroup } from '~/components/ui/button-group';
-import { type ReactionEmoji, reactionEmojis } from '~/types/game';
 
 const COOLDOWN_MS = 1000;
 
-type EmojiReactionsProps = {
+type EmojiReactionsProps<Emoji extends string> = {
   className?: string;
-  onEmojiClick: (emoji: ReactionEmoji) => void;
+  emojis: readonly Emoji[];
+  onEmojiClick: (emoji: Emoji) => void;
 };
 
-export function EmojiReactions({
+export function EmojiReactions<Emoji extends string>({
   className,
+  emojis,
   onEmojiClick,
-}: EmojiReactionsProps) {
+}: EmojiReactionsProps<Emoji>) {
   const [isOnCooldown, setIsOnCooldown] = useState(false);
 
-  const handleClick = (emoji: ReactionEmoji) => {
+  const handleClick = (emoji: Emoji) => {
     if (isOnCooldown) return;
     onEmojiClick(emoji);
     setIsOnCooldown(true);
@@ -27,7 +28,7 @@ export function EmojiReactions({
 
   return (
     <ButtonGroup className={className}>
-      {reactionEmojis.map((emoji) => (
+      {emojis.map((emoji) => (
         <Button
           key={emoji}
           variant='secondary'

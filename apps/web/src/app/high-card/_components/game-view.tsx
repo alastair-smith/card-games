@@ -28,7 +28,7 @@ import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { useSwipe } from '~/hooks/use-swipe';
 import { RANK_FULL_NAME } from '~/types/cards';
 import type { EmojiReactionId, UserId } from '~/types/entities';
-import { GameType, type ReactionEmoji } from '~/types/game';
+import { GameType, type ReactionEmoji, reactionEmojis } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
 import { cn } from '~/utils/cn';
 import { HowToContent } from './how-to';
@@ -250,7 +250,11 @@ export default function HighCardGameView({
 
             <div className='row-start-1 col-span-full justify-self-end lg:row-start-2 lg:col-start-4 lg:col-span-1 lg:mr-3'>
               {showEmojiReactions && (
-                <EmojiReactions onEmojiClick={onEmojiClick} className='' />
+                <EmojiReactions
+                  emojis={reactionEmojis}
+                  onEmojiClick={onEmojiClick}
+                  className=''
+                />
               )}
             </div>
 

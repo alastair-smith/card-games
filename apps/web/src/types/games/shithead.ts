@@ -15,6 +15,12 @@ export enum GameStage {
 
 export const gameStageSchema = z.enum(GameStage);
 
+export const reactionEmojis = ['🐍', '🤡', '🪄', '👀', '⏰', '💀'] as const;
+
+export const reactionEmojiSchema = z.enum(reactionEmojis);
+
+export type ReactionEmoji = z.infer<typeof reactionEmojiSchema>;
+
 const storedTableCardSlotSchema = z.object({
   faceUpCard: standardPlayingCardSchema.nullable(),
   faceDownCard: standardPlayingCardSchema.nullable(),

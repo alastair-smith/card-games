@@ -1,7 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import {
   PLAYING_CARD_MIN_PROPORTIONS,
-  PLAYING_CARD_PROPORTIONS,
   PlayingCard,
 } from '~/components/ui/playing-card';
 import type { PlayingCardValue } from '~/types/cards';
@@ -15,6 +14,7 @@ type PlayingCardDeckProps = {
   drawnCardClassName?: string;
   ariaLabel?: string;
   topCardHighlighted?: boolean | undefined;
+  isEmpty?: boolean;
 };
 
 export function PlayingCardDeck({
@@ -25,8 +25,23 @@ export function PlayingCardDeck({
   drawnCardClassName,
   ariaLabel,
   topCardHighlighted,
+  isEmpty = false,
 }: PlayingCardDeckProps) {
   const showDrawnCard = drawnCardDisplay !== undefined;
+
+  if (isEmpty) {
+    return (
+      // Keeps the full deck's footprint, so the table doesn't shift as it empties
+      <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
+        <div
+          role='img'
+          aria-label={ariaLabel}
+          className='w-[3.75em] h-[5.25em] rounded-[0.22em] border-[0.056em] border-dashed border-white/60'
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={cn('relative w-fit pt-[0.56em] pr-[0.44em]', className)}>
       <div className='w-fit relative'>
@@ -74,7 +89,7 @@ export function PlayingCardStack({ className, children }: PlayingCardStack) {
       <div
         className={cn(
           PLAYING_CARD_MIN_PROPORTIONS,
-          'flex *:-ml-[1.44em] *:first:ml-0',
+          'flex *:shrink-0 *:not-first:-ml-[2.15em]',
         )}
       >
         {children}
@@ -89,7 +104,7 @@ type PlayingCardDiscardPile = {
 };
 
 /**
- * Pass visible cards as children
+ * Pass the top card, or a `PlayingCardStack` to show several, as children
  */
 export function PlayingCardDiscardPile({
   className,
@@ -103,7 +118,7 @@ export function PlayingCardDiscardPile({
         className,
       )}
     >
-      <div className={PLAYING_CARD_PROPORTIONS}>{children}</div>
+      <div className={PLAYING_CARD_MIN_PROPORTIONS}>{children}</div>
     </section>
   );
 }

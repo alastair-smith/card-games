@@ -44,6 +44,8 @@ type Story = StoryObj<typeof meta>;
 
 export const DefaultDeck: Story = {};
 
+export const EmptyDeck: Story = { args: { isEmpty: true } };
+
 export const Overview: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
