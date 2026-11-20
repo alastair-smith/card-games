@@ -27,11 +27,20 @@ function describeDiscardPile(
   return `${describeCardCount(discardSize)}, ${visibleDiscardCards.map(cardAriaLabel).join(', on ')}`;
 }
 
-function PileCount({ count }: { count: number }) {
+function PileCount({
+  className,
+  count,
+}: {
+  className?: string;
+  count: number;
+}) {
   return (
     // The deck and pile already say their counts to screen readers
-    <span aria-hidden='true' className='text-sm font-bold text-white'>
-      {describeCardCount(count)}
+    <span
+      aria-hidden='true'
+      className={cn('text-xs font-bold text-white/70', className)}
+    >
+      {count}
     </span>
   );
 }
@@ -48,7 +57,7 @@ export function PlayArea({
   return (
     <div
       className={cn(
-        'grid w-fit grid-cols-[auto_auto] items-center justify-items-center gap-x-3 gap-y-1',
+        'grid w-fit grid-cols-[auto_auto] items-center gap-x-3 gap-y-1',
         className,
       )}
     >
@@ -75,8 +84,8 @@ export function PlayArea({
           {describeDiscardPile(discardSize, visibleDiscardCards)}
         </span>
       </PlayingCardDiscardPile>
-      <PileCount count={deckSize} />
-      <PileCount count={discardSize} />
+      <PileCount count={deckSize} className='justify-self-end' />
+      <PileCount count={discardSize} className='justify-self-start' />
     </div>
   );
 }

@@ -45,11 +45,11 @@ describe('PlayArea', () => {
     render(
       <PlayArea
         deckSize={12}
-        discardSize={1}
+        discardSize={7}
         visibleDiscardCards={[{ suit: Suit.HEARTS, rank: Rank.FIVE }]}
       />,
     );
-    expect(screen.getByText('12 cards')).toBeInTheDocument();
-    expect(screen.getByText('1 card')).toBeInTheDocument();
+    expect(screen.getByText('12')).toBeInTheDocument();
+    expect(screen.getByText('7')).toBeInTheDocument();
   });
 });
