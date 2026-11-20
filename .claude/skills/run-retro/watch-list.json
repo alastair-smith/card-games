@@ -200,9 +200,14 @@
           "date": "2026-11-14",
           "session": "3a41e422-37b1-4aeb-916e-ca28e0b99f6d",
           "pr": 491
+        },
+        {
+          "date": "2026-11-20",
+          "session": "42f7b21d-bad2-4bd6-bead-ca65e1a96cc5",
+          "pr": 500
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 0
     },
     {
       "id": 44,
@@ -459,8 +464,8 @@
       "prs": [496],
       "result": {
         "pointsRaised": 3,
-        "retroOfRetroPoints": 0,
-        "changesMade": "1 rule in `CLAUDE.md`; 1 script flag (`take-screenshots.ts --live`) with a `raise-pr` step pointed at it; detail added to #482",
+        "retroOfRetroPoints": 1,
+        "changesMade": "1 rule in `CLAUDE.md`; 1 script flag (`take-screenshots.ts --live`) with a `raise-pr` step pointed at it; detail added to #482; from the retro of the retro, none; pattern #43 kept on the watch list with a second sighting",
         "fixPr": 500
       }
     }
