@@ -11,13 +11,14 @@ import {
 import {
   getStorybookDocsUrl,
   getStoryUrl,
+  HOSTED_STORYBOOK_ORIGIN,
   LAYOUT_SETTLED_SCRIPT,
   SIZES,
   waitForStoryToSettle,
 } from './story-page.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] [--live] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const DOCS_ORIGIN = 'http://localhost:5173';
@@ -34,6 +35,7 @@ const {
   'scroll-to-bottom': isScrollingToBottom = false,
   theme = 'light',
   dialog: isDialog = false,
+  live: isLive = false,
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
@@ -45,6 +47,7 @@ const {
     'scroll-to-bottom': { type: 'boolean' },
     theme: { type: 'string' },
     dialog: { type: 'boolean' },
+    live: { type: 'boolean' },
   },
 }).values;
 
@@ -84,8 +87,18 @@ if (isDialog && !story) {
   );
 }
 
+if (isLive && !story) {
+  exitWithError(
+    '--live only applies to --story, as a page on the live site would need a game set up.',
+  );
+}
+
 function getUrl(): URL {
-  if (story) return getStoryUrl(story);
+  if (story) {
+    return isLive
+      ? getStoryUrl(story, HOSTED_STORYBOOK_ORIGIN)
+      : getStoryUrl(story);
+  }
 
   if (storybookDocs) {
     if (!STORYBOOK_DOCS_ID.test(storybookDocs)) {
@@ -330,7 +343,9 @@ try {
       await page.goto(url.href, { waitUntil: 'load' });
     } catch {
       exitWithError(
-        `Couldn't load ${url.href}. Is ${story || storybookDocs ? 'Storybook' : docs ? 'the docs site' : 'the dev server'} running on ${url.origin}?`,
+        isLive
+          ? `Couldn't load ${url.href}, main's hosted stories.`
+          : `Couldn't load ${url.href}. Is ${story || storybookDocs ? 'Storybook' : docs ? 'the docs site' : 'the dev server'} running on ${url.origin}?`,
       );
     }
 

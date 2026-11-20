@@ -444,6 +444,9 @@ Components live in kebab-case directories with an `index.tsx` entry point:
 components/my-component/index.tsx
 ```
 
+Before adding a prop, component or function, look for one that already does
+the job, in the same file and in `~/components/ui`, and reuse or extend it.
+
 Give new UI elements their own component rather than adding JSX inline to an
 existing component. A simple component that only its parent uses can live in
 the parent's file while that file is still small. Give a bigger one its own
