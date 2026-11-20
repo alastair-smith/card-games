@@ -1,42 +1,6 @@
 {
   "patterns": [
     {
-      "id": 17,
-      "pattern": "Existing `manage-branch` rule not followed: resuming an existing issue branch with `git checkout` and `git merge main` instead of `git switch` and `update-branch.ts`, as the skill wasn't loaded when not creating a branch",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
-          "pr": 412
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 18,
-      "pattern": "Removing a config file after checking only one tool that reads it, e.g. deleting `.npmrc` because pnpm stopped reading it, while npm still needed its `engine-strict` for the `engines` guard",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
-          "pr": 412
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 19,
-      "pattern": "Running a command that prompts when an allowlisted one does the same job, e.g. `npm view` instead of `pnpm view`",
-      "sightings": [
-        {
-          "date": "2026-11-07",
-          "session": "525fb026-d8c1-46ae-a568-7381ac820e98",
-          "pr": 412
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
       "id": 20,
       "pattern": "Existing memory \"several topics: list with summaries, detail one at a time\" not followed: detailing every review finding in one reply",
       "sightings": [
@@ -492,7 +456,13 @@
     {
       "date": "2026-11-20",
       "sessions": ["42f7b21d-bad2-4bd6-bead-ca65e1a96cc5"],
-      "prs": [496]
+      "prs": [496],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 rule in `CLAUDE.md`; 1 script flag (`take-screenshots.ts --live`) with a `raise-pr` step pointed at it; detail added to #482",
+        "fixPr": 500
+      }
     }
   ]
 }
