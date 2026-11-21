@@ -477,7 +477,13 @@
     {
       "date": "2026-11-21",
       "sessions": ["566fb129-e609-4ba1-a5a0-5e4f224ce0ac"],
-      "prs": [501]
+      "prs": [501],
+      "result": {
+        "pointsRaised": 2,
+        "retroOfRetroPoints": 0,
+        "changesMade": "1 skill and allowlisted script (`review-dependency-pr`); git prompts left on the watch list (#49)",
+        "fixPr": 505
+      }
     }
   ]
 }
