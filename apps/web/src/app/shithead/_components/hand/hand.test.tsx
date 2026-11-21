@@ -30,6 +30,26 @@ const FACE_DOWN_ONLY: TableCardSlot[] = buildTableCards().map((slot) => ({
   faceUpCard: null,
 }));
 
+// The table's 7 and King, with a 9 in place of the 10, which goes on any card
+const FACE_UP_WITHOUT_TEN: TableCardSlot[] = buildTableCards().map((slot) =>
+  slot.faceUpCard?.rank === Rank.TEN
+    ? { ...slot, faceUpCard: { suit: Suit.DIAMONDS, rank: Rank.NINE } }
+    : slot,
+);
+
+// 2s, 5s and 10s go on any card
+const PLAYABLE_ON_ANYTHING = [Rank.TWO, Rank.FIVE, Rank.TEN];
+const PLAYABLE_ON_NINE = [
+  ...PLAYABLE_ON_ANYTHING,
+  Rank.NINE,
+  Rank.JACK,
+  Rank.QUEEN,
+  Rank.KING,
+  Rank.ACE,
+];
+const PLAYABLE_ON_KING = [...PLAYABLE_ON_ANYTHING, Rank.KING, Rank.ACE];
+const PLAYABLE_ON_ACE = [...PLAYABLE_ON_ANYTHING, Rank.ACE];
+
 function renderHand(props: Partial<ComponentProps<typeof Hand>> = {}) {
   return render(
     <Hand
@@ -39,7 +59,7 @@ function renderHand(props: Partial<ComponentProps<typeof Hand>> = {}) {
       tableCards={buildTableCards()}
       isSwapConfirmed
       isPlayersTurn
-      playableRanks={[Rank.NINE, Rank.QUEEN]}
+      playableRanks={PLAYABLE_ON_NINE}
       onSwapCards={noop}
       onConfirmSwap={noop}
       onPlayCards={noop}
@@ -182,7 +202,10 @@ describe('Hand', () => {
 
     test('picks up the pile when nothing in the hand can be played', () => {
       const handlePickUpPile = vi.fn();
-      renderHand({ playableRanks: [Rank.ACE], onPickUpPile: handlePickUpPile });
+      renderHand({
+        playableRanks: PLAYABLE_ON_ACE,
+        onPickUpPile: handlePickUpPile,
+      });
 
       expect(
         screen.queryByRole('button', { name: 'Play Cards' }),
@@ -227,7 +250,7 @@ describe('Hand', () => {
       const handlePlayCards = vi.fn();
       renderHand({
         cards: [],
-        playableRanks: [Rank.KING],
+        playableRanks: PLAYABLE_ON_KING,
         onPlayCards: handlePlayCards,
       });
 
@@ -244,7 +267,8 @@ describe('Hand', () => {
       const handlePlayCards = vi.fn();
       renderHand({
         cards: [],
-        playableRanks: [Rank.ACE],
+        tableCards: FACE_UP_WITHOUT_TEN,
+        playableRanks: PLAYABLE_ON_ACE,
         onPlayCards: handlePlayCards,
       });
 
@@ -267,7 +291,7 @@ describe('Hand', () => {
           tableCards={buildTableCards()}
           isSwapConfirmed
           isPlayersTurn
-          playableRanks={[]}
+          playableRanks={PLAYABLE_ON_ACE}
           onSwapCards={noop}
           onConfirmSwap={noop}
           onPlayCards={noop}
@@ -300,7 +324,11 @@ describe('Hand', () => {
     });
 
     test('has no pick-up button', () => {
-      renderHand({ cards: [], tableCards: FACE_DOWN_ONLY, playableRanks: [] });
+      renderHand({
+        cards: [],
+        tableCards: FACE_DOWN_ONLY,
+        playableRanks: PLAYABLE_ON_ACE,
+      });
       expect(
         screen.queryByRole('button', { name: 'Pick Up Pile' }),
       ).not.toBeInTheDocument();

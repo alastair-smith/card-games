@@ -28,7 +28,16 @@ const FACE_DOWN_ONLY: TableCardSlot[] = buildTableCards().map((slot) => ({
 // Everything but two cards, after picking up a long pile
 const BIGGEST_HAND = standardDeck.slice(2);
 
-const RANKS_ABOVE_SIX = RANKS.filter((rank) => rank > Rank.SIX);
+// 2s, 5s and 10s go on any card
+const PLAYABLE_ON_ANYTHING = [Rank.TWO, Rank.FIVE, Rank.TEN];
+
+// What can go on a 7
+const PLAYABLE_ON_SEVEN = [
+  ...PLAYABLE_ON_ANYTHING,
+  ...RANKS.filter((rank) => rank >= Rank.SEVEN && rank !== Rank.TEN),
+];
+
+const PLAYABLE_ON_ACE = [...PLAYABLE_ON_ANYTHING, Rank.ACE];
 
 const meta = {
   title: 'Shithead / Hand',
@@ -49,7 +58,7 @@ const meta = {
     tableCards: buildTableCards(),
     isSwapConfirmed: true,
     isPlayersTurn: true,
-    playableRanks: RANKS_ABOVE_SIX,
+    playableRanks: PLAYABLE_ON_SEVEN,
     onSwapCards: fn(),
     onConfirmSwap: fn(),
     onPlayCards: fn(),
@@ -84,7 +93,9 @@ export const YourTurn: Story = {
 
 export const OtherPlayersTurn: Story = { args: { isPlayersTurn: false } };
 
-export const NothingToPlay: Story = { args: { playableRanks: [] } };
+export const NothingToPlay: Story = {
+  args: { playableRanks: PLAYABLE_ON_ACE },
+};
 
 export const MagicCards: Story = {
   args: {
@@ -159,7 +170,15 @@ export const FaceUpCards: Story = { args: { cards: [] } };
 
 /** None can go on the pile, so any can be chosen to pick up with it. */
 export const FaceUpCardsNothingToPlay: Story = {
-  args: { cards: [], playableRanks: [Rank.ACE] },
+  args: {
+    cards: [],
+    tableCards: buildTableCards().map((slot) =>
+      slot.faceUpCard?.rank === Rank.TEN
+        ? { ...slot, faceUpCard: { suit: Suit.DIAMONDS, rank: Rank.NINE } }
+        : slot,
+    ),
+    playableRanks: PLAYABLE_ON_ACE,
+  },
 };
 
 export const FaceDownCards: Story = {

@@ -81,7 +81,10 @@ const handProps = {
   tableCards: buildTableCards(),
   isSwapConfirmed: true,
   isPlayersTurn: true,
-  playableRanks: RANKS.filter((rank) => rank >= Rank.EIGHT),
+  // What can go on the 8 on the pile, including the 2s and 5s that go on any card
+  playableRanks: RANKS.filter(
+    (rank) => rank >= Rank.EIGHT || rank === Rank.TWO || rank === Rank.FIVE,
+  ),
   onSwapCards: fn(),
   onConfirmSwap: fn(),
   onPlayCards: fn(),
