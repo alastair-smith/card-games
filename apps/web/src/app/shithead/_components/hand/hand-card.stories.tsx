@@ -35,7 +35,7 @@ type Story = StoryObj<typeof meta>;
 /** Each magic card's symbol: an eraser for the 2's reset, a ghost for the invisible 5, a downward arrow for the 7's lower and a bin for the 10's burn. */
 export const MagicCards: Story = {
   render: (args) => (
-    <div className='flex gap-2'>
+    <div className='flex flex-wrap gap-2'>
       {MAGIC_CARDS.map((card) => (
         <HandCard key={card.rank} {...args} card={card} />
       ))}
