@@ -19,6 +19,7 @@
       "Bash(./.claude/skills/raise-pr/scripts/create-pr.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/list-review-comments.ts *)",
       "Bash(./.claude/skills/raise-pr/scripts/update-pr.ts *)",
+      "Bash(./.claude/skills/review-dependency-pr/scripts/fetch-release-notes.ts *)",
       "Bash(./.claude/skills/run-retro/scripts/add-watch-pattern.ts *)",
       "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts *)",
       "Bash(./.claude/skills/run-retro/scripts/list-llm-approvals.ts)",
