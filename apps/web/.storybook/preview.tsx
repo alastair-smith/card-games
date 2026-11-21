@@ -5,7 +5,10 @@ import { Toaster } from '~/components/ui/toast';
 import { cn } from '~/utils/cn';
 import { DocsPage } from './docs-page';
 import { PHONE_VIEWPORT, PHONE_VIEWPORT_KEY } from './phone-viewport';
+import { preventBrowserSearch } from './prevent-browser-search';
 import { getSystemTheme } from './theme';
+
+window.addEventListener('keydown', preventBrowserSearch);
 
 const preview: Preview = {
   tags: ['autodocs'],
