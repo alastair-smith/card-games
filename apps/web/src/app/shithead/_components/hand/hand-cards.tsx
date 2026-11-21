@@ -1,10 +1,23 @@
-import { WandSparklesIcon } from 'lucide-react';
+import {
+  ArrowDownIcon,
+  EraserIcon,
+  GhostIcon,
+  type LucideIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import { PlayingCard } from '~/components/ui/playing-card';
-import { type StandardPlayingCard, suitColorClass } from '~/types/cards';
-import { MAGIC_RANKS } from '~/types/games/shithead';
+import { Rank, type StandardPlayingCard, suitColorClass } from '~/types/cards';
 import { cardAriaLabel, isSameCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
-import { groupByRank, sortShitheadHand } from '~/utils/shithead/sort';
+import { sortShitheadHand } from '~/utils/shithead/sort';
+
+// Each magic card's symbol shows what it does
+const MAGIC_CARD_ICON: Partial<Record<Rank, LucideIcon>> = {
+  [Rank.TWO]: EraserIcon,
+  [Rank.FIVE]: GhostIcon,
+  [Rank.SEVEN]: ArrowDownIcon,
+  [Rank.TEN]: Trash2Icon,
+};
 
 type HandCardsProps = {
   className?: string | undefined;
@@ -15,11 +28,6 @@ type HandCardsProps = {
   onCardClick?: ((card: StandardPlayingCard) => void) | undefined;
 };
 
-/**
- * The cards in a column per rank, each overlapping the last so its corner
- * still shows. Usually 3 cards sit side by side, but after picking up the
- * pile a hand can hold most of the deck.
- */
 export function HandCards({
   className,
   cards,
@@ -27,31 +35,24 @@ export function HandCards({
   isCardSelectable = () => true,
   onCardClick,
 }: HandCardsProps) {
-  const rankGroups = groupByRank(sortShitheadHand(cards));
-
   return (
     <ol
       aria-label='Your hand'
       className={cn(
-        'm-0 flex list-none flex-wrap items-start justify-center gap-2 p-0 text-base min-[360px]:text-lg md:text-2xl',
+        'm-0 flex list-none flex-wrap justify-center gap-1 p-0 text-base min-[360px]:gap-2 min-[360px]:text-lg md:text-2xl',
         className,
       )}
     >
-      {rankGroups.map((group) => (
-        <li key={group.rank} className='flex flex-col'>
-          {group.cards.map((card, cardIndex) => (
-            <HandCard
-              key={card.suit}
-              // Leaves the rank and suit in the top corner showing
-              className={cn(cardIndex > 0 && '-mt-[3.65em]')}
-              card={card}
-              isSelected={selectedCards.some((selected) =>
-                isSameCard(selected, card),
-              )}
-              isSelectable={onCardClick !== undefined && isCardSelectable(card)}
-              onClick={() => onCardClick?.(card)}
-            />
-          ))}
+      {sortShitheadHand(cards).map((card) => (
+        <li key={`${card.suit}-${card.rank}`} className='relative flex'>
+          <HandCard
+            card={card}
+            isSelected={selectedCards.some((selected) =>
+              isSameCard(selected, card),
+            )}
+            isSelectable={onCardClick !== undefined && isCardSelectable(card)}
+            onClick={() => onCardClick?.(card)}
+          />
         </li>
       ))}
     </ol>
@@ -59,35 +60,32 @@ export function HandCards({
 }
 
 function HandCard({
-  className,
   card,
   isSelected,
   isSelectable,
   onClick,
 }: {
-  className?: string;
   card: StandardPlayingCard;
   isSelected: boolean;
   isSelectable: boolean;
   onClick: () => void;
 }) {
-  const isMagic = MAGIC_RANKS.some((rank) => rank === card.rank);
+  const MagicIcon = MAGIC_CARD_ICON[card.rank];
 
   return (
-    // Lifts a card above the next one's overlap while it has keyboard focus
-    <div className={cn('relative flex has-focus-visible:z-10', className)}>
+    <>
       <PlayingCard
         card={card}
         border
         ariaLabel={
-          isMagic ? `${cardAriaLabel(card)}, magic card` : cardAriaLabel(card)
+          MagicIcon ? `${cardAriaLabel(card)}, magic card` : cardAriaLabel(card)
         }
         highlighted={isSelected}
         isPressed={isSelectable ? isSelected : undefined}
         onClick={isSelectable ? onClick : undefined}
       />
-      {isMagic && (
-        <WandSparklesIcon
+      {MagicIcon && (
+        <MagicIcon
           aria-hidden='true'
           className={cn(
             'pointer-events-none absolute top-[0.22em] right-[0.22em] size-[0.8em]',
@@ -95,6 +93,6 @@ function HandCard({
           )}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -47,9 +47,8 @@ If the discard pile is empty, any card can be played.
 
 From lowest to highest: 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
 
-The hand sorts by this order, then by suit, with each rank's cards in a column
-overlapping so each card's corner shows. Magic cards stay in their usual
-positions, marked with a wand symbol.
+The hand sorts by this order, then by suit. Magic cards stay in their usual
+positions, each marked with a symbol for what it does.
 
 ### Drawing
 
@@ -66,12 +65,12 @@ next player then plays onto an empty pile, so they can play any card.
 
 ## Magic cards
 
-| Rank | Can be played               | Effect                                                                      |
-| :--- | :-------------------------- | :-------------------------------------------------------------------------- |
-| 2    | On any card                 | Resets the rank to 2, so the next player can play any card                  |
-| 5    | On any card                 | Invisible: the next player looks at the card underneath to see what to beat |
-| 7    | Where a 7 is normally valid | The next card must be a 7 or lower                                          |
-| 10   | On any card                 | Burns the discard pile                                                      |
+| Rank | Can be played               | Effect                                                                      | Symbol in the hand |
+| :--- | :-------------------------- | :-------------------------------------------------------------------------- | :----------------- |
+| 2    | On any card                 | Resets the rank to 2, so the next player can play any card                  | Eraser             |
+| 5    | On any card                 | Invisible: the next player looks at the card underneath to see what to beat | Ghost              |
+| 7    | Where a 7 is normally valid | The next card must be a 7 or lower                                          | Downward arrow     |
+| 10   | On any card                 | Burns the discard pile                                                      | Bin                |
 
 The 5's invisibility stacks, so with several 5s in a row the next player looks
 at the first card below them. A 5 on an empty pile leaves the pile with nothing

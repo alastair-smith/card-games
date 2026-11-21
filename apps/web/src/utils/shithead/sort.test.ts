@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
-import { groupByRank, sortShitheadHand } from './sort';
+import { sortShitheadHand } from './sort';
 
 const ACE_OF_CLUBS = { suit: Suit.CLUBS, rank: Rank.ACE };
 const TWO_OF_SPADES = { suit: Suit.SPADES, rank: Rank.TWO };
@@ -28,20 +28,5 @@ describe('sortShitheadHand', () => {
     sortShitheadHand(cards);
 
     expect(cards).toEqual([ACE_OF_CLUBS, TWO_OF_SPADES]);
-  });
-});
-
-describe('groupByRank', () => {
-  test('puts cards of the same rank in one group', () => {
-    expect(
-      groupByRank([TWO_OF_SPADES, SEVEN_OF_CLUBS, SEVEN_OF_HEARTS]),
-    ).toEqual([
-      { rank: Rank.TWO, cards: [TWO_OF_SPADES] },
-      { rank: Rank.SEVEN, cards: [SEVEN_OF_CLUBS, SEVEN_OF_HEARTS] },
-    ]);
-  });
-
-  test('has no groups for no cards', () => {
-    expect(groupByRank([])).toEqual([]);
   });
 });
