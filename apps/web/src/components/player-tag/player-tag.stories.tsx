@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { ReadyStatus } from '~/components/lobby/ready-status';
 import {
   PlayerTag,
   PlayerTagCardCount,
@@ -23,6 +24,7 @@ type PlayerTagStoryProps = {
   isUser: boolean;
   isHost: boolean;
   isPlayersTurn: boolean;
+  isReady?: boolean;
   emojiReaction?: { emoji: string; id: EmojiReactionId };
 };
 
@@ -33,6 +35,7 @@ function PlayerTagStory({
   isUser,
   isHost,
   isPlayersTurn,
+  isReady,
   emojiReaction,
 }: PlayerTagStoryProps) {
   return (
@@ -41,6 +44,7 @@ function PlayerTagStory({
       {isUser && <PlayerTagUserIcon />}
       <PlayerTagName>{name}</PlayerTagName>
       {cardCount !== undefined && <PlayerTagCardCount count={cardCount} />}
+      {isReady !== undefined && <ReadyStatus isReady={isReady} />}
       <PlayerTagReaction reaction={emojiReaction} />
     </PlayerTag>
   );
@@ -53,6 +57,7 @@ const meta = {
   argTypes: {
     color: { control: 'select', options: playerColorSchema.options },
     cardCount: { control: 'number' },
+    isReady: { control: 'boolean' },
     emojiReaction: { control: 'object' },
   },
   args: {
@@ -93,6 +98,18 @@ export const LongestName: Story = {
     isUser: true,
     isHost: true,
     cardCount: 5,
+  },
+};
+
+/** A lobby tag, with whether the player is ready after their name. */
+export const ReadyStatusInLobby: Story = { args: { isReady: true } };
+
+export const LongestNameReadyStatusInLobby: Story = {
+  args: {
+    name: 'W'.repeat(MAX_NAME_LENGTH) as PlayerName,
+    isUser: true,
+    isHost: true,
+    isReady: false,
   },
 };
 

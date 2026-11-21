@@ -1,8 +1,8 @@
-import { CheckIcon, HourglassIcon } from 'lucide-react';
 import {
   hasPlayerActions,
   PlayerActionsMenu,
 } from '~/components/lobby/player-actions-menu';
+import { ReadyStatus } from '~/components/lobby/ready-status';
 import {
   PlayerTag,
   PlayerTagHostIcon,
@@ -14,22 +14,6 @@ import { ButtonGroup } from '~/components/ui/button-group';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
-
-function ReadyStatus({ isReady }: { isReady: boolean }) {
-  const Icon = isReady ? CheckIcon : HourglassIcon;
-
-  return (
-    <>
-      <Icon
-        size='1.15em'
-        strokeWidth={isReady ? 3.5 : 2.5}
-        aria-hidden='true'
-        className='shrink-0 text-white icon-outline-black'
-      />
-      <span className='sr-only'>{isReady ? ', ready' : ', not ready'}</span>
-    </>
-  );
-}
 
 export default function LobbyPlayers({
   className,
