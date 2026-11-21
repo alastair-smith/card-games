@@ -3,7 +3,13 @@ import {
   hasPlayerActions,
   PlayerActionsMenu,
 } from '~/components/lobby/player-actions-menu';
-import { PlayerTag } from '~/components/player-tag';
+import {
+  PlayerTag,
+  PlayerTagHostIcon,
+  PlayerTagLabel,
+  PlayerTagName,
+  PlayerTagUserIcon,
+} from '~/components/player-tag';
 import { PlayerActionsButton } from '~/components/player-tag/player-actions-button';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
@@ -62,13 +68,12 @@ export default function LobbyPlayers({
           {players.map((player) => (
             <li key={player.id} className='flex'>
               <ButtonGroup>
-                <PlayerTag
-                  name={player.name}
-                  color={player.color}
-                  isUser={player.isUser}
-                  isHost={player.isHost}
-                  isPlayersTurn={false}
-                >
+                <PlayerTag color={player.color} isPlayersTurn={false}>
+                  {player.isHost && <PlayerTagHostIcon />}
+                  {player.isUser && <PlayerTagUserIcon />}
+                  <PlayerTagLabel>
+                    <PlayerTagName>{player.name}</PlayerTagName>
+                  </PlayerTagLabel>
                   <ReadyStatus isReady={player.isReady} />
                 </PlayerTag>
                 {hasPlayerActions(player, isUserHost) && (

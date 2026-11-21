@@ -1,5 +1,10 @@
 import { GameOver as GameOverScreen } from '~/components/game-over';
-import { PlayerTag } from '~/components/player-tag';
+import {
+  PlayerTag,
+  PlayerTagLabel,
+  PlayerTagName,
+  PlayerTagUserIcon,
+} from '~/components/player-tag';
 import { GameType } from '~/types/game';
 import { FINISHING_POSITIONS } from '~/utils/shithead/finishing-positions';
 import { buildShareText, type GameOverPlayer, sortByFinish } from './share';
@@ -45,12 +50,12 @@ function FinishingOrderRow({ player }: { player: GameOverPlayer }) {
       <span aria-hidden='true' className='w-7 shrink-0 text-xl'>
         {medal}
       </span>
-      <PlayerTag
-        name={player.name}
-        color={player.color}
-        isUser={player.isUser}
-        isPlayersTurn={false}
-      />
+      <PlayerTag color={player.color} isPlayersTurn={false}>
+        {player.isUser && <PlayerTagUserIcon />}
+        <PlayerTagLabel>
+          <PlayerTagName>{player.name}</PlayerTagName>
+        </PlayerTagLabel>
+      </PlayerTag>
     </li>
   );
 }
