@@ -1,9 +1,10 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 import { useCallback, useState } from 'react';
 import { toast } from '~/components/ui/toast';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import LobbyView from './lobby.view';
@@ -28,15 +29,22 @@ export default function Lobby({
     };
   });
 
-  const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
-  const leaveGameMutation = api.lobby.leaveGame.useMutation();
-  const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
-    onError: () => {
-      toast.error('Error kicking player.');
-    },
-  });
-  const makeHostMutation = api.lobby.makeHost.useMutation();
-  const startGameMutation = api.highCard.startGame.useMutation();
+  const trpc = useTRPC();
+  const updatePlayerMutation = useMutation(
+    trpc.lobby.updatePlayer.mutationOptions(),
+  );
+  const leaveGameMutation = useMutation(trpc.lobby.leaveGame.mutationOptions());
+  const kickPlayerMutation = useMutation(
+    trpc.lobby.kickPlayer.mutationOptions({
+      onError: () => {
+        toast.error('Error kicking player.');
+      },
+    }),
+  );
+  const makeHostMutation = useMutation(trpc.lobby.makeHost.mutationOptions());
+  const startGameMutation = useMutation(
+    trpc.highCard.startGame.mutationOptions(),
+  );
 
   const debouncedUpdatePlayerName = useCallback(
     debounce((name: string) => {

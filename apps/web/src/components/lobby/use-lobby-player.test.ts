@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { buildPlayer } from '~/test-utils/lobby';
+import { procedurePath, type StubMutationOptions } from '~/test-utils/trpc';
 import type { GameCode } from '~/types/game';
 import { useLobbyPlayer } from './use-lobby-player';
 
@@ -23,18 +24,16 @@ const createMutationStub = (): MutationStub => ({
 const readyMutation = createMutationStub();
 const otherMutation = createMutationStub();
 
-vi.mock('~/trpc/react', () => ({
-  api: {
-    lobby: {
-      updatePlayer: {
-        useMutation: (options?: { scope?: { id: string } }) =>
-          options?.scope ? readyMutation : otherMutation,
-      },
-      leaveGame: { useMutation: () => otherMutation },
-      kickPlayer: { useMutation: () => otherMutation },
-      makeHost: { useMutation: () => otherMutation },
-    },
-  },
+vi.mock('~/trpc/react', async () => {
+  const { createTRPCStub } = await import('~/test-utils/trpc');
+  return { useTRPC: () => createTRPCStub() };
+});
+
+vi.mock('@tanstack/react-query', () => ({
+  useMutation: (options: StubMutationOptions) =>
+    procedurePath(options) === 'lobby.updatePlayer' && options.scope
+      ? readyMutation
+      : otherMutation,
 }));
 
 const code = 'ABCDEF' as GameCode;

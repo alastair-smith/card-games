@@ -1,6 +1,7 @@
 'use client';
 
-import { api } from '~/trpc/react';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji } from '~/types/game';
 import type { GameState } from '~/types/games/high-card';
@@ -15,8 +16,13 @@ export default function HighCardGameController({
   state: GameState;
   reactions: Record<UserId, { emoji: ReactionEmoji; id: EmojiReactionId }>;
 }) {
-  const pickupCardMutation = api.highCard.pickupCard.useMutation();
-  const triggerEmojiMutation = api.highCard.triggerEmoji.useMutation();
+  const trpc = useTRPC();
+  const pickupCardMutation = useMutation(
+    trpc.highCard.pickupCard.mutationOptions(),
+  );
+  const triggerEmojiMutation = useMutation(
+    trpc.highCard.triggerEmoji.mutationOptions(),
+  );
 
   const handleEmojiClick = (emoji: ReactionEmoji) => {
     triggerEmojiMutation.mutate({

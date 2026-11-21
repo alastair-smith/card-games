@@ -2,6 +2,7 @@
 
 import { context as otelContext, propagation, trace } from '@opentelemetry/api';
 import { skipToken } from '@tanstack/react-query';
+import { useSubscription } from '@trpc/tanstack-react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import YanivGameController from '~/app/yaniv/_components/game-controller';
@@ -10,7 +11,7 @@ import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { setGameAttributes } from '~/telemetry/attributes';
 import { recordClientError } from '~/telemetry/errors';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import {
   type GameCode,
@@ -47,96 +48,100 @@ export default function YanivClient({
     Record<UserId, { emoji: ReactionEmoji | SystemEmoji; id: EmojiReactionId }>
   >({});
 
-  api.yaniv.state.useSubscription(
-    status === GameStatus.FINISHED ? skipToken : { code },
-    {
-      onStarted: () => {
-        console.log(`Subscription to game ${code} started`);
-      },
-      onData: (newGameState) => {
-        const remoteCtx = remoteContextFromTraceparent(newGameState._trace);
-        clientTracer.startActiveSpan(
-          'subscription.receive',
-          {},
-          remoteCtx,
-          (span) => {
-            try {
-              switch (newGameState.update) {
-                case GameUpdate.KICKED:
-                  setStatus(GameStatus.FINISHED);
-                  toast.warning('You have been removed from the game!');
-                  router.push('/');
-                  return;
+  const trpc = useTRPC();
+  useSubscription(
+    trpc.yaniv.state.subscriptionOptions(
+      status === GameStatus.FINISHED ? skipToken : { code },
+      {
+        onStarted: () => {
+          console.log(`Subscription to game ${code} started`);
+        },
+        onData: (newGameState) => {
+          const remoteCtx = remoteContextFromTraceparent(newGameState._trace);
+          clientTracer.startActiveSpan(
+            'subscription.receive',
+            {},
+            remoteCtx,
+            (span) => {
+              try {
+                switch (newGameState.update) {
+                  case GameUpdate.KICKED:
+                    setStatus(GameStatus.FINISHED);
+                    toast.warning('You have been removed from the game!');
+                    router.push('/');
+                    return;
 
-                case GameUpdate.LEFT_GAME:
-                  setStatus(GameStatus.FINISHED);
-                  toast.info('You have left the game!');
-                  router.push('/');
-                  return;
+                  case GameUpdate.LEFT_GAME:
+                    setStatus(GameStatus.FINISHED);
+                    toast.info('You have left the game!');
+                    router.push('/');
+                    return;
 
-                case GameUpdate.GAME_NOT_FOUND:
-                  setStatus(GameStatus.FINISHED);
-                  toast.warning('This game is not available!');
-                  router.push('/');
-                  return;
+                  case GameUpdate.GAME_NOT_FOUND:
+                    setStatus(GameStatus.FINISHED);
+                    toast.warning('This game is not available!');
+                    router.push('/');
+                    return;
 
-                case GameUpdate.LOBBY_FULL:
-                  setStatus(GameStatus.FINISHED);
-                  toast.warning('The lobby is full!');
-                  router.push('/');
-                  return;
+                  case GameUpdate.LOBBY_FULL:
+                    setStatus(GameStatus.FINISHED);
+                    toast.warning('The lobby is full!');
+                    router.push('/');
+                    return;
 
-                case GameUpdate.LOBBY_UPDATE:
-                  setStatus(GameStatus.LOBBY);
-                  setPlayers(newGameState.players);
-                  setSettings(newGameState.settings);
-                  return;
+                  case GameUpdate.LOBBY_UPDATE:
+                    setStatus(GameStatus.LOBBY);
+                    setPlayers(newGameState.players);
+                    setSettings(newGameState.settings);
+                    return;
 
-                case GameUpdate.GAME_STATE_UPDATE:
-                  setStatus(GameStatus.IN_PROGRESS);
-                  setGameState(newGameState.state);
-                  return;
+                  case GameUpdate.GAME_STATE_UPDATE:
+                    setStatus(GameStatus.IN_PROGRESS);
+                    setGameState(newGameState.state);
+                    return;
 
-                case GameUpdate.FINISHED:
-                  setGameState(newGameState.state);
-                  setStatus(GameStatus.FINISHED);
-                  return;
+                  case GameUpdate.FINISHED:
+                    setGameState(newGameState.state);
+                    setStatus(GameStatus.FINISHED);
+                    return;
 
-                case GameUpdate.EMOJI_REACTION: {
-                  const { targetPlayerId, ...reaction } = newGameState.payload;
-                  setReactions((prev) => ({
-                    ...prev,
-                    [targetPlayerId]: reaction,
-                  }));
-                  return;
+                  case GameUpdate.EMOJI_REACTION: {
+                    const { targetPlayerId, ...reaction } =
+                      newGameState.payload;
+                    setReactions((prev) => ({
+                      ...prev,
+                      [targetPlayerId]: reaction,
+                    }));
+                    return;
+                  }
+
+                  default: {
+                    const exhaustiveCheck: never = newGameState;
+                    console.error(
+                      new Error(
+                        `Unexpected game update type: ${exhaustiveCheck}`,
+                      ),
+                    );
+                    return;
+                  }
                 }
-
-                default: {
-                  const exhaustiveCheck: never = newGameState;
-                  console.error(
-                    new Error(
-                      `Unexpected game update type: ${exhaustiveCheck}`,
-                    ),
-                  );
-                  return;
-                }
+              } finally {
+                void setGameAttributes(span, code, userId)
+                  .catch((error: unknown) => {
+                    recordClientError(error, 'subscription.attributes.error');
+                    console.error(error);
+                  })
+                  .finally(() => span.end());
               }
-            } finally {
-              void setGameAttributes(span, code, userId)
-                .catch((error: unknown) => {
-                  recordClientError(error, 'subscription.attributes.error');
-                  console.error(error);
-                })
-                .finally(() => span.end());
-            }
-          },
-        );
+            },
+          );
+        },
+        onError: (error) => {
+          recordClientError(error, 'subscription.error');
+          console.error(error);
+        },
       },
-      onError: (error) => {
-        recordClientError(error, 'subscription.error');
-        console.error(error);
-      },
-    },
+    ),
   );
 
   if (status === GameStatus.LOADING) {

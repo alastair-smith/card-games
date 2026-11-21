@@ -1,11 +1,10 @@
 'use client';
 
-import { useMutationState } from '@tanstack/react-query';
-import { getMutationKey } from '@trpc/react-query';
+import { useMutation, useMutationState } from '@tanstack/react-query';
 import { useLobbyPlayer } from '~/components/lobby/use-lobby-player';
 import { toast } from '~/components/ui/toast';
 import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import type { GameCode, Player } from '~/types/game';
 import {
   type Settings,
@@ -45,17 +44,20 @@ export default function Lobby({
     isSettingUpdateApplied,
   );
 
-  const startGameMutation = api.yaniv.startGame.useMutation();
-  const updateSettingsMutation = api.yaniv.updateSettings.useMutation({
-    scope: { id: `settings-${code}` },
-    onSuccess: (_data, { settings: update }) => waitForSettingUpdate(update),
-    onError: () => {
-      toast.error('Error updating settings.');
-    },
-  });
+  const trpc = useTRPC();
+  const startGameMutation = useMutation(trpc.yaniv.startGame.mutationOptions());
+  const updateSettingsMutation = useMutation(
+    trpc.yaniv.updateSettings.mutationOptions({
+      scope: { id: `settings-${code}` },
+      onSuccess: (_data, { settings: update }) => waitForSettingUpdate(update),
+      onError: () => {
+        toast.error('Error updating settings.');
+      },
+    }),
+  );
   const pendingSettingsVariables = useMutationState({
     filters: {
-      mutationKey: getMutationKey(api.yaniv.updateSettings),
+      mutationKey: trpc.yaniv.updateSettings.mutationKey(),
       status: 'pending',
     },
     select: (mutation) => mutation.state.variables,
