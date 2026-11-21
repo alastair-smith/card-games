@@ -6,7 +6,6 @@ import {
 import {
   PlayerTag,
   PlayerTagHostIcon,
-  PlayerTagLabel,
   PlayerTagName,
   PlayerTagUserIcon,
 } from '~/components/player-tag';
@@ -71,9 +70,7 @@ export default function LobbyPlayers({
                 <PlayerTag color={player.color} isPlayersTurn={false}>
                   {player.isHost && <PlayerTagHostIcon />}
                   {player.isUser && <PlayerTagUserIcon />}
-                  <PlayerTagLabel>
-                    <PlayerTagName>{player.name}</PlayerTagName>
-                  </PlayerTagLabel>
+                  <PlayerTagName>{player.name}</PlayerTagName>
                   <ReadyStatus isReady={player.isReady} />
                 </PlayerTag>
                 {hasPlayerActions(player, isUserHost) && (

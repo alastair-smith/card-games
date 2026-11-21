@@ -1,7 +1,6 @@
 import {
   PlayerTag,
   PlayerTagCardCount,
-  PlayerTagLabel,
   PlayerTagName,
   PlayerTagReaction,
   PlayerTagUserIcon,
@@ -43,10 +42,8 @@ export function PlayerArea({
     <div className={cn('flex w-fit flex-col items-center gap-2', className)}>
       <PlayerTag color={color} isPlayersTurn={isPlayersTurn}>
         {isUser && <PlayerTagUserIcon />}
-        <PlayerTagLabel>
-          <PlayerTagName>{name}</PlayerTagName>
-          <PlayerTagCardCount count={isFinished ? null : cardCount} />
-        </PlayerTagLabel>
+        <PlayerTagName>{name}</PlayerTagName>
+        <PlayerTagCardCount count={isFinished ? null : cardCount} />
         <PlayerTagReaction reaction={emojiReaction} />
       </PlayerTag>
       {isPlayersTurn && <span className='sr-only'>, their turn</span>}

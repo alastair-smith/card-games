@@ -25,9 +25,16 @@ export function PlayerTag({
     <span className={cn('relative block w-fit rounded', className)}>
       <span
         style={{ backgroundColor: playerColorValue(color) }}
-        className='relative flex h-full items-center justify-center gap-1 rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:gap-1.5 sm:px-2 sm:py-1 sm:text-sm'
+        className='relative flex h-full items-center justify-center rounded-[inherit] border-2 border-white px-1.5 py-0.5 text-xs sm:px-2 sm:py-1 sm:text-sm'
       >
-        {children}
+        <span
+          // As wide as the longest name in the widest letter, so on smaller
+          // screens a long name sits on its own row, between the icons and
+          // the card count
+          className='flex max-w-[8.75rem] flex-wrap items-center justify-center gap-x-1 gap-y-0.5 sm:max-w-none sm:gap-x-1.5'
+        >
+          {children}
+        </span>
       </span>
 
       {isPlayersTurn && (
@@ -71,19 +78,6 @@ export function PlayerTagHostIcon() {
 
 export function PlayerTagUserIcon() {
   return <PlayerTagIcon icon={UserRoundIcon} label='You:' />;
-}
-
-/** Holds the name and card count, so a long name wraps what follows it. */
-export function PlayerTagLabel({ children }: { children: ReactNode }) {
-  return (
-    <span
-      // As wide as the longest name in the widest letter, so on smaller
-      // screens a long name wraps the card count below it
-      className='flex max-w-[8.75rem] flex-wrap items-center justify-center gap-1 sm:max-w-none sm:gap-1.5'
-    >
-      {children}
-    </span>
-  );
 }
 
 export function PlayerTagName({ children }: { children: ReactNode }) {

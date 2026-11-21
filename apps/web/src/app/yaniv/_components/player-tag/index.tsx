@@ -1,7 +1,6 @@
 import {
   PlayerTag as BasePlayerTag,
   PlayerTagCardCount,
-  PlayerTagLabel,
   PlayerTagName,
   PlayerTagReaction,
   PlayerTagUserIcon,
@@ -32,10 +31,8 @@ export function PlayerTag({
   return (
     <BasePlayerTag color={color} isPlayersTurn={isPlayersTurn}>
       {isUser && <PlayerTagUserIcon />}
-      <PlayerTagLabel>
-        <PlayerTagName>{name}</PlayerTagName>
-        <PlayerTagCardCount count={cardCount} />
-      </PlayerTagLabel>
+      <PlayerTagName>{name}</PlayerTagName>
+      <PlayerTagCardCount count={cardCount} />
       {isYanivCalled && (
         <>
           <span

@@ -3,7 +3,6 @@ import {
   PlayerTag,
   PlayerTagCardCount,
   PlayerTagHostIcon,
-  PlayerTagLabel,
   PlayerTagName,
   PlayerTagReaction,
   PlayerTagUserIcon,
@@ -40,10 +39,8 @@ function PlayerTagStory({
     <PlayerTag color={color} isPlayersTurn={isPlayersTurn}>
       {isHost && <PlayerTagHostIcon />}
       {isUser && <PlayerTagUserIcon />}
-      <PlayerTagLabel>
-        <PlayerTagName>{name}</PlayerTagName>
-        {cardCount !== undefined && <PlayerTagCardCount count={cardCount} />}
-      </PlayerTagLabel>
+      <PlayerTagName>{name}</PlayerTagName>
+      {cardCount !== undefined && <PlayerTagCardCount count={cardCount} />}
       <PlayerTagReaction reaction={emojiReaction} />
     </PlayerTag>
   );

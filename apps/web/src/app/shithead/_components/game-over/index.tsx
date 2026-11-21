@@ -1,7 +1,6 @@
 import { GameOver as GameOverScreen } from '~/components/game-over';
 import {
   PlayerTag,
-  PlayerTagLabel,
   PlayerTagName,
   PlayerTagUserIcon,
 } from '~/components/player-tag';
@@ -52,9 +51,7 @@ function FinishingOrderRow({ player }: { player: GameOverPlayer }) {
       </span>
       <PlayerTag color={player.color} isPlayersTurn={false}>
         {player.isUser && <PlayerTagUserIcon />}
-        <PlayerTagLabel>
-          <PlayerTagName>{player.name}</PlayerTagName>
-        </PlayerTagLabel>
+        <PlayerTagName>{player.name}</PlayerTagName>
       </PlayerTag>
     </li>
   );
