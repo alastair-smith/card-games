@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { buildPlayer } from '~/test-utils/lobby';
+import { procedurePath, type StubMutationOptions } from '~/test-utils/trpc';
 import type { GameCode } from '~/types/game';
 import {
   type DealerSetting,
@@ -29,23 +30,20 @@ let pendingSettingsVariables: unknown[] = [];
 let mutationStateOptions: unknown;
 
 vi.mock('@tanstack/react-query', () => ({
+  useMutation: (options: StubMutationOptions) =>
+    procedurePath(options) === 'yaniv.startGame'
+      ? startGameMutation
+      : settingsMutation,
   useMutationState: (options: unknown) => {
     mutationStateOptions = options;
     return pendingSettingsVariables;
   },
 }));
-vi.mock('@trpc/react-query', () => ({
-  getMutationKey: () => [['yaniv', 'updateSettings']],
-}));
 
-vi.mock('~/trpc/react', () => ({
-  api: {
-    yaniv: {
-      startGame: { useMutation: () => startGameMutation },
-      updateSettings: { useMutation: () => settingsMutation },
-    },
-  },
-}));
+vi.mock('~/trpc/react', async () => {
+  const { createTRPCStub } = await import('~/test-utils/trpc');
+  return { useTRPC: () => createTRPCStub() };
+});
 
 vi.mock('./lobby.view', () => ({
   default: (props: {

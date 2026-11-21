@@ -1,9 +1,10 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import { toast } from '~/components/ui/toast';
 import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import { JOKER_RANK } from '~/types/cards';
 import type { EmojiReactionId, UserId } from '~/types/entities';
 import type { GameCode, ReactionEmoji, SystemEmoji } from '~/types/game';
@@ -53,25 +54,38 @@ export default function YanivGameController({
     gameState.hand,
   );
 
-  const playCardsMutation = api.yaniv.playCards.useMutation({
-    onSuccess: clearSelectedCards,
-  });
-  const pickupCardMutation = api.yaniv.pickupCard.useMutation();
-  const callYanivMutation = api.yaniv.callYaniv.useMutation();
-  const startNewRoundMutation = api.yaniv.startNewRound.useMutation();
+  const trpc = useTRPC();
+  const playCardsMutation = useMutation(
+    trpc.yaniv.playCards.mutationOptions({
+      onSuccess: clearSelectedCards,
+    }),
+  );
+  const pickupCardMutation = useMutation(
+    trpc.yaniv.pickupCard.mutationOptions(),
+  );
+  const callYanivMutation = useMutation(trpc.yaniv.callYaniv.mutationOptions());
+  const startNewRoundMutation = useMutation(
+    trpc.yaniv.startNewRound.mutationOptions(),
+  );
   const waitForIsChoosingHandSize = useWaitForServerValue(
     'gameStep' in gameState && gameState.gameStep === GameStep.CHOOSE_HAND_SIZE,
   );
-  const chooseHandSizeMutation = api.yaniv.chooseHandSize.useMutation({
-    // Stays pending until the next step arrives and closes the dialog, so it
-    // can't be sent twice in between
-    onSuccess: () => waitForIsChoosingHandSize(false),
-    onError: (error) => toast.error(error.message),
-  });
-  const endTurnMutation = api.yaniv.endTurn.useMutation({
-    onError: (error) => toast.error(error.message),
-  });
-  const triggerEmojiMutation = api.yaniv.triggerEmoji.useMutation();
+  const chooseHandSizeMutation = useMutation(
+    trpc.yaniv.chooseHandSize.mutationOptions({
+      // Stays pending until the next step arrives and closes the dialog, so it
+      // can't be sent twice in between
+      onSuccess: () => waitForIsChoosingHandSize(false),
+      onError: (error) => toast.error(error.message),
+    }),
+  );
+  const endTurnMutation = useMutation(
+    trpc.yaniv.endTurn.mutationOptions({
+      onError: (error) => toast.error(error.message),
+    }),
+  );
+  const triggerEmojiMutation = useMutation(
+    trpc.yaniv.triggerEmoji.mutationOptions(),
+  );
 
   const userId = gameState.players.find((player) => player.isUser)?.id;
 

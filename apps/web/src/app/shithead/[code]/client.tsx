@@ -2,13 +2,14 @@
 
 import { context as otelContext, propagation, trace } from '@opentelemetry/api';
 import { skipToken } from '@tanstack/react-query';
+import { useSubscription } from '@trpc/tanstack-react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Lobby from '~/app/shithead/_components/lobby';
 import { toast } from '~/components/ui/toast';
 import { setGameAttributes } from '~/telemetry/attributes';
 import { recordClientError } from '~/telemetry/errors';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import type { UserId } from '~/types/entities';
 import {
   type GameCode,
@@ -43,69 +44,74 @@ export default function ShitheadClient({
     router.push('/');
   };
 
-  api.shithead.state.useSubscription(
-    status === GameStatus.FINISHED ? skipToken : { code },
-    {
-      onData: (update) => {
-        const remoteCtx = remoteContextFromTraceparent(update._trace);
-        clientTracer.startActiveSpan(
-          'subscription.receive',
-          {},
-          remoteCtx,
-          (span) => {
-            try {
-              switch (update.update) {
-                case GameUpdate.KICKED:
-                  leaveWithMessage(() =>
-                    toast.warning('You have been removed from the game!'),
-                  );
-                  return;
+  const trpc = useTRPC();
+  useSubscription(
+    trpc.shithead.state.subscriptionOptions(
+      status === GameStatus.FINISHED ? skipToken : { code },
+      {
+        onData: (update) => {
+          const remoteCtx = remoteContextFromTraceparent(update._trace);
+          clientTracer.startActiveSpan(
+            'subscription.receive',
+            {},
+            remoteCtx,
+            (span) => {
+              try {
+                switch (update.update) {
+                  case GameUpdate.KICKED:
+                    leaveWithMessage(() =>
+                      toast.warning('You have been removed from the game!'),
+                    );
+                    return;
 
-                case GameUpdate.LEFT_GAME:
-                  leaveWithMessage(() => toast.info('You have left the game!'));
-                  return;
+                  case GameUpdate.LEFT_GAME:
+                    leaveWithMessage(() =>
+                      toast.info('You have left the game!'),
+                    );
+                    return;
 
-                case GameUpdate.GAME_NOT_FOUND:
-                  leaveWithMessage(() =>
-                    toast.warning('This game is not available!'),
-                  );
-                  return;
+                  case GameUpdate.GAME_NOT_FOUND:
+                    leaveWithMessage(() =>
+                      toast.warning('This game is not available!'),
+                    );
+                    return;
 
-                case GameUpdate.LOBBY_FULL:
-                  leaveWithMessage(() => toast.warning('The lobby is full!'));
-                  return;
+                  case GameUpdate.LOBBY_FULL:
+                    leaveWithMessage(() => toast.warning('The lobby is full!'));
+                    return;
 
-                case GameUpdate.LOBBY_UPDATE:
-                  setStatus(GameStatus.LOBBY);
-                  setPlayers(update.players);
-                  return;
+                  case GameUpdate.LOBBY_UPDATE:
+                    setStatus(GameStatus.LOBBY);
+                    setPlayers(update.players);
+                    return;
 
-                default: {
-                  const exhaustiveCheck: never = update;
-                  console.error(
-                    new Error(
-                      `Unexpected game update type: ${exhaustiveCheck}`,
-                    ),
-                  );
-                  return;
+                  default: {
+                    const exhaustiveCheck: never = update;
+                    console.error(
+                      new Error(
+                        `Unexpected game update type: ${exhaustiveCheck}`,
+                      ),
+                    );
+                    return;
+                  }
                 }
+              } finally {
+                void setGameAttributes(span, code, userId)
+                  .catch((error: unknown) => {
+                    recordClientError(error, 'subscription.attributes.error');
+                    console.error(error);
+                  })
+                  .finally(() => span.end());
               }
-            } finally {
-              void setGameAttributes(span, code, userId)
-                .catch((error: unknown) => {
-                  recordClientError(error, 'subscription.attributes.error');
-                  console.error(error);
-                })
-                .finally(() => span.end());
-            }
-          },
-        );
+            },
+          );
+        },
+        onError: (error) => {
+          recordClientError(error, 'subscription.error');
+          console.error(error);
+        },
       },
-      onError: (error) => {
-        recordClientError(error, 'subscription.error');
-        console.error(error);
-      },
-    },
+    ),
   );
 
   if (status !== GameStatus.LOBBY || players === null) {

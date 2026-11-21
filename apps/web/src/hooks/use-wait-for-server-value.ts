@@ -13,12 +13,14 @@ const SERVER_VALUE_TIMEOUT_MS = 5000;
  * @example
  * const waitForIsReady = useWaitForServerValue(isReady);
  *
- * api.lobby.updatePlayer.useMutation({
- *   onSuccess: (_data, variables) =>
- *     variables.field === 'isReady'
- *       ? waitForIsReady(variables.isReady)
- *       : undefined,
- * });
+ * useMutation(
+ *   trpc.lobby.updatePlayer.mutationOptions({
+ *     onSuccess: (_data, variables) =>
+ *       variables.field === 'isReady'
+ *         ? waitForIsReady(variables.isReady)
+ *         : undefined,
+ *   }),
+ * );
  */
 export function useWaitForServerValue<ServerValue, Value = ServerValue>(
   serverValue: ServerValue,

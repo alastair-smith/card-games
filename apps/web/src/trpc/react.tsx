@@ -2,15 +2,16 @@
 
 import { type QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  createTRPCClient,
   httpLink,
   loggerLink,
   splitLink,
   unstable_httpBatchStreamLink,
   unstable_httpSubscriptionLink,
 } from '@trpc/client';
-import { createTRPCReact } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { useState } from 'react';
+import { createTRPCContext } from '@trpc/tanstack-react-query';
+import { type ReactNode, useState } from 'react';
 import SuperJSON from 'superjson';
 import type { AppRouter } from '~/server/api/root';
 import { createMutationFetch, otelLink } from './otel-link';
@@ -28,7 +29,7 @@ const getQueryClient = () => {
   return clientQueryClientSingleton;
 };
 
-export const api = createTRPCReact<AppRouter>();
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 /**
  * Inference helper for inputs.
@@ -44,11 +45,11 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
+export function TRPCReactProvider(props: { children: ReactNode }) {
   const queryClient = getQueryClient();
 
   const [trpcClient] = useState(() =>
-    api.createClient({
+    createTRPCClient<AppRouter>({
       links: [
         otelLink(),
         loggerLink({
@@ -101,9 +102,9 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <api.Provider client={trpcClient} queryClient={queryClient}>
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         {props.children}
-      </api.Provider>
+      </TRPCProvider>
     </QueryClientProvider>
   );
 }

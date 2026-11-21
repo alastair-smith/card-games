@@ -1,8 +1,9 @@
+import { useMutation } from '@tanstack/react-query';
 import debounce from 'lodash/debounce';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from '~/components/ui/toast';
 import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
-import { api } from '~/trpc/react';
+import { useTRPC } from '~/trpc/react';
 import { MIN_NAME_LENGTH, type UserId } from '~/types/entities';
 import type { GameCode, Player } from '~/types/game';
 import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
@@ -40,26 +41,34 @@ export function useLobbyPlayer({
 
   const waitForIsReady = useWaitForServerValue(currentPlayer.isReady);
 
-  const updatePlayerMutation = api.lobby.updatePlayer.useMutation();
+  const trpc = useTRPC();
 
-  const updateReadyMutation = api.lobby.updatePlayer.useMutation({
-    scope: { id: `player-ready-${code}` },
-    onSuccess: (_data, variables) =>
-      variables.field === 'isReady'
-        ? waitForIsReady(variables.isReady)
-        : undefined,
-    onError: () => {
-      toast.error('Error updating ready status.');
-    },
-  });
+  const updatePlayerMutation = useMutation(
+    trpc.lobby.updatePlayer.mutationOptions(),
+  );
 
-  const leaveGameMutation = api.lobby.leaveGame.useMutation();
-  const kickPlayerMutation = api.lobby.kickPlayer.useMutation({
-    onError: () => {
-      toast.error('Error kicking player.');
-    },
-  });
-  const makeHostMutation = api.lobby.makeHost.useMutation();
+  const updateReadyMutation = useMutation(
+    trpc.lobby.updatePlayer.mutationOptions({
+      scope: { id: `player-ready-${code}` },
+      onSuccess: (_data, variables) =>
+        variables.field === 'isReady'
+          ? waitForIsReady(variables.isReady)
+          : undefined,
+      onError: () => {
+        toast.error('Error updating ready status.');
+      },
+    }),
+  );
+
+  const leaveGameMutation = useMutation(trpc.lobby.leaveGame.mutationOptions());
+  const kickPlayerMutation = useMutation(
+    trpc.lobby.kickPlayer.mutationOptions({
+      onError: () => {
+        toast.error('Error kicking player.');
+      },
+    }),
+  );
+  const makeHostMutation = useMutation(trpc.lobby.makeHost.mutationOptions());
 
   const readyUpdate = updateReadyMutation.variables;
   const pendingIsReady =

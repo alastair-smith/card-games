@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { toast } from '~/components/ui/toast';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
+import { procedurePath, type StubMutationOptions } from '~/test-utils/trpc';
 import { buildClientPlayer } from '~/test-utils/yaniv';
 import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
@@ -26,22 +27,19 @@ let chooseHandSizeOptions: {
   onSuccess?: () => Promise<void>;
   onError?: (error: Error) => void;
 } = {};
-vi.mock('~/trpc/react', () => ({
-  api: {
-    yaniv: {
-      playCards: { useMutation: () => ({ mutate }) },
-      pickupCard: { useMutation: () => ({ mutate }) },
-      callYaniv: { useMutation: () => ({ mutate }) },
-      startNewRound: { useMutation: () => ({ mutate }) },
-      chooseHandSize: {
-        useMutation: (options: typeof chooseHandSizeOptions) => {
-          chooseHandSizeOptions = options;
-          return { mutate, isPending: false };
-        },
-      },
-      endTurn: { useMutation: () => ({ mutate }) },
-      triggerEmoji: { useMutation: () => ({ mutate }) },
-    },
+vi.mock('~/trpc/react', async () => {
+  const { createTRPCStub } = await import('~/test-utils/trpc');
+  return { useTRPC: () => createTRPCStub() };
+});
+
+vi.mock('@tanstack/react-query', () => ({
+  useMutation: (
+    options: StubMutationOptions & typeof chooseHandSizeOptions,
+  ) => {
+    if (procedurePath(options) === 'yaniv.chooseHandSize') {
+      chooseHandSizeOptions = options;
+    }
+    return { mutate, isPending: false };
   },
 }));
 
