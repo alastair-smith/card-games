@@ -479,7 +479,13 @@
       "date": "2026-11-21",
       "sessions": ["3b976dd0-268e-4813-bb7d-0a386518b230"],
       "prs": [509],
-      "labels": ["ui", "layout", "stories", "accessibility"]
+      "labels": ["ui", "layout", "stories", "accessibility"],
+      "result": {
+        "pointsRaised": 3,
+        "retroOfRetroPoints": 0,
+        "changesMade": "`measure-stories.ts --live` and `--args` on both screenshot scripts; watch list labels with a shared labelled count (drop at 5, or 30 overall); 1 issue (#510) filed on request; 1 pattern added to the watch list",
+        "fixPr": 512
+      }
     }
   ]
 }
