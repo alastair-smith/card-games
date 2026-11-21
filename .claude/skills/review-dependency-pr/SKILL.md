@@ -52,3 +52,11 @@ too, and check CI with `gh pr checks`.
 Say whether it's safe to merge, then list what affects the app and how you
 checked it, what's breaking but doesn't apply and why, and anything worth
 following up later. Say which notes you couldn't find or read.
+
+Then suggest an issue for what the upgrade lets us adopt, and file it with the
+`manage-issue` skill once the user agrees:
+
+- **Biome:** new rules worth turning on, including nursery rules, and new
+  formatter or assist options, each with what it would catch in our code
+- **Any package:** moving off what it now deprecates and we use, such as an
+  option, API or whole package, with what replaces it
