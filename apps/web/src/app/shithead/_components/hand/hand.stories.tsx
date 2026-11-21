@@ -153,7 +153,7 @@ export const Swapping: Story = {
       canvas.getByRole('button', { name: 'Four of Clubs' }),
     );
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Ten of Diamonds' }),
+      canvas.getByRole('button', { name: 'Ten of Diamonds, magic card' }),
     );
     await expect(args.onSwapCards).toHaveBeenCalledOnce();
     await expect(

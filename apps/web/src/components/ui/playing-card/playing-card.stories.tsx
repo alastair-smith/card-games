@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
+import { fn } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import {
@@ -42,8 +43,8 @@ const meta = {
   args: {
     card: { suit: Suit.SPADES, rank: Rank.ACE },
     className: PLAYING_CARD_DEFAULT_SIZE,
-    selected: false,
-    highlighted: false,
+    isHighlighted: false,
+    isPressed: false,
     design: 'default',
   },
   argTypes: {
@@ -60,9 +61,10 @@ export const Default: Story = {};
 
 export const FaceDown: Story = { args: { card: null } };
 
-export const Selected: Story = { args: { selected: true } };
+export const Highlighted: Story = { args: { isHighlighted: true } };
 
-export const Highlighted: Story = { args: { highlighted: true } };
+/** Chosen with a click, such as a card picked to play. */
+export const Pressed: Story = { args: { isPressed: true, onClick: fn() } };
 
 /** A 10, the widest rank, with an icon beside its rank and suit. */
 export const CornerIcon: Story = {
@@ -137,67 +139,40 @@ export const Overview: Story = {
       </Card>
 
       <Card>
-        <CardHeader className='text-2xl font-medium'>
-          Selecting Cards
-        </CardHeader>
+        <CardHeader className='text-2xl font-medium'>Card States</CardHeader>
         <CardContent>
           <Table className='w-fit bg-main-background text-dark-text'>
             <TableCaption>
-              Variations of the PlayingCard selection states
+              Highlighted draws the eye; pressed marks a chosen card
             </TableCaption>
 
             <TableHeader>
               <TableRow>
-                <TableHead>Highlighted</TableHead>
-                <TableHead>Not Selected (Face)</TableHead>
-                <TableHead>Selected (Face)</TableHead>
-                <TableHead>Not Selected (Back)</TableHead>
-                <TableHead>Selected (Back)</TableHead>
+                <TableHead>State</TableHead>
+                <TableHead>Face</TableHead>
+                <TableHead>Back</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              <TableRow>
-                <TableCell>Not Highlighted</TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard card={{ rank: Rank.ACE, suit: Suit.SPADES }} />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard
-                    card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-                    selected
-                  />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard card={null} />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard card={null} selected />
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Highlighted</TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard
-                    card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-                    highlighted
-                  />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard
-                    card={{ rank: Rank.ACE, suit: Suit.SPADES }}
-                    selected
-                    highlighted
-                  />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard card={null} highlighted />
-                </TableCell>
-                <TableCell className='pt-14'>
-                  <PlayingCard card={null} selected highlighted />
-                </TableCell>
-              </TableRow>
+              {[
+                { label: 'Plain', isHighlighted: false, isPressed: false },
+                { label: 'Highlighted', isHighlighted: true, isPressed: false },
+                { label: 'Pressed', isHighlighted: false, isPressed: true },
+              ].map(({ label, ...state }) => (
+                <TableRow key={label}>
+                  <TableCell>{label}</TableCell>
+                  <TableCell>
+                    <PlayingCard
+                      card={{ rank: Rank.ACE, suit: Suit.SPADES }}
+                      {...state}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <PlayingCard card={null} {...state} />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>
@@ -230,7 +205,7 @@ export const FlipCard: Story = {
           )}
           {showCard && (
             <PlayingCard
-              highlighted
+              isHighlighted
               card={cardHasValue ? { rank: Rank.ACE, suit: Suit.SPADES } : null}
             />
           )}

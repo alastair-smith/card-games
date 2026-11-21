@@ -58,31 +58,29 @@ export function PlayingCard({
   className,
   cardClassName,
   onClick,
-  selected,
-  highlighted,
+  isHighlighted,
+  isPressed,
   design,
   border,
   ariaLabel,
-  isPressed,
   cornerIcon,
 }: {
   card: PlayingCardValue | null;
   className?: string | undefined;
   cardClassName?: string | undefined;
   onClick?: (() => void) | undefined;
-  selected?: boolean | undefined;
-  highlighted?: boolean | undefined;
+  /** Draws the eye without the card being chosen, such as a deck to draw from */
+  isHighlighted?: boolean | undefined;
+  /** A card the player has chosen, such as to play. Highlights it, and makes a clickable card a toggle button */
+  isPressed?: boolean | undefined;
   design?: 'default' | 'simple' | undefined;
   border?: boolean | undefined;
   ariaLabel?: string | undefined;
-  /** Makes a clickable card a toggle button, such as one picked to play */
-  isPressed?: boolean | undefined;
   /** Sits in the top corner beside the rank and suit, such as a game's mark for a special card */
   cornerIcon?: LucideIcon | undefined;
 }) {
-  const highlightedClass = highlighted
-    ? 'bg-highlighted-playing-card-background'
-    : '';
+  const highlightedClass =
+    isHighlighted || isPressed ? 'bg-highlighted-playing-card-background' : '';
 
   const cardContent = (
     <FlippableRoot showFront={!!card}>
@@ -106,7 +104,6 @@ export function PlayingCard({
   const sharedClassName = cn(
     PLAYING_CARD_PROPORTIONS,
     'select-none',
-    selected && '-translate-y-12',
     className,
   );
 

@@ -56,7 +56,7 @@ export function PlayingCardDeck({
             border
             onClick={showDrawnCard ? undefined : onClick}
             ariaLabel={ariaLabel}
-            highlighted={topCardHighlighted}
+            isHighlighted={topCardHighlighted}
           />
           {showDrawnCard && (
             <div className={cn('absolute inset-0', drawnCardClassName)}>
@@ -65,7 +65,7 @@ export function PlayingCardDeck({
                 cardClassName='border-[0.056em] border-border/50'
                 border
                 onClick={onDrawnCardClick}
-                highlighted={topCardHighlighted}
+                isHighlighted={topCardHighlighted}
               />
             </div>
           )}

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect, fn, within } from 'storybook/test';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
-import { HandCard } from './hand-card';
+import { ShitheadPlayingCard } from '.';
 
 const MAGIC_CARDS: StandardPlayingCard[] = [
   { suit: Suit.SPADES, rank: Rank.TWO },
@@ -11,22 +11,15 @@ const MAGIC_CARDS: StandardPlayingCard[] = [
 ];
 
 const meta = {
-  title: 'Shithead / Hand Card',
-  component: HandCard,
-  decorators: [
-    (Story) => (
-      <div className='text-2xl'>
-        <Story />
-      </div>
-    ),
-  ],
+  title: 'Shithead / Playing Card',
+  component: ShitheadPlayingCard,
   args: {
-    card: { suit: Suit.HEARTS, rank: Rank.TEN },
-    isSelected: false,
-    isSelectable: true,
-    onClick: fn(),
+    className: 'text-2xl',
+    card: { suit: Suit.DIAMONDS, rank: Rank.TEN },
+    border: true,
+    isPressed: false,
   },
-} satisfies Meta<typeof HandCard>;
+} satisfies Meta<typeof ShitheadPlayingCard>;
 
 export default meta;
 
@@ -37,14 +30,14 @@ export const MagicCards: Story = {
   render: (args) => (
     <div className='flex flex-wrap gap-2'>
       {MAGIC_CARDS.map((card) => (
-        <HandCard key={card.rank} {...args} card={card} />
+        <ShitheadPlayingCard key={card.rank} {...args} card={card} />
       ))}
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getAllByRole('button', { name: /, magic card$/ }),
+      canvas.getAllByRole('img', { name: /, magic card$/ }),
     ).toHaveLength(4);
   },
 };
@@ -58,7 +51,7 @@ export const Five: Story = {
 };
 
 export const Seven: Story = {
-  args: { card: { suit: Suit.HEARTS, rank: Rank.SEVEN } },
+  args: { card: { suit: Suit.CLUBS, rank: Rank.SEVEN } },
 };
 
 export const Ten: Story = {};
@@ -67,7 +60,10 @@ export const NotMagic: Story = {
   args: { card: { suit: Suit.CLUBS, rank: Rank.KING } },
 };
 
-export const Selected: Story = { args: { isSelected: true } };
+export const FaceDown: Story = { args: { card: null } };
 
-/** Shown only, such as on another player's turn. */
-export const NotSelectable: Story = { args: { isSelectable: false } };
+/** One the player can choose, such as on their turn. */
+export const Clickable: Story = { args: { onClick: fn() } };
+
+/** Chosen, such as to play. */
+export const Pressed: Story = { args: { isPressed: true, onClick: fn() } };

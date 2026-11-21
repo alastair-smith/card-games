@@ -116,7 +116,7 @@ describe('TableCards', () => {
         />,
       );
       expect(
-        screen.getByRole('button', { name: 'Seven of Hearts' }),
+        screen.getByRole('button', { name: 'Seven of Hearts, magic card' }),
       ).toHaveAttribute('aria-pressed', 'true');
     });
   });

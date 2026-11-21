@@ -6,18 +6,18 @@ import { Hand } from '.';
 vi.mock('~/components/ui/playing-card', () => ({
   PlayingCard: ({
     card,
-    highlighted,
+    isPressed,
     onClick,
   }: {
     card: { suit: string; rank: string } | null;
-    highlighted?: boolean;
+    isPressed?: boolean;
     onClick?: () => void;
   }) =>
     card ? (
       <button
         data-suit={card.suit}
         data-rank={card.rank}
-        data-highlighted={highlighted}
+        aria-pressed={isPressed}
         type='button'
         onClick={onClick}
         aria-label={`${card.rank} of ${card.suit}`}
@@ -88,7 +88,7 @@ describe('Hand', () => {
       expect(within(getHand()).getAllByRole('button')).toHaveLength(2);
     });
 
-    test('passes highlighted state to selected cards', () => {
+    test('marks selected cards as pressed', () => {
       const cardsWithSelection = [
         // biome-ignore lint/style/noNonNullAssertion: test data is guaranteed to be present
         { ...cards[0]!, selected: true },
@@ -99,15 +99,11 @@ describe('Hand', () => {
       ];
       render(<Hand {...defaultProps} cards={cardsWithSelection} />);
       expect(
-        screen
-          .getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` })
-          .getAttribute('data-highlighted'),
-      ).toBe('true');
+        screen.getByRole('button', { name: `${Rank.ACE} of ${Suit.CLUBS}` }),
+      ).toHaveAttribute('aria-pressed', 'true');
       expect(
-        screen
-          .getByRole('button', { name: `${Rank.FIVE} of ${Suit.HEARTS}` })
-          .getAttribute('data-highlighted'),
-      ).toBe('false');
+        screen.getByRole('button', { name: `${Rank.FIVE} of ${Suit.HEARTS}` }),
+      ).toHaveAttribute('aria-pressed', 'false');
     });
   });
 

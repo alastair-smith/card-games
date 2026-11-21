@@ -2,7 +2,7 @@ import type { StandardPlayingCard } from '~/types/cards';
 import { isSameCard } from '~/utils/cards';
 import { cn } from '~/utils/cn';
 import { sortShitheadHand } from '~/utils/shithead/sort';
-import { HandCard } from './hand-card';
+import { ShitheadPlayingCard } from '../shithead-playing-card';
 
 type HandCardsProps = {
   className?: string | undefined;
@@ -30,13 +30,17 @@ export function HandCards({
     >
       {sortShitheadHand(cards).map((card) => (
         <li key={`${card.suit}-${card.rank}`} className='flex'>
-          <HandCard
+          <ShitheadPlayingCard
             card={card}
-            isSelected={selectedCards.some((selected) =>
+            border
+            isPressed={selectedCards.some((selected) =>
               isSameCard(selected, card),
             )}
-            isSelectable={onCardClick !== undefined && isCardSelectable(card)}
-            onClick={() => onCardClick?.(card)}
+            onClick={
+              onCardClick && isCardSelectable(card)
+                ? () => onCardClick(card)
+                : undefined
+            }
           />
         </li>
       ))}

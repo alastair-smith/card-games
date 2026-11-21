@@ -272,7 +272,7 @@ describe('Hand', () => {
         onPlayCards: handlePlayCards,
       });
 
-      fireEvent.click(cardButton('Seven of Hearts'));
+      fireEvent.click(cardButton('Seven of Hearts, magic card'));
       fireEvent.click(screen.getByRole('button', { name: 'Pick Up Pile' }));
 
       expect(handlePlayCards).toHaveBeenCalledExactlyOnceWith({

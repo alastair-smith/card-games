@@ -1,11 +1,9 @@
-import {
-  PLAYING_CARD_PROPORTIONS,
-  PlayingCard,
-} from '~/components/ui/playing-card';
+import { PLAYING_CARD_PROPORTIONS } from '~/components/ui/playing-card';
 import type { StandardPlayingCard } from '~/types/cards';
 import type { TableCardSlot } from '~/types/games/shithead';
 import { cardAriaLabel } from '~/utils/cards';
 import { cn } from '~/utils/cn';
+import { ShitheadPlayingCard } from '../shithead-playing-card';
 
 type TableCardsProps = {
   className?: string | undefined;
@@ -98,13 +96,12 @@ function TableCard({
 }) {
   if (isSelectable) {
     return (
-      <PlayingCard
+      <ShitheadPlayingCard
         card={card}
         border
         // A button sits on the text baseline, leaving a gap below
         className={cn('block', className)}
         ariaLabel={ariaLabel}
-        highlighted={isSelected}
         isPressed={isSelected}
         onClick={onClick}
       />
@@ -114,7 +111,7 @@ function TableCard({
   // The description above reads out the cards that can't be chosen
   return (
     <div aria-hidden='true' className={className}>
-      <PlayingCard card={card} border />
+      <ShitheadPlayingCard card={card} border />
     </div>
   );
 }
