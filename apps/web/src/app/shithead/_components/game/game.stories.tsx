@@ -4,7 +4,6 @@ import { fn } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildTableCards } from '~/test-utils/shithead';
 import {
-  RANKS,
   Rank,
   type StandardPlayingCard,
   Suit,
@@ -81,14 +80,9 @@ const handProps = {
   tableCards: buildTableCards(),
   isSwapConfirmed: true,
   isPlayersTurn: true,
-  // What can go on the 8 on the pile, including the 2s and 5s that go on any card
-  playableRanks: RANKS.filter(
-    (rank) => rank >= Rank.EIGHT || rank === Rank.TWO || rank === Rank.FIVE,
-  ),
   onSwapCards: fn(),
   onConfirmSwap: fn(),
   onPlayCards: fn(),
-  onPickUpPile: fn(),
 } satisfies ComponentProps<typeof Hand>;
 
 const meta = {
@@ -103,6 +97,7 @@ const meta = {
     visibleDiscardCards: [{ suit: Suit.HEARTS, rank: Rank.EIGHT }],
     hand: <Hand {...handProps} />,
     onEmojiClick: fn(),
+    onDiscardPileClick: fn(),
   },
 } satisfies Meta<typeof Game>;
 

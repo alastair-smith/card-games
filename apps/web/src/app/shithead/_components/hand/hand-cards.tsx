@@ -8,7 +8,6 @@ type HandCardsProps = {
   className?: string | undefined;
   cards: StandardPlayingCard[];
   selectedCards?: StandardPlayingCard[] | undefined;
-  isCardSelectable?: ((card: StandardPlayingCard) => boolean) | undefined;
   /** Without it, the cards are only shown */
   onCardClick?: ((card: StandardPlayingCard) => void) | undefined;
 };
@@ -17,7 +16,6 @@ export function HandCards({
   className,
   cards,
   selectedCards = [],
-  isCardSelectable = () => true,
   onCardClick,
 }: HandCardsProps) {
   return (
@@ -36,11 +34,7 @@ export function HandCards({
             isPressed={selectedCards.some((selected) =>
               isSameCard(selected, card),
             )}
-            onClick={
-              onCardClick && isCardSelectable(card)
-                ? () => onCardClick(card)
-                : undefined
-            }
+            onClick={onCardClick ? () => onCardClick(card) : undefined}
           />
         </li>
       ))}

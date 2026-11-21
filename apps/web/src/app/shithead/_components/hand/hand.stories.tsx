@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { buildTableCards } from '~/test-utils/shithead';
 import {
-  RANKS,
   Rank,
   type StandardPlayingCard,
   Suit,
@@ -28,17 +27,6 @@ const FACE_DOWN_ONLY: TableCardSlot[] = buildTableCards().map((slot) => ({
 // Everything but two cards, after picking up a long pile
 const BIGGEST_HAND = standardDeck.slice(2);
 
-// 2s, 5s and 10s go on any card
-const PLAYABLE_ON_ANYTHING = [Rank.TWO, Rank.FIVE, Rank.TEN];
-
-// What can go on a 7
-const PLAYABLE_ON_SEVEN = [
-  ...PLAYABLE_ON_ANYTHING,
-  ...RANKS.filter((rank) => rank >= Rank.SEVEN && rank !== Rank.TEN),
-];
-
-const PLAYABLE_ON_ACE = [...PLAYABLE_ON_ANYTHING, Rank.ACE];
-
 const meta = {
   title: 'Shithead / Hand',
   component: Hand,
@@ -58,11 +46,9 @@ const meta = {
     tableCards: buildTableCards(),
     isSwapConfirmed: true,
     isPlayersTurn: true,
-    playableRanks: PLAYABLE_ON_SEVEN,
     onSwapCards: fn(),
     onConfirmSwap: fn(),
     onPlayCards: fn(),
-    onPickUpPile: fn(),
   },
   argTypes: {
     color: {
@@ -76,7 +62,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** The 4 can't go on the pile, so only the 9 and Queen can be chosen. */
 export const YourTurn: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
@@ -92,10 +77,6 @@ export const YourTurn: Story = {
 };
 
 export const OtherPlayersTurn: Story = { args: { isPlayersTurn: false } };
-
-export const NothingToPlay: Story = {
-  args: { playableRanks: PLAYABLE_ON_ACE },
-};
 
 export const MagicCards: Story = {
   args: {
@@ -167,19 +148,6 @@ export const SwapConfirmed: Story = {
 };
 
 export const FaceUpCards: Story = { args: { cards: [] } };
-
-/** None can go on the pile, so any can be chosen to pick up with it. */
-export const FaceUpCardsNothingToPlay: Story = {
-  args: {
-    cards: [],
-    tableCards: buildTableCards().map((slot) =>
-      slot.faceUpCard?.rank === Rank.TEN
-        ? { ...slot, faceUpCard: { suit: Suit.DIAMONDS, rank: Rank.NINE } }
-        : slot,
-    ),
-    playableRanks: PLAYABLE_ON_ACE,
-  },
-};
 
 export const FaceDownCards: Story = {
   args: { cards: [], tableCards: FACE_DOWN_ONLY },

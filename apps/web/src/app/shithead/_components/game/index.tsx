@@ -43,6 +43,7 @@ type GameProps = {
   visibleDiscardCards: StandardPlayingCard[];
   hand: ReactNode;
   onEmojiClick: (emoji: ReactionEmoji) => void;
+  onDiscardPileClick: () => void;
 };
 
 /** The table with every player's cards, beside the player's own hand. */
@@ -54,6 +55,7 @@ export default function Game({
   visibleDiscardCards,
   hand,
   onEmojiClick,
+  onDiscardPileClick,
 }: GameProps) {
   const playerReactions = usePageReactions(players);
   const deckEmptyReaction = useDeckEmptyReaction(deckSize);
@@ -139,6 +141,12 @@ export default function Game({
                     deckSize={deckSize}
                     discardSize={discardSize}
                     visibleDiscardCards={visibleDiscardCards}
+                    onDiscardPileClick={
+                      gameStage === GameStage.IN_PROGRESS &&
+                      userPlayer.isPlayersTurn
+                        ? onDiscardPileClick
+                        : undefined
+                    }
                   />
                 </div>
               </div>

@@ -30,44 +30,20 @@ const FACE_DOWN_ONLY: TableCardSlot[] = buildTableCards().map((slot) => ({
   faceUpCard: null,
 }));
 
-// The table's 7 and King, with a 9 in place of the 10, which goes on any card
-const FACE_UP_WITHOUT_TEN: TableCardSlot[] = buildTableCards().map((slot) =>
-  slot.faceUpCard?.rank === Rank.TEN
-    ? { ...slot, faceUpCard: { suit: Suit.DIAMONDS, rank: Rank.NINE } }
-    : slot,
-);
+const baseProps: ComponentProps<typeof Hand> = {
+  color: 'cyan',
+  gameStage: GameStage.IN_PROGRESS,
+  cards: HAND,
+  tableCards: buildTableCards(),
+  isSwapConfirmed: true,
+  isPlayersTurn: true,
+  onSwapCards: noop,
+  onConfirmSwap: noop,
+  onPlayCards: noop,
+};
 
-// 2s, 5s and 10s go on any card
-const PLAYABLE_ON_ANYTHING = [Rank.TWO, Rank.FIVE, Rank.TEN];
-const PLAYABLE_ON_NINE = [
-  ...PLAYABLE_ON_ANYTHING,
-  Rank.NINE,
-  Rank.JACK,
-  Rank.QUEEN,
-  Rank.KING,
-  Rank.ACE,
-];
-const PLAYABLE_ON_KING = [...PLAYABLE_ON_ANYTHING, Rank.KING, Rank.ACE];
-const PLAYABLE_ON_ACE = [...PLAYABLE_ON_ANYTHING, Rank.ACE];
-
-function renderHand(props: Partial<ComponentProps<typeof Hand>> = {}) {
-  return render(
-    <Hand
-      color='cyan'
-      gameStage={GameStage.IN_PROGRESS}
-      cards={HAND}
-      tableCards={buildTableCards()}
-      isSwapConfirmed
-      isPlayersTurn
-      playableRanks={PLAYABLE_ON_NINE}
-      onSwapCards={noop}
-      onConfirmSwap={noop}
-      onPlayCards={noop}
-      onPickUpPile={noop}
-      {...props}
-    />,
-  );
-}
+const renderHand = (props: Partial<ComponentProps<typeof Hand>> = {}) =>
+  render(<Hand {...baseProps} {...props} />);
 
 const cardButton = (name: string) => screen.getByRole('button', { name });
 
@@ -188,38 +164,18 @@ describe('Hand', () => {
       });
     });
 
-    test('only lets cards that can be played be chosen', () => {
+    test('lets any card be chosen', () => {
       renderHand();
       expect(
-        screen.queryByRole('button', { name: 'Four of Clubs' }),
-      ).not.toBeInTheDocument();
+        within(screen.getByRole('list', { name: 'Your hand' })).getAllByRole(
+          'button',
+        ),
+      ).toHaveLength(HAND.length);
     });
 
     test('waits for a card to be chosen before playing', () => {
       renderHand();
       expect(screen.getByRole('button', { name: 'Play Cards' })).toBeDisabled();
-    });
-
-    test('picks up the pile when nothing in the hand can be played', () => {
-      const handlePickUpPile = vi.fn();
-      renderHand({
-        playableRanks: PLAYABLE_ON_ACE,
-        onPickUpPile: handlePickUpPile,
-      });
-
-      expect(
-        screen.queryByRole('button', { name: 'Play Cards' }),
-      ).not.toBeInTheDocument();
-      fireEvent.click(screen.getByRole('button', { name: 'Pick Up Pile' }));
-
-      expect(handlePickUpPile).toHaveBeenCalledOnce();
-    });
-
-    test('has no pick-up button when a card can be played', () => {
-      renderHand();
-      expect(
-        screen.queryByRole('button', { name: 'Pick Up Pile' }),
-      ).not.toBeInTheDocument();
     });
 
     test('has no buttons on another player’s turn', () => {
@@ -248,11 +204,7 @@ describe('Hand', () => {
 
     test('plays the chosen face-up card', () => {
       const handlePlayCards = vi.fn();
-      renderHand({
-        cards: [],
-        playableRanks: PLAYABLE_ON_KING,
-        onPlayCards: handlePlayCards,
-      });
+      renderHand({ cards: [], onPlayCards: handlePlayCards });
 
       fireEvent.click(cardButton('King of Spades'));
       fireEvent.click(screen.getByRole('button', { name: 'Play Cards' }));
@@ -263,75 +215,30 @@ describe('Hand', () => {
       });
     });
 
-    test('picks up a chosen face-up card with the pile when none can be played', () => {
-      const handlePlayCards = vi.fn();
-      renderHand({
-        cards: [],
-        tableCards: FACE_UP_WITHOUT_TEN,
-        playableRanks: PLAYABLE_ON_ACE,
-        onPlayCards: handlePlayCards,
-      });
-
-      fireEvent.click(cardButton('Seven of Hearts, magic card'));
-      fireEvent.click(screen.getByRole('button', { name: 'Pick Up Pile' }));
-
-      expect(handlePlayCards).toHaveBeenCalledExactlyOnceWith({
-        source: 'faceUp',
-        cards: [{ suit: Suit.HEARTS, rank: Rank.SEVEN }],
-      });
-    });
-
     test('goes back to the hand after picking up', () => {
       const { rerender } = renderHand({ cards: [] });
-      rerender(
-        <Hand
-          color='cyan'
-          gameStage={GameStage.IN_PROGRESS}
-          cards={HAND}
-          tableCards={buildTableCards()}
-          isSwapConfirmed
-          isPlayersTurn
-          playableRanks={PLAYABLE_ON_ACE}
-          onSwapCards={noop}
-          onConfirmSwap={noop}
-          onPlayCards={noop}
-          onPickUpPile={noop}
-        />,
-      );
+      rerender(<Hand {...baseProps} />);
       expect(
         screen.getByRole('heading', { name: 'Your hand' }),
       ).toBeInTheDocument();
     });
   });
 
-  describe('playing face-down cards', () => {
-    test('turns over one chosen face-down card', () => {
-      const handlePlayCards = vi.fn();
-      renderHand({
-        cards: [],
-        tableCards: FACE_DOWN_ONLY,
-        onPlayCards: handlePlayCards,
-      });
-
-      fireEvent.click(cardButton('Face-down card 1'));
-      fireEvent.click(cardButton('Face-down card 3'));
-      fireEvent.click(screen.getByRole('button', { name: 'Play Card' }));
-
-      expect(handlePlayCards).toHaveBeenCalledExactlyOnceWith({
-        source: 'faceDown',
-        slotIndex: 2,
-      });
+  test('turns over one chosen face-down card', () => {
+    const handlePlayCards = vi.fn();
+    renderHand({
+      cards: [],
+      tableCards: FACE_DOWN_ONLY,
+      onPlayCards: handlePlayCards,
     });
 
-    test('has no pick-up button', () => {
-      renderHand({
-        cards: [],
-        tableCards: FACE_DOWN_ONLY,
-        playableRanks: PLAYABLE_ON_ACE,
-      });
-      expect(
-        screen.queryByRole('button', { name: 'Pick Up Pile' }),
-      ).not.toBeInTheDocument();
+    fireEvent.click(cardButton('Face-down card 1'));
+    fireEvent.click(cardButton('Face-down card 3'));
+    fireEvent.click(screen.getByRole('button', { name: 'Play Card' }));
+
+    expect(handlePlayCards).toHaveBeenCalledExactlyOnceWith({
+      source: 'faceDown',
+      slotIndex: 2,
     });
   });
 

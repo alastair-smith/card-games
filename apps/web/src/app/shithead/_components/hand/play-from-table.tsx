@@ -1,8 +1,8 @@
-import { CircleCheckIcon, LayersIcon } from 'lucide-react';
+import { CircleCheckIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { useCardSelection } from '~/hooks/use-card-selection';
-import type { Rank, StandardPlayingCard } from '~/types/cards';
+import type { StandardPlayingCard } from '~/types/cards';
 import type { TableCardSlot } from '~/types/games/shithead';
 import { isSameCard } from '~/utils/cards';
 import type { PlayerColor } from '~/utils/player-color';
@@ -14,7 +14,6 @@ type PlayFromTableProps = {
   color: PlayerColor;
   tableCards: TableCardSlot[];
   playSource: 'faceUp' | 'faceDown';
-  playableRanks: Rank[];
   isPlayersTurn: boolean;
   onPlayFaceUpCards: (cards: StandardPlayingCard[]) => void;
   onPlayFaceDownCard: (slotIndex: number) => void;
@@ -26,7 +25,6 @@ export function PlayFromTable({
   color,
   tableCards,
   playSource,
-  playableRanks,
   isPlayersTurn,
   onPlayFaceUpCards,
   onPlayFaceDownCard,
@@ -40,14 +38,6 @@ export function PlayFromTable({
     null,
   );
 
-  const hasFaceUpPlay = faceUpCards.some((card) =>
-    playableRanks.includes(card.rank),
-  );
-
-  // A face-up card that can't be played can still be chosen, to pick it up
-  const isFaceUpCardSelectable = (card: StandardPlayingCard) =>
-    !hasFaceUpPlay || playableRanks.includes(card.rank);
-
   // A chosen card that's since been played no longer counts
   const selectedFaceDownSlot =
     chosenFaceDownSlot !== null &&
@@ -57,9 +47,7 @@ export function PlayFromTable({
 
   const faceUpSelection = {
     selectableSlotIndexes: tableCards.flatMap((slot, slotIndex) =>
-      slot.faceUpCard && isFaceUpCardSelectable(slot.faceUpCard)
-        ? [slotIndex]
-        : [],
+      slot.faceUpCard ? [slotIndex] : [],
     ),
     selectedSlotIndexes: tableCards.flatMap((slot, slotIndex) =>
       selectedCards.some((selected) => isSameCard(selected, slot.faceUpCard))
@@ -93,13 +81,6 @@ export function PlayFromTable({
   const selection =
     playSource === 'faceUp' ? faceUpSelection : faceDownSelection;
 
-  const getHint = () => {
-    if (!isPlayersTurn) return undefined;
-    if (playSource === 'faceDown') return 'Choose one to turn over';
-    if (hasFaceUpPlay) return undefined;
-    return 'None of these can be played. Choose one, or several of the same rank, to pick up with the pile';
-  };
-
   return (
     <HandLayout
       className={className}
@@ -107,7 +88,11 @@ export function PlayFromTable({
       title={
         playSource === 'faceUp' ? 'Your face-up cards' : 'Your face-down cards'
       }
-      hint={getHint()}
+      hint={
+        isPlayersTurn && playSource === 'faceDown'
+          ? 'Choose one to turn over'
+          : undefined
+      }
       isUserActing={isPlayersTurn}
       actions={
         isPlayersTurn &&
@@ -116,17 +101,8 @@ export function PlayFromTable({
             disabled={selectedCards.length === 0}
             onClick={() => onPlayFaceUpCards(selectedCards)}
           >
-            {hasFaceUpPlay ? (
-              <>
-                <CircleCheckIcon />
-                Play Cards
-              </>
-            ) : (
-              <>
-                <LayersIcon />
-                Pick Up Pile
-              </>
-            )}
+            <CircleCheckIcon />
+            Play Cards
           </Button>
         ) : (
           <Button

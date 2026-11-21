@@ -60,8 +60,9 @@ When the deck empties, 🫥 emoji rain down automatically.
 
 ### Picking up
 
-A player who can't play picks up the entire discard pile into their hand. The
-next player then plays onto an empty pile, so they can play any card.
+A player who can't play picks up the entire discard pile into their hand, by
+choosing the discard pile on their turn. The next player then plays onto an
+empty pile, so they can play any card.
 
 ## Magic cards
 

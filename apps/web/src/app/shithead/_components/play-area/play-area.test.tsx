@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, test } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, test, vi } from 'vitest';
 import { Rank, Suit } from '~/types/cards';
 import { PlayArea } from '.';
 
@@ -51,5 +51,48 @@ describe('PlayArea', () => {
     );
     expect(screen.getByText('12')).toBeInTheDocument();
     expect(screen.getByText('7')).toBeInTheDocument();
+  });
+
+  describe('picking up', () => {
+    test('picks up the discard pile when it is clicked', () => {
+      const handleDiscardPileClick = vi.fn();
+      render(
+        <PlayArea
+          deckSize={12}
+          discardSize={4}
+          visibleDiscardCards={[{ suit: Suit.HEARTS, rank: Rank.FIVE }]}
+          onDiscardPileClick={handleDiscardPileClick}
+        />,
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Pick up the discard pile' }),
+      );
+
+      expect(handleDiscardPileClick).toHaveBeenCalledOnce();
+    });
+
+    test('has nothing to pick up from an empty pile', () => {
+      render(
+        <PlayArea
+          deckSize={12}
+          discardSize={0}
+          visibleDiscardCards={[]}
+          onDiscardPileClick={vi.fn()}
+        />,
+      );
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+
+    test('only shows the pile when it cannot be picked up', () => {
+      render(
+        <PlayArea
+          deckSize={12}
+          discardSize={4}
+          visibleDiscardCards={[{ suit: Suit.HEARTS, rank: Rank.FIVE }]}
+        />,
+      );
+      expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
   });
 });

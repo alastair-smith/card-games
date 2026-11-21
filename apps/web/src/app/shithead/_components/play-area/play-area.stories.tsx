@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
 import { PlayArea } from '.';
 
@@ -62,3 +63,20 @@ export const LongestPile: Story = {
 };
 
 export const EmptyDeck: Story = { args: { deckSize: 0 } };
+
+/** On the player's turn, clicking the pile picks it up. */
+export const PickingUp: Story = {
+  args: {
+    discardSize: 7,
+    visibleDiscardCards: longestVisiblePile,
+    onDiscardPileClick: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', {
+        name: 'Pick up the discard pile',
+      }),
+    );
+    await expect(args.onDiscardPileClick).toHaveBeenCalledOnce();
+  },
+};

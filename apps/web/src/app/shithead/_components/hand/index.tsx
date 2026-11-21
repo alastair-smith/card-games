@@ -1,4 +1,4 @@
-import type { Rank, StandardPlayingCard } from '~/types/cards';
+import type { StandardPlayingCard } from '~/types/cards';
 import { GameStage, type TableCardSlot } from '~/types/games/shithead';
 import type { PlayerColor } from '~/utils/player-color';
 import { getPlaySource } from '~/utils/shithead/play-source';
@@ -22,12 +22,9 @@ type HandProps = {
   tableCards: TableCardSlot[];
   isSwapConfirmed: boolean;
   isPlayersTurn: boolean;
-  /** Ranks that can go on the discard pile now */
-  playableRanks: Rank[];
   onSwapCards: (swap: CardSwap) => void;
   onConfirmSwap: () => void;
   onPlayCards: (play: HandPlay) => void;
-  onPickUpPile: () => void;
 };
 
 /**
@@ -43,11 +40,9 @@ export function Hand({
   tableCards,
   isSwapConfirmed,
   isPlayersTurn,
-  playableRanks,
   onSwapCards,
   onConfirmSwap,
   onPlayCards,
-  onPickUpPile,
 }: HandProps) {
   if (gameStage === GameStage.SWAPPING) {
     return (
@@ -71,12 +66,10 @@ export function Hand({
         className={className}
         color={color}
         cards={cards}
-        playableRanks={playableRanks}
         isPlayersTurn={isPlayersTurn}
         onPlayCards={(playedCards) =>
           onPlayCards({ source: 'hand', cards: playedCards })
         }
-        onPickUpPile={onPickUpPile}
       />
     );
   }
@@ -88,7 +81,6 @@ export function Hand({
         color={color}
         tableCards={tableCards}
         playSource={playSource}
-        playableRanks={playableRanks}
         isPlayersTurn={isPlayersTurn}
         onPlayFaceUpCards={(playedCards) =>
           onPlayCards({ source: 'faceUp', cards: playedCards })
