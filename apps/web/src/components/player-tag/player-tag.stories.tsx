@@ -15,7 +15,7 @@ import {
   MAX_NAME_LENGTH,
   type PlayerName,
 } from '~/types/entities';
-import type { PlayerColor } from '~/utils/player-color';
+import { type PlayerColor, playerColorSchema } from '~/utils/player-color';
 
 type PlayerTagStoryProps = {
   name: PlayerName;
@@ -52,6 +52,12 @@ function PlayerTagStory({
 const meta = {
   title: 'Player Tag',
   component: PlayerTagStory,
+  // Storybook can't read the props of a component declared in a stories file
+  argTypes: {
+    color: { control: 'select', options: playerColorSchema.options },
+    cardCount: { control: 'number' },
+    emojiReaction: { control: 'object' },
+  },
   args: {
     name: 'Frank' as PlayerName,
     color: 'cyan',
