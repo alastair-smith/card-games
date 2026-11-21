@@ -1,18 +1,39 @@
-import type { ComponentProps } from 'react';
-import { PlayerTag as BasePlayerTag } from '~/components/player-tag';
+import {
+  PlayerTag as BasePlayerTag,
+  PlayerTagCardCount,
+  type PlayerTagEmojiReaction,
+  PlayerTagName,
+  PlayerTagReaction,
+  PlayerTagUserIcon,
+} from '~/components/player-tag';
+import type { PlayerName } from '~/types/entities';
+import type { PlayerColor } from '~/utils/player-color';
 
-type PlayerTagProps = Omit<
-  ComponentProps<typeof BasePlayerTag>,
-  'children' | 'cardCount'
-> & {
+type PlayerTagProps = {
+  name: PlayerName;
+  color: PlayerColor;
   cardCount: number;
+  isUser: boolean;
+  isPlayersTurn: boolean;
   isYanivCalled: boolean;
+  emojiReaction?: PlayerTagEmojiReaction | undefined;
 };
 
 /** A player's tag, with a sticker once they've called Yaniv. */
-export function PlayerTag({ isYanivCalled, ...tagProps }: PlayerTagProps) {
+export function PlayerTag({
+  name,
+  color,
+  cardCount,
+  isUser,
+  isPlayersTurn,
+  isYanivCalled,
+  emojiReaction,
+}: PlayerTagProps) {
   return (
-    <BasePlayerTag {...tagProps}>
+    <BasePlayerTag color={color} isPlayersTurn={isPlayersTurn}>
+      {isUser && <PlayerTagUserIcon />}
+      <PlayerTagName>{name}</PlayerTagName>
+      <PlayerTagCardCount cardCount={cardCount} />
       {isYanivCalled && (
         <>
           <span
@@ -25,6 +46,7 @@ export function PlayerTag({ isYanivCalled, ...tagProps }: PlayerTagProps) {
           <span className='sr-only'>, has called Yaniv</span>
         </>
       )}
+      <PlayerTagReaction emojiReaction={emojiReaction} />
     </BasePlayerTag>
   );
 }

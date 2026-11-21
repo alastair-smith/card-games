@@ -1,15 +1,26 @@
-import type { ComponentProps } from 'react';
-import { PlayerTag } from '~/components/player-tag';
+import {
+  PlayerTag,
+  PlayerTagCardCount,
+  type PlayerTagEmojiReaction,
+  PlayerTagName,
+  PlayerTagReaction,
+  PlayerTagUserIcon,
+} from '~/components/player-tag';
+import type { PlayerName } from '~/types/entities';
 import type { FinishingPosition, TableCardSlot } from '~/types/games/shithead';
 import { cn } from '~/utils/cn';
+import type { PlayerColor } from '~/utils/player-color';
 import { FINISHING_POSITIONS } from '~/utils/shithead/finishing-positions';
 import { TableCards } from '../table-cards';
 
-type PlayerAreaProps = Omit<
-  ComponentProps<typeof PlayerTag>,
-  'children' | 'cardCount'
-> & {
+type PlayerAreaProps = {
+  className?: string | undefined;
+  name: PlayerName;
+  color: PlayerColor;
   cardCount: number;
+  isUser: boolean;
+  isPlayersTurn: boolean;
+  emojiReaction?: PlayerTagEmojiReaction | undefined;
   tableCards: TableCardSlot[];
   finishingPosition: FinishingPosition | null;
 };
@@ -17,21 +28,25 @@ type PlayerAreaProps = Omit<
 /** A player's tag above their cards on the table, or where they finished. */
 export function PlayerArea({
   className,
+  name,
+  color,
   cardCount,
+  isUser,
+  isPlayersTurn,
+  emojiReaction,
   tableCards,
   finishingPosition,
-  isPlayersTurn,
-  ...tagProps
 }: PlayerAreaProps) {
   const isFinished = finishingPosition !== null;
 
   return (
     <div className={cn('flex w-fit flex-col items-center gap-2', className)}>
-      <PlayerTag
-        {...tagProps}
-        cardCount={isFinished ? null : cardCount}
-        isPlayersTurn={isPlayersTurn}
-      />
+      <PlayerTag color={color} isPlayersTurn={isPlayersTurn}>
+        {isUser && <PlayerTagUserIcon />}
+        <PlayerTagName>{name}</PlayerTagName>
+        <PlayerTagCardCount cardCount={isFinished ? null : cardCount} />
+        <PlayerTagReaction emojiReaction={emojiReaction} />
+      </PlayerTag>
       {isPlayersTurn && <span className='sr-only'>, their turn</span>}
       <div className='relative'>
         <TableCards slots={tableCards} />

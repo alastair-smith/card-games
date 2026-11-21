@@ -1,30 +1,19 @@
-import { CheckIcon, HourglassIcon } from 'lucide-react';
 import {
   hasPlayerActions,
   PlayerActionsMenu,
 } from '~/components/lobby/player-actions-menu';
-import { PlayerTag } from '~/components/player-tag';
+import { ReadyStatus } from '~/components/lobby/ready-status';
+import {
+  PlayerTag,
+  PlayerTagHostIcon,
+  PlayerTagName,
+  PlayerTagUserIcon,
+} from '~/components/player-tag';
 import { PlayerActionsButton } from '~/components/player-tag/player-actions-button';
 import { ButtonGroup } from '~/components/ui/button-group';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import type { UserId } from '~/types/entities';
 import type { Player } from '~/types/game';
-
-function ReadyStatus({ isReady }: { isReady: boolean }) {
-  const Icon = isReady ? CheckIcon : HourglassIcon;
-
-  return (
-    <>
-      <Icon
-        size='1.15em'
-        strokeWidth={isReady ? 3.5 : 2.5}
-        aria-hidden='true'
-        className='shrink-0 text-white icon-outline-black'
-      />
-      <span className='sr-only'>{isReady ? ', ready' : ', not ready'}</span>
-    </>
-  );
-}
 
 export default function LobbyPlayers({
   className,
@@ -62,13 +51,10 @@ export default function LobbyPlayers({
           {players.map((player) => (
             <li key={player.id} className='flex'>
               <ButtonGroup>
-                <PlayerTag
-                  name={player.name}
-                  color={player.color}
-                  isUser={player.isUser}
-                  isHost={player.isHost}
-                  isPlayersTurn={false}
-                >
+                <PlayerTag color={player.color} isPlayersTurn={false}>
+                  {player.isHost && <PlayerTagHostIcon />}
+                  {player.isUser && <PlayerTagUserIcon />}
+                  <PlayerTagName>{player.name}</PlayerTagName>
                   <ReadyStatus isReady={player.isReady} />
                 </PlayerTag>
                 {hasPlayerActions(player, isUserHost) && (
