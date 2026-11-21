@@ -51,7 +51,7 @@ function PlayerTagStory({
 
 const meta = {
   title: 'Player Tag',
-  render: (args) => <PlayerTagStory {...args} />,
+  component: PlayerTagStory,
   args: {
     name: 'Frank' as PlayerName,
     color: 'cyan',
