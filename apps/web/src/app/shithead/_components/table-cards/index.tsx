@@ -51,8 +51,6 @@ export function TableCards({
               selectableSlotIndexes.includes(slotIndex),
             isSelected: selectedSlotIndexes.includes(slotIndex),
             onClick: () => onSlotClick?.(slotIndex),
-            // Cards that can't be chosen dim only while the player is choosing
-            isDimmed: onSlotClick !== undefined,
           };
 
           return (
@@ -89,7 +87,6 @@ function TableCard({
   ariaLabel,
   isSelectable = false,
   isSelected = false,
-  isDimmed = false,
   onClick,
 }: {
   className?: string;
@@ -97,7 +94,6 @@ function TableCard({
   ariaLabel?: string;
   isSelectable?: boolean;
   isSelected?: boolean;
-  isDimmed?: boolean;
   onClick?: () => void;
 }) {
   if (isSelectable) {
@@ -117,11 +113,7 @@ function TableCard({
 
   // The description above reads out the cards that can't be chosen
   return (
-    <div
-      aria-hidden='true'
-      // Darkened rather than faded, so the face-down card doesn't show through
-      className={cn(className, isDimmed && 'brightness-75')}
-    >
+    <div aria-hidden='true' className={className}>
       <PlayingCard card={card} border />
     </div>
   );

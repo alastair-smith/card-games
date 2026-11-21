@@ -49,7 +49,6 @@ export function HandCards({
                 isSameCard(selected, card),
               )}
               isSelectable={onCardClick !== undefined && isCardSelectable(card)}
-              isDimmed={onCardClick !== undefined && !isCardSelectable(card)}
               onClick={() => onCardClick?.(card)}
             />
           ))}
@@ -64,14 +63,12 @@ function HandCard({
   card,
   isSelected,
   isSelectable,
-  isDimmed,
   onClick,
 }: {
   className?: string;
   card: StandardPlayingCard;
   isSelected: boolean;
   isSelectable: boolean;
-  isDimmed: boolean;
   onClick: () => void;
 }) {
   const isMagic = MAGIC_RANKS.some((rank) => rank === card.rank);
@@ -82,8 +79,6 @@ function HandCard({
       <PlayingCard
         card={card}
         border
-        // Darkened rather than faded, so the cards it overlaps don't show through
-        className={cn(isDimmed && 'brightness-75')}
         ariaLabel={
           isMagic ? `${cardAriaLabel(card)}, magic card` : cardAriaLabel(card)
         }
@@ -97,7 +92,6 @@ function HandCard({
           className={cn(
             'pointer-events-none absolute top-[0.22em] right-[0.22em] size-[0.8em]',
             suitColorClass[card.suit],
-            isDimmed && 'brightness-75',
           )}
         />
       )}
