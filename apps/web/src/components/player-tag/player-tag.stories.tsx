@@ -52,7 +52,7 @@ function PlayerTagStory({
 const meta = {
   title: 'Player Tag',
   component: PlayerTagStory,
-  // Storybook can't read the props of a component declared in a stories file
+  // Storybook doesn't infer these from PlayerTagStory's props
   argTypes: {
     color: { control: 'select', options: playerColorSchema.options },
     cardCount: { control: 'number' },
