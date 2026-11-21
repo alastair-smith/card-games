@@ -7,6 +7,7 @@ import {
   DiamondIcon,
   HeartIcon,
   type Icon,
+  type LucideIcon,
   ScanFaceIcon,
   SpadeIcon,
   SwordsIcon,
@@ -63,6 +64,7 @@ export function PlayingCard({
   border,
   ariaLabel,
   isPressed,
+  cornerIcon,
 }: {
   card: PlayingCardValue | null;
   className?: string | undefined;
@@ -75,6 +77,8 @@ export function PlayingCard({
   ariaLabel?: string | undefined;
   /** Makes a clickable card a toggle button, such as one picked to play */
   isPressed?: boolean | undefined;
+  /** Sits in the top corner beside the rank and suit, such as a game's mark for a special card */
+  cornerIcon?: LucideIcon | undefined;
 }) {
   const highlightedClass = highlighted
     ? 'bg-highlighted-playing-card-background'
@@ -86,6 +90,7 @@ export function PlayingCard({
         <PlayingCardFace
           card={card}
           design={design}
+          cornerIcon={cornerIcon}
           className={cn(highlightedClass, border ? BORDER : '', cardClassName)}
         />
       </FlippableFront>
@@ -144,10 +149,12 @@ function PlayingCardFace({
   className,
   card,
   design,
+  cornerIcon,
 }: {
   className?: string;
   card: PlayingCardValue | null;
   design: 'default' | 'simple' | undefined;
+  cornerIcon: LucideIcon | undefined;
 }) {
   if (!card)
     return (
@@ -177,6 +184,12 @@ function PlayingCardFace({
           createElement(suitSymbol[card.suit], {
             fill: 'currentColor',
             size: '0.8em',
+          })}
+        {cornerIcon &&
+          createElement(cornerIcon, {
+            'aria-hidden': true,
+            size: '0.8em',
+            className: 'ml-auto',
           })}
       </div>
 

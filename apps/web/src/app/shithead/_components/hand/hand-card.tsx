@@ -6,9 +6,8 @@ import {
   Trash2Icon,
 } from 'lucide-react';
 import { PlayingCard } from '~/components/ui/playing-card';
-import { Rank, type StandardPlayingCard, suitColorClass } from '~/types/cards';
+import { Rank, type StandardPlayingCard } from '~/types/cards';
 import { cardAriaLabel } from '~/utils/cards';
-import { cn } from '~/utils/cn';
 
 // Each magic card's symbol shows what it does
 const MAGIC_CARD_ICON: Partial<Record<Rank, LucideIcon>> = {
@@ -34,29 +33,20 @@ export function HandCard({
   isSelectable,
   onClick,
 }: HandCardProps) {
-  const MagicIcon = MAGIC_CARD_ICON[card.rank];
+  const magicIcon = MAGIC_CARD_ICON[card.rank];
 
   return (
-    <div className={cn('relative flex', className)}>
-      <PlayingCard
-        card={card}
-        border
-        ariaLabel={
-          MagicIcon ? `${cardAriaLabel(card)}, magic card` : cardAriaLabel(card)
-        }
-        highlighted={isSelected}
-        isPressed={isSelectable ? isSelected : undefined}
-        onClick={isSelectable ? onClick : undefined}
-      />
-      {MagicIcon && (
-        <MagicIcon
-          aria-hidden='true'
-          className={cn(
-            'pointer-events-none absolute top-[0.22em] right-[0.22em] size-[0.8em]',
-            suitColorClass[card.suit],
-          )}
-        />
-      )}
-    </div>
+    <PlayingCard
+      className={className}
+      card={card}
+      border
+      cornerIcon={magicIcon}
+      ariaLabel={
+        magicIcon ? `${cardAriaLabel(card)}, magic card` : cardAriaLabel(card)
+      }
+      highlighted={isSelected}
+      isPressed={isSelectable ? isSelected : undefined}
+      onClick={isSelectable ? onClick : undefined}
+    />
   );
 }

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
@@ -62,6 +63,15 @@ export const FaceDown: Story = { args: { card: null } };
 export const Selected: Story = { args: { selected: true } };
 
 export const Highlighted: Story = { args: { highlighted: true } };
+
+/** A 10, the widest rank, with an icon beside its rank and suit. */
+export const CornerIcon: Story = {
+  args: {
+    card: { suit: Suit.DIAMONDS, rank: Rank.TEN },
+    cornerIcon: Trash2Icon,
+  },
+  argTypes: { cornerIcon: { control: false } },
+};
 
 export const Overview: Story = {
   parameters: { controls: { disable: true } },
