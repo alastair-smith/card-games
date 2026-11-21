@@ -3,6 +3,7 @@ import { ReadyStatus } from '~/components/lobby/ready-status';
 import {
   PlayerTag,
   PlayerTagCardCount,
+  type PlayerTagEmojiReaction,
   PlayerTagHostIcon,
   PlayerTagName,
   PlayerTagReaction,
@@ -25,7 +26,7 @@ type PlayerTagStoryProps = {
   isHost: boolean;
   isPlayersTurn: boolean;
   isReady?: boolean;
-  emojiReaction?: { emoji: string; id: EmojiReactionId };
+  emojiReaction?: PlayerTagEmojiReaction;
 };
 
 function PlayerTagStory({
@@ -43,9 +44,9 @@ function PlayerTagStory({
       {isHost && <PlayerTagHostIcon />}
       {isUser && <PlayerTagUserIcon />}
       <PlayerTagName>{name}</PlayerTagName>
-      {cardCount !== undefined && <PlayerTagCardCount count={cardCount} />}
+      {cardCount !== undefined && <PlayerTagCardCount cardCount={cardCount} />}
       {isReady !== undefined && <ReadyStatus isReady={isReady} />}
-      <PlayerTagReaction reaction={emojiReaction} />
+      <PlayerTagReaction emojiReaction={emojiReaction} />
     </PlayerTag>
   );
 }

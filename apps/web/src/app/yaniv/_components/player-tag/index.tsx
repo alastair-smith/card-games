@@ -1,11 +1,12 @@
 import {
   PlayerTag as BasePlayerTag,
   PlayerTagCardCount,
+  type PlayerTagEmojiReaction,
   PlayerTagName,
   PlayerTagReaction,
   PlayerTagUserIcon,
 } from '~/components/player-tag';
-import type { EmojiReactionId, PlayerName } from '~/types/entities';
+import type { PlayerName } from '~/types/entities';
 import type { PlayerColor } from '~/utils/player-color';
 
 type PlayerTagProps = {
@@ -15,7 +16,7 @@ type PlayerTagProps = {
   isUser: boolean;
   isPlayersTurn: boolean;
   isYanivCalled: boolean;
-  emojiReaction?: { emoji: string; id: EmojiReactionId } | undefined;
+  emojiReaction?: PlayerTagEmojiReaction | undefined;
 };
 
 /** A player's tag, with a sticker once they've called Yaniv. */
@@ -32,7 +33,7 @@ export function PlayerTag({
     <BasePlayerTag color={color} isPlayersTurn={isPlayersTurn}>
       {isUser && <PlayerTagUserIcon />}
       <PlayerTagName>{name}</PlayerTagName>
-      <PlayerTagCardCount count={cardCount} />
+      <PlayerTagCardCount cardCount={cardCount} />
       {isYanivCalled && (
         <>
           <span
@@ -45,7 +46,7 @@ export function PlayerTag({
           <span className='sr-only'>, has called Yaniv</span>
         </>
       )}
-      <PlayerTagReaction reaction={emojiReaction} />
+      <PlayerTagReaction emojiReaction={emojiReaction} />
     </BasePlayerTag>
   );
 }

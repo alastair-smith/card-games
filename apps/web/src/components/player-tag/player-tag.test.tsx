@@ -32,7 +32,7 @@ describe('PlayerTag', () => {
     test('says how many cards the player holds', () => {
       render(
         <PlayerTag color='cyan' isPlayersTurn={false}>
-          <PlayerTagCardCount count={5} />
+          <PlayerTagCardCount cardCount={5} />
         </PlayerTag>,
       );
       expect(screen.getByText(', 5 cards')).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe('PlayerTag', () => {
     test('says nothing about cards while the count is hidden', () => {
       render(
         <PlayerTag color='cyan' isPlayersTurn={false}>
-          <PlayerTagCardCount count={null} />
+          <PlayerTagCardCount cardCount={null} />
         </PlayerTag>,
       );
       expect(screen.queryByText(/cards$/)).not.toBeInTheDocument();
@@ -53,7 +53,10 @@ describe('PlayerTag', () => {
       render(
         <PlayerTag color='cyan' isPlayersTurn={false}>
           <PlayerTagReaction
-            reaction={{ emoji: '🎉', id: 'reaction-1' as EmojiReactionId }}
+            emojiReaction={{
+              emoji: '🎉',
+              id: 'reaction-1' as EmojiReactionId,
+            }}
           />
         </PlayerTag>,
       );

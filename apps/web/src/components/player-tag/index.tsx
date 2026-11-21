@@ -89,38 +89,46 @@ export function PlayerTagName({ children }: { children: ReactNode }) {
 }
 
 /** `null` keeps the card's space while the count is hidden. */
-export function PlayerTagCardCount({ count }: { count: number | null }) {
+export function PlayerTagCardCount({
+  cardCount,
+}: {
+  cardCount: number | null;
+}) {
   return (
     <>
       <MiniCard
         aria-hidden='true'
         // Still takes up space, so the tag keeps its size without a count
-        className={cn(count === null && 'invisible')}
+        className={cn(cardCount === null && 'invisible')}
       >
-        {count}
+        {cardCount}
       </MiniCard>
-      {count !== null && <span className='sr-only'>, {count} cards</span>}
+      {cardCount !== null && (
+        <span className='sr-only'>, {cardCount} cards</span>
+      )}
     </>
   );
 }
 
+export type PlayerTagEmojiReaction = { emoji: string; id: EmojiReactionId };
+
 export function PlayerTagReaction({
-  reaction,
+  emojiReaction,
 }: {
-  reaction: { emoji: string; id: EmojiReactionId } | undefined;
+  emojiReaction: PlayerTagEmojiReaction | undefined;
 }) {
-  if (!reaction) {
+  if (!emojiReaction) {
     return null;
   }
 
   return (
     <span
       // A new key per reaction remounts it, restarting the animation
-      key={reaction.id}
+      key={emojiReaction.id}
       aria-hidden='true'
       className='pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-3xl animate-reaction-emoji'
     >
-      {reaction.emoji}
+      {emojiReaction.emoji}
     </span>
   );
 }

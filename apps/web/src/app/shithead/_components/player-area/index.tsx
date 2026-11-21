@@ -1,11 +1,12 @@
 import {
   PlayerTag,
   PlayerTagCardCount,
+  type PlayerTagEmojiReaction,
   PlayerTagName,
   PlayerTagReaction,
   PlayerTagUserIcon,
 } from '~/components/player-tag';
-import type { EmojiReactionId, PlayerName } from '~/types/entities';
+import type { PlayerName } from '~/types/entities';
 import type { FinishingPosition, TableCardSlot } from '~/types/games/shithead';
 import { cn } from '~/utils/cn';
 import type { PlayerColor } from '~/utils/player-color';
@@ -19,7 +20,7 @@ type PlayerAreaProps = {
   cardCount: number;
   isUser: boolean;
   isPlayersTurn: boolean;
-  emojiReaction?: { emoji: string; id: EmojiReactionId } | undefined;
+  emojiReaction?: PlayerTagEmojiReaction | undefined;
   tableCards: TableCardSlot[];
   finishingPosition: FinishingPosition | null;
 };
@@ -43,8 +44,8 @@ export function PlayerArea({
       <PlayerTag color={color} isPlayersTurn={isPlayersTurn}>
         {isUser && <PlayerTagUserIcon />}
         <PlayerTagName>{name}</PlayerTagName>
-        <PlayerTagCardCount count={isFinished ? null : cardCount} />
-        <PlayerTagReaction reaction={emojiReaction} />
+        <PlayerTagCardCount cardCount={isFinished ? null : cardCount} />
+        <PlayerTagReaction emojiReaction={emojiReaction} />
       </PlayerTag>
       {isPlayersTurn && <span className='sr-only'>, their turn</span>}
       <div className='relative'>
