@@ -33,6 +33,10 @@ suggest the tool that should have been used, such as the `check-urls` skill
 for our own sites or web fetch for third-party docs, or a new script or
 narrow allow rule if neither fits.
 
+Claude Code already runs `grep` and `git grep` without a prompt as read-only
+commands, so a prompt for one comes from how it was written, such as nested
+quotes. Don't propose an allow rule or script for them.
+
 Then read the watch list, the patterns earlier retros chose to watch, and
 check whether each happened again this session:
 

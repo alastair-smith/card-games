@@ -1,66 +1,6 @@
 {
   "patterns": [
     {
-      "id": 20,
-      "pattern": "Existing memory \"several topics: list with summaries, detail one at a time\" not followed: detailing every review finding in one reply",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 21,
-      "pattern": "A markdown list numbered out of order, e.g. a reviewer's 1, 3, 4, 5, rendered as 1, 2, 3, 4 so the numbers no longer matched the findings",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 22,
-      "pattern": "Existing memory \"check the library's docs before building bespoke machinery\" not followed: extending `useWaitForServerValue` before checking TanStack Query's own pattern of writing mutation results into the query cache",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 23,
-      "pattern": "Existing `CLAUDE.md` rule not followed: running a whole long E2E game, e.g. the Winner Chooses project, to check a step at its start, rather than stopping once past it",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
-      "id": 24,
-      "pattern": "A game's docs given a section for a new option but no overview of the options around it, e.g. a Dealer section without a breakdown of all the Yaniv settings",
-      "sightings": [
-        {
-          "date": "2026-11-08",
-          "session": "7f13715d-599b-49d0-9135-da31b42da054",
-          "pr": 415
-        }
-      ],
-      "retrosWithout": 10
-    },
-    {
       "id": 26,
       "pattern": "An implementation detail written into a game's rules doc, e.g. which emoji reaction replaces another, when it only matters for building the game",
       "sightings": [
@@ -480,8 +420,8 @@
       "prs": [501],
       "result": {
         "pointsRaised": 2,
-        "retroOfRetroPoints": 0,
-        "changesMade": "1 skill and allowlisted script (`review-dependency-pr`); git prompts left on the watch list (#49)",
+        "retroOfRetroPoints": 1,
+        "changesMade": "1 skill and allowlisted script (`review-dependency-pr`); git prompts left on the watch list (#49); from the retro of the retro, 1 note in `run-retro` step 1 (`grep` and `git grep` already run without a prompt, so no allow rule or script for them); patterns #20 to #24 dropped after 10 retros",
         "fixPr": 505
       }
     }
