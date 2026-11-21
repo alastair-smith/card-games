@@ -7,30 +7,39 @@ import {
 } from '../../lib/script-helpers.ts';
 import {
   getStoryUrl,
+  HOSTED_STORYBOOK_ORIGIN,
   NAMED_SIZES,
+  parseStoryArgs,
   SIZES,
   type Size,
   waitForStoryToSettle,
 } from './story-page.ts';
 
 const usage =
-  'Usage: measure-stories.ts --story <story id> [--story <story id> ...] [--selector <css selector>] [--size <name or WxH> ...]';
+  'Usage: measure-stories.ts --story <story id> [--story <story id> ...] [--selector <css selector>] [--size <name or WxH> ...] [--live] [--args <name:value;…>]';
 
 const {
   story: stories = [],
   selector,
   size: sizeArguments = [],
+  live: isLive = false,
+  args,
 } = parseArguments(usage, {
   options: {
     story: { type: 'string', multiple: true },
     selector: { type: 'string' },
     size: { type: 'string', multiple: true },
+    live: { type: 'boolean' },
+    args: { type: 'string' },
   },
 }).values;
 
 if (stories.length === 0 || selector === '') {
   exitWithUsage(usage);
 }
+
+const storyArgs = parseStoryArgs(args);
+const origin = isLive ? HOSTED_STORYBOOK_ORIGIN : undefined;
 
 const CUSTOM_SIZE = /^(\d{3,4})x(\d{3,4})$/;
 
@@ -69,10 +78,15 @@ const formatBox = (box: Box) =>
   BOX_SIDES.map((side) => `${side}=${box[side]}`).join(' ');
 
 async function loadStory(page: Page, story: string) {
+  const url = getStoryUrl(story, origin, storyArgs);
   try {
-    await page.goto(getStoryUrl(story).href, { waitUntil: 'load' });
+    await page.goto(url.href, { waitUntil: 'load' });
   } catch {
-    exitWithError("Couldn't load Storybook. Is it running on port 6006?");
+    exitWithError(
+      isLive
+        ? `Couldn't load ${url.href}, main's hosted stories.`
+        : "Couldn't load Storybook. Is it running on port 6006?",
+    );
   }
   await waitForStoryToSettle(page, story);
 }

@@ -34,8 +34,25 @@ const STORYBOOK_ORIGIN = 'http://localhost:6006';
 // main's stories, deployed on each merge
 export const HOSTED_STORYBOOK_ORIGIN = 'https://stories.playcards.games';
 const STORY_ID = /^[a-z0-9-]+--[a-z0-9-]+$/;
+// Storybook's URL args: name:value pairs split by ;, where a value is plain
+// text or a special value such as !true. Storybook ignores other characters
+const STORY_ARG = /^[A-Za-z][\w.]*:(?:![a-z]+|[\w -]*)$/;
 
-export function getStoryUrl(story: string, origin = STORYBOOK_ORIGIN): URL {
+export function parseStoryArgs(args: string | undefined): string | undefined {
+  if (args === undefined) return undefined;
+  if (!args.split(';').every((arg) => STORY_ARG.test(arg))) {
+    exitWithError(
+      `--args must be name:value pairs split by ;, such as 'name:Alastair;isUser:!true', with values of letters, digits, spaces, _ and -. Not '${args}'.`,
+    );
+  }
+  return args;
+}
+
+export function getStoryUrl(
+  story: string,
+  origin = STORYBOOK_ORIGIN,
+  args?: string,
+): URL {
   if (!STORY_ID.test(story)) {
     exitWithError(
       `--story must be a Storybook story ID such as 'yaniv-scorecard--start', not '${story}'.`,
@@ -44,6 +61,7 @@ export function getStoryUrl(story: string, origin = STORYBOOK_ORIGIN): URL {
   const url = new URL('/iframe.html', origin);
   url.searchParams.set('id', story);
   url.searchParams.set('viewMode', 'story');
+  if (args) url.searchParams.set('args', args);
   return url;
 }
 

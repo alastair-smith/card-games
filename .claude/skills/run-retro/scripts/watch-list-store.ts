@@ -13,7 +13,17 @@ export const WATCH_LIST_PATH = fileURLToPath(
 );
 
 /** Retros without a pattern after which a retro proposes dropping it */
-export const RETROS_BEFORE_DROPPING = 10;
+export const RETROS_BEFORE_DROPPING = 30;
+
+/** The same, counting only retros whose work touched one of its labels */
+export const LABELLED_RETROS_BEFORE_DROPPING = 5;
+
+export const labelSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+  .brand<'WatchLabel'>();
+
+export type WatchLabel = z.infer<typeof labelSchema>;
 
 export const sessionIdSchema = z
   .string()
@@ -37,8 +47,10 @@ const sightingSchema = z.object({
 const patternSchema = z.object({
   id: z.number().int().positive(),
   pattern: z.string().min(1),
+  labels: z.array(labelSchema).min(1),
   sightings: z.array(sightingSchema).min(1),
   retrosWithout: z.number().int().nonnegative(),
+  retrosWithoutInLabels: z.number().int().nonnegative(),
 });
 
 export type WatchedPattern = z.infer<typeof patternSchema>;
@@ -55,6 +67,8 @@ const retroSchema = z.object({
   date: dateSchema,
   sessions: z.array(sessionIdSchema).min(1),
   prs: z.array(prNumberSchema),
+  // What the sessions' work touched. Left out of retros from before labels
+  labels: z.array(labelSchema).optional(),
   result: retroResultSchema.optional(),
 });
 
@@ -89,6 +103,32 @@ export function parsePrNumber(value: string, option: string): number {
     exitWithError(`${option} must be a PR number such as 400, not '${value}'.`);
   }
   return parsed.data;
+}
+
+export function getLabelsInUse(watchList: WatchList): WatchLabel[] {
+  return [
+    ...new Set(watchList.patterns.flatMap((pattern) => pattern.labels)),
+  ].sort();
+}
+
+export function parseLabels(
+  watchList: WatchList,
+  values: string[],
+): WatchLabel[] {
+  if (values.length === 0) {
+    exitWithError(
+      `Pass --label at least once, such as --label ui. Labels in use: ${getLabelsInUse(watchList).join(', ')}.`,
+    );
+  }
+  return values.map((value) => {
+    const parsed = labelSchema.safeParse(value);
+    if (!parsed.success) {
+      exitWithError(
+        `--label must be lowercase kebab-case, such as 'ui' or 'pr-description', not '${value}'.`,
+      );
+    }
+    return parsed.data;
+  });
 }
 
 export function findRetro(

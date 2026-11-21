@@ -3,6 +3,7 @@
     {
       "id": 26,
       "pattern": "An implementation detail written into a game's rules doc, e.g. which emoji reaction replaces another, when it only matters for building the game",
+      "labels": ["docs"],
       "sightings": [
         {
           "date": "2026-11-08",
@@ -10,11 +11,13 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 9
+      "retrosWithout": 10,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 27,
       "pattern": "Separate rules merged into one sentence of a doc, e.g. a dealt card's magic and its four-in-a-row effect in Setup, rather than each going in the section it belongs to",
+      "labels": ["docs"],
       "sightings": [
         {
           "date": "2026-11-08",
@@ -22,11 +25,13 @@
           "pr": 441
         }
       ],
-      "retrosWithout": 9
+      "retrosWithout": 10,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 32,
       "pattern": "Existing `run-retro` step 4 \"find what actually went wrong\" not followed: drafting a rule around where the work came from (a PR's review) rather than why it belonged in the PR (the PR's own change made it necessary)",
+      "labels": ["retro"],
       "sightings": [
         {
           "date": "2026-11-11",
@@ -34,11 +39,13 @@
           "pr": 468
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 33,
       "pattern": "Code that doesn't read the way the rule is applied by hand, so it's harder to follow than it needs to be, e.g. `getVisibleDiscardCards` should look at the top cards first and only read further down the pile when they call for it",
+      "labels": ["code"],
       "sightings": [
         {
           "date": "2026-11-11",
@@ -46,11 +53,13 @@
           "pr": 449
         }
       ],
-      "retrosWithout": 7
+      "retrosWithout": 8,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 35,
       "pattern": "Existing `CLAUDE.md` rule \"explain how only in code that is rarely touched but important\" not followed: a store's doc comment describing its Redis calls, e.g. `drainDiscard` \"fetches and clears the rest in one batch\", rather than what it does for the caller",
+      "labels": ["code", "comments"],
       "sightings": [
         {
           "date": "2026-11-12",
@@ -58,11 +67,13 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 36,
       "pattern": "Part of an issue's scope named only in its title left undone, e.g. #462 \"Expire and clean up discard piles\" fixed only the expiry until the user asked about existing entries",
+      "labels": ["scope"],
       "sightings": [
         {
           "date": "2026-11-12",
@@ -70,11 +81,13 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 37,
       "pattern": "An allowlisted skill script prompting as \"too complex\" because its heredoc body contains a shell snippet with nested quotes or `$` variables, e.g. `update-pr.ts` with an `awk '{ print … $1 … }'` command in the PR description",
+      "labels": ["tooling", "permissions"],
       "sightings": [
         {
           "date": "2026-11-12",
@@ -82,11 +95,13 @@
           "pr": 474
         }
       ],
-      "retrosWithout": 6
+      "retrosWithout": 7,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 38,
       "pattern": "Existing `CLAUDE.md` rule \"look for layout shift between states\" not followed: a control moving when a sibling's text changes between states, e.g. the Ready switch shifting as the Start button's label changed width",
+      "labels": ["ui", "layout"],
       "sightings": [
         {
           "date": "2026-11-13",
@@ -94,11 +109,13 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 40,
       "pattern": "A view showing the player's unsaved edits where the server's values would confirm the change went through, e.g. your own lobby tag following the name and colour inputs rather than the saved player",
+      "labels": ["ui"],
       "sightings": [
         {
           "date": "2026-11-13",
@@ -106,11 +123,13 @@
           "pr": 479
         }
       ],
-      "retrosWithout": 5
+      "retrosWithout": 6,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 41,
       "pattern": "Existing `CLAUDE.md` rule on reduced motion not followed: reusing a shared component whose motion ignores `prefers-reduced-motion`, e.g. `CelebrationRain`, and leaving it because the player starts it, until a review raised it",
+      "labels": ["ui", "accessibility"],
       "sightings": [
         {
           "date": "2026-11-14",
@@ -118,11 +137,13 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 42,
       "pattern": "A visible heading added over content whose meaning is already clear, e.g. \"Finishing order\" above a list of 1st, 2nd and 3rd, which the user first called bland and then removed",
+      "labels": ["ui"],
       "sightings": [
         {
           "date": "2026-11-14",
@@ -130,11 +151,13 @@
           "pr": 489
         }
       ],
-      "retrosWithout": 3
+      "retrosWithout": 4,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 43,
       "pattern": "Existing `run-retro` step 4 \"offer a change of setup that removes the step\" not followed: proposing a script to wait for a PR's Storybook preview without first checking whether its URL could be built from the PR number, so no wait was needed",
+      "labels": ["retro", "tooling"],
       "sightings": [
         {
           "date": "2026-11-14",
@@ -147,11 +170,13 @@
           "pr": 500
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 44,
       "pattern": "Screenshots of a diagram change in a PR description that are overwhelming and make it hard to see what changed, e.g. the whole Lobby docs page for three relabelled boxes in the join-game diagram, until the user asked for them to be cropped and the change outlined",
+      "labels": ["pr-description", "docs"],
       "sightings": [
         {
           "date": "2026-11-14",
@@ -159,11 +184,13 @@
           "pr": 492
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 45,
       "pattern": "Docs or diagrams for a flow every game shares named for particular games, e.g. \"/yaniv/<code> or /shithead/<code>\" in the join-game diagram, rather than generically as \"/<game>/<code>\"",
+      "labels": ["docs"],
       "sightings": [
         {
           "date": "2026-11-14",
@@ -171,11 +198,13 @@
           "pr": 492
         }
       ],
-      "retrosWithout": 2
+      "retrosWithout": 3,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 46,
       "pattern": "Shortening content the player needs to read so a layout fits, e.g. truncating player names with an ellipsis, which the user ruled out, rather than letting the layout make room, such as wrapping the card count below the name",
+      "labels": ["ui", "layout"],
       "sightings": [
         {
           "date": "2026-11-20",
@@ -183,11 +212,13 @@
           "pr": 496
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 47,
       "pattern": "Existing `CLAUDE.md` rule \"keep a comment to the reason in a few words\" not followed: a four-line comment working through a width's arithmetic, e.g. the discard pile's min-width, which the user cut to \"Room for 7 cards\"",
+      "labels": ["comments"],
       "sightings": [
         {
           "date": "2026-11-20",
@@ -195,11 +226,13 @@
           "pr": 496
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2,
+      "retrosWithoutInLabels": 0
     },
     {
       "id": 48,
       "pattern": "Existing `CLAUDE.md` worst-case rule not followed: tightening a shared layout without checking its widest content, e.g. the card stack's overlap without a 10 or a Queen, whose corner suit then sat under the next card, until the user asked",
+      "labels": ["ui", "layout"],
       "sightings": [
         {
           "date": "2026-11-20",
@@ -207,11 +240,13 @@
           "pr": 496
         }
       ],
-      "retrosWithout": 1
+      "retrosWithout": 2,
+      "retrosWithoutInLabels": 1
     },
     {
       "id": 49,
       "pattern": "Approval prompts for read-only or rename git commands that aren't allowlisted, e.g. `git grep` (2) and `git mv` (2)",
+      "labels": ["tooling", "permissions"],
       "sightings": [
         {
           "date": "2026-11-20",
@@ -224,7 +259,22 @@
           "pr": 501
         }
       ],
-      "retrosWithout": 0
+      "retrosWithout": 1,
+      "retrosWithoutInLabels": 0
+    },
+    {
+      "id": 50,
+      "pattern": "How Storybook would behave stated without opening it, e.g. a PR description saying a story's controls were inferred from its props, when the docs page showed no control for `emojiReaction` until the user noticed",
+      "labels": ["stories", "pr-description"],
+      "sightings": [
+        {
+          "date": "2026-11-21",
+          "session": "3b976dd0-268e-4813-bb7d-0a386518b230",
+          "pr": 509
+        }
+      ],
+      "retrosWithout": 0,
+      "retrosWithoutInLabels": 0
     }
   ],
   "retros": [
@@ -424,6 +474,12 @@
         "changesMade": "1 skill and allowlisted script (`review-dependency-pr`); git prompts left on the watch list (#49); from the retro of the retro, 1 note in `run-retro` step 1 (`grep` and `git grep` already run without a prompt, so no allow rule or script for them); patterns #20 to #24 dropped after 10 retros",
         "fixPr": 505
       }
+    },
+    {
+      "date": "2026-11-21",
+      "sessions": ["3b976dd0-268e-4813-bb7d-0a386518b230"],
+      "prs": [509],
+      "labels": ["ui", "layout", "stories", "accessibility"]
     }
   ]
 }
