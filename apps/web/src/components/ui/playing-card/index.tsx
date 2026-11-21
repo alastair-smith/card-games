@@ -62,6 +62,7 @@ export function PlayingCard({
   design,
   border,
   ariaLabel,
+  isPressed,
 }: {
   card: PlayingCardValue | null;
   className?: string | undefined;
@@ -72,6 +73,8 @@ export function PlayingCard({
   design?: 'default' | 'simple' | undefined;
   border?: boolean | undefined;
   ariaLabel?: string | undefined;
+  /** Makes a clickable card a toggle button, such as one picked to play */
+  isPressed?: boolean | undefined;
 }) {
   const highlightedClass = highlighted
     ? 'bg-highlighted-playing-card-background'
@@ -113,6 +116,7 @@ export function PlayingCard({
         type='button'
         onClick={onClick}
         aria-label={resolvedAriaLabel}
+        aria-pressed={isPressed}
         {...dataAttributes}
         className={cn(
           sharedClassName,

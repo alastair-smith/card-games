@@ -1,10 +1,17 @@
 import { z } from 'zod';
-import { standardPlayingCardSchema } from '~/types/cards';
+import { Rank, standardPlayingCardSchema } from '~/types/cards';
 import { playerNameSchema, userIdSchema } from '~/types/entities';
 import { playerColorSchema } from '~/utils/player-color';
 
 export const MIN_PLAYERS = 2;
 export const MAX_PLAYERS = 5;
+
+export const MAGIC_RANKS = [
+  Rank.TWO,
+  Rank.FIVE,
+  Rank.SEVEN,
+  Rank.TEN,
+] as const satisfies Rank[];
 
 export enum GameStage {
   LOBBY = 'LOBBY',

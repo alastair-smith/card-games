@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { fn } from 'storybook/test';
 import { buildTableCards } from '~/test-utils/shithead';
 import { TableCards } from '.';
 
@@ -35,6 +36,15 @@ export const OneFaceDownCardLeft: Story = {
       { faceUpCard: null, hasFaceDownCard: true },
       { faceUpCard: null, hasFaceDownCard: false },
     ],
+  },
+};
+
+/** The player's own cards, with the King chosen and the 7 not allowed. */
+export const Choosing: Story = {
+  args: {
+    selectableSlotIndexes: [1, 2],
+    selectedSlotIndexes: [1],
+    onSlotClick: fn(),
   },
 };
 

@@ -47,8 +47,9 @@ If the discard pile is empty, any card can be played.
 
 From lowest to highest: 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
 
-The hand sorts by this order. Magic cards stay in their usual positions, with a
-symbol or colour to mark them out.
+The hand sorts by this order, then by suit, with each rank's cards in a column
+overlapping so each card's corner shows. Magic cards stay in their usual
+positions, marked with a wand symbol.
 
 ### Drawing
 
