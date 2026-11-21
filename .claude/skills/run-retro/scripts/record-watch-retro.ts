@@ -6,6 +6,7 @@ import {
 } from '../../lib/script-helpers.ts';
 import {
   findRetro,
+  parseLabels,
   parsePatternId,
   parsePrNumber,
   parseSessionId,
@@ -16,19 +17,21 @@ import {
 } from './watch-list-store.ts';
 
 const usage =
-  'Usage: record-watch-retro.ts --session <session id> [--session …] [--pr <number> …] [--seen <pattern id>[:<pr number>][@<session id>] …] [--retro-of-retro]';
+  'Usage: record-watch-retro.ts --session <session id> [--session …] [--pr <number> …] --label <label> [--label …] [--seen <pattern id>[:<pr number>][@<session id>] …] [--retro-of-retro]';
 
 const SEEN = /^([^:@]+)(?::([^:@]+))?(?:@([^:@]+))?$/;
 
 const {
   session: sessions = [],
   pr: prs = [],
+  label: labelValues = [],
   seen: seenValues = [],
   'retro-of-retro': isRetroOfRetro = false,
 } = parseArguments(usage, {
   options: {
     session: { type: 'string', multiple: true },
     pr: { type: 'string', multiple: true },
+    label: { type: 'string', multiple: true },
     seen: { type: 'string', multiple: true },
     'retro-of-retro': { type: 'boolean' },
   },
@@ -58,11 +61,12 @@ if (!isRetroOfRetro) {
     }
   }
 }
-if (isRetroOfRetro && prNumbers.length) {
+if (isRetroOfRetro && (prNumbers.length || labelValues.length)) {
   exitWithError(
-    "--pr only applies to the retro's first record, not --retro-of-retro.",
+    "--pr and --label only apply to the retro's first record, not --retro-of-retro.",
   );
 }
+const labels = isRetroOfRetro ? [] : parseLabels(watchList, labelValues);
 
 const sightings = seenValues.map((value) => {
   const match = SEEN.exec(value);
@@ -114,6 +118,7 @@ for (const sighting of sightings) {
     ...(sighting.pr && { pr: sighting.pr }),
   });
   sighting.pattern.retrosWithout = 0;
+  sighting.pattern.retrosWithoutInLabels = 0;
 }
 
 // The first record already counted this retro for every other pattern
@@ -122,8 +127,14 @@ const bumpedPatterns = isRetroOfRetro
   : watchList.patterns.filter(
       (pattern) => !seenPatterns.has(pattern) && !isAddedThisRetro(pattern),
     );
+const labelledPatterns = bumpedPatterns.filter((pattern) =>
+  pattern.labels.some((label) => labels.includes(label)),
+);
 for (const pattern of bumpedPatterns) {
   pattern.retrosWithout += 1;
+}
+for (const pattern of labelledPatterns) {
+  pattern.retrosWithoutInLabels += 1;
 }
 
 if (!isRetroOfRetro) {
@@ -131,6 +142,7 @@ if (!isRetroOfRetro) {
     date: today(),
     sessions: sessionIds,
     prs: prNumbers,
+    labels,
   });
 }
 
@@ -144,5 +156,5 @@ for (const pattern of seenPatterns) {
 console.log(
   isRetroOfRetro
     ? "Recorded the retro of the retro's sightings."
-    : `Added a retro without it to ${bumpedPatterns.length} patterns, and started the retro's log entry. Finish it with log-retro.ts.`,
+    : `Added a retro without it to ${bumpedPatterns.length} patterns, ${labelledPatterns.length} of them sharing a label with this retro, and started the retro's log entry. Finish it with log-retro.ts.`,
 );

@@ -13,12 +13,13 @@ import {
   getStoryUrl,
   HOSTED_STORYBOOK_ORIGIN,
   LAYOUT_SETTLED_SCRIPT,
+  parseStoryArgs,
   SIZES,
   waitForStoryToSettle,
 } from './story-page.ts';
 
 const usage =
-  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] [--live] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
+  'Usage: take-screenshots.ts (--path <path> | --docs <path> | --story <story id> [--dialog] [--live] [--args <name:value;…>] | --storybook-docs <docs id>) --name <name> [--full-page | --scroll-to-bottom] [--theme <light|dark>]';
 
 const DEV_SERVER_ORIGIN = 'http://localhost:3000';
 const DOCS_ORIGIN = 'http://localhost:5173';
@@ -36,6 +37,7 @@ const {
   theme = 'light',
   dialog: isDialog = false,
   live: isLive = false,
+  args,
 } = parseArguments(usage, {
   options: {
     path: { type: 'string' },
@@ -48,6 +50,7 @@ const {
     theme: { type: 'string' },
     dialog: { type: 'boolean' },
     live: { type: 'boolean' },
+    args: { type: 'string' },
   },
 }).values;
 
@@ -93,11 +96,17 @@ if (isLive && !story) {
   );
 }
 
+if (args !== undefined && !story) {
+  exitWithError('--args only applies to --story.');
+}
+
 function getUrl(): URL {
   if (story) {
-    return isLive
-      ? getStoryUrl(story, HOSTED_STORYBOOK_ORIGIN)
-      : getStoryUrl(story);
+    return getStoryUrl(
+      story,
+      isLive ? HOSTED_STORYBOOK_ORIGIN : undefined,
+      parseStoryArgs(args),
+    );
   }
 
   if (storybookDocs) {

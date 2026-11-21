@@ -46,11 +46,14 @@ check whether each happened again this session:
 
 A pattern that happened again is now on its second sighting and a candidate
 for a change in step 3. Record which ones did, with the PR it happened in,
-along with the PRs the session's work went into. This starts the retro's log
-entry and adds one to the count of retros without it for every other pattern:
+along with the PRs the session's work went into and a `--label` for each
+area that work touched, reusing the labels the watch list prints. This starts
+the retro's log entry and adds one to the count of retros without it for
+every other pattern, and to its count of retros touching its labels where it
+shares one:
 
 ```bash
-./.claude/skills/run-retro/scripts/record-watch-retro.ts --session <id> --pr 400 --seen 12:400
+./.claude/skills/run-retro/scripts/record-watch-retro.ts --session <id> --pr 400 --label ui --label layout --seen 12:400
 ```
 
 For a retro of several sessions, pass `--session` once for each, and name the
@@ -177,12 +180,13 @@ End with a table of every item, its decision, and where it landed: the PR,
 memory, the watch list, an existing rule, or dropped.
 
 Update the watch list in the retro's PR. Add each pattern being watched, with
-the PR it happened in, and remove any that got a fix or that the user agrees
-to drop. `show-watch-list.ts` marks those that have gone 10 retros without
-recurring:
+the PR it happened in and a `--label` for each area it's about, and remove
+any that got a fix or that the user agrees to drop. `show-watch-list.ts`
+marks those that have gone 5 retros touching their labels, or 30 retros in
+all, without recurring:
 
 ```bash
-./.claude/skills/run-retro/scripts/add-watch-pattern.ts --session <id> --pr 400 --pattern <<'EOF'
+./.claude/skills/run-retro/scripts/add-watch-pattern.ts --session <id> --pr 400 --label docs --pattern <<'EOF'
 …
 EOF
 ./.claude/skills/run-retro/scripts/remove-watch-pattern.ts --id 7

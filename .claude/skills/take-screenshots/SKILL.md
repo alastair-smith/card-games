@@ -35,6 +35,10 @@ kebab-case, describing what's shown.
   `main`'s hosted stories at `https://stories.playcards.games` instead, such
   as for a PR's previous screenshots. It needs no local Storybook, and a story
   the branch adds isn't there yet
+- **Story args:** pass `--args` with `--story` to set the story's args, such
+  as `--args 'name:Alastair;isUser:!true;cardCount:5'`, rather than adding a
+  story to try other values. Values are letters, digits, spaces, `_` and `-`,
+  or a special value such as `!true`
 - **Dialog:** pass `--dialog` with `--story` to capture an open dialog, which
   renders outside the story's own area. The story's `play` function must
   open it and leave it open
@@ -77,6 +81,9 @@ nothing scrolls. Use it to check a layout fits a screen:
 | `ipad-portrait`  | 820×1180  | Yes   |
 | `large-mobile`   | 414×896   | Yes   |
 | `small-mobile`   | 360×800   | Yes   |
+
+`--live` and `--args` work as they do for screenshots, so a measurement can
+be compared with `main`'s without switching branches or stashing changes.
 
 Sizes are in CSS pixels, so a 4K screen at its usual 150% or 200% scaling is
 `1440p` or `1080p`. A `WxH` size has no touch screen, so pick a named size for a phone or tablet
