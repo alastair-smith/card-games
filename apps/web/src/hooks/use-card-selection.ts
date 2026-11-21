@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { YanivPlayingCard } from '~/types/games/yaniv';
+import type { PlayingCardValue } from '~/types/cards';
 
-export function useCardSelection(hand: YanivPlayingCard[]) {
-  const [selectedCards, setSelectedCards] = useState<YanivPlayingCard[]>([]);
+export function useCardSelection<Card extends PlayingCardValue>(hand: Card[]) {
+  const [selectedCards, setSelectedCards] = useState<Card[]>([]);
 
   const handKey = hand
     .map(({ suit, rank }) => `${suit}:${rank}`)
@@ -14,7 +14,7 @@ export function useCardSelection(hand: YanivPlayingCard[]) {
     setSelectedCards([]);
   }, [handKey]);
 
-  const toggleCard = (card: YanivPlayingCard) => {
+  const toggleCard = (card: Card) => {
     setSelectedCards((prev) => {
       const alreadySelected = prev.some(
         (selected) =>

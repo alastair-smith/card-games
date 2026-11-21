@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { stubBrowserApis } from '~/test-utils/browser';
 import { buildClientPlayer } from '~/test-utils/shithead';
+import { Rank, Suit } from '~/types/cards';
 import type { PlayerName, UserId } from '~/types/entities';
 import { GameStage } from '~/types/games/shithead';
 import Game from '.';
@@ -38,7 +39,19 @@ const baseProps: ComponentProps<typeof Game> = {
   visibleDiscardCards: [],
   hand: <div>Your cards</div>,
   onEmojiClick: noop,
+  onDiscardPileClick: noop,
 };
+
+const pileWithCards = {
+  discardSize: 3,
+  visibleDiscardCards: [{ suit: Suit.HEARTS, rank: Rank.EIGHT }],
+};
+
+const queryPickUpButton = () =>
+  screen.queryByRole('button', {
+    name: 'Pick up the discard pile',
+    hidden: true,
+  });
 
 const getHandTab = () => screen.getByRole('tab', { name: /Hand/ });
 
@@ -107,6 +120,46 @@ describe('Game', () => {
       render(<Game {...baseProps} players={buildPlayers({ turnIndex: 0 })} />);
       fireEvent.mouseDown(getHandTab());
       expect(getHandTab()).not.toHaveTextContent('your move');
+    });
+  });
+
+  describe('picking up the discard pile', () => {
+    test('picks up the pile on your turn', () => {
+      const handleDiscardPileClick = vi.fn();
+      render(
+        <Game
+          {...baseProps}
+          {...pileWithCards}
+          players={buildPlayers({ turnIndex: 0 })}
+          onDiscardPileClick={handleDiscardPileClick}
+        />,
+      );
+
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Pick up the discard pile',
+          hidden: true,
+        }),
+      );
+
+      expect(handleDiscardPileClick).toHaveBeenCalledOnce();
+    });
+
+    test('can’t pick up on another player’s turn', () => {
+      render(<Game {...baseProps} {...pileWithCards} />);
+      expect(queryPickUpButton()).not.toBeInTheDocument();
+    });
+
+    test('can’t pick up while swapping', () => {
+      render(
+        <Game
+          {...baseProps}
+          {...pileWithCards}
+          gameStage={GameStage.SWAPPING}
+          players={buildPlayers({ isUserSwapConfirmed: false })}
+        />,
+      );
+      expect(queryPickUpButton()).not.toBeInTheDocument();
     });
   });
 

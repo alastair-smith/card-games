@@ -7,7 +7,31 @@ import {
   standardDeck,
   ZERO_RANK,
 } from '~/types/cards';
-import { isPictureCard, shuffle } from '.';
+import { isPictureCard, isSameCard, shuffle } from '.';
+
+describe('isSameCard', () => {
+  test('matches a card with the same suit and rank', () => {
+    expect(
+      isSameCard(
+        { suit: Suit.CLUBS, rank: Rank.TEN },
+        { suit: Suit.CLUBS, rank: Rank.TEN },
+      ),
+    ).toBe(true);
+  });
+
+  test('tells apart cards of the same rank in different suits', () => {
+    expect(
+      isSameCard(
+        { suit: Suit.CLUBS, rank: Rank.TEN },
+        { suit: Suit.HEARTS, rank: Rank.TEN },
+      ),
+    ).toBe(false);
+  });
+
+  test('matches nothing when there is no card', () => {
+    expect(isSameCard(null, { suit: Suit.CLUBS, rank: Rank.TEN })).toBe(false);
+  });
+});
 
 describe('isPictureCard', () => {
   test('returns true for Jack', () => {

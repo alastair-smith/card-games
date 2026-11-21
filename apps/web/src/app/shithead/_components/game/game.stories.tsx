@@ -3,7 +3,12 @@ import { type ComponentProps, useState } from 'react';
 import { fn } from 'storybook/test';
 import { Button } from '~/components/ui/button';
 import { buildClientPlayer, buildTableCards } from '~/test-utils/shithead';
-import { Rank, type StandardPlayingCard, Suit } from '~/types/cards';
+import {
+  Rank,
+  type StandardPlayingCard,
+  Suit,
+  standardDeck,
+} from '~/types/cards';
 import {
   type EmojiReactionId,
   MAX_NAME_LENGTH,
@@ -12,6 +17,7 @@ import {
 } from '~/types/entities';
 import { GameStage, MAX_PLAYERS } from '~/types/games/shithead';
 import type { PlayerColor } from '~/utils/player-color';
+import { Hand } from '../hand';
 import Game from '.';
 
 type GameProps = ComponentProps<typeof Game>;
@@ -62,14 +68,22 @@ const longestVisiblePile: StandardPlayingCard[] = [
   { suit: Suit.CLUBS, rank: Rank.JACK },
 ];
 
-// Stands in for the player's hand, which the game passes in
-function HandPlaceholder() {
-  return (
-    <div className='grid flex-1 place-items-center rounded-lg border-2 border-dashed border-white/60 p-4 text-center'>
-      Your hand
-    </div>
-  );
-}
+const handProps = {
+  className: 'flex-1',
+  color: 'red',
+  gameStage: GameStage.IN_PROGRESS,
+  cards: [
+    { suit: Suit.CLUBS, rank: Rank.FOUR },
+    { suit: Suit.HEARTS, rank: Rank.NINE },
+    { suit: Suit.SPADES, rank: Rank.QUEEN },
+  ],
+  tableCards: buildTableCards(),
+  isSwapConfirmed: true,
+  isPlayersTurn: true,
+  onSwapCards: fn(),
+  onConfirmSwap: fn(),
+  onPlayCards: fn(),
+} satisfies ComponentProps<typeof Hand>;
 
 const meta = {
   title: 'Shithead / Game',
@@ -81,8 +95,9 @@ const meta = {
     deckSize: 3,
     discardSize: 4,
     visibleDiscardCards: [{ suit: Suit.HEARTS, rank: Rank.EIGHT }],
-    hand: <HandPlaceholder />,
+    hand: <Hand {...handProps} />,
     onEmojiClick: fn(),
+    onDiscardPileClick: fn(),
   },
 } satisfies Meta<typeof Game>;
 
@@ -93,7 +108,18 @@ type Story = StoryObj<typeof meta>;
 export const YourTurn: Story = {};
 
 export const OtherPlayersTurn: Story = {
-  args: { players: buildPlayers({ turnIndex: 2 }) },
+  args: {
+    players: buildPlayers({ turnIndex: 2 }),
+    hand: <Hand {...handProps} isPlayersTurn={false} />,
+  },
+};
+
+/** Most of the deck in hand, after picking up a long pile. */
+export const BiggestHand: Story = {
+  args: {
+    deckSize: 0,
+    hand: <Hand {...handProps} cards={standardDeck.slice(2)} />,
+  },
 };
 
 export const TwoPlayers: Story = {
@@ -111,6 +137,14 @@ export const Swapping: Story = {
       ...player,
       isSwapConfirmed: false,
     })),
+    hand: (
+      <Hand
+        {...handProps}
+        gameStage={GameStage.SWAPPING}
+        isSwapConfirmed={false}
+        isPlayersTurn={false}
+      />
+    ),
   },
 };
 

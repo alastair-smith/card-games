@@ -32,7 +32,7 @@ const RenderZones = ({ zoneCount }: Pick<PlayAreaStoryProps, 'zoneCount'>) => {
           <PlayAreaPlayerZone key={player.name}>
             <PlayingCard
               card={player.name === 'Player 3' ? null : player.card}
-              highlighted={player.name === 'Player 3'}
+              isHighlighted={player.name === 'Player 3'}
               className='text-2xl'
             />
             <PlayAreaPlayerName>{player.name}</PlayAreaPlayerName>

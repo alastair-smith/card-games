@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '~/components/ui/toast';
+import { useCardSelection } from '~/hooks/use-card-selection';
 import { useWaitForServerValue } from '~/hooks/use-wait-for-server-value';
 import type { ClientGameState } from '~/server/state/game/yaniv/lib/to-client-game-state';
 import { useTRPC } from '~/trpc/react';
@@ -20,7 +21,6 @@ import { sumYanivHand } from '~/utils/yaniv';
 import { isRunShape, isValidYanivPlay } from '~/utils/yaniv/validation';
 import Game from './game';
 import GameOver from './game-over';
-import { useCardSelection } from './use-card-selection';
 
 type Props = {
   code: GameCode;

@@ -500,7 +500,7 @@ function HandCards({
         <li key={`${card.suit}-${card.rank}`} className='flex'>
           <PlayingCard
             card={isFaceDown ? null : card}
-            highlighted={card.selected && !isFaceDown}
+            isPressed={!isFaceDown && card.selected === true}
             onClick={isFaceDown ? undefined : () => onCardClick(card)}
           />
         </li>

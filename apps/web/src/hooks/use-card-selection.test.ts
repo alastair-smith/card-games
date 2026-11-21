@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
+import { useCardSelection } from '~/hooks/use-card-selection';
 import { Rank, Suit } from '~/types/cards';
 import type { YanivPlayingCard } from '~/types/games/yaniv';
-import { useCardSelection } from './use-card-selection';
 
 const card = (suit: Suit, rank: Rank): YanivPlayingCard => ({ suit, rank });
 

@@ -1,3 +1,4 @@
+import { Button } from '~/components/ui/button';
 import { PlayingCard } from '~/components/ui/playing-card';
 import {
   PlayingCardDeck,
@@ -14,6 +15,8 @@ type PlayAreaProps = {
   discardSize: number;
   /** Top-first */
   visibleDiscardCards: StandardPlayingCard[];
+  /** Makes a pile with cards in it a button to pick it up */
+  onDiscardPileClick?: (() => void) | undefined;
 };
 
 const describeCardCount = (count: number) =>
@@ -45,8 +48,17 @@ export function PlayArea({
   deckSize,
   discardSize,
   visibleDiscardCards,
+  onDiscardPileClick,
 }: PlayAreaProps) {
   const isDeckEmpty = deckSize === 0;
+
+  const discardStack = (
+    <PlayingCardStack>
+      {[...visibleDiscardCards].reverse().map((card) => (
+        <PlayingCard key={`${card.suit}-${card.rank}`} card={card} border />
+      ))}
+    </PlayingCardStack>
+  );
 
   return (
     <div
@@ -63,17 +75,18 @@ export function PlayArea({
         // Room for 7 cards
         className='min-w-[calc(3.75em+6*1.6em+0.112em+1rem)]'
       >
-        <div aria-hidden='true'>
-          <PlayingCardStack>
-            {[...visibleDiscardCards].reverse().map((card) => (
-              <PlayingCard
-                key={`${card.suit}-${card.rank}`}
-                card={card}
-                border
-              />
-            ))}
-          </PlayingCardStack>
-        </div>
+        {onDiscardPileClick && discardSize > 0 ? (
+          <Button
+            variant='raw'
+            size='fit'
+            aria-label='Pick up the discard pile'
+            onClick={onDiscardPileClick}
+          >
+            <span aria-hidden='true'>{discardStack}</span>
+          </Button>
+        ) : (
+          <div aria-hidden='true'>{discardStack}</div>
+        )}
         <span className='sr-only'>
           {describeDiscardPile(discardSize, visibleDiscardCards)}
         </span>

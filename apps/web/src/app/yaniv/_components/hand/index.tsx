@@ -75,7 +75,7 @@ export function Hand({
           <li key={`${card.suit}-${card.rank}`} className='flex'>
             <PlayingCard
               card={isHandHidden ? null : card}
-              highlighted={card.selected && !isHandHidden}
+              isPressed={!isHandHidden && card.selected === true}
               onClick={
                 onCardClick && !isHandHidden
                   ? () => onCardClick(card)

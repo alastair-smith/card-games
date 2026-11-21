@@ -26,6 +26,15 @@ export function cardAriaLabel(card: PlayingCardValue | null): string {
   return `${RANK_FULL_NAME[card.rank]} of ${capitalize(card.suit)}`;
 }
 
+export const isSameCard = (
+  first: PlayingCardValue | null,
+  second: PlayingCardValue | null,
+): boolean =>
+  first !== null &&
+  second !== null &&
+  first.suit === second.suit &&
+  first.rank === second.rank;
+
 export const shuffle = <T>(deck: T[]): T[] => {
   const newDeck = [...deck];
 

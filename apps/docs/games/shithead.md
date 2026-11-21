@@ -47,8 +47,8 @@ If the discard pile is empty, any card can be played.
 
 From lowest to highest: 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
 
-The hand sorts by this order. Magic cards stay in their usual positions, with a
-symbol or colour to mark them out.
+The hand sorts by this order, then by suit. Magic cards stay in their usual
+positions, each marked with a symbol for what it does.
 
 ### Drawing
 
@@ -60,17 +60,18 @@ When the deck empties, 🫥 emoji rain down automatically.
 
 ### Picking up
 
-A player who can't play picks up the entire discard pile into their hand. The
-next player then plays onto an empty pile, so they can play any card.
+A player who can't play picks up the entire discard pile into their hand, by
+choosing the discard pile on their turn. The next player then plays onto an
+empty pile, so they can play any card.
 
 ## Magic cards
 
-| Rank | Can be played               | Effect                                                                      |
-| :--- | :-------------------------- | :-------------------------------------------------------------------------- |
-| 2    | On any card                 | Resets the rank to 2, so the next player can play any card                  |
-| 5    | On any card                 | Invisible: the next player looks at the card underneath to see what to beat |
-| 7    | Where a 7 is normally valid | The next card must be a 7 or lower                                          |
-| 10   | On any card                 | Burns the discard pile                                                      |
+| Rank | Can be played               | Effect                                                                      | Symbol in the hand |
+| :--- | :-------------------------- | :-------------------------------------------------------------------------- | :----------------- |
+| 2    | On any card                 | Resets the rank to 2, so the next player can play any card                  | Eraser             |
+| 5    | On any card                 | Invisible: the next player looks at the card underneath to see what to beat | Ghost              |
+| 7    | Where a 7 is normally valid | The next card must be a 7 or lower                                          | Downward arrow     |
+| 10   | On any card                 | Burns the discard pile                                                      | Bin                |
 
 The 5's invisibility stacks, so with several 5s in a row the next player looks
 at the first card below them. A 5 on an empty pile leaves the pile with nothing

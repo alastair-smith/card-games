@@ -126,7 +126,7 @@ export default function HighCardGameView({
             }
           : undefined
       }
-      highlighted={userCanPickup}
+      isHighlighted={userCanPickup}
     />
   );
 
