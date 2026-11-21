@@ -38,6 +38,15 @@ describe('PlayerTag', () => {
       expect(screen.getByText(', 5 cards')).toBeInTheDocument();
     });
 
+    test('says card rather than cards for a single card', () => {
+      render(
+        <PlayerTag color='cyan' isPlayersTurn={false}>
+          <PlayerTagCardCount cardCount={1} />
+        </PlayerTag>,
+      );
+      expect(screen.getByText(', 1 card')).toBeInTheDocument();
+    });
+
     test('says nothing about cards while the count is hidden', () => {
       render(
         <PlayerTag color='cyan' isPlayersTurn={false}>

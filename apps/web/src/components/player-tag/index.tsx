@@ -104,7 +104,9 @@ export function PlayerTagCardCount({
         {cardCount}
       </MiniCard>
       {cardCount !== null && (
-        <span className='sr-only'>, {cardCount} cards</span>
+        <span className='sr-only'>
+          , {cardCount} {cardCount === 1 ? 'card' : 'cards'}
+        </span>
       )}
     </>
   );
